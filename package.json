@@ -1,0 +1,78 @@
+{
+  "name": "template",
+  "version": "1.0.0",
+  "description": "Template repository with ESLint and Prettier configured for vanilla JS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --passWithNoTests",
+    "prepare": "husky",
+    "start": "webpack serve --open-app-name 'google-chrome' --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "p": "git add . && git commit && git push origin main",
+    "d": "git checkout gh-pages 2>/dev/null || git checkout -b gh-pages && git merge main --no-edit && npm run build && git add dist -f && git commit -m 'Deployment commit' && git subtree push --prefix dist origin gh-pages && git checkout main",
+    "pd": "npm run p && npm run deploy"
+  },
+  "keywords": [],
+  "author": "Mikhail Sholokhov",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.27.1",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
+    "autoprefixer": "^10.4.21",
+    "babel-jest": "^29.7.0",
+    "babel-loader": "^10.0.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.2",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-import-resolver-webpack": "^0.13.10",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-webpack-plugin": "^5.0.1",
+    "html-loader": "^5.1.0",
+    "html-webpack-plugin": "^5.6.3",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.4.3",
+    "postcss": "^8.5.3",
+    "postcss-loader": "^8.1.1",
+    "prettier": "3.5.2",
+    "react-test-renderer": "^19.1.0",
+    "sass-embedded": "^1.88.0",
+    "sass-loader": "^16.0.5",
+    "style-loader": "^4.0.0",
+    "stylelint": "^16.19.1",
+    "stylelint-config-concentric-order": "^5.2.1",
+    "stylelint-config-sass-guidelines": "^12.1.0",
+    "stylelint-webpack-plugin": "^5.0.1",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0",
+    "webpack-merge": "^6.0.1"
+  },
+  "lint-staged": {
+    "src/**/*.{jsx,mjs,js}": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
+    ],
+    "src/**/*.{html,css,json}": "prettier --write --ignore-unknown",
+    "src/**/*.scss": [
+      "stylelint --fix",
+      "prettier --write --ignore-unknown"
+    ]
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}

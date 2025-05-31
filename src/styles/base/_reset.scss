@@ -1,0 +1,116 @@
+/*------------------------------------*\
+  #RESET
+\*------------------------------------*/
+
+/**
+ * Based on
+ * Josh Comeau's Custom CSS Reset
+ * https://www.joshwcomeau.com/css/custom-css-reset/
+ */
+
+/* Use a more-intuitive box-sizing model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+* {
+  margin: 0;
+}
+
+/* Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  /* Add accessible line-height */
+  line-height: 1.5;
+  /* Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Improve media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/**
+ * OPTIONAL: Create a root stacking context
+ *
+ * This is beneficial since it allows us to guarantee that certain
+ * high-priority elements (modals, dropdowns, tooltips) will always show up
+ * above the other elements in our application. No weird stacking context bugs
+ * no z-index arms race.
+ *
+ * !You should tweak the selector to match your framework.
+ * We want to select the top-level element that your application is rendered
+ * within. For example, create-react-app uses a <div id="root">, so the correct
+ * selector is #root.
+ */
+/**
+ * #root,
+ * #__next {
+ *  isolation: isolate;
+ * }
+ */
+
+/**
+ * This is to stop animations for people that explicitly notified their system
+ * that they prefer reduced motion. 
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  * {
+    /* With very short durations, relying on events JavaScript still works */
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/**
+ * Ideally, use `prefers-contrast`, `inverted-colors`, `prefers-color-scheme`
+ * media features as well in your projects
+ */
