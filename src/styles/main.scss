@@ -1,21 +1,11 @@
 @charset 'UTF-8'; /* To avoid any character encoding issue. */
 
-@forward 'vendors';
 @forward 'base';
-@forward 'themes';
 
 /**
  * TABLE OF CONTENTS
  * 
  * BASE
  * Fonts.....................Global font styles.
- * Helpers...................CSS helper classes.
  * Reset.....................A CSS reset.
- * Typography................Typography styles.
- * 
- * THEMES
- * Default...................Default-theme styles.
- * 
- * VENDORS
- * ..........................CSS from external libraries and frameworks   .
  */
