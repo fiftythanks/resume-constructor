@@ -1,0 +1,15 @@
+/*------------------------------------*\
+  #BASE
+\*------------------------------------*/
+
+/* This file contains all application-wide styles. */
+
+@use '@styleUtils/variables';
+
+body {
+  background-color: var(--main-color);
+  width: 100vw;
+  height: 100vh;
+  overflow-y: hidden;
+  color: var(--text-color);
+}
