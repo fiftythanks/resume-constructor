@@ -23,6 +23,16 @@ module.exports = {
   rules: {
     // This rule should be deprecated since React deprecated PropTypes in April 2017.
     'react/prop-types': [0],
+    'react/jsx-no-bind': [
+      2,
+      {
+        ignoreDOMComponents: true,
+        ignoreRefs: false,
+        allowArrowFunctions: true,
+        allowFunctions: true,
+        allowBind: false,
+      },
+    ],
   },
   settings: {
     'import/resolver': {
