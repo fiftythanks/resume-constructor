@@ -10,7 +10,15 @@ module.exports = {
   resolve: {
     extensions: ['.jsx', '.mjs', '.js', '.json'],
     alias: {
-      '@*': path.resolve(__dirname, 'src/*'),
+      '@components/*': path.resolve(__dirname, 'src/components/*'),
+      '@layout/*': path.resolve(__dirname, 'src/layout/*'),
+      '@pages/*': path.resolve(__dirname, 'src/pages/*'),
+      '@styles/*': path.resolve(__dirname, 'src/styles/*'),
+      '@assets/*': path.resolve(__dirname, 'src/assets/*'),
+      '@icons/*': path.resolve(__dirname, 'src/assets/icons/*'),
+      '@images/*': path.resolve(__dirname, 'src/assets/images/*'),
+      '@styleUtils/*': path.resolve(__dirname, 'src/styles/styleUtils/*'),
+      '@utils/*': path.resolve(__dirname, 'src/utils/*'),
     },
   },
   plugins: [
