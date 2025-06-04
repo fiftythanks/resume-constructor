@@ -8,6 +8,7 @@ const config = {
     /* This rule conflicts with Prettier */
     '@stylistic/function-parentheses-space-inside': null,
     'max-nesting-depth': 2,
+    'selector-class-pattern': null,
   },
 };
 
