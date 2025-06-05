@@ -1,12 +1,15 @@
 .Navigation {
-  display: flex;
   position: absolute;
   bottom: calc(0.5rem + 50px + 0.5rem);
   left: 1rem;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0;
-  list-style-type: none;
+
+  &-Items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0;
+    list-style-type: none;
+  }
 
   &_hidden {
     display: none;

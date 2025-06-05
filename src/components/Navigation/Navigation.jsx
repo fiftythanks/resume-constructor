@@ -31,6 +31,7 @@ import experienceSrc from '@icons/experience.svg';
 import projectsSrc from '@icons/projects.svg';
 import educationSrc from '@icons/education.svg';
 import certificationsSrc from '@icons/certifications.svg';
+import optionsSrc from '@icons/options.svg';
 
 import './Navigation.scss';
 
@@ -42,12 +43,13 @@ const icons = {
   projects: projectsSrc,
   education: educationSrc,
   certifications: certificationsSrc,
+  options: optionsSrc,
 };
 
 export default function Navigation({
   activeSectionIDs,
   openedSectionID,
-  openSection,
+  selectSection,
   reorderSections,
 }) {
   // Drag and drop logic
@@ -85,33 +87,42 @@ export default function Navigation({
       className="Navigation-NavItem"
       iconSrc={icons[sectionID]}
       alt={capitalize(sectionID)}
-      isOpened={openedSectionID === sectionID}
+      isSelected={openedSectionID === sectionID}
       key={sectionID}
       id={sectionID}
-      openSection={() => openSection(sectionID)}
+      selectSection={() => selectSection(sectionID)}
     />
   ));
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-      modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-      /**
-       * Since the navigation bar will always stay in the same position
-       * (or at least won't move beyond the screen almost certainly),
-       * there's no need for autoscroll. It also introduces strange behaviour
-       * on mobile Firefox, so turning it off is for the best.
-       */
-      autoScroll={false}
-    >
-      <SortableContext
-        items={activeSectionIDs}
-        strategy={verticalListSortingStrategy}
+    <nav className="Navigation">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+        /**
+         * Since the navigation bar will always stay in the same position
+         * (or at least won't move beyond the screen almost certainly),
+         * there's no need for autoscroll. It also introduces strange behaviour
+         * on mobile Firefox, so turning it off is for the best.
+         */
+        autoScroll={false}
       >
-        <ul className="Navigation">{items}</ul>
-      </SortableContext>
-    </DndContext>
+        <SortableContext
+          items={activeSectionIDs}
+          strategy={verticalListSortingStrategy}
+        >
+          <ul
+            className="Navigation-Items"
+            role="tablist"
+            aria-label="Resume Sections"
+            aria-orientation="vertical"
+          >
+            {items}
+          </ul>
+        </SortableContext>
+      </DndContext>
+    </nav>
   );
 }

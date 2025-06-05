@@ -5,13 +5,15 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+import capitalize from '@utils/capitalize';
+
 import '@blocks/toolbar-item.scss';
 
 export default function NavItem({
   iconSrc,
   alt,
-  isOpened,
-  openSection,
+  isSelected,
+  selectSection,
   id,
   className,
 }) {
@@ -42,8 +44,12 @@ export default function NavItem({
     >
       <button
         type="button"
-        className={`toolbar-item__inner toolbar-item__inner_action ${isOpened ? 'toolbar-item__inner_active' : ''}`.trim()}
-        onClick={openSection}
+        className={`toolbar-item__inner toolbar-item__inner_action ${isSelected ? 'toolbar-item__inner_active' : ''}`.trim()}
+        onClick={selectSection}
+        role="tab"
+        aria-label={`${capitalize(id)} Section`}
+        aria-controls={id}
+        aria-selected={isSelected}
         // Drag and drop props
         style={style}
         aria-roledescription="draggable"

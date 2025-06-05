@@ -35,7 +35,7 @@ export default function App() {
     <Navigation
       activeSectionIDs={activeSectionIDs}
       openedSectionID={openedSectionID}
-      openSection={openSection}
+      selectSection={openSection}
       reorderSections={reorderSections}
     />
   );
