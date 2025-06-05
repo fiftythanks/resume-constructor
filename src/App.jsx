@@ -11,8 +11,7 @@ export default function App() {
     </> 
   */
 
-  // eslint-disable-next-line no-unused-vars
-  const [activeSections, setActiveSections] = useState([
+  const [activeSectionIDs, setActiveSectionIDs] = useState([
     'personal',
     'links',
     'skills',
@@ -22,6 +21,10 @@ export default function App() {
     'certifications',
   ]);
 
+  function reorderSections(newActiveSectionIDs) {
+    setActiveSectionIDs(newActiveSectionIDs);
+  }
+
   const [openedSectionID, setOpenedSectionID] = useState(null);
 
   function openSection(sectionID) {
@@ -30,9 +33,10 @@ export default function App() {
 
   return (
     <Navigation
-      activeSections={activeSections}
+      activeSectionIDs={activeSectionIDs}
       openedSectionID={openedSectionID}
       openSection={openSection}
+      reorderSections={reorderSections}
     />
   );
 }

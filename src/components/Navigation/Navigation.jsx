@@ -1,5 +1,29 @@
 import React from 'react';
+
+// `dnd-kit` docs: https://docs.dndkit.com/
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  restrictToVerticalAxis,
+  restrictToParentElement,
+} from '@dnd-kit/modifiers';
+
 import NavItem from '@components/NavItem';
+
+import capitalize from '@utils/capitalize';
+
 import personalSrc from '@icons/personal.svg';
 import linksSrc from '@icons/links.svg';
 import skillsSrc from '@icons/skills.svg';
@@ -7,7 +31,7 @@ import experienceSrc from '@icons/experience.svg';
 import projectsSrc from '@icons/projects.svg';
 import educationSrc from '@icons/education.svg';
 import certificationsSrc from '@icons/certifications.svg';
-import capitalize from '@utils/capitalize';
+
 import './Navigation.scss';
 
 const icons = {
@@ -21,11 +45,42 @@ const icons = {
 };
 
 export default function Navigation({
-  activeSections,
+  activeSectionIDs,
   openedSectionID,
   openSection,
+  reorderSections,
 }) {
-  const items = activeSections.map((sectionID) => (
+  // Drag and drop logic
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 10,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  function handleDragEnd(e) {
+    const { active, over } = e;
+
+    if (active.id !== over.id) {
+      const oldIndex = activeSectionIDs.indexOf(active.id);
+      const newIndex = activeSectionIDs.indexOf(over.id);
+
+      const newActiveSectionIDs = arrayMove(
+        activeSectionIDs,
+        oldIndex,
+        newIndex,
+      );
+
+      reorderSections(newActiveSectionIDs);
+    }
+  }
+
+  const items = activeSectionIDs.map((sectionID) => (
     <NavItem
       className="Navigation-NavItem"
       iconSrc={icons[sectionID]}
@@ -37,5 +92,26 @@ export default function Navigation({
     />
   ));
 
-  return <ul className="Navigation">{items}</ul>;
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+      /**
+       * Since the navigation bar will always stay in the same position
+       * (or at least won't move beyond the screen almost certainly),
+       * there's no need for autoscroll. It also introduces strange behaviour
+       * on mobile Firefox, so turning it off is for the best.
+       */
+      autoScroll={false}
+    >
+      <SortableContext
+        items={activeSectionIDs}
+        strategy={verticalListSortingStrategy}
+      >
+        <ul className="Navigation">{items}</ul>
+      </SortableContext>
+    </DndContext>
+  );
 }
