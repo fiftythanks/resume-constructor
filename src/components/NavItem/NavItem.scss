@@ -1,35 +1,9 @@
 @use '@styleUtils/variables';
 
 .NavItem {
-  width: 50px;
-  height: 50px;
-
-  &-Btn {
-    touch-action: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 5px;
-    background-color: var(--secondary-color);
-    width: 100%;
-    height: 100%;
-
-    &:hover {
-      cursor: pointer;
-    }
-
-    &_opened {
+  &-Inner {
+    &_sectionOpened {
       background-color: var(--opened-section-color);
     }
-
-    &_dragged {
-      cursor: grabbing;
-    }
-  }
-
-  &-Icon {
-    width: 25px;
-    height: auto;
   }
 }
