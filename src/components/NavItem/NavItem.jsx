@@ -6,7 +6,6 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import '@blocks/toolbar-item.scss';
-import './NavItem.scss';
 
 export default function NavItem({
   iconSrc,
@@ -16,8 +15,6 @@ export default function NavItem({
   id,
   className,
 }) {
-  const openedModifier = isOpened ? 'NavItem-Inner_sectionOpened' : '';
-
   // Drag and drop logic
   const {
     attributes,
@@ -36,7 +33,7 @@ export default function NavItem({
 
   return (
     <li
-      className={`${className} toolbar-item NavItem`}
+      className={`${className} toolbar-item`}
       ref={setNodeRef}
       // To display the dragged item on top of other items
       style={{
@@ -45,7 +42,7 @@ export default function NavItem({
     >
       <button
         type="button"
-        className={`toolbar-item__inner toolbar-item__inner_action NavItem-Inner ${openedModifier}`.trim()}
+        className={`toolbar-item__inner toolbar-item__inner_action ${isOpened ? 'toolbar-item__inner_active' : ''}`.trim()}
         onClick={openSection}
         // Drag and drop props
         style={style}
@@ -59,7 +56,7 @@ export default function NavItem({
           alt={alt}
           width="25px"
           height="25px"
-          className="toolbar-item__icon NavItem-Icon"
+          className="toolbar-item__icon"
         />
       </button>
     </li>

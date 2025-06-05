@@ -1,9 +1,0 @@
-@use '@styleUtils/variables';
-
-.NavItem {
-  &-Inner {
-    &_sectionOpened {
-      background-color: var(--opened-section-color);
-    }
-  }
-}

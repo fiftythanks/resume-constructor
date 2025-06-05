@@ -3,8 +3,9 @@
 .toolbar-item {
   width: 50px;
   height: 50px;
+  user-select: none;
 
-  &_noInner {
+  &_no-inner {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,6 +18,10 @@
     &:hover {
       cursor: pointer;
     }
+  }
+
+  &_active {
+    background-color: var(--opened-section-color);
   }
 
   &__inner {
@@ -33,6 +38,10 @@
       &:hover {
         cursor: pointer;
       }
+    }
+
+    &_active {
+      background-color: var(--opened-section-color);
     }
   }
 
