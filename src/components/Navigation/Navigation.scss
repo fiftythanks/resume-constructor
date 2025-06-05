@@ -1,7 +1,14 @@
 .Navigation {
+  display: flex;
   position: absolute;
   bottom: calc(0.5rem + 50px + 0.5rem);
   left: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &_hidden {
+    display: none;
+  }
 
   &-Items {
     display: flex;
@@ -11,7 +18,17 @@
     list-style-type: none;
   }
 
-  &_hidden {
-    display: none;
+  &-ControlsWrapper {
+    position: relative;
+  }
+
+  &-Controls {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: calc(100% + 0.5rem);
+    gap: 0.5rem;
+    padding: 0;
+    list-style-type: none;
   }
 }

@@ -47,8 +47,8 @@ export default function NavItem({
         className={`toolbar-item__inner toolbar-item__inner_action ${isSelected ? 'toolbar-item__inner_active' : ''}`.trim()}
         onClick={selectSection}
         role="tab"
-        aria-label={`${capitalize(id)} Section`}
-        aria-controls={id}
+        aria-label={`${capitalize(id)}`}
+        aria-controls={`${id}-tabpanel`}
         aria-selected={isSelected}
         // Drag and drop props
         style={style}

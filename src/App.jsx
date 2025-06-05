@@ -11,6 +11,16 @@ export default function App() {
     </> 
   */
 
+  const availableSectionIDs = [
+    'personal',
+    'links',
+    'skills',
+    'experience',
+    'projects',
+    'education',
+    'certifications',
+  ];
+
   const [activeSectionIDs, setActiveSectionIDs] = useState([
     'personal',
     'links',
@@ -31,12 +41,65 @@ export default function App() {
     setOpenedSectionID(sectionID);
   }
 
+  function addSections(sectionIDs) {
+    if (Array.isArray(sectionIDs)) {
+      const newActiveSectionIDs = activeSectionIDs.slice();
+
+      sectionIDs.forEach((sectionID) => {
+        if (availableSectionIDs.includes(sectionID)) {
+          if (!activeSectionIDs.includes(sectionID)) {
+            newActiveSectionIDs.push(sectionID);
+          }
+        } else {
+          throw new Error(
+            'Incorrect section ID. Available section IDs: personal, links, skills, experience, projects, education, certifications',
+          );
+        }
+      });
+
+      setActiveSectionIDs(newActiveSectionIDs);
+    } else {
+      throw new TypeError(
+        'Incorrect argument! `addSections` accepts only arrays.',
+      );
+    }
+  }
+
+  function deleteSections(sectionIDs) {
+    if (Array.isArray(sectionIDs)) {
+      const newActiveSectionIDs = activeSectionIDs.slice();
+
+      sectionIDs.forEach((sectionID) => {
+        if (availableSectionIDs.includes(sectionID)) {
+          if (activeSectionIDs.includes(sectionID)) {
+            newActiveSectionIDs.splice(
+              newActiveSectionIDs.indexOf(sectionID),
+              1,
+            );
+          }
+        } else {
+          throw new Error(
+            'Incorrect section ID. Available section IDs: personal, links, skills, experience, projects, education, certifications',
+          );
+        }
+      });
+
+      setActiveSectionIDs(newActiveSectionIDs);
+    } else {
+      throw new TypeError(
+        'Incorrect argument! `deleteSections` accepts only arrays.',
+      );
+    }
+  }
+
   return (
     <Navigation
       activeSectionIDs={activeSectionIDs}
       openedSectionID={openedSectionID}
       selectSection={openSection}
       reorderSections={reorderSections}
+      addSections={addSections}
+      deleteSections={deleteSections}
     />
   );
 }
