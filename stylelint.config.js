@@ -7,7 +7,7 @@ const config = {
   rules: {
     /* This rule conflicts with Prettier */
     '@stylistic/function-parentheses-space-inside': null,
-    'max-nesting-depth': 2,
+    'max-nesting-depth': 3,
     'selector-class-pattern': null,
   },
 };
