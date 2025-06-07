@@ -110,7 +110,7 @@ export default function Navigation({
     setAreControlsShown(!areControlsShown);
   }
 
-  const canAddSectionss = activeSectionIDs.length !== 7;
+  const canAddSections = activeSectionIDs.length !== 7;
   const canDeleteSections = activeSectionIDs.length !== 1;
 
   return (
@@ -164,7 +164,7 @@ export default function Navigation({
             role="menu"
             aria-labelledby="nav-controls-toggle"
           >
-            {!canAddSectionss ? null : (
+            {!canAddSections ? null : (
               <ToolbarItem
                 hasInner
                 isListItem
@@ -173,30 +173,23 @@ export default function Navigation({
                 alt="Add New Sections"
                 innerAttributes={{ role: 'menuitem' }}
                 action={() => {
+                  // Placeholder
                   addSections(['skills', 'personal']);
                   toggleControls();
                 }}
               />
             )}
-            {
-              {
-                /**
-                 * Here will be a popup that lets users pick one or several
-                 * sections to add.
-                 */
-              }
-            }
+            {/**
+             * Here will be a popup that lets users pick one or several
+             * sections to add.
+             */}
 
-            {
-              {
-                /**
-                 * Maybe, instead of this delete button, I will add a button
-                 * that will add to each navigation item a drag handle and a
-                 * delete button; just like it is going to be on large screens
-                 * by default.
-                 */
-              }
-            }
+            {/**
+             * Maybe, instead of this delete button, I will add a button
+             * that will add to each navigation item a drag handle and a
+             * delete button; just like it is going to be on large screens
+             * by default.
+             */}
             {!canDeleteSections ? null : (
               <ToolbarItem
                 hasInner
@@ -206,23 +199,20 @@ export default function Navigation({
                 alt="Delete Sections"
                 innerAttributes={{ role: 'menuitem' }}
                 action={() => {
+                  // Placeholder
                   deleteSections(['skills', 'personal', 'projects']);
                   toggleControls();
                 }}
               />
             )}
-            {
-              {
-                /**
-                 * If I do what's written above, there will be nothing. But
-                 * if I do not, there will be a popup that lets you choose what
-                 * section to delete.
-                 *
-                 * And a change-layout button that will add drag handles to the
-                 * navigation items.
-                 */
-              }
-            }
+            {/**
+             * If I do what's written above, there will be nothing. But
+             * if I do not, there will be a popup that lets you choose what
+             * section to delete.
+             *
+             * And a change-layout button that will add drag handles to the
+             * navigation items.
+             */}
           </ul>
         )}
       </div>
