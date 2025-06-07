@@ -1,3 +1,4 @@
+/* stylelint-disable selector-max-id */
 /*------------------------------------*\
   #RESET
 \*------------------------------------*/
@@ -78,24 +79,17 @@ h6 {
 }
 
 /**
- * OPTIONAL: Create a root stacking context
+ * Create a root stacking context
  *
  * This is beneficial since it allows us to guarantee that certain
  * high-priority elements (modals, dropdowns, tooltips) will always show up
  * above the other elements in our application. No weird stacking context bugs
  * no z-index arms race.
- *
- * !You should tweak the selector to match your framework.
- * We want to select the top-level element that your application is rendered
- * within. For example, create-react-app uses a <div id="root">, so the correct
- * selector is #root.
  */
-/**
- * #root,
- * #__next {
- *  isolation: isolate;
- * }
- */
+
+#root {
+  isolation: isolate;
+}
 
 /**
  * This is to stop animations for people that explicitly notified their system
