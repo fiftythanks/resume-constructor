@@ -104,10 +104,10 @@ export default function Navigation({
   ));
 
   // For navigation controls (add/delete section, reorder sections).
-  const [areControlsShown, setAreControlsShown] = useState(false);
+  const [areControlsExpanded, setAreControlsExpanded] = useState(false);
 
   function toggleControls() {
-    setAreControlsShown(!areControlsShown);
+    setAreControlsExpanded(!areControlsExpanded);
   }
 
   const canAddSections = activeSectionIDs.length !== 7;
@@ -145,19 +145,19 @@ export default function Navigation({
       </DndContext>
       <div className="Navigation-ControlsWrapper">
         <ToolbarItem
-          iconSrc={areControlsShown ? icons.close : icons.options}
+          iconSrc={areControlsExpanded ? icons.close : icons.options}
           alt="Navigation Controls"
           className="Navigation-ToggleControls"
           attributes={{
             'arial-label': 'Navigation Controls',
             'aria-haspopup': 'menu',
-            'aria-expanded': `${areControlsShown}`,
+            'aria-expanded': `${areControlsExpanded}`,
             'aria-controls': 'nav-controls',
             id: 'nav-controls-toggle',
           }}
           action={toggleControls}
         />
-        {!areControlsShown ? null : (
+        {!areControlsExpanded ? null : (
           <ul
             className="Navigation-Controls"
             id="nav-controls"
