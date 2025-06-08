@@ -5,6 +5,8 @@ import Button from '@components/Button';
 
 import capitalize from '@utils/capitalize';
 
+import closeSrc from '@icons/close.svg';
+
 import './AddSections.scss';
 
 export default function AddSections({
@@ -74,6 +76,19 @@ export default function AddSections({
           All
         </Button>
       </ul>
+      <button
+        type="button"
+        onClick={closePopup}
+        className="AddSections-CloseBtn"
+      >
+        <img
+          src={closeSrc}
+          alt="Close Popup"
+          width="32px"
+          height="32px"
+          className="AddSections-CloseIcon"
+        />
+      </button>
     </Popup>
   );
 }
