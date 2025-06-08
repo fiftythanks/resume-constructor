@@ -1,0 +1,20 @@
+@use '@styleUtils/variables';
+
+.Popup {
+  &:open {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    flex-direction: column;
+    align-items: center;
+    border: 0;
+    background-color: var(--main-color);
+    min-width: 100vw;
+    min-height: 100vh;
+  }
+
+  &-Title {
+    color: var(--text-color);
+  }
+}

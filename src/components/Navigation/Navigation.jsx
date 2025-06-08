@@ -22,6 +22,7 @@ import {
 
 import NavItem from '@components/NavItem';
 import ToolbarItem from '@components/ToolbarItem';
+import Popup from '@components/Popup';
 
 import capitalize from '@utils/capitalize';
 
@@ -60,6 +61,7 @@ export default function Navigation({
   reorderSections,
   addSections,
   deleteSections,
+  possibleSectionIDs,
 }) {
   // Drag and drop logic
   const sensors = useSensors(
@@ -110,112 +112,170 @@ export default function Navigation({
     setAreControlsExpanded(!areControlsExpanded);
   }
 
-  const canAddSections = activeSectionIDs.length !== 7;
-  const canDeleteSections = activeSectionIDs.length !== 1;
+  const canAddSections =
+    possibleSectionIDs.filter(
+      (sectionID) => !activeSectionIDs.includes(sectionID),
+    ).length > 0;
+  const canDeleteSections = activeSectionIDs.length > 1;
+
+  // For the "Add Sections" popup
+  const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
+
+  function showAddSectionsPopup() {
+    setIsAddSectionsPopupShown(true);
+  }
+
+  function closeAddSectionsPopup() {
+    setIsAddSectionsPopupShown(false);
+
+    if (canAddSections) {
+      document.getElementById('add-sections').focus();
+    } else {
+      toggleControls();
+    }
+  }
 
   return (
-    <nav className="Navigation">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-        /**
-         * Since the navigation bar will always stay in the same position
-         * (or at least won't move beyond the screen almost certainly),
-         * there's no need for autoscroll. It also introduces strange behaviour
-         * on mobile Firefox, so turning it off is for the best.
-         */
-        autoScroll={false}
-      >
-        <SortableContext
-          items={activeSectionIDs}
-          strategy={verticalListSortingStrategy}
+    <>
+      <nav className="Navigation">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+          /**
+           * Since the navigation bar will always stay in the same position
+           * (or at least won't move beyond the screen almost certainly),
+           * there's no need for autoscroll. It also introduces strange behaviour
+           * on mobile Firefox, so turning it off is for the best.
+           */
+          autoScroll={false}
         >
-          <ul
-            className="Navigation-Items"
-            role="tablist"
-            aria-label="Resume Sections"
-            aria-orientation="vertical"
-            aria-owns="personal links skills experience projects education certifications"
+          <SortableContext
+            items={activeSectionIDs}
+            strategy={verticalListSortingStrategy}
           >
-            {items}
-          </ul>
-        </SortableContext>
-      </DndContext>
-      <div className="Navigation-ControlsWrapper">
-        <ToolbarItem
-          iconSrc={areControlsExpanded ? icons.close : icons.options}
-          alt="Navigation Controls"
-          className="Navigation-ToggleControls"
-          attributes={{
-            'arial-label': 'Navigation Controls',
-            'aria-haspopup': 'menu',
-            'aria-expanded': `${areControlsExpanded}`,
-            'aria-controls': 'nav-controls',
-            id: 'nav-controls-toggle',
-          }}
-          action={toggleControls}
-        />
-        {!areControlsExpanded ? null : (
-          <ul
-            className="Navigation-Controls"
-            id="nav-controls"
-            role="menu"
-            aria-labelledby="nav-controls-toggle"
-          >
-            {!canAddSections ? null : (
-              <ToolbarItem
-                hasInner
-                isListItem
-                className="Navigation-Control"
-                iconSrc={icons.add}
-                alt="Add New Sections"
-                innerAttributes={{ role: 'menuitem' }}
-                action={() => {
-                  // Placeholder
-                  addSections(['skills', 'personal']);
-                  toggleControls();
-                }}
-              />
-            )}
-            {/**
-             * Here will be a popup that lets users pick one or several
-             * sections to add.
-             */}
+            <ul
+              className="Navigation-Items"
+              role="tablist"
+              aria-label="Resume Sections"
+              aria-orientation="vertical"
+              aria-owns="personal links skills experience projects education certifications"
+            >
+              {items}
+            </ul>
+          </SortableContext>
+        </DndContext>
+        <div className="Navigation-ControlsWrapper">
+          <ToolbarItem
+            iconSrc={areControlsExpanded ? icons.close : icons.options}
+            alt="Navigation Controls"
+            className="Navigation-ToggleControls"
+            attributes={{
+              'arial-label': 'Navigation Controls',
+              'aria-haspopup': 'menu',
+              'aria-expanded': `${areControlsExpanded}`,
+              'aria-controls': 'nav-controls',
+              id: 'nav-controls-toggle',
+            }}
+            action={toggleControls}
+          />
+          {!areControlsExpanded ? null : (
+            <ul
+              className="Navigation-Controls"
+              id="nav-controls"
+              role="menu"
+              aria-labelledby="nav-controls-toggle"
+            >
+              {!canAddSections ? null : (
+                <ToolbarItem
+                  hasInner
+                  isListItem
+                  className="Navigation-Control"
+                  iconSrc={icons.add}
+                  alt="Add New Sections"
+                  innerAttributes={{ role: 'menuitem', id: 'add-sections' }}
+                  action={() => {
+                    // Placeholder
+                    showAddSectionsPopup();
+                  }}
+                />
+              )}
 
-            {/**
-             * Maybe, instead of this delete button, I will add a button
-             * that will add to each navigation item a drag handle and a
-             * delete button; just like it is going to be on large screens
-             * by default.
-             */}
-            {!canDeleteSections ? null : (
-              <ToolbarItem
-                hasInner
-                isListItem
-                className="Navigation-Control"
-                iconSrc={icons.delete}
-                alt="Delete Sections"
-                innerAttributes={{ role: 'menuitem' }}
-                action={() => {
-                  // Placeholder
-                  deleteSections(['skills', 'personal', 'projects']);
-                  toggleControls();
-                }}
-              />
-            )}
-            {/**
-             * If I do what's written above, there will be nothing. But
-             * if I do not, there will be a popup that lets you choose what
-             * section to delete.
-             *
-             * And a change-layout button that will add drag handles to the
-             * navigation items.
-             */}
-          </ul>
-        )}
-      </div>
-    </nav>
+              {/**
+               * Maybe, instead of this delete button, I will add a button
+               * that will add to each navigation item a drag handle and a
+               * delete button; just like it is going to be on large screens
+               * by default.
+               */}
+              {!canDeleteSections ? null : (
+                <ToolbarItem
+                  hasInner
+                  isListItem
+                  className="Navigation-Control"
+                  iconSrc={icons.delete}
+                  alt="Delete Sections"
+                  innerAttributes={{ role: 'menuitem' }}
+                  action={() => {
+                    // Placeholder
+                    deleteSections(['skills', 'personal', 'projects']);
+                    toggleControls();
+                  }}
+                />
+              )}
+              {/**
+               * If I do what's written above, there will be nothing. But
+               * if I do not, there will be a popup that lets you choose what
+               * section to delete.
+               *
+               * And a change-layout button that will add drag handles to the
+               * navigation items.
+               */}
+            </ul>
+          )}
+        </div>
+      </nav>
+      <Popup
+        isShown={isAddSectionsPopupShown}
+        handleClose={closeAddSectionsPopup}
+        title="Choose which Sections to Add"
+      >
+        {possibleSectionIDs
+          .filter((sectionID) => !activeSectionIDs.includes(sectionID))
+          .map((sectionID) => (
+            <button
+              type="button"
+              className="Button"
+              onClick={() => {
+                addSections([sectionID]);
+
+                /**
+                 * `addSections` will only change the state for the next render.
+                 * That's why I can't use the `canAddSections` here and need
+                 * another way.
+                 */
+                const noMoreToAdd =
+                  possibleSectionIDs.filter(
+                    (id) => !activeSectionIDs.includes(id),
+                  ).length <= 1;
+                if (noMoreToAdd) closeAddSectionsPopup();
+              }}
+              key={`add-${sectionID}`}
+            >
+              {capitalize(sectionID)}
+            </button>
+          ))}
+        <button
+          type="button"
+          className="Button"
+          onClick={() => {
+            addSections(possibleSectionIDs);
+            closeAddSectionsPopup();
+          }}
+        >
+          All
+        </button>
+      </Popup>
+    </>
   );
 }

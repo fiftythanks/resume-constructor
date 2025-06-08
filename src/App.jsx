@@ -11,7 +11,7 @@ export default function App() {
     </> 
   */
 
-  const availableSectionIDs = [
+  const possibleSectionIDs = [
     'personal',
     'links',
     'skills',
@@ -46,7 +46,7 @@ export default function App() {
       const newActiveSectionIDs = activeSectionIDs.slice();
 
       sectionIDs.forEach((sectionID) => {
-        if (availableSectionIDs.includes(sectionID)) {
+        if (possibleSectionIDs.includes(sectionID)) {
           if (!activeSectionIDs.includes(sectionID)) {
             newActiveSectionIDs.push(sectionID);
           }
@@ -70,7 +70,7 @@ export default function App() {
       const newActiveSectionIDs = activeSectionIDs.slice();
 
       sectionIDs.forEach((sectionID) => {
-        if (availableSectionIDs.includes(sectionID)) {
+        if (possibleSectionIDs.includes(sectionID)) {
           if (activeSectionIDs.includes(sectionID)) {
             newActiveSectionIDs.splice(
               newActiveSectionIDs.indexOf(sectionID),
@@ -100,6 +100,7 @@ export default function App() {
       reorderSections={reorderSections}
       addSections={addSections}
       deleteSections={deleteSections}
+      possibleSectionIDs={possibleSectionIDs}
     />
   );
 }
