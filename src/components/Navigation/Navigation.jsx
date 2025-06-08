@@ -22,7 +22,7 @@ import {
 
 import NavItem from '@components/NavItem';
 import ToolbarItem from '@components/ToolbarItem';
-import Popup from '@components/Popup';
+import AddSections from '@components/AddSections';
 
 import capitalize from '@utils/capitalize';
 
@@ -131,6 +131,7 @@ export default function Navigation({
     if (canAddSections) {
       document.getElementById('add-sections').focus();
     } else {
+      // Close the controls bar
       toggleControls();
     }
   }
@@ -235,47 +236,13 @@ export default function Navigation({
           )}
         </div>
       </nav>
-      <Popup
+      <AddSections
         isShown={isAddSectionsPopupShown}
-        handleClose={closeAddSectionsPopup}
-        title="Choose which Sections to Add"
-      >
-        {possibleSectionIDs
-          .filter((sectionID) => !activeSectionIDs.includes(sectionID))
-          .map((sectionID) => (
-            <button
-              type="button"
-              className="Button"
-              onClick={() => {
-                addSections([sectionID]);
-
-                /**
-                 * `addSections` will only change the state for the next render.
-                 * That's why I can't use the `canAddSections` here and need
-                 * another way.
-                 */
-                const noMoreToAdd =
-                  possibleSectionIDs.filter(
-                    (id) => !activeSectionIDs.includes(id),
-                  ).length <= 1;
-                if (noMoreToAdd) closeAddSectionsPopup();
-              }}
-              key={`add-${sectionID}`}
-            >
-              {capitalize(sectionID)}
-            </button>
-          ))}
-        <button
-          type="button"
-          className="Button"
-          onClick={() => {
-            addSections(possibleSectionIDs);
-            closeAddSectionsPopup();
-          }}
-        >
-          All
-        </button>
-      </Popup>
+        onClose={closeAddSectionsPopup}
+        possibleSectionIDs={possibleSectionIDs}
+        activeSectionIDs={activeSectionIDs}
+        addSections={addSections}
+      />
     </>
   );
 }
