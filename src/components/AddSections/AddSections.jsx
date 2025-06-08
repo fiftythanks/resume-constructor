@@ -65,7 +65,7 @@ export default function AddSections({
         {createAddBtns()}
         <Button
           elements={['AddSections-Button']}
-          modifiers={['AddSections-Button_add']}
+          modifiers={['AddSections-Button_add AddSections-Button_all']}
           onClick={() => {
             addSections(possibleSectionIDs);
             closePopup();
