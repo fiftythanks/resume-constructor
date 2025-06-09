@@ -10,6 +10,7 @@ export default function Popup({
   title,
   block = null,
   modifiers = [],
+  id,
 }) {
   const root = document.getElementById('popup-root');
   const ref = useRef(null);
@@ -47,9 +48,10 @@ export default function Popup({
       className={popupClassName}
       ref={ref}
       onClose={onClose}
-      aria-labelledby="popup-title"
+      id={id}
+      aria-labelledby={`${id}-title`}
     >
-      <h2 className={titleClassName} id="popup-title">
+      <h2 className={titleClassName} id={`${id}-title`}>
         {title}
       </h2>
       {children}
