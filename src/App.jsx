@@ -71,7 +71,10 @@ export default function App() {
 
       sectionIDs.forEach((sectionID) => {
         if (possibleSectionIDs.includes(sectionID)) {
-          if (activeSectionIDs.includes(sectionID)) {
+          if (
+            activeSectionIDs.includes(sectionID) &&
+            sectionID !== 'personal'
+          ) {
             newActiveSectionIDs.splice(
               newActiveSectionIDs.indexOf(sectionID),
               1,
