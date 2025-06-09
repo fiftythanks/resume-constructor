@@ -4,8 +4,6 @@
 
 /* This file contains all application-wide styles. */
 
-@use '@styleUtils/variables';
-
 body {
   background-color: var(--main-color);
   width: 100vw;

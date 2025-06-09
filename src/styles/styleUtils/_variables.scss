@@ -1,13 +1,4 @@
-// Sass variables
+// Global Sass variables
+
 // It's a Sass variable because it's used in calculations for a media query
 $button-width-main: 10rem;
-
-/* Application-wide CSS custom properties. */
-:root {
-  --main-color: hsl(0, 0%, 12%);
-  --secondary-color: hsl(0, 0%, 15%);
-  --text-color: hsl(0, 0%, 100%);
-  --placeholder-color: hsl(0, 0%, 52%);
-  --opened-section-color: hsl(0, 0%, 25%);
-  --button-bgc-main: hsl(0, 0%, 100%);
-}
