@@ -38,6 +38,7 @@ import closeSrc from '@icons/close.svg';
 import addSrc from '@icons/add.svg';
 import deleteSrc from '@icons/delete.svg';
 import editSrc from '@icons/edit.svg';
+import doneSrc from '@icons/done.svg';
 
 import './Navigation.scss';
 
@@ -54,6 +55,7 @@ const icons = {
   add: addSrc,
   delete: deleteSrc,
   edit: editSrc,
+  done: doneSrc,
 };
 
 export default function Navigation({
@@ -214,7 +216,7 @@ export default function Navigation({
         )}
         <ToolbarItem
           className="Navigation-Control"
-          iconSrc={icons.edit}
+          iconSrc={editorMode ? icons.done : icons.edit}
           alt="Edit Sections"
           attributes={{
             'aria-label': 'Toggle Editor Mode',
