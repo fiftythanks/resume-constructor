@@ -1,5 +1,6 @@
 .NavItem {
   display: flex;
+  position: relative;
   gap: 0.5rem;
   align-items: center;
 
@@ -21,6 +22,9 @@
   }
 
   &-ControlBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 0;
     background: none;
 
@@ -34,6 +38,17 @@
 
     &_disabled {
       display: none;
+    }
+
+    &_delete {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      border-radius: 15px;
+      background-color: hsl(351, 71.3%, 49.2%);
+      padding: 0;
+      width: 15px;
+      height: 15px;
     }
   }
 }
