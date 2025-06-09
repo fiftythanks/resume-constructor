@@ -94,10 +94,10 @@ export default function Navigation({
    * This state determines whether to display drag handles and delete buttons
    * with the `NavItem`s or not.
    */
-  const [reorderMode, setReorderMode] = useState(false);
+  const [editorMode, setEditorMode] = useState(false);
 
-  function toggleReorderMode() {
-    setReorderMode(!reorderMode);
+  function toggleEditorMode() {
+    setEditorMode(!editorMode);
   }
 
   /**
@@ -117,27 +117,15 @@ export default function Navigation({
       key={sectionID}
       id={sectionID}
       selectSection={() => selectSection(sectionID)}
-      reorderMode={reorderMode}
+      editorMode={editorMode}
       deleteSection={() => deleteSections([sectionID])}
     />
   ));
-
-  // For navigation controls (add/delete section, reorder sections).
-  const [areControlsExpanded, setAreControlsExpanded] = useState(false);
-
-  function toggleControls() {
-    if (areControlsExpanded === true && reorderMode === true) {
-      toggleReorderMode();
-    }
-
-    setAreControlsExpanded(!areControlsExpanded);
-  }
 
   const canAddSections =
     possibleSectionIDs.filter(
       (sectionID) => !activeSectionIDs.includes(sectionID),
     ).length > 0;
-  const canDeleteSections = activeSectionIDs.length > 1;
 
   // For the "Add Sections" popup
   const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
@@ -151,31 +139,28 @@ export default function Navigation({
 
     if (canAddSections) {
       document.getElementById('add-sections').focus();
-    } else {
-      // Close the controls bar
-      toggleControls();
     }
   }
 
   return (
     <>
-      <nav className="Navigation">
+      <nav className="Navigation" aria-live="polite">
         <ul
           className="Navigation-Items"
           role="tablist"
           aria-label="Resume Sections"
           aria-orientation="vertical"
           aria-owns="personal links skills experience projects education certifications"
+          id="resume-sections"
         >
           <NavItem
             className="Navigation-NavItem Navigation-NavItem_personal"
             iconSrc={icons.personal}
             alt="Personal"
             isSelected={openedSectionID === 'personal'}
-            key="personal"
             id="personal"
             selectSection={() => selectSection('personal')}
-            reorderMode={reorderMode}
+            editorMode={editorMode}
           />
           {/**
            * This structure is necessary to be able to limit the dragging to
@@ -209,82 +194,36 @@ export default function Navigation({
             </DndContext>
           </li>
         </ul>
-        <div className="Navigation-ControlsWrapper">
+
+        {/* Control buttons */}
+        {canAddSections && (
           <ToolbarItem
-            iconSrc={areControlsExpanded ? icons.close : icons.options}
-            alt="Navigation Controls"
-            className="Navigation-ToggleControls"
+            className="Navigation-Control"
+            iconSrc={icons.add}
+            alt="Add Sections"
             attributes={{
-              'arial-label': 'Navigation Controls',
-              'aria-haspopup': 'menu',
-              'aria-expanded': `${areControlsExpanded}`,
-              'aria-controls': 'nav-controls',
-              id: 'nav-controls-toggle',
+              'aria-label': 'Add Sections',
+              'aria-haspopup': 'dialog',
+              'aria-controls': 'add-sections-dialog',
+              id: 'add-sections',
             }}
-            action={toggleControls}
+            action={() => {
+              showAddSectionsPopup();
+            }}
           />
-          {!areControlsExpanded ? null : (
-            <ul
-              className="Navigation-Controls"
-              id="nav-controls"
-              role="menu"
-              aria-labelledby="nav-controls-toggle"
-            >
-              {!canAddSections ? null : (
-                <ToolbarItem
-                  hasInner
-                  isListItem
-                  className="Navigation-Control"
-                  iconSrc={icons.add}
-                  alt="Add New Sections"
-                  innerAttributes={{ role: 'menuitem', id: 'add-sections' }}
-                  action={() => {
-                    // Placeholder
-                    showAddSectionsPopup();
-                  }}
-                />
-              )}
-
-              {!canDeleteSections ? null : (
-                <ToolbarItem
-                  hasInner
-                  isListItem
-                  className="Navigation-Control"
-                  iconSrc={icons.delete}
-                  alt="Delete Sections"
-                  innerAttributes={{ role: 'menuitem' }}
-                  action={() => {
-                    // Placeholder
-                    deleteSections(['skills', 'personal', 'projects']);
-                    toggleControls();
-                  }}
-                />
-              )}
-
-              <ToolbarItem
-                hasInner
-                isListItem
-                className="Navigation-Control"
-                iconSrc={icons.edit}
-                alt="Reorder Sections"
-                innerAttributes={{ role: 'menuitem' }}
-                innerModifiers={[
-                  `${reorderMode ? 'Navigation-Control_reordering' : ''}`,
-                ]}
-                action={toggleReorderMode}
-              />
-
-              {/**
-               * If I do what's written above, there will be nothing. But
-               * if I do not, there will be a popup that lets you choose what
-               * section to delete.
-               *
-               * And a change-layout button that will add drag handles to the
-               * navigation items.
-               */}
-            </ul>
-          )}
-        </div>
+        )}
+        <ToolbarItem
+          className="Navigation-Control"
+          iconSrc={icons.edit}
+          alt="Edit Sections"
+          attributes={{
+            'aria-label': 'Toggle Editor Mode',
+            'aria-controls': 'resume-sections',
+            'aria-pressed': `${editorMode}`,
+          }}
+          modifiers={[`${editorMode ? 'Navigation-Control_editing' : ''}`]}
+          action={toggleEditorMode}
+        />
       </nav>
       <AddSections
         isShown={isAddSectionsPopupShown}

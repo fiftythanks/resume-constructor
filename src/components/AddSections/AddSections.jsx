@@ -62,6 +62,7 @@ export default function AddSections({
       onClose={onClose}
       title="Add Sections"
       block="AddSections"
+      id="add-sections-dialog"
     >
       <ul className="AddSections-List">
         {createAddBtns()}

@@ -20,7 +20,7 @@ export default function NavItem({
   selectSection,
   id,
   className,
-  reorderMode,
+  editorMode,
   deleteSection,
 }) {
   // Drag and drop logic
@@ -48,7 +48,7 @@ export default function NavItem({
       {id === 'personal' ? null : (
         <button
           type="button"
-          className={`NavItem-ControlBtn NavItem-ControlBtn_drag ${reorderMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
+          className={`NavItem-ControlBtn NavItem-ControlBtn_drag ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
           // Drag and drop props
           aria-roledescription="draggable"
           aria-describedby={attributes['aria-describedby']}
@@ -67,8 +67,8 @@ export default function NavItem({
 
       <button
         type="button"
-        className={`NavItem-Button toolbar-item__inner ${reorderMode ? '' : 'toolbar-item__inner_action '}${isSelected ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
-        onClick={reorderMode ? null : selectSection}
+        className={`NavItem-Button toolbar-item__inner ${editorMode ? '' : 'toolbar-item__inner_action '}${isSelected ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
+        onClick={editorMode ? null : selectSection}
         role="tab"
         aria-label={`${capitalize(id)}`}
         aria-controls={`${id}-tabpanel`}
@@ -86,7 +86,7 @@ export default function NavItem({
       {id === 'personal' ? null : (
         <button
           type="button"
-          className={`NavItem-ControlBtn NavItem-ControlBtn_delete ${reorderMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
+          className={`NavItem-ControlBtn NavItem-ControlBtn_delete ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
           onClick={deleteSection}
         >
           <img

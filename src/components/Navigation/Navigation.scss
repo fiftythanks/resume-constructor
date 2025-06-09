@@ -31,18 +31,10 @@
     align-self: flex-start;
   }
 
-  &-Controls {
-    display: flex;
-    position: absolute;
-    top: 0;
-    left: calc(100% + 0.5rem);
-    gap: 0.5rem;
-    padding: 0;
-    list-style-type: none;
-  }
-
   &-Control {
-    &_reordering {
+    align-self: flex-start;
+
+    &_editing {
       background-color: var(--opened-section-color);
     }
   }

@@ -13,10 +13,21 @@ export default function ToolbarItem({
   hasInner = false,
   isListItem = false,
   attributes = {},
+  modifiers = [],
   innerAttributes = {},
   innerModifiers = [],
   iconModifiers = [],
 }) {
+  let outerClassName = `${className} toolbar-item`;
+
+  if (Array.isArray(modifiers)) {
+    if (modifiers.length > 0) {
+      outerClassName += ` ${modifiers.join(' ')}`;
+    }
+  } else {
+    throw new TypeError('`modifiers` must be an array!');
+  }
+
   let iconClassName = 'toolbar-item__icon';
 
   if (Array.isArray(iconModifiers)) {
@@ -48,7 +59,7 @@ export default function ToolbarItem({
 
     if (isListItem) {
       return (
-        <li className={`${className} toolbar-item`} {...attributes}>
+        <li className={outerClassName} {...attributes}>
           {action !== null ? (
             <button
               type="button"
@@ -80,7 +91,7 @@ export default function ToolbarItem({
     }
 
     return (
-      <div className={`${className} toolbar-item`} {...attributes}>
+      <div className={outerClassName} {...attributes}>
         {action !== null ? (
           <button
             type="button"
@@ -114,7 +125,7 @@ export default function ToolbarItem({
   return action !== null ? (
     <button
       type="button"
-      className={`${className} toolbar-item toolbar-item_no-inner toolbar-item_action ${canBeActivated && isActive ? 'toolbar-item_active' : ''}`.trim()}
+      className={`${outerClassName} toolbar-item_no-inner toolbar-item_action ${canBeActivated && isActive ? 'toolbar-item_active' : ''}`.trim()}
       onClick={action}
       {...attributes}
     >
@@ -127,10 +138,7 @@ export default function ToolbarItem({
       />
     </button>
   ) : (
-    <div
-      className={`${className} toolbar-item toolbar-item_no-inner`}
-      {...attributes}
-    >
+    <div className={`${outerClassName} toolbar-item_no-inner`} {...attributes}>
       <img
         src={iconSrc}
         alt={alt}
