@@ -7,7 +7,6 @@ import { CSS } from '@dnd-kit/utilities';
 
 import capitalize from '@utils/capitalize';
 
-// import dragSrc from '@icons/drag.svg';
 import deleteSrc from '@icons/delete-cross.svg';
 
 import '@blocks/toolbar-item.scss';
@@ -39,14 +38,15 @@ export default function NavItem({
     transition,
   };
 
-  const dragProps = !editorMode
-    ? {}
-    : {
-        ...listeners,
-        'aria-roledescription': 'draggable',
-        'aria-describedby': attributes['aria-describedby'],
-        ref: setActivatorNodeRef,
-      };
+  const dragProps =
+    id !== 'personal' && !editorMode
+      ? {}
+      : {
+          ...listeners,
+          'aria-roledescription': 'draggable',
+          'aria-describedby': attributes['aria-describedby'],
+          ref: setActivatorNodeRef,
+        };
 
   return (
     <li
@@ -54,29 +54,9 @@ export default function NavItem({
       ref={id === 'personal' ? null : setNodeRef}
       style={id === 'personal' ? null : style}
     >
-      {/* {id === 'personal' ? null : (
-        <button
-          type="button"
-          className={`NavItem-ControlBtn NavItem-ControlBtn_drag ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
-          // Drag and drop props
-          aria-roledescription="draggable"
-          aria-describedby={attributes['aria-describedby']}
-          {...listeners}
-          ref={setActivatorNodeRef}
-        >
-          <img
-            src={dragSrc}
-            alt="Drag"
-            width="21px"
-            height="25px"
-            className="NavItem-ControlBtnIcon"
-          />
-        </button>
-      )} */}
-
       <button
         type="button"
-        className={`NavItem-Button toolbar-item__inner ${editorMode ? '' : 'toolbar-item__inner_action '}${isSelected ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
+        className={`NavItem-Button toolbar-item__inner toolbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''}${isSelected ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
         onClick={!editorMode && selectSection}
         role="tab"
         aria-label={`${capitalize(id)}`}
