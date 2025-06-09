@@ -7,7 +7,11 @@ import { CSS } from '@dnd-kit/utilities';
 
 import capitalize from '@utils/capitalize';
 
+import dragSrc from '@icons/drag.svg';
+import deleteSrc from '@icons/delete.svg';
+
 import '@blocks/toolbar-item.scss';
+import './NavItem.scss';
 
 export default function NavItem({
   iconSrc,
@@ -16,6 +20,8 @@ export default function NavItem({
   selectSection,
   id,
   className,
+  reorderMode,
+  deleteSection,
 }) {
   // Drag and drop logic
   const {
@@ -35,27 +41,38 @@ export default function NavItem({
 
   return (
     <li
-      className={`${className} toolbar-item`}
-      ref={setNodeRef}
-      // To display the dragged item on top of other items
-      style={{
-        zIndex: isDragging ? 1 : 0,
-      }}
+      className={`NavItem toolbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''}`.trimEnd()}
+      ref={id === 'personal' ? null : setNodeRef}
+      style={id === 'personal' ? null : style}
     >
+      {id === 'personal' ? null : (
+        <button
+          type="button"
+          className={`NavItem-ControlBtn NavItem-ControlBtn_drag ${reorderMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
+          // Drag and drop props
+          aria-roledescription="draggable"
+          aria-describedby={attributes['aria-describedby']}
+          {...listeners}
+          ref={setActivatorNodeRef}
+        >
+          <img
+            src={dragSrc}
+            alt="Drag"
+            width="21px"
+            height="25px"
+            className="NavItem-ControlBtnIcon"
+          />
+        </button>
+      )}
+
       <button
         type="button"
-        className={`toolbar-item__inner toolbar-item__inner_action ${isSelected ? 'toolbar-item__inner_active' : ''}`.trim()}
-        onClick={selectSection}
+        className={`NavItem-Button toolbar-item__inner ${reorderMode ? '' : 'toolbar-item__inner_action '}${isSelected ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
+        onClick={reorderMode ? null : selectSection}
         role="tab"
         aria-label={`${capitalize(id)}`}
         aria-controls={`${id}-tabpanel`}
         aria-selected={isSelected}
-        // Drag and drop props
-        style={style}
-        aria-roledescription="draggable"
-        aria-describedby={attributes['aria-describedby']}
-        {...listeners}
-        ref={setActivatorNodeRef}
       >
         <img
           src={iconSrc}
@@ -65,6 +82,22 @@ export default function NavItem({
           className="toolbar-item__icon"
         />
       </button>
+
+      {id === 'personal' ? null : (
+        <button
+          type="button"
+          className={`NavItem-ControlBtn NavItem-ControlBtn_delete ${reorderMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
+          onClick={deleteSection}
+        >
+          <img
+            src={deleteSrc}
+            alt="Delete"
+            width="25px"
+            height="25px"
+            className="NavItem-ControlBtnIcon"
+          />
+        </button>
+      )}
     </li>
   );
 }

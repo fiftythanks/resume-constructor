@@ -1,0 +1,39 @@
+.NavItem {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  &_dragged {
+    /**
+     * `z-index` must be 1 to make the dragged item display on
+     * top of all other elements.
+     * 
+     * In this case, the rule is effective without explicitly
+     * creating a new stacking context, because a stacking
+     * context is already created by `dnd-kit` when dragging takes
+     * place.
+     */
+    z-index: 1;
+  }
+
+  &-Button {
+    width: 50px;
+  }
+
+  &-ControlBtn {
+    border: 0;
+    background: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &_drag {
+      touch-action: none;
+    }
+
+    &_disabled {
+      display: none;
+    }
+  }
+}

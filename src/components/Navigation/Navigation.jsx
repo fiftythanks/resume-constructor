@@ -37,6 +37,7 @@ import optionsSrc from '@icons/options.svg';
 import closeSrc from '@icons/close.svg';
 import addSrc from '@icons/add.svg';
 import deleteSrc from '@icons/delete.svg';
+import editSrc from '@icons/edit.svg';
 
 import './Navigation.scss';
 
@@ -52,6 +53,7 @@ const icons = {
   close: closeSrc,
   add: addSrc,
   delete: deleteSrc,
+  edit: editSrc,
 };
 
 export default function Navigation({
@@ -65,12 +67,7 @@ export default function Navigation({
 }) {
   // Drag and drop logic
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 10,
-      },
-    }),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -93,15 +90,35 @@ export default function Navigation({
     }
   }
 
-  const items = activeSectionIDs.map((sectionID) => (
+  /**
+   * This state determines whether to display drag handles and delete buttons
+   * with the `NavItem`s or not.
+   */
+  const [reorderMode, setReorderMode] = useState(false);
+
+  function toggleReorderMode() {
+    setReorderMode(!reorderMode);
+  }
+
+  /**
+   * The `personal` item isn't draggable, and has to be added to the DOM
+   * separately.
+   */
+  const draggableSectionIDs = activeSectionIDs.filter(
+    (sectionID) => sectionID !== 'personal',
+  );
+
+  const items = draggableSectionIDs.map((sectionID) => (
     <NavItem
-      className="Navigation-NavItem"
+      className="Navigation-NavItem Navigation-NavItem_draggable"
       iconSrc={icons[sectionID]}
       alt={capitalize(sectionID)}
       isSelected={openedSectionID === sectionID}
       key={sectionID}
       id={sectionID}
       selectSection={() => selectSection(sectionID)}
+      reorderMode={reorderMode}
+      deleteSection={() => deleteSections([sectionID])}
     />
   ));
 
@@ -109,6 +126,10 @@ export default function Navigation({
   const [areControlsExpanded, setAreControlsExpanded] = useState(false);
 
   function toggleControls() {
+    if (areControlsExpanded === true && reorderMode === true) {
+      toggleReorderMode();
+    }
+
     setAreControlsExpanded(!areControlsExpanded);
   }
 
@@ -139,34 +160,55 @@ export default function Navigation({
   return (
     <>
       <nav className="Navigation">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-          /**
-           * Since the navigation bar will always stay in the same position
-           * (or at least won't move beyond the screen almost certainly),
-           * there's no need for autoscroll. It also introduces strange behaviour
-           * on mobile Firefox, so turning it off is for the best.
-           */
-          autoScroll={false}
+        <ul
+          className="Navigation-Items"
+          role="tablist"
+          aria-label="Resume Sections"
+          aria-orientation="vertical"
+          aria-owns="personal links skills experience projects education certifications"
         >
-          <SortableContext
-            items={activeSectionIDs}
-            strategy={verticalListSortingStrategy}
-          >
-            <ul
-              className="Navigation-Items"
-              role="tablist"
-              aria-label="Resume Sections"
-              aria-orientation="vertical"
-              aria-owns="personal links skills experience projects education certifications"
+          <NavItem
+            className="Navigation-NavItem Navigation-NavItem_personal"
+            iconSrc={icons.personal}
+            alt="Personal"
+            isSelected={openedSectionID === 'personal'}
+            key="personal"
+            id="personal"
+            selectSection={() => selectSection('personal')}
+            reorderMode={reorderMode}
+          />
+          {/**
+           * This structure is necessary to be able to limit the dragging to
+           * the area between "personal" and the end of `Navigation-Items`.
+           */}
+          <li role="none" className="Navigation-DraggableItemsWrapper">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+              /**
+               * Since the navigation bar will always stay in the same position
+               * (or at least won't move beyond the screen almost certainly),
+               * there's no need for autoscroll. It also introduces strange behaviour
+               * on mobile Firefox, so turning it off is for the best.
+               */
+              autoScroll={false}
             >
-              {items}
-            </ul>
-          </SortableContext>
-        </DndContext>
+              <SortableContext
+                items={draggableSectionIDs}
+                strategy={verticalListSortingStrategy}
+              >
+                <ul
+                  role="none"
+                  className="Navigation-Items Navigation-Items_draggable"
+                >
+                  {items}
+                </ul>
+              </SortableContext>
+            </DndContext>
+          </li>
+        </ul>
         <div className="Navigation-ControlsWrapper">
           <ToolbarItem
             iconSrc={areControlsExpanded ? icons.close : icons.options}
@@ -203,12 +245,6 @@ export default function Navigation({
                 />
               )}
 
-              {/**
-               * Maybe, instead of this delete button, I will add a button
-               * that will add to each navigation item a drag handle and a
-               * delete button; just like it is going to be on large screens
-               * by default.
-               */}
               {!canDeleteSections ? null : (
                 <ToolbarItem
                   hasInner
@@ -224,6 +260,20 @@ export default function Navigation({
                   }}
                 />
               )}
+
+              <ToolbarItem
+                hasInner
+                isListItem
+                className="Navigation-Control"
+                iconSrc={icons.edit}
+                alt="Reorder Sections"
+                innerAttributes={{ role: 'menuitem' }}
+                innerModifiers={[
+                  `${reorderMode ? 'Navigation-Control_reordering' : ''}`,
+                ]}
+                action={toggleReorderMode}
+              />
+
               {/**
                * If I do what's written above, there will be nothing. But
                * if I do not, there will be a popup that lets you choose what

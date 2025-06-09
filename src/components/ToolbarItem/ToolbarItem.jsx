@@ -3,7 +3,7 @@ import React from 'react';
 
 import '@blocks/toolbar-item.scss';
 
-export default function NavItem({
+export default function ToolbarItem({
   iconSrc,
   alt,
   className,
@@ -14,15 +14,45 @@ export default function NavItem({
   isListItem = false,
   attributes = {},
   innerAttributes = {},
+  innerModifiers = [],
+  iconModifiers = [],
 }) {
+  let iconClassName = 'toolbar-item__icon';
+
+  if (Array.isArray(iconModifiers)) {
+    if (iconModifiers.length > 0) {
+      iconClassName += ` ${iconModifiers.join(' ')}`;
+    }
+  } else {
+    throw new TypeError('`iconModifiers` must be an array!');
+  }
+
   if (hasInner) {
+    let innerClassName = 'toolbar-item__inner';
+
+    if (action !== null) {
+      innerClassName += ' toolbar-item__inner_action';
+
+      if (canBeActivated && isActive) {
+        innerClassName += ' toolbar-item__inner_active';
+      }
+    }
+
+    if (Array.isArray(innerModifiers)) {
+      if (innerModifiers.length > 0) {
+        innerClassName += ` ${innerModifiers.join(' ')}`;
+      }
+    } else {
+      throw new TypeError('`innerModifiers` must be an array!');
+    }
+
     if (isListItem) {
       return (
         <li className={`${className} toolbar-item`} {...attributes}>
           {action !== null ? (
             <button
               type="button"
-              className={`toolbar-item__inner toolbar-item__inner_action ${canBeActivated && isActive ? 'toolbar-item__inner_active' : ''}`.trim()}
+              className={innerClassName}
               onClick={action}
               {...innerAttributes}
             >
@@ -31,17 +61,17 @@ export default function NavItem({
                 alt={alt}
                 width="25px"
                 height="25px"
-                className="toolbar-item__icon"
+                className={iconClassName}
               />
             </button>
           ) : (
-            <div className="toolbar-item__inner" {...innerAttributes}>
+            <div className={innerModifiers} {...innerAttributes}>
               <img
                 src={iconSrc}
                 alt={alt}
                 width="25px"
                 height="25px"
-                className="toolbar-item__icon"
+                className={iconClassName}
               />
             </div>
           )}
@@ -93,7 +123,7 @@ export default function NavItem({
         alt={alt}
         width="25px"
         height="25px"
-        className="toolbar-item__icon"
+        className={iconClassName}
       />
     </button>
   ) : (
@@ -106,7 +136,7 @@ export default function NavItem({
         alt={alt}
         width="25px"
         height="25px"
-        className="toolbar-item__icon"
+        className={iconClassName}
       />
     </div>
   );

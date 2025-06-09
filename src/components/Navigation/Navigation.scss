@@ -18,8 +18,17 @@
     list-style-type: none;
   }
 
+  &-DraggableItems {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0;
+    list-style-type: none;
+  }
+
   &-ControlsWrapper {
     position: relative;
+    align-self: flex-start;
   }
 
   &-Controls {
@@ -30,5 +39,11 @@
     gap: 0.5rem;
     padding: 0;
     list-style-type: none;
+  }
+
+  &-Control {
+    &_reordering {
+      background-color: var(--opened-section-color);
+    }
   }
 }
