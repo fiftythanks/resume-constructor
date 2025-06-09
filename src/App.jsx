@@ -79,6 +79,10 @@ export default function App() {
               newActiveSectionIDs.indexOf(sectionID),
               1,
             );
+
+            if (openedSectionID === sectionID) {
+              setOpenedSectionID(null);
+            }
           }
         } else {
           throw new Error(
