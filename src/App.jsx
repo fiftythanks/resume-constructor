@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 // import Toolbar from '@components/Toolbar';
 import Navigation from '@components/Navigation';
 
+import capitalize from '@utils/capitalize';
+
 export default function App() {
-  /* 
-    <>
-      <Toolbar className="Toolbar" />
-      <Main className="Main" />
-    </> 
-  */
+  const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
+
+  function resetScreenReaderAnnouncement() {
+    setScreenReaderAnnouncement(null);
+  }
 
   const possibleSectionIDs = [
     'personal',
@@ -58,6 +59,22 @@ export default function App() {
       });
 
       setActiveSectionIDs(newActiveSectionIDs);
+
+      const areAllSectionsActive =
+        newActiveSectionIDs.filter(
+          (sectionID) => !possibleSectionIDs.includes(sectionID),
+        ).length === 0;
+
+      if (areAllSectionsActive) {
+        if (sectionIDs.length === 1) {
+          setScreenReaderAnnouncement(`${capitalize(sectionIDs[0])} added.`);
+        } else {
+          // The first item is omitted because its the "Personal" page.
+          setScreenReaderAnnouncement(
+            `${capitalize(sectionIDs[1])} ${sectionIDs.slice(2).join(', ')} added.`,
+          );
+        }
+      }
     } else {
       throw new TypeError(
         'Incorrect argument! `addSections` accepts only arrays.',
@@ -68,8 +85,10 @@ export default function App() {
   function deleteSections(sectionIDs) {
     if (Array.isArray(sectionIDs)) {
       const newActiveSectionIDs = activeSectionIDs.slice();
+      let newScreenReaderAnnouncement = '';
+      let wasOpenedSectionDeleted = false;
 
-      sectionIDs.forEach((sectionID) => {
+      sectionIDs.forEach((sectionID, i) => {
         if (possibleSectionIDs.includes(sectionID)) {
           if (
             activeSectionIDs.includes(sectionID) &&
@@ -80,8 +99,12 @@ export default function App() {
               1,
             );
 
+            newScreenReaderAnnouncement +=
+              i === 0 ? capitalize(sectionID) : `, ${sectionID}`;
+
             if (openedSectionID === sectionID) {
               setOpenedSectionID(null);
+              wasOpenedSectionDeleted = true;
             }
           }
         } else {
@@ -92,6 +115,17 @@ export default function App() {
       });
 
       setActiveSectionIDs(newActiveSectionIDs);
+
+      if (newScreenReaderAnnouncement !== '') {
+        newScreenReaderAnnouncement += ' deleted.';
+
+        if (wasOpenedSectionDeleted) {
+          newScreenReaderAnnouncement +=
+            ' Opened section deleted. No section is opened currently.';
+        }
+
+        setScreenReaderAnnouncement(newScreenReaderAnnouncement);
+      }
     } else {
       throw new TypeError(
         'Incorrect argument! `deleteSections` accepts only arrays.',
@@ -100,14 +134,20 @@ export default function App() {
   }
 
   return (
-    <Navigation
-      activeSectionIDs={activeSectionIDs}
-      openedSectionID={openedSectionID}
-      selectSection={openSection}
-      reorderSections={reorderSections}
-      addSections={addSections}
-      deleteSections={deleteSections}
-      possibleSectionIDs={possibleSectionIDs}
-    />
+    <>
+      <span className="visually-hidden" aria-live="polite">
+        {screenReaderAnouncement}
+      </span>
+      <Navigation
+        activeSectionIDs={activeSectionIDs}
+        openedSectionID={openedSectionID}
+        selectSection={openSection}
+        reorderSections={reorderSections}
+        addSections={addSections}
+        deleteSections={deleteSections}
+        possibleSectionIDs={possibleSectionIDs}
+        resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
+      />
+    </>
   );
 }

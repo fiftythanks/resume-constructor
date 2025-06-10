@@ -3,11 +3,13 @@ import './Button.scss';
 
 export default function Button({
   children,
+  onClick,
   elements = [],
   modifiers = [],
   isDisabled = false,
   isSubmit = false,
-  onClick,
+  id = null,
+  label = null,
 }) {
   let className = 'Button';
 
@@ -38,6 +40,8 @@ export default function Button({
       type={isSubmit ? 'submit' : 'button'}
       onClick={onClick}
       className={className}
+      id={id}
+      aria-label={label}
     >
       {children}
     </button>

@@ -26,13 +26,13 @@ import AddSections from '@components/AddSections';
 
 import capitalize from '@utils/capitalize';
 
-import personalSrc from '@icons/personal.svg';
-import linksSrc from '@icons/links.svg';
-import skillsSrc from '@icons/skills.svg';
-import experienceSrc from '@icons/experience.svg';
-import projectsSrc from '@icons/projects.svg';
-import educationSrc from '@icons/education.svg';
-import certificationsSrc from '@icons/certifications.svg';
+import personalSrc from '@icons/sections/personal.svg';
+import linksSrc from '@icons/sections/links.svg';
+import skillsSrc from '@icons/sections/skills.svg';
+import experienceSrc from '@icons/sections/experience.svg';
+import projectsSrc from '@icons/sections/projects.svg';
+import educationSrc from '@icons/sections/education.svg';
+import certificationsSrc from '@icons/sections/certifications.svg';
 import optionsSrc from '@icons/options.svg';
 import closeSrc from '@icons/close.svg';
 import addSrc from '@icons/add.svg';
@@ -66,6 +66,7 @@ export default function Navigation({
   addSections,
   deleteSections,
   possibleSectionIDs,
+  resetScreenReaderAnnouncement,
 }) {
   // Drag and drop logic
   const sensors = useSensors(
@@ -120,7 +121,10 @@ export default function Navigation({
       id={sectionID}
       selectSection={() => selectSection(sectionID)}
       editorMode={editorMode}
-      deleteSection={() => deleteSections([sectionID])}
+      deleteSection={() => {
+        deleteSections([sectionID]);
+      }}
+      activeSectionIDs={activeSectionIDs}
     />
   ));
 
@@ -133,6 +137,9 @@ export default function Navigation({
   const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
 
   function showAddSectionsPopup() {
+    // Otherwise, the screen reader will announce incorrect things
+    resetScreenReaderAnnouncement();
+
     setIsAddSectionsPopupShown(true);
   }
 
@@ -141,12 +148,15 @@ export default function Navigation({
 
     if (canAddSections) {
       document.getElementById('add-sections').focus();
+    } else {
+      const lastAddedSectionID = activeSectionIDs.at(-1);
+      document.getElementById(lastAddedSectionID).focus();
     }
   }
 
   return (
     <>
-      <nav className="Navigation" aria-live="polite">
+      <nav className="Navigation">
         <ul
           className="Navigation-Items"
           role="tablist"
@@ -163,6 +173,7 @@ export default function Navigation({
             id="personal"
             selectSection={() => selectSection('personal')}
             editorMode={editorMode}
+            activeSectionIDs={activeSectionIDs}
           />
           {/**
            * This structure is necessary to be able to limit the dragging to
@@ -200,7 +211,7 @@ export default function Navigation({
         {/* Control buttons */}
         {canAddSections && (
           <ToolbarItem
-            className="Navigation-Control"
+            className="Navigation-Control Navigation-Control_onTop"
             iconSrc={icons.add}
             alt="Add Sections"
             attributes={{
@@ -215,16 +226,18 @@ export default function Navigation({
           />
         )}
         <ToolbarItem
-          className="Navigation-Control"
+          className={`Navigation-Control${canAddSections ? '' : ' Navigation-Control_onTop'}`}
           iconSrc={editorMode ? icons.done : icons.edit}
           alt="Edit Sections"
           attributes={{
             'aria-label': 'Toggle Editor Mode',
             'aria-controls': 'resume-sections',
             'aria-pressed': `${editorMode}`,
+            id: 'edit-sections',
           }}
           modifiers={[`${editorMode ? 'Navigation-Control_editing' : ''}`]}
           action={toggleEditorMode}
+          key="toggle-editor-mode"
         />
       </nav>
       <AddSections

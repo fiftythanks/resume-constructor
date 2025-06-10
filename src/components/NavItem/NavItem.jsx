@@ -21,6 +21,7 @@ export default function NavItem({
   className,
   editorMode,
   deleteSection,
+  activeSectionIDs,
 }) {
   // Drag and drop logic
   const {
@@ -38,15 +39,18 @@ export default function NavItem({
     transition,
   };
 
-  const dragProps =
-    id !== 'personal' && !editorMode
-      ? {}
-      : {
-          ...listeners,
-          'aria-roledescription': 'draggable',
-          'aria-describedby': attributes['aria-describedby'],
-          ref: setActivatorNodeRef,
-        };
+  let dragProps;
+
+  if (id === 'personal' || !editorMode) {
+    dragProps = {};
+  } else if (id !== 'personal' && editorMode) {
+    dragProps = {
+      ...listeners,
+      'aria-roledescription': 'draggable',
+      'aria-describedby': attributes['aria-describedby'],
+      ref: setActivatorNodeRef,
+    };
+  }
 
   return (
     <li
@@ -55,15 +59,43 @@ export default function NavItem({
       style={id === 'personal' ? null : style}
     >
       <button
+        id={id}
         type="button"
-        className={`NavItem-Button toolbar-item__inner toolbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''}${isSelected ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
-        onClick={!editorMode && selectSection}
+        className={`NavItem-Button toolbar-item__inner toolbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
+        // TODO: screen reader announcements (when sections are implemented)
+        onClick={!editorMode ? selectSection : null}
         role="tab"
         aria-label={`${capitalize(id)}`}
         aria-controls={`${id}-tabpanel`}
         aria-selected={isSelected}
-        // Drag and drop props
+        // To indicate that the tabbing functionality is disabled
+        aria-disabled={editorMode}
         {...dragProps}
+        onKeyUp={(e) => {
+          if (
+            e.key === 'ArrowDown' &&
+            activeSectionIDs.length > 1 &&
+            !isDragging
+          ) {
+            const i = activeSectionIDs.indexOf(id);
+            if (i < activeSectionIDs.length - 1) {
+              document.getElementById(activeSectionIDs[i + 1]).focus();
+            } else {
+              document.getElementById(activeSectionIDs[0]).focus();
+            }
+          } else if (
+            e.key === 'ArrowUp' &&
+            activeSectionIDs.length > 1 &&
+            !isDragging
+          ) {
+            const i = activeSectionIDs.indexOf(id);
+            if (i > 0) {
+              document.getElementById(activeSectionIDs[i - 1]).focus();
+            } else {
+              document.getElementById(activeSectionIDs.at(-1)).focus();
+            }
+          }
+        }}
       >
         <img
           src={iconSrc}
@@ -78,7 +110,28 @@ export default function NavItem({
         <button
           type="button"
           className={`NavItem-ControlBtn NavItem-ControlBtn_delete ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
-          onClick={deleteSection}
+          onClick={() => {
+            deleteSection();
+
+            const i = activeSectionIDs.indexOf(id);
+
+            // If there's only "Personal" left.
+            if (activeSectionIDs.length === 2) {
+              document.getElementById('edit-sections').focus();
+
+              // If the deleted item wasn't the last in the array
+            } else if (i < activeSectionIDs.length - 1) {
+              document
+                .getElementById(`delete-${activeSectionIDs[i + 1]}`)
+                .focus();
+            } else {
+              document
+                .getElementById(`delete-${activeSectionIDs[i - 1]}`)
+                .focus();
+            }
+          }}
+          id={`delete-${id}`}
+          aria-label={`Delete ${id}`}
         >
           <img
             src={deleteSrc}

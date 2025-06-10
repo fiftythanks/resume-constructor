@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Popup from '@components/Popup';
 import Button from '@components/Button';
@@ -25,37 +25,54 @@ export default function AddSections({
    */
   const closePopup = onClose;
 
-  const createAddBtns = () =>
-    possibleSectionIDs
-      .filter((sectionID) => !activeSectionIDs.includes(sectionID))
-      .map((sectionID) => {
-        const handleClick = () => {
-          addSections([sectionID]);
+  const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
 
+  const createAddBtns = () => {
+    const addableSectionIDs = possibleSectionIDs.filter(
+      (sectionID) => !activeSectionIDs.includes(sectionID),
+    );
+
+    return addableSectionIDs.map((sectionID, i) => {
+      const handleClick = () => {
+        addSections([sectionID]);
+
+        const nextAddableSectionIDs = addableSectionIDs.toSpliced(i, 1);
+
+        if (nextAddableSectionIDs.length > 0) {
           /**
-           * `addSections` will only change the state for the next render.
-           * That's why I can't use the `canAddSections` here and need
-           * another way.
+           * If the added section was the last section that the user could add,
+           * the modal will close, and the screen reader won't announce the
+           * addition. In this case, `addSections` from the App component
+           * handles the announcement.
            */
-          const noMoreToAdd =
-            possibleSectionIDs.filter((id) => !activeSectionIDs.includes(id))
-              .length <= 1;
+          setScreenReaderAnnouncement(`${capitalize(sectionID)} added.`);
 
-          if (noMoreToAdd) closePopup();
-        };
+          if (nextAddableSectionIDs[i] !== undefined) {
+            document.getElementById(`add-${nextAddableSectionIDs[i]}`).focus();
+          } else {
+            document
+              .getElementById(`add-${nextAddableSectionIDs[i - 1]}`)
+              .focus();
+          }
+        } else {
+          closePopup();
+        }
+      };
 
-        return (
-          <Button
-            onClick={handleClick}
-            key={`add-${sectionID}`}
-            elements={['AddSections-Button']}
-            modifiers={['AddSections-Button_add']}
-          >
-            {capitalize(sectionID)}
-          </Button>
-        );
-      });
-
+      return (
+        <Button
+          onClick={handleClick}
+          key={`add-${sectionID}`}
+          id={`add-${sectionID}`}
+          elements={['AddSections-Button']}
+          modifiers={['AddSections-Button_add']}
+          label={`Add ${sectionID}`}
+        >
+          {capitalize(sectionID)}
+        </Button>
+      );
+    });
+  };
   return (
     <Popup
       isShown={isShown}
@@ -64,6 +81,9 @@ export default function AddSections({
       block="AddSections"
       id="add-sections-dialog"
     >
+      <span className="visually-hidden" aria-live="polite">
+        {screenReaderAnouncement}
+      </span>
       <ul className="AddSections-List">
         {createAddBtns()}
         <Button
@@ -73,6 +93,8 @@ export default function AddSections({
             addSections(possibleSectionIDs);
             closePopup();
           }}
+          id="add-all-sections"
+          label="Add All Sections"
         >
           All
         </Button>
