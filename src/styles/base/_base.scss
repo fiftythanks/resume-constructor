@@ -2,7 +2,10 @@
   #BASE
 \*------------------------------------*/
 
-/* This file contains all application-wide styles. */
+/**
+ * This file contains all application-wide styles that do not fit in
+ * other categories. 
+ */
 
 body {
   background-color: var(--main-color);
