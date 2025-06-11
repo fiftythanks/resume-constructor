@@ -18,6 +18,7 @@ export default function ToolbarItem({
   innerModifiers = [],
   iconModifiers = [],
 }) {
+  // The outer (compared to the inner) element's class name construction.
   let outerClassName = `${className} toolbar-item`;
 
   if (Array.isArray(modifiers)) {
@@ -28,6 +29,7 @@ export default function ToolbarItem({
     throw new TypeError('`modifiers` must be an array!');
   }
 
+  // The icon's class name construction.
   let iconClassName = 'toolbar-item__icon';
 
   if (Array.isArray(iconModifiers)) {
@@ -39,6 +41,7 @@ export default function ToolbarItem({
   }
 
   if (hasInner) {
+    // The inner element's class name construction.
     let innerClassName = 'toolbar-item__inner';
 
     if (action !== null) {
@@ -57,6 +60,7 @@ export default function ToolbarItem({
       throw new TypeError('`innerModifiers` must be an array!');
     }
 
+    // If the outer element is a list item.
     if (isListItem) {
       return (
         <li className={outerClassName} {...attributes}>
@@ -90,6 +94,7 @@ export default function ToolbarItem({
       );
     }
 
+    // If the outer element is a div.
     return (
       <div className={outerClassName} {...attributes}>
         {action !== null ? (
@@ -122,6 +127,7 @@ export default function ToolbarItem({
     );
   }
 
+  // If there's no inner/outer element, only an element and an icon.
   return action !== null ? (
     <button
       type="button"

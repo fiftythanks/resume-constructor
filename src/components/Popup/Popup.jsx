@@ -12,7 +12,6 @@ export default function Popup({
   modifiers = [],
   id,
 }) {
-  const root = document.getElementById('popup-root');
   const ref = useRef(null);
 
   useEffect(() => {
@@ -24,6 +23,8 @@ export default function Popup({
       node.close();
     }
   }, [isShown]);
+
+  const root = document.getElementById('popup-root');
 
   let popupClassName = 'Popup';
   let titleClassName = 'Popup-Title';

@@ -16,6 +16,8 @@ export default function AddSections({
   activeSectionIDs,
   addSections,
 }) {
+  const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
+
   /**
    * The `onClose` function changes a state, and this change
    * results in the closing of the popup. So in some contexts, for
@@ -24,8 +26,6 @@ export default function AddSections({
    * more meaning.
    */
   const closePopup = onClose;
-
-  const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
 
   const createAddBtns = () => {
     const addableSectionIDs = possibleSectionIDs.filter(
@@ -73,6 +73,7 @@ export default function AddSections({
       );
     });
   };
+
   return (
     <Popup
       isShown={isShown}

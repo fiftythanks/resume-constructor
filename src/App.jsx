@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-// import Main from '@layout/Main';
-// import Toolbar from '@components/Toolbar';
 import Navigation from '@components/Navigation';
-
 import capitalize from '@utils/capitalize';
 
 export default function App() {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
+  const [openedSectionID, setOpenedSectionID] = useState(null);
 
   function resetScreenReaderAnnouncement() {
     setScreenReaderAnnouncement(null);
@@ -35,8 +33,6 @@ export default function App() {
   function reorderSections(newActiveSectionIDs) {
     setActiveSectionIDs(newActiveSectionIDs);
   }
-
-  const [openedSectionID, setOpenedSectionID] = useState(null);
 
   function openSection(sectionID) {
     setOpenedSectionID(sectionID);

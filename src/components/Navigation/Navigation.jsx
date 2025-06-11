@@ -68,7 +68,16 @@ export default function Navigation({
   possibleSectionIDs,
   resetScreenReaderAnnouncement,
 }) {
-  // Drag and drop logic
+  /**
+   * This state determines whether to alow DnD and render delete buttons
+   * with `NavItem`s or not.
+   */
+  const [editorMode, setEditorMode] = useState(false);
+
+  // For the "Add Sections" popup
+  const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
+
+  // Drag and drop hooks
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -76,6 +85,34 @@ export default function Navigation({
     }),
   );
 
+  function toggleEditorMode() {
+    setEditorMode(!editorMode);
+  }
+
+  const canAddSections =
+    possibleSectionIDs.filter(
+      (sectionID) => !activeSectionIDs.includes(sectionID),
+    ).length > 0;
+
+  function showAddSectionsPopup() {
+    // Otherwise, the screen reader will announce incorrect things
+    resetScreenReaderAnnouncement();
+
+    setIsAddSectionsPopupShown(true);
+  }
+
+  function closeAddSectionsPopup() {
+    setIsAddSectionsPopupShown(false);
+
+    if (canAddSections) {
+      document.getElementById('add-sections').focus();
+    } else {
+      const lastAddedSectionID = activeSectionIDs.at(-1);
+      document.getElementById(lastAddedSectionID).focus();
+    }
+  }
+
+  // Drag and drop logic
   function handleDragEnd(e) {
     const { active, over } = e;
 
@@ -91,16 +128,6 @@ export default function Navigation({
 
       reorderSections(newActiveSectionIDs);
     }
-  }
-
-  /**
-   * This state determines whether to display drag handles and delete buttons
-   * with the `NavItem`s or not.
-   */
-  const [editorMode, setEditorMode] = useState(false);
-
-  function toggleEditorMode() {
-    setEditorMode(!editorMode);
   }
 
   /**
@@ -127,32 +154,6 @@ export default function Navigation({
       activeSectionIDs={activeSectionIDs}
     />
   ));
-
-  const canAddSections =
-    possibleSectionIDs.filter(
-      (sectionID) => !activeSectionIDs.includes(sectionID),
-    ).length > 0;
-
-  // For the "Add Sections" popup
-  const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
-
-  function showAddSectionsPopup() {
-    // Otherwise, the screen reader will announce incorrect things
-    resetScreenReaderAnnouncement();
-
-    setIsAddSectionsPopupShown(true);
-  }
-
-  function closeAddSectionsPopup() {
-    setIsAddSectionsPopupShown(false);
-
-    if (canAddSections) {
-      document.getElementById('add-sections').focus();
-    } else {
-      const lastAddedSectionID = activeSectionIDs.at(-1);
-      document.getElementById(lastAddedSectionID).focus();
-    }
-  }
 
   return (
     <>
@@ -188,8 +189,8 @@ export default function Navigation({
               /**
                * Since the navigation bar will always stay in the same position
                * (or at least won't move beyond the screen almost certainly),
-               * there's no need for autoscroll. It also introduces strange behaviour
-               * on mobile Firefox, so turning it off is for the best.
+               * there's no need for autoscroll. It also introduces strange
+               * behaviour on mobile Firefox, so turning it off is for the best.
                */
               autoScroll={false}
             >
