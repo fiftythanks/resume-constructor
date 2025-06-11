@@ -1,15 +1,16 @@
 import React from 'react';
+
 import './Button.scss';
 
 export default function Button({
   children,
   onClick,
   elements = [],
-  modifiers = [],
+  id = null,
   isDisabled = false,
   isSubmit = false,
-  id = null,
   label = null,
+  modifiers = [],
 }) {
   let className = 'Button';
 
@@ -37,11 +38,11 @@ export default function Button({
 
   return (
     <button
-      type={isSubmit ? 'submit' : 'button'}
-      onClick={onClick}
+      aria-label={label}
       className={className}
       id={id}
-      aria-label={label}
+      onClick={onClick}
+      type={isSubmit ? 'submit' : 'button'}
     >
       {children}
     </button>

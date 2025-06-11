@@ -2,71 +2,71 @@ import React, { useState } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import {
-  DndContext,
   closestCenter,
+  DndContext,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from '@dnd-kit/modifiers';
+import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import {
-  restrictToVerticalAxis,
-  restrictToParentElement,
-} from '@dnd-kit/modifiers';
 
-import NavItem from '@components/NavItem';
-import ToolbarItem from '@components/ToolbarItem';
-import AddSections from '@components/AddSections';
+import AddSections from '@/components/AddSections';
+import NavItem from '@/components/NavItem';
+import ToolbarItem from '@/components/ToolbarItem';
 
-import capitalize from '@utils/capitalize';
+import capitalize from '@/utils/capitalize';
 
-import personalSrc from '@icons/sections/personal.svg';
-import linksSrc from '@icons/sections/links.svg';
-import skillsSrc from '@icons/sections/skills.svg';
-import experienceSrc from '@icons/sections/experience.svg';
-import projectsSrc from '@icons/sections/projects.svg';
-import educationSrc from '@icons/sections/education.svg';
-import certificationsSrc from '@icons/sections/certifications.svg';
-import optionsSrc from '@icons/options.svg';
-import closeSrc from '@icons/close.svg';
-import addSrc from '@icons/add.svg';
-import deleteSrc from '@icons/delete.svg';
-import editSrc from '@icons/edit.svg';
-import doneSrc from '@icons/done.svg';
+import addSrc from '@/assets/icons/add.svg';
+import closeSrc from '@/assets/icons/close.svg';
+import deleteSrc from '@/assets/icons/delete.svg';
+import doneSrc from '@/assets/icons/done.svg';
+import editSrc from '@/assets/icons/edit.svg';
+import optionsSrc from '@/assets/icons/options.svg';
+import certificationsSrc from '@/assets/icons/sections/certifications.svg';
+import educationSrc from '@/assets/icons/sections/education.svg';
+import experienceSrc from '@/assets/icons/sections/experience.svg';
+import linksSrc from '@/assets/icons/sections/links.svg';
+import personalSrc from '@/assets/icons/sections/personal.svg';
+import projectsSrc from '@/assets/icons/sections/projects.svg';
+import skillsSrc from '@/assets/icons/sections/skills.svg';
 
 import './Navigation.scss';
 
 const icons = {
-  personal: personalSrc,
-  links: linksSrc,
-  skills: skillsSrc,
-  experience: experienceSrc,
-  projects: projectsSrc,
-  education: educationSrc,
-  certifications: certificationsSrc,
-  options: optionsSrc,
-  close: closeSrc,
   add: addSrc,
+  certifications: certificationsSrc,
+  close: closeSrc,
   delete: deleteSrc,
-  edit: editSrc,
   done: doneSrc,
+  edit: editSrc,
+  education: educationSrc,
+  experience: experienceSrc,
+  links: linksSrc,
+  options: optionsSrc,
+  personal: personalSrc,
+  projects: projectsSrc,
+  skills: skillsSrc,
 };
 
 export default function Navigation({
   activeSectionIDs,
-  openedSectionID,
-  selectSection,
-  reorderSections,
   addSections,
   deleteSections,
+  openedSectionID,
   possibleSectionIDs,
+  reorderSections,
   resetScreenReaderAnnouncement,
+  selectSection,
 }) {
   /**
    * This state determines whether to alow DnD and render delete buttons
@@ -122,8 +122,8 @@ export default function Navigation({
 
       const newActiveSectionIDs = arrayMove(
         activeSectionIDs,
-        oldIndex,
         newIndex,
+        oldIndex,
       );
 
       reorderSections(newActiveSectionIDs);
@@ -140,18 +140,18 @@ export default function Navigation({
 
   const items = draggableSectionIDs.map((sectionID) => (
     <NavItem
-      className="Navigation-NavItem Navigation-NavItem_draggable"
-      iconSrc={icons[sectionID]}
+      activeSectionIDs={activeSectionIDs}
       alt={capitalize(sectionID)}
+      className="Navigation-NavItem Navigation-NavItem_draggable"
+      editorMode={editorMode}
+      iconSrc={icons[sectionID]}
+      id={sectionID}
       isSelected={openedSectionID === sectionID}
       key={sectionID}
-      id={sectionID}
       selectSection={() => selectSection(sectionID)}
-      editorMode={editorMode}
       deleteSection={() => {
         deleteSections([sectionID]);
       }}
-      activeSectionIDs={activeSectionIDs}
     />
   ));
 
@@ -159,33 +159,29 @@ export default function Navigation({
     <>
       <nav className="Navigation">
         <ul
-          className="Navigation-Items"
-          role="tablist"
           aria-label="Resume Sections"
           aria-orientation="vertical"
           aria-owns="personal links skills experience projects education certifications"
+          className="Navigation-Items"
           id="resume-sections"
+          role="tablist"
         >
           <NavItem
-            className="Navigation-NavItem Navigation-NavItem_personal"
-            iconSrc={icons.personal}
-            alt="Personal"
-            isSelected={openedSectionID === 'personal'}
-            id="personal"
-            selectSection={() => selectSection('personal')}
-            editorMode={editorMode}
             activeSectionIDs={activeSectionIDs}
+            alt="Personal"
+            className="Navigation-NavItem Navigation-NavItem_personal"
+            editorMode={editorMode}
+            iconSrc={icons.personal}
+            id="personal"
+            isSelected={openedSectionID === 'personal'}
+            selectSection={() => selectSection('personal')}
           />
           {/**
            * This structure is necessary to be able to limit the dragging to
            * the area between "personal" and the end of `Navigation-Items`.
            */}
-          <li role="none" className="Navigation-DraggableItemsWrapper">
+          <li className="Navigation-DraggableItemsWrapper" role="none">
             <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
               /**
                * Since the navigation bar will always stay in the same position
                * (or at least won't move beyond the screen almost certainly),
@@ -193,14 +189,18 @@ export default function Navigation({
                * behaviour on mobile Firefox, so turning it off is for the best.
                */
               autoScroll={false}
+              collisionDetection={closestCenter}
+              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+              onDragEnd={handleDragEnd}
+              sensors={sensors}
             >
               <SortableContext
                 items={draggableSectionIDs}
                 strategy={verticalListSortingStrategy}
               >
                 <ul
-                  role="none"
                   className="Navigation-Items Navigation-Items_draggable"
+                  role="none"
                 >
                   {items}
                 </ul>
@@ -212,41 +212,41 @@ export default function Navigation({
         {/* Control buttons */}
         {canAddSections && (
           <ToolbarItem
+            alt="Add Sections"
             className="Navigation-Control Navigation-Control_onTop"
             iconSrc={icons.add}
-            alt="Add Sections"
+            action={() => {
+              showAddSectionsPopup();
+            }}
             attributes={{
               'aria-label': 'Add Sections',
               'aria-haspopup': 'dialog',
               'aria-controls': 'add-sections-dialog',
               id: 'add-sections',
             }}
-            action={() => {
-              showAddSectionsPopup();
-            }}
           />
         )}
         <ToolbarItem
+          action={toggleEditorMode}
+          alt="Edit Sections"
           className={`Navigation-Control${canAddSections ? '' : ' Navigation-Control_onTop'}`}
           iconSrc={editorMode ? icons.done : icons.edit}
-          alt="Edit Sections"
+          key="toggle-editor-mode"
+          modifiers={[`${editorMode ? 'Navigation-Control_editing' : ''}`]}
           attributes={{
             'aria-label': 'Toggle Editor Mode',
             'aria-controls': 'resume-sections',
             'aria-pressed': `${editorMode}`,
             id: 'edit-sections',
           }}
-          modifiers={[`${editorMode ? 'Navigation-Control_editing' : ''}`]}
-          action={toggleEditorMode}
-          key="toggle-editor-mode"
         />
       </nav>
       <AddSections
+        activeSectionIDs={activeSectionIDs}
+        addSections={addSections}
         isShown={isAddSectionsPopupShown}
         onClose={closeAddSectionsPopup}
         possibleSectionIDs={possibleSectionIDs}
-        activeSectionIDs={activeSectionIDs}
-        addSections={addSections}
       />
     </>
   );

@@ -5,11 +5,11 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import capitalize from '@utils/capitalize';
+import capitalize from '@/utils/capitalize';
 
-import deleteSrc from '@icons/delete-cross.svg';
+import deleteSrc from '@/assets/icons/delete-cross.svg';
 
-import '@blocks/toolbar-item.scss';
+import '@/styles/blocks/toolbar-item.scss';
 import './NavItem.scss';
 
 export default function NavItem({
@@ -59,17 +59,17 @@ export default function NavItem({
       style={id === 'personal' ? null : style}
     >
       <button
-        id={id}
-        type="button"
+        aria-controls={`${id}-tabpanel`}
+        // To indicate that the tabbing functionality is disabled
+        aria-disabled={editorMode}
+        aria-label={`${capitalize(id)}`}
+        aria-selected={isSelected}
         className={`NavItem-Button toolbar-item__inner toolbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
+        id={id}
         // TODO: screen reader announcements (when sections are implemented)
         onClick={!editorMode ? selectSection : null}
         role="tab"
-        aria-label={`${capitalize(id)}`}
-        aria-controls={`${id}-tabpanel`}
-        aria-selected={isSelected}
-        // To indicate that the tabbing functionality is disabled
-        aria-disabled={editorMode}
+        type="button"
         {...dragProps}
         onKeyUp={(e) => {
           if (
@@ -98,18 +98,20 @@ export default function NavItem({
         }}
       >
         <img
-          src={iconSrc}
           alt={alt}
-          width="25px"
-          height="25px"
           className="toolbar-item__icon"
+          height="25px"
+          src={iconSrc}
+          width="25px"
         />
       </button>
 
       {id !== 'personal' && (
         <button
-          type="button"
+          aria-label={`Delete ${id}`}
           className={`NavItem-ControlBtn NavItem-ControlBtn_delete ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
+          id={`delete-${id}`}
+          type="button"
           onClick={() => {
             deleteSection();
 
@@ -130,15 +132,13 @@ export default function NavItem({
                 .focus();
             }
           }}
-          id={`delete-${id}`}
-          aria-label={`Delete ${id}`}
         >
           <img
-            src={deleteSrc}
             alt="Delete"
-            width="12px"
-            height="12px"
             className="NavItem-ControlBtnIcon"
+            height="12px"
+            src={deleteSrc}
+            width="12px"
           />
         </button>
       )}

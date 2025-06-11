@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
-import '@blocks/toolbar-item.scss';
+import '@/styles/blocks/toolbar-item.scss';
 
 export default function ToolbarItem({
   iconSrc,
@@ -66,27 +66,27 @@ export default function ToolbarItem({
         <li className={outerClassName} {...attributes}>
           {action !== null ? (
             <button
-              type="button"
               className={innerClassName}
               onClick={action}
+              type="button"
               {...innerAttributes}
             >
               <img
-                src={iconSrc}
                 alt={alt}
-                width="25px"
-                height="25px"
                 className={iconClassName}
+                height="25px"
+                src={iconSrc}
+                width="25px"
               />
             </button>
           ) : (
             <div className={innerModifiers} {...innerAttributes}>
               <img
-                src={iconSrc}
                 alt={alt}
-                width="25px"
-                height="25px"
                 className={iconClassName}
+                height="25px"
+                src={iconSrc}
+                width="25px"
               />
             </div>
           )}
@@ -99,27 +99,27 @@ export default function ToolbarItem({
       <div className={outerClassName} {...attributes}>
         {action !== null ? (
           <button
-            type="button"
             className={`toolbar-item__inner toolbar-item__inner_action ${canBeActivated && isActive ? 'toolbar-item__inner_active' : ''}`.trim()}
             onClick={action}
+            type="button"
             {...innerAttributes}
           >
             <img
-              src={iconSrc}
               alt={alt}
-              width="25px"
-              height="25px"
               className="toolbar-item__icon"
+              height="25px"
+              src={iconSrc}
+              width="25px"
             />
           </button>
         ) : (
           <div className="toolbar-item__inner" {...innerAttributes}>
             <img
-              src={iconSrc}
               alt={alt}
-              width="25px"
-              height="25px"
               className="toolbar-item__icon"
+              height="25px"
+              src={iconSrc}
+              width="25px"
             />
           </div>
         )}
@@ -130,27 +130,27 @@ export default function ToolbarItem({
   // If there's no inner/outer element, only an element and an icon.
   return action !== null ? (
     <button
-      type="button"
       className={`${outerClassName} toolbar-item_no-inner toolbar-item_action ${canBeActivated && isActive ? 'toolbar-item_active' : ''}`.trim()}
       onClick={action}
+      type="button"
       {...attributes}
     >
       <img
-        src={iconSrc}
         alt={alt}
-        width="25px"
-        height="25px"
         className={iconClassName}
+        height="25px"
+        src={iconSrc}
+        width="25px"
       />
     </button>
   ) : (
     <div className={`${outerClassName} toolbar-item_no-inner`} {...attributes}>
       <img
-        src={iconSrc}
         alt={alt}
-        width="25px"
-        height="25px"
         className={iconClassName}
+        height="25px"
+        src={iconSrc}
+        width="25px"
       />
     </div>
   );

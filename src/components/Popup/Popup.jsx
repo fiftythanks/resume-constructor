@@ -46,11 +46,11 @@ export default function Popup({
 
   return createPortal(
     <dialog
-      className={popupClassName}
-      ref={ref}
-      onClose={onClose}
-      id={id}
       aria-labelledby={`${id}-title`}
+      className={popupClassName}
+      id={id}
+      onClose={onClose}
+      ref={ref}
     >
       <h2 className={titleClassName} id={`${id}-title`}>
         {title}

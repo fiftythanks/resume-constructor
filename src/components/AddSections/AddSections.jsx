@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 
-import Popup from '@components/Popup';
-import Button from '@components/Button';
+import Button from '@/components/Button';
+import Popup from '@/components/Popup';
 
-import capitalize from '@utils/capitalize';
+import capitalize from '@/utils/capitalize';
 
-import closeSrc from '@icons/close.svg';
+import closeSrc from '@/assets/icons/close.svg';
 
 import './AddSections.scss';
 
 export default function AddSections({
+  activeSectionIDs,
+  addSections,
   isShown,
   onClose,
   possibleSectionIDs,
-  activeSectionIDs,
-  addSections,
 }) {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
 
@@ -61,12 +61,12 @@ export default function AddSections({
 
       return (
         <Button
-          onClick={handleClick}
-          key={`add-${sectionID}`}
-          id={`add-${sectionID}`}
           elements={['AddSections-Button']}
-          modifiers={['AddSections-Button_add']}
+          id={`add-${sectionID}`}
+          key={`add-${sectionID}`}
           label={`Add ${sectionID}`}
+          modifiers={['AddSections-Button_add']}
+          onClick={handleClick}
         >
           {capitalize(sectionID)}
         </Button>
@@ -76,41 +76,41 @@ export default function AddSections({
 
   return (
     <Popup
+      block="AddSections"
+      id="add-sections-dialog"
       isShown={isShown}
       onClose={onClose}
       title="Add Sections"
-      block="AddSections"
-      id="add-sections-dialog"
     >
-      <span className="visually-hidden" aria-live="polite">
+      <span aria-live="polite" className="visually-hidden">
         {screenReaderAnouncement}
       </span>
       <ul className="AddSections-List">
         {createAddBtns()}
         <Button
           elements={['AddSections-Button']}
+          id="add-all-sections"
+          label="Add All Sections"
           modifiers={['AddSections-Button_add AddSections-Button_all']}
           onClick={() => {
             addSections(possibleSectionIDs);
             closePopup();
           }}
-          id="add-all-sections"
-          label="Add All Sections"
         >
           All
         </Button>
       </ul>
       <button
-        type="button"
-        onClick={closePopup}
         className="AddSections-CloseBtn"
+        onClick={closePopup}
+        type="button"
       >
         <img
-          src={closeSrc}
           alt="Close Popup"
-          width="32px"
-          height="32px"
           className="AddSections-CloseIcon"
+          height="32px"
+          src={closeSrc}
+          width="32px"
         />
       </button>
     </Popup>

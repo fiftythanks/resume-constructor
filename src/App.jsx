@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import Navigation from '@components/Navigation';
-import capitalize from '@utils/capitalize';
+
+import Navigation from '@/components/Navigation';
+
+import capitalize from '@/utils/capitalize';
 
 export default function App() {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
@@ -131,18 +133,18 @@ export default function App() {
 
   return (
     <>
-      <span className="visually-hidden" aria-live="polite">
+      <span aria-live="polite" className="visually-hidden">
         {screenReaderAnouncement}
       </span>
       <Navigation
         activeSectionIDs={activeSectionIDs}
-        openedSectionID={openedSectionID}
-        selectSection={openSection}
-        reorderSections={reorderSections}
         addSections={addSections}
         deleteSections={deleteSections}
+        openedSectionID={openedSectionID}
         possibleSectionIDs={possibleSectionIDs}
+        reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
+        selectSection={openSection}
       />
     </>
   );
