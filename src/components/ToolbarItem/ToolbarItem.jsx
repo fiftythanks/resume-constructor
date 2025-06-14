@@ -4,19 +4,19 @@ import React from 'react';
 import '@/styles/blocks/toolbar-item.scss';
 
 export default function ToolbarItem({
-  iconSrc,
   alt,
-  className,
+  iconSrc,
   isActive,
-  canBeActivated = false,
   action = null,
-  hasInner = false,
-  isListItem = false,
   attributes = {},
-  modifiers = [],
+  canBeActivated = false,
+  className = '',
+  hasInner = false,
+  iconModifiers = [],
   innerAttributes = {},
   innerModifiers = [],
-  iconModifiers = [],
+  isListItem = false,
+  modifiers = [],
 }) {
   // The outer (compared to the inner) element's class name construction.
   let outerClassName = `${className} toolbar-item`;
