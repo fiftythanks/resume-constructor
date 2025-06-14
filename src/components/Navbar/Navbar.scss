@@ -1,0 +1,45 @@
+.Navbar {
+  display: flex;
+  position: absolute;
+  bottom: calc(0.5rem + 50px + 0.5rem);
+  left: 1rem;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  &_hidden {
+    display: none;
+  }
+
+  &-Items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    border-radius: 10px;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  &-DraggableItems {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style-type: none;
+  }
+
+  &-ControlsWrapper {
+    position: relative;
+    align-self: flex-start;
+  }
+
+  &-Control {
+    align-self: flex-start;
+
+    &_editing {
+      background-color: var(--opened-section-color);
+    }
+
+    &_onTop {
+      margin-top: 1rem;
+    }
+  }
+}

@@ -9,7 +9,7 @@ import capitalize from '@/utils/capitalize';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
-import '@/styles/blocks/toolbar-item.scss';
+import '@/styles/blocks/appbar-item.scss';
 import './NavItem.scss';
 
 export default function NavItem({
@@ -54,7 +54,7 @@ export default function NavItem({
 
   // Outer element
   const outerClassName =
-    `NavItem toolbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''}`.trimEnd();
+    `NavItem appbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''}`.trimEnd();
 
   // Main button
   function handleKeyUp(e) {
@@ -81,7 +81,7 @@ export default function NavItem({
   }
 
   const mainClassName =
-    `NavItem-Button toolbar-item__inner toolbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'toolbar-item__inner_active' : ''}`.trimEnd();
+    `NavItem-Button appbar-item__inner appbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'appbar-item__inner_active' : ''}`.trimEnd();
 
   // Delete button
   function handleDeleteClick() {
@@ -127,7 +127,7 @@ export default function NavItem({
       >
         <img
           alt={alt}
-          className="toolbar-item__icon"
+          className="appbar-item__icon"
           height="25px"
           src={iconSrc}
           width="25px"
