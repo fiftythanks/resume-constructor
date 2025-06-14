@@ -122,8 +122,8 @@ export default function Navigation({
 
       const newActiveSectionIDs = arrayMove(
         activeSectionIDs,
-        newIndex,
         oldIndex,
+        newIndex,
       );
 
       reorderSections(newActiveSectionIDs);
