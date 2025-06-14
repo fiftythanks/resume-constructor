@@ -27,7 +27,7 @@ import ToolbarItem from '@/components/ToolbarItem';
 import capitalize from '@/utils/capitalize';
 
 import addSrc from '@/assets/icons/add.svg';
-import closeSrc from '@/assets/icons/close.svg';
+import closeSrc from '@/assets/icons/cross.svg';
 import deleteSrc from '@/assets/icons/delete.svg';
 import doneSrc from '@/assets/icons/done.svg';
 import editSrc from '@/assets/icons/edit.svg';
@@ -62,6 +62,7 @@ export default function Navigation({
   activeSectionIDs,
   addSections,
   deleteSections,
+  isExpanded,
   openedSectionID,
   possibleSectionIDs,
   reorderSections,
@@ -173,7 +174,10 @@ export default function Navigation({
 
   return (
     <>
-      <nav className="Navigation">
+      <nav
+        className={`Navigation ${isExpanded ? '' : 'Navigation_hidden'}`.trimEnd()}
+        id="navigation"
+      >
         <ul
           aria-label="Resume Sections"
           aria-orientation="vertical"

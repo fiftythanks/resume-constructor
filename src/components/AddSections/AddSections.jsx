@@ -5,7 +5,7 @@ import Popup from '@/components/Popup';
 
 import capitalize from '@/utils/capitalize';
 
-import closeSrc from '@/assets/icons/close.svg';
+import closeSrc from '@/assets/icons/cross.svg';
 
 import './AddSections.scss';
 
