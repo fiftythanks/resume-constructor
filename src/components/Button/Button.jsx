@@ -41,8 +41,8 @@ export default function Button({
       aria-label={label}
       className={className}
       id={id}
-      onClick={onClick}
       type={isSubmit ? 'submit' : 'button'}
+      onClick={onClick}
     >
       {children}
     </button>

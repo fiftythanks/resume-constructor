@@ -79,8 +79,8 @@ export default function AddSections({
       block="AddSections"
       id="add-sections-dialog"
       isShown={isShown}
-      onClose={onClose}
       title="Add Sections"
+      onClose={onClose}
     >
       <span aria-live="polite" className="visually-hidden">
         {screenReaderAnouncement}
@@ -102,8 +102,8 @@ export default function AddSections({
       </ul>
       <button
         className="AddSections-CloseBtn"
-        onClick={closePopup}
         type="button"
+        onClick={closePopup}
       >
         <img
           alt="Close Popup"

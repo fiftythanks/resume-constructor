@@ -52,9 +52,61 @@ export default function NavItem({
     };
   }
 
+  // Outer element
+  const outerClassName =
+    `NavItem toolbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''}`.trimEnd();
+
+  // Main button
+  function handleKeyUp(e) {
+    if (e.key === 'ArrowDown' && activeSectionIDs.length > 1 && !isDragging) {
+      const i = activeSectionIDs.indexOf(id);
+
+      if (i < activeSectionIDs.length - 1) {
+        document.getElementById(activeSectionIDs[i + 1]).focus();
+      } else {
+        document.getElementById(activeSectionIDs[0]).focus();
+      }
+    } else if (
+      e.key === 'ArrowUp' &&
+      activeSectionIDs.length > 1 &&
+      !isDragging
+    ) {
+      const i = activeSectionIDs.indexOf(id);
+      if (i > 0) {
+        document.getElementById(activeSectionIDs[i - 1]).focus();
+      } else {
+        document.getElementById(activeSectionIDs.at(-1)).focus();
+      }
+    }
+  }
+
+  const mainClassName =
+    `NavItem-Button toolbar-item__inner toolbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'toolbar-item__inner_active' : ''}`.trimEnd();
+
+  // Delete button
+  function handleDeleteClick() {
+    deleteSection();
+
+    const i = activeSectionIDs.indexOf(id);
+
+    // If there's only "Personal" left.
+    if (activeSectionIDs.length === 2) {
+      document.getElementById('edit-sections').focus();
+
+      // If the deleted item wasn't the last in the array
+    } else if (i < activeSectionIDs.length - 1) {
+      document.getElementById(`delete-${activeSectionIDs[i + 1]}`).focus();
+    } else {
+      document.getElementById(`delete-${activeSectionIDs[i - 1]}`).focus();
+    }
+  }
+
+  const deleteClassName =
+    `NavItem-ControlBtn NavItem-ControlBtn_delete ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd();
+
   return (
     <li
-      className={`NavItem toolbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''}`.trimEnd()}
+      className={outerClassName}
       ref={id === 'personal' ? null : setNodeRef}
       style={id === 'personal' ? null : style}
     >
@@ -64,38 +116,14 @@ export default function NavItem({
         aria-disabled={editorMode}
         aria-label={`${capitalize(id)}`}
         aria-selected={isSelected}
-        className={`NavItem-Button toolbar-item__inner toolbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'toolbar-item__inner_active' : ''}`.trimEnd()}
+        className={mainClassName}
         id={id}
         // TODO: screen reader announcements (when sections are implemented)
-        onClick={!editorMode ? selectSection : null}
         role="tab"
         type="button"
+        onClick={!editorMode ? selectSection : null}
         {...dragProps}
-        onKeyUp={(e) => {
-          if (
-            e.key === 'ArrowDown' &&
-            activeSectionIDs.length > 1 &&
-            !isDragging
-          ) {
-            const i = activeSectionIDs.indexOf(id);
-            if (i < activeSectionIDs.length - 1) {
-              document.getElementById(activeSectionIDs[i + 1]).focus();
-            } else {
-              document.getElementById(activeSectionIDs[0]).focus();
-            }
-          } else if (
-            e.key === 'ArrowUp' &&
-            activeSectionIDs.length > 1 &&
-            !isDragging
-          ) {
-            const i = activeSectionIDs.indexOf(id);
-            if (i > 0) {
-              document.getElementById(activeSectionIDs[i - 1]).focus();
-            } else {
-              document.getElementById(activeSectionIDs.at(-1)).focus();
-            }
-          }
-        }}
+        onKeyUp={handleKeyUp}
       >
         <img
           alt={alt}
@@ -109,29 +137,10 @@ export default function NavItem({
       {id !== 'personal' && (
         <button
           aria-label={`Delete ${id}`}
-          className={`NavItem-ControlBtn NavItem-ControlBtn_delete ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd()}
+          className={deleteClassName}
           id={`delete-${id}`}
           type="button"
-          onClick={() => {
-            deleteSection();
-
-            const i = activeSectionIDs.indexOf(id);
-
-            // If there's only "Personal" left.
-            if (activeSectionIDs.length === 2) {
-              document.getElementById('edit-sections').focus();
-
-              // If the deleted item wasn't the last in the array
-            } else if (i < activeSectionIDs.length - 1) {
-              document
-                .getElementById(`delete-${activeSectionIDs[i + 1]}`)
-                .focus();
-            } else {
-              document
-                .getElementById(`delete-${activeSectionIDs[i - 1]}`)
-                .focus();
-            }
-          }}
+          onClick={handleDeleteClick}
         >
           <img
             alt="Delete"

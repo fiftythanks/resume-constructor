@@ -155,6 +155,22 @@ export default function Navigation({
     />
   ));
 
+  const addSectionsAttributes = {
+    'aria-label': 'Add Sections',
+    'aria-haspopup': 'dialog',
+    'aria-controls': 'add-sections-dialog',
+    id: 'add-sections',
+  };
+
+  const editorClassName = `Navigation-Control${canAddSections ? '' : ' Navigation-Control_onTop'}`;
+
+  const editorAttributes = {
+    'aria-label': 'Toggle Editor Mode',
+    'aria-controls': 'resume-sections',
+    'aria-pressed': `${editorMode}`,
+    id: 'edit-sections',
+  };
+
   return (
     <>
       <nav className="Navigation">
@@ -191,8 +207,8 @@ export default function Navigation({
               autoScroll={false}
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-              onDragEnd={handleDragEnd}
               sensors={sensors}
+              onDragEnd={handleDragEnd}
             >
               <SortableContext
                 items={draggableSectionIDs}
@@ -213,40 +229,30 @@ export default function Navigation({
         {canAddSections && (
           <ToolbarItem
             alt="Add Sections"
+            attributes={addSectionsAttributes}
             className="Navigation-Control Navigation-Control_onTop"
             iconSrc={icons.add}
             action={() => {
               showAddSectionsPopup();
-            }}
-            attributes={{
-              'aria-label': 'Add Sections',
-              'aria-haspopup': 'dialog',
-              'aria-controls': 'add-sections-dialog',
-              id: 'add-sections',
             }}
           />
         )}
         <ToolbarItem
           action={toggleEditorMode}
           alt="Edit Sections"
-          className={`Navigation-Control${canAddSections ? '' : ' Navigation-Control_onTop'}`}
+          attributes={editorAttributes}
+          className={editorClassName}
           iconSrc={editorMode ? icons.done : icons.edit}
           key="toggle-editor-mode"
           modifiers={[`${editorMode ? 'Navigation-Control_editing' : ''}`]}
-          attributes={{
-            'aria-label': 'Toggle Editor Mode',
-            'aria-controls': 'resume-sections',
-            'aria-pressed': `${editorMode}`,
-            id: 'edit-sections',
-          }}
         />
       </nav>
       <AddSections
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
         isShown={isAddSectionsPopupShown}
-        onClose={closeAddSectionsPopup}
         possibleSectionIDs={possibleSectionIDs}
+        onClose={closeAddSectionsPopup}
       />
     </>
   );

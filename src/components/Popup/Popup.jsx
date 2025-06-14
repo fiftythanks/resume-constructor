@@ -29,6 +29,7 @@ export default function Popup({
   let popupClassName = 'Popup';
   let titleClassName = 'Popup-Title';
 
+  // Add BEM block(s) to the className.
   if (typeof block === 'string') {
     popupClassName += ` ${block}`;
     titleClassName += ` ${block}-Title`;
@@ -36,6 +37,7 @@ export default function Popup({
     throw new TypeError('`block` must be a string!');
   }
 
+  // Add BEM modifier(s) to the className.
   if (Array.isArray(modifiers)) {
     if (modifiers.length > 0) {
       popupClassName += ` ${modifiers.join(' ')}`;
@@ -49,8 +51,8 @@ export default function Popup({
       aria-labelledby={`${id}-title`}
       className={popupClassName}
       id={id}
-      onClose={onClose}
       ref={ref}
+      onClose={onClose}
     >
       <h2 className={titleClassName} id={`${id}-title`}>
         {title}

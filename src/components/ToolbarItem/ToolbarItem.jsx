@@ -67,8 +67,8 @@ export default function ToolbarItem({
           {action !== null ? (
             <button
               className={innerClassName}
-              onClick={action}
               type="button"
+              onClick={action}
               {...innerAttributes}
             >
               <img
@@ -100,8 +100,8 @@ export default function ToolbarItem({
         {action !== null ? (
           <button
             className={`toolbar-item__inner toolbar-item__inner_action ${canBeActivated && isActive ? 'toolbar-item__inner_active' : ''}`.trim()}
-            onClick={action}
             type="button"
+            onClick={action}
             {...innerAttributes}
           >
             <img
@@ -128,11 +128,14 @@ export default function ToolbarItem({
   }
 
   // If there's no inner/outer element, only an element and an icon.
+  const noInnerNoActionClassName =
+    `${outerClassName} toolbar-item_no-inner toolbar-item_action ${canBeActivated && isActive ? 'toolbar-item_active' : ''}`.trim();
+
   return action !== null ? (
     <button
-      className={`${outerClassName} toolbar-item_no-inner toolbar-item_action ${canBeActivated && isActive ? 'toolbar-item_active' : ''}`.trim()}
-      onClick={action}
+      className={noInnerNoActionClassName}
       type="button"
+      onClick={action}
       {...attributes}
     >
       <img
