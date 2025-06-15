@@ -81,6 +81,8 @@ export default function Navbar({
     }),
   );
 
+  const [isDragging, setIsDragging] = useState(false);
+
   function toggleEditorMode() {
     setEditorMode(!editorMode);
   }
@@ -109,6 +111,10 @@ export default function Navbar({
   }
 
   // Drag and drop logic
+  function handleDragStart() {
+    setIsDragging(true);
+  }
+
   function handleDragEnd(e) {
     const { active, over } = e;
 
@@ -124,6 +130,8 @@ export default function Navbar({
 
       reorderSections(newActiveSectionIDs);
     }
+
+    setIsDragging(false);
   }
 
   /**
@@ -167,6 +175,36 @@ export default function Navbar({
     id: 'edit-sections',
   };
 
+  // Keyboard navigation
+  function handleKeyDown(e) {
+    const { id } = e.target;
+
+    if (e.key === 'ArrowDown' && activeSectionIDs.length > 1 && !isDragging) {
+      e.preventDefault();
+
+      const i = activeSectionIDs.indexOf(id);
+
+      if (i < activeSectionIDs.length - 1) {
+        document.getElementById(activeSectionIDs[i + 1]).focus();
+      } else {
+        document.getElementById(activeSectionIDs[0]).focus();
+      }
+    } else if (
+      e.key === 'ArrowUp' &&
+      activeSectionIDs.length > 1 &&
+      !isDragging
+    ) {
+      e.preventDefault();
+
+      const i = activeSectionIDs.indexOf(id);
+      if (i > 0) {
+        document.getElementById(activeSectionIDs[i - 1]).focus();
+      } else {
+        document.getElementById(activeSectionIDs.at(-1)).focus();
+      }
+    }
+  }
+
   return (
     <>
       <nav
@@ -180,6 +218,7 @@ export default function Navbar({
           className="Navbar-Items"
           id="resume-sections"
           role="tablist"
+          onKeyDown={handleKeyDown}
         >
           <NavItem
             activeSectionIDs={activeSectionIDs}
@@ -211,6 +250,7 @@ export default function Navbar({
               modifiers={[restrictToVerticalAxis, restrictToParentElement]}
               sensors={sensors}
               onDragEnd={handleDragEnd}
+              onDragStart={handleDragStart}
             >
               <SortableContext
                 items={draggableSectionIDs}

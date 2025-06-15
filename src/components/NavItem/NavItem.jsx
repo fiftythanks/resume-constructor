@@ -56,30 +56,6 @@ export default function NavItem({
   const outerClassName =
     `NavItem appbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''}`.trimEnd();
 
-  // Main button
-  function handleKeyUp(e) {
-    if (e.key === 'ArrowDown' && activeSectionIDs.length > 1 && !isDragging) {
-      const i = activeSectionIDs.indexOf(id);
-
-      if (i < activeSectionIDs.length - 1) {
-        document.getElementById(activeSectionIDs[i + 1]).focus();
-      } else {
-        document.getElementById(activeSectionIDs[0]).focus();
-      }
-    } else if (
-      e.key === 'ArrowUp' &&
-      activeSectionIDs.length > 1 &&
-      !isDragging
-    ) {
-      const i = activeSectionIDs.indexOf(id);
-      if (i > 0) {
-        document.getElementById(activeSectionIDs[i - 1]).focus();
-      } else {
-        document.getElementById(activeSectionIDs.at(-1)).focus();
-      }
-    }
-  }
-
   const mainClassName =
     `NavItem-Button appbar-item__inner appbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'appbar-item__inner_active' : ''}`.trimEnd();
 
@@ -123,7 +99,6 @@ export default function NavItem({
         type="button"
         onClick={!editorMode ? selectSection : null}
         {...dragProps}
-        onKeyUp={handleKeyUp}
       >
         <img
           alt={alt}
