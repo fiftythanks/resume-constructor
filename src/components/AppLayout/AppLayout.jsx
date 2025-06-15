@@ -8,9 +8,13 @@ import './AppLayout.scss';
 export default function AppLayout({
   activeSectionIDs,
   addSections,
+  children,
+  clearAll,
   deleteSections,
+  fillAll,
   openedSectionID,
   possibleSectionIDs,
+  preview,
   reorderSections,
   resetScreenReaderAnnouncement,
   selectSection,
@@ -40,10 +44,13 @@ export default function AppLayout({
       />
       <Toolbar
         className="AppLayout-Toolbar"
+        clearAll={clearAll}
+        fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
+        preview={preview}
         toggleNavbar={toggleNavbar}
       />
-      <main className="AppLayout-Main" />
+      <main className="AppLayout-Main">{children}</main>
     </div>
   );
 }

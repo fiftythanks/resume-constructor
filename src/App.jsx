@@ -131,6 +131,18 @@ export default function App() {
     }
   }
 
+  function clearAll() {
+    deleteSections(possibleSectionIDs);
+  }
+
+  function fillAll() {
+    addSections(possibleSectionIDs);
+  }
+
+  function preview() {
+    // do nothing
+  }
+
   return (
     <>
       <span aria-live="polite" className="visually-hidden">
@@ -139,9 +151,12 @@ export default function App() {
       <AppLayout
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
+        clearAll={clearAll}
         deleteSections={deleteSections}
+        fillAll={fillAll}
         openedSectionID={openedSectionID}
         possibleSectionIDs={possibleSectionIDs}
+        preview={preview}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         selectSection={openSection}
