@@ -205,6 +205,35 @@ export default function Navbar({
     }
   }
 
+  function handleKeyUp(e) {
+    const { id } = e.target;
+
+    // The RegExp checks if it's not a delete button.
+    if (
+      e.key === 'Delete' &&
+      /^(?!delete-).+/.test(id) &&
+      id !== 'personal' &&
+      !isDragging
+    ) {
+      e.preventDefault();
+
+      deleteSections([id]);
+
+      const i = activeSectionIDs.indexOf(id);
+
+      // If there's only "Personal" left.
+      if (activeSectionIDs.length === 2) {
+        document.getElementById('edit-sections').focus();
+
+        // If the deleted item wasn't the last in the array
+      } else if (i < activeSectionIDs.length - 1) {
+        document.getElementById(activeSectionIDs[i + 1]).focus();
+      } else {
+        document.getElementById(activeSectionIDs[i - 1]).focus();
+      }
+    }
+  }
+
   return (
     <>
       <nav
@@ -219,6 +248,7 @@ export default function Navbar({
           id="resume-sections"
           role="tablist"
           onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
         >
           <NavItem
             activeSectionIDs={activeSectionIDs}
