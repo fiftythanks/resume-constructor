@@ -16,6 +16,12 @@
     list-style-type: none;
   }
 
+  &-DraggableItemsWrapper {
+    &_hidden {
+      display: none;
+    }
+  }
+
   &-DraggableItems {
     display: flex;
     flex-direction: column;

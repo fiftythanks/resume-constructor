@@ -195,7 +195,10 @@ export default function Navbar({
            * This structure is necessary to be able to limit the dragging to
            * the area between "personal" and the end of `Navbar-Items`.
            */}
-          <li className="Navbar-DraggableItemsWrapper" role="none">
+          <li
+            className={`Navbar-DraggableItemsWrapper${activeSectionIDs.length === 1 ? ' Navbar-DraggableItemsWrapper_hidden' : ''}`}
+            role="none"
+          >
             <DndContext
               /**
                * Since the navigation bar will always stay in the same position
