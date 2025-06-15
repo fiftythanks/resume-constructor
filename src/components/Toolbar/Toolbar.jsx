@@ -76,25 +76,31 @@ export default function Toolbar({
       >
         <ul className="Toolbar-ControlsList">
           <AppbarItem
+            hasInner
+            isListItem
             action={clearAll}
             alt="Clear All"
-            attributes={clearAllBtnAttributes}
-            className="Toolbar-Item Toolbar-Item_clearAll"
             iconSrc={clearSrc}
+            innerAttributes={clearAllBtnAttributes}
+            innerClassName="Toolbar-Item Toolbar-Item_clearAll"
           />
           <AppbarItem
+            hasInner
+            isListItem
             action={fillAll}
             alt="Fill All"
-            attributes={fillAllBtnAttributes}
-            className="Toolbar-Item Toolbar-Item_fillAll"
             iconSrc={fillSrc}
+            innerAttributes={fillAllBtnAttributes}
+            innerClassName="Toolbar-Item Toolbar-Item_fillAll"
           />
           <AppbarItem
+            hasInner
+            isListItem
             action={preview}
             alt="Preview"
-            attributes={previewAttributes}
-            className="Toolbar-Item Toolbar-Item_preview"
             iconSrc={previewSrc}
+            innerAttributes={previewAttributes}
+            innerClassName="Toolbar-Item Toolbar-Item_preview"
           />
         </ul>
       </div>
