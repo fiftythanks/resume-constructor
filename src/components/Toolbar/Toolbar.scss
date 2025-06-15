@@ -1,5 +1,21 @@
 .Toolbar {
   display: flex;
+  gap: 1rem;
   padding-inline: 1rem;
   width: 100%;
+
+  &-Item {
+    &_toggleNavbar {
+      margin-right: auto;
+    }
+  }
+
+  &-ControlsWrapper {
+    display: flex;
+    gap: 1rem;
+
+    &_hidden {
+      display: none;
+    }
+  }
 }
