@@ -57,19 +57,15 @@ export default function Navbar({
   addSections,
   className,
   deleteSections,
+  editorMode,
   isExpanded,
   openedSectionID,
   possibleSectionIDs,
   reorderSections,
   resetScreenReaderAnnouncement,
   selectSection,
+  toggleEditorMode,
 }) {
-  /**
-   * This state determines whether to alow DnD and render delete buttons
-   * with `NavItem`s or not.
-   */
-  const [editorMode, setEditorMode] = useState(false);
-
   // For the "Add Sections" popup
   const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
 
@@ -82,10 +78,6 @@ export default function Navbar({
   );
 
   const [isDragging, setIsDragging] = useState(false);
-
-  function toggleEditorMode() {
-    setEditorMode(!editorMode);
-  }
 
   const canAddSections =
     possibleSectionIDs.filter(
