@@ -74,27 +74,29 @@ export default function Toolbar({
         id="control-btns"
         role="menu"
       >
-        <AppbarItem
-          action={clearAll}
-          alt="Clear All"
-          attributes={clearAllBtnAttributes}
-          className="Toolbar-Item Toolbar-Item_clearAll"
-          iconSrc={clearSrc}
-        />
-        <AppbarItem
-          action={fillAll}
-          alt="Fill All"
-          attributes={fillAllBtnAttributes}
-          className="Toolbar-Item Toolbar-Item_fillAll"
-          iconSrc={fillSrc}
-        />
-        <AppbarItem
-          action={preview}
-          alt="Preview"
-          attributes={previewAttributes}
-          className="Toolbar-Item Toolbar-Item_preview"
-          iconSrc={previewSrc}
-        />
+        <ul className="Toolbar-ControlsList">
+          <AppbarItem
+            action={clearAll}
+            alt="Clear All"
+            attributes={clearAllBtnAttributes}
+            className="Toolbar-Item Toolbar-Item_clearAll"
+            iconSrc={clearSrc}
+          />
+          <AppbarItem
+            action={fillAll}
+            alt="Fill All"
+            attributes={fillAllBtnAttributes}
+            className="Toolbar-Item Toolbar-Item_fillAll"
+            iconSrc={fillSrc}
+          />
+          <AppbarItem
+            action={preview}
+            alt="Preview"
+            attributes={previewAttributes}
+            className="Toolbar-Item Toolbar-Item_preview"
+            iconSrc={previewSrc}
+          />
+        </ul>
       </div>
       <AppbarItem
         action={toggleControls}

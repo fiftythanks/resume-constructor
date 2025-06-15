@@ -11,11 +11,14 @@
   }
 
   &-ControlsWrapper {
-    display: flex;
-    gap: 1rem;
-
     &_hidden {
       display: none;
     }
+  }
+
+  &-ControlsList {
+    display: flex;
+    gap: 1rem;
+    padding: 0;
   }
 }
