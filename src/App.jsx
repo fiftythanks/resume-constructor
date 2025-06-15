@@ -86,7 +86,7 @@ export default function App() {
       let newScreenReaderAnnouncement = '';
       let wasOpenedSectionDeleted = false;
 
-      sectionIDs.forEach((sectionID, i) => {
+      sectionIDs.forEach((sectionID) => {
         if (possibleSectionIDs.includes(sectionID)) {
           if (
             activeSectionIDs.includes(sectionID) &&
@@ -98,7 +98,9 @@ export default function App() {
             );
 
             newScreenReaderAnnouncement +=
-              i === 0 ? capitalize(sectionID) : `, ${sectionID}`;
+              newScreenReaderAnnouncement === ''
+                ? capitalize(sectionID)
+                : `, ${sectionID}`;
 
             if (openedSectionID === sectionID) {
               setOpenedSectionID(null);
