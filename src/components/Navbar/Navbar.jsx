@@ -27,11 +27,8 @@ import NavItem from '@/components/NavItem';
 import capitalize from '@/utils/capitalize';
 
 import addSrc from '@/assets/icons/add.svg';
-import closeSrc from '@/assets/icons/cross.svg';
-import deleteSrc from '@/assets/icons/delete.svg';
 import doneSrc from '@/assets/icons/done.svg';
 import editSrc from '@/assets/icons/edit.svg';
-import optionsSrc from '@/assets/icons/options.svg';
 import certificationsSrc from '@/assets/icons/sections/certifications.svg';
 import educationSrc from '@/assets/icons/sections/education.svg';
 import experienceSrc from '@/assets/icons/sections/experience.svg';
@@ -45,14 +42,11 @@ import './Navbar.scss';
 const icons = {
   add: addSrc,
   certifications: certificationsSrc,
-  close: closeSrc,
-  delete: deleteSrc,
   done: doneSrc,
   edit: editSrc,
   education: educationSrc,
   experience: experienceSrc,
   links: linksSrc,
-  options: optionsSrc,
   personal: personalSrc,
   projects: projectsSrc,
   skills: skillsSrc,
