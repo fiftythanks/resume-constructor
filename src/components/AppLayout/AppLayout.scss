@@ -1,0 +1,41 @@
+@use '@/styles/utils/variables' as v;
+
+.AppLayout {
+  display: grid;
+  grid-template:
+    1fr calc(v.$appbar-button-size + 2 * 1rem) / calc(
+      v.$appbar-button-size + 2 * 1rem
+    )
+    1fr;
+  align-items: center;
+  justify-items: center;
+  width: 100vw;
+  height: 100vh;
+
+  &_navbar {
+    &_expanded {
+      grid-template-areas:
+        'navbar  main'
+        'toolbar toolbar';
+    }
+
+    &_hidden {
+      grid-template-areas:
+        'main    main'
+        'toolbar toolbar';
+    }
+  }
+
+  &-Navbar {
+    grid-area: navbar;
+    align-self: end;
+  }
+
+  &-Toolbar {
+    grid-area: toolbar;
+  }
+
+  &-Main {
+    grid-area: main;
+  }
+}

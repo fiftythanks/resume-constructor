@@ -61,6 +61,7 @@ const icons = {
 export default function Navbar({
   activeSectionIDs,
   addSections,
+  className,
   deleteSections,
   isExpanded,
   openedSectionID,
@@ -175,7 +176,7 @@ export default function Navbar({
   return (
     <>
       <nav
-        className={`Navbar ${isExpanded ? '' : 'Navbar_hidden'}`.trimEnd()}
+        className={`Navbar ${isExpanded ? '' : 'Navbar_hidden'} ${className}`.trimEnd()}
         id="navbar"
       >
         <ul

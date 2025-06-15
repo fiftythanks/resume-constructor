@@ -14,3 +14,9 @@ body {
   overflow: hidden;
   color: var(--text-color);
 }
+
+/* stylelint-disable-next-line selector-max-id */
+#root {
+  width: 100%;
+  height: 100%;
+}

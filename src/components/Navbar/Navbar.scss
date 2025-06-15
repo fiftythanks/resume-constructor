@@ -1,10 +1,7 @@
 .Navbar {
   display: flex;
-  position: absolute;
-  bottom: calc(0.5rem + 50px + 0.5rem);
-  left: 1rem;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.7rem;
 
   &_hidden {
     display: none;

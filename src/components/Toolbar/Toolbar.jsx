@@ -7,7 +7,7 @@ import hamburger from '@/assets/icons/hamburger.svg';
 
 import './Toolbar.scss';
 
-export default function Toolbar({ isNavbarExpanded, toggleNavbar }) {
+export default function Toolbar({ isNavbarExpanded, toggleNavbar, className }) {
   const navbarToggleAttributes = {
     'aria-controls': 'navbar',
     'aria-expanded': isNavbarExpanded,
@@ -15,7 +15,7 @@ export default function Toolbar({ isNavbarExpanded, toggleNavbar }) {
   };
 
   return (
-    <div className="Toolbar" role="toolbar">
+    <div className={`Toolbar ${className}`} role="toolbar">
       <AppbarItem
         action={toggleNavbar}
         alt="Toggle Navigation"

@@ -1,26 +1,22 @@
 import React, { useState } from 'react';
 
-import Navigation from '@/components/Navigation';
+import AppLayout from '@/components/AppLayout';
 
 import capitalize from '@/utils/capitalize';
+
+const possibleSectionIDs = [
+  'personal',
+  'links',
+  'skills',
+  'experience',
+  'projects',
+  'education',
+  'certifications',
+];
 
 export default function App() {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
   const [openedSectionID, setOpenedSectionID] = useState(null);
-
-  function resetScreenReaderAnnouncement() {
-    setScreenReaderAnnouncement(null);
-  }
-
-  const possibleSectionIDs = [
-    'personal',
-    'links',
-    'skills',
-    'experience',
-    'projects',
-    'education',
-    'certifications',
-  ];
 
   const [activeSectionIDs, setActiveSectionIDs] = useState([
     'personal',
@@ -32,12 +28,16 @@ export default function App() {
     'certifications',
   ]);
 
-  function reorderSections(newActiveSectionIDs) {
-    setActiveSectionIDs(newActiveSectionIDs);
+  function resetScreenReaderAnnouncement() {
+    setScreenReaderAnnouncement(null);
   }
 
   function openSection(sectionID) {
     setOpenedSectionID(sectionID);
+  }
+
+  function reorderSections(newActiveSectionIDs) {
+    setActiveSectionIDs(newActiveSectionIDs);
   }
 
   function addSections(sectionIDs) {
@@ -136,7 +136,7 @@ export default function App() {
       <span aria-live="polite" className="visually-hidden">
         {screenReaderAnouncement}
       </span>
-      <Navigation
+      <AppLayout
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
         deleteSections={deleteSections}
