@@ -5,8 +5,10 @@ const config = {
     'stylelint-config-concentric-order',
   ],
   rules: {
-    /* This rule conflicts with Prettier */
+    // These rules conflict with Prettier
     '@stylistic/function-parentheses-space-inside': null,
+    '@stylistic/indentation': null,
+
     'max-nesting-depth': 3,
     'selector-class-pattern': null,
   },
