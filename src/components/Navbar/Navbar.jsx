@@ -55,14 +55,15 @@ const icons = {
 export default function Navbar({
   activeSectionIDs,
   addSections,
+  canAddSections,
   className,
   deleteSections,
   editorMode,
   isExpanded,
-  openedSectionID,
   possibleSectionIDs,
   reorderSections,
   resetScreenReaderAnnouncement,
+  selectedSectionID,
   selectSection,
   toggleEditorMode,
 }) {
@@ -78,11 +79,6 @@ export default function Navbar({
   );
 
   const [isDragging, setIsDragging] = useState(false);
-
-  const canAddSections =
-    possibleSectionIDs.filter(
-      (sectionID) => !activeSectionIDs.includes(sectionID),
-    ).length > 0;
 
   function showAddSectionsPopup() {
     // Otherwise, the screen reader will announce incorrect things
@@ -142,8 +138,8 @@ export default function Navbar({
       editorMode={editorMode}
       iconSrc={icons[sectionID]}
       id={sectionID}
-      isSelected={openedSectionID === sectionID}
       key={sectionID}
+      selectedSectionID={selectedSectionID}
       selectSection={() => selectSection(sectionID)}
       deleteSection={() => {
         deleteSections([sectionID]);
@@ -226,6 +222,22 @@ export default function Navbar({
     }
   }
 
+  function handleKeyDownAddSections(e) {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+
+      document.getElementById('edit-sections').focus();
+    }
+  }
+
+  function handleKeyDownEditorMode(e) {
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && canAddSections) {
+      e.preventDefault();
+
+      document.getElementById('add-sections').focus();
+    }
+  }
+
   return (
     <>
       <nav
@@ -249,7 +261,7 @@ export default function Navbar({
             editorMode={editorMode}
             iconSrc={icons.personal}
             id="personal"
-            isSelected={openedSectionID === 'personal'}
+            selectedSectionID={selectedSectionID}
             selectSection={() => selectSection('personal')}
           />
           {/**
@@ -293,6 +305,7 @@ export default function Navbar({
             attributes={addSectionsAttributes}
             className="Navbar-Control Navbar-Control_onTop"
             iconSrc={icons.add}
+            onKeyDown={handleKeyDownAddSections}
             action={() => {
               showAddSectionsPopup();
             }}
@@ -306,6 +319,7 @@ export default function Navbar({
           iconSrc={editorMode ? icons.done : icons.edit}
           key="toggle-editor-mode"
           modifiers={[`${editorMode ? 'Navbar-Control_editing' : ''}`]}
+          onKeyDown={handleKeyDownEditorMode}
         />
       </nav>
       <AddSections

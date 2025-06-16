@@ -15,7 +15,7 @@ import './NavItem.scss';
 export default function NavItem({
   iconSrc,
   alt,
-  isSelected,
+  selectedSectionID,
   selectSection,
   id,
   className,
@@ -52,9 +52,11 @@ export default function NavItem({
     };
   }
 
+  const isSelected = selectedSectionID === id;
+
   // Outer element
   const outerClassName =
-    `NavItem appbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''}`.trimEnd();
+    `NavItem appbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''} ${isSelected ? 'NavItem_selected' : ''}`.trimEnd();
 
   const mainClassName =
     `NavItem-Button appbar-item__inner appbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'appbar-item__inner_active' : ''}`.trimEnd();
@@ -99,6 +101,14 @@ export default function NavItem({
         type="button"
         onClick={!editorMode ? selectSection : null}
         {...dragProps}
+        // If there's no selected section, "personal" is focusable.
+        tabIndex={
+          isSelected ||
+          editorMode ||
+          (id === 'personal' && selectedSectionID === null)
+            ? '0'
+            : '-1'
+        }
       >
         <img
           alt={alt}

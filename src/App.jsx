@@ -32,6 +32,10 @@ export default function App() {
     setScreenReaderAnnouncement(null);
   }
 
+  function updateScreenReaderAnnouncement(announcement) {
+    setScreenReaderAnnouncement(announcement);
+  }
+
   function openSection(sectionID) {
     setOpenedSectionID(sectionID);
   }
@@ -162,6 +166,7 @@ export default function App() {
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         selectSection={openSection}
+        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     </>
   );

@@ -17,6 +17,8 @@ export default function AppbarItem({
   innerModifiers = [],
   isListItem = false,
   modifiers = [],
+  onBlur = null,
+  onKeyDown = null,
 }) {
   // The outer (compared to the inner) element's class name construction.
   let outerClassName = `${className} appbar-item`;
@@ -68,7 +70,9 @@ export default function AppbarItem({
             <button
               className={innerClassName}
               type="button"
+              onBlur={onBlur}
               onClick={action}
+              onKeyDown={onKeyDown}
               {...innerAttributes}
             >
               <img
@@ -101,7 +105,9 @@ export default function AppbarItem({
           <button
             className={`appbar-item__inner appbar-item__inner_action ${canBeActivated && isActive ? 'appbar-item__inner_active' : ''}`.trim()}
             type="button"
+            onBlur={onBlur}
             onClick={action}
+            onKeyDown={onKeyDown}
             {...innerAttributes}
           >
             <img
@@ -135,7 +141,9 @@ export default function AppbarItem({
     <button
       className={noInnerNoActionClassName}
       type="button"
+      onBlur={onBlur}
       onClick={action}
+      onKeyDown={onKeyDown}
       {...attributes}
     >
       <img

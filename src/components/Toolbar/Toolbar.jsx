@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import AppbarItem from '@/components/AppbarItem';
 
@@ -20,29 +20,38 @@ export default function Toolbar({
   toggleNavbar,
 }) {
   const [areControlsExpanded, setAreControlsExpanded] = useState(false);
-
-  function toggleControls() {
-    setAreControlsExpanded(!areControlsExpanded);
-  }
+  const firstControlRef = useRef(null);
 
   const navbarToggleAttributes = {
     'aria-controls': 'navbar',
     'aria-expanded': isNavbarExpanded,
     'aria-label': 'Toggle Navigation',
+    id: 'toggle-navbar',
+    /**
+     * I know setting positive tab indices isn't the best practice, but
+     * it's the only place I need it in the application, simply to make
+     * the button the first element that receives focus in the application.
+     */
+    tabIndex: '2',
   };
 
   const clearAllBtnAttributes = {
     'aria-controls':
       'links skills experience projects education certifications',
     'aria-label': 'Clear All',
+    ref: firstControlRef,
     role: 'menuitem',
     // TODO: Add more ARIA attributes when you create actual resume sections!
+    id: 'clear-all',
+    tabIndex: '-1',
   };
 
   const previewAttributes = {
     'aria-label': 'Open Preview',
     role: 'menuitem',
     // TODO: Add more ARIA attributes when you create actual resume preview!
+    id: 'preview',
+    tabIndex: '-1',
   };
 
   const fillAllBtnAttributes = {
@@ -51,16 +60,95 @@ export default function Toolbar({
     'aria-label': 'Fill All',
     role: 'menuitem',
     // TODO: Add more ARIA attributes when you create actual resume sections!
+    id: 'fill-all',
+    tabIndex: '-1',
   };
+
+  function toggleControls() {
+    setAreControlsExpanded(!areControlsExpanded);
+  }
 
   const controlsToggleAttributes = {
     'aria-controls': 'control-btns',
     'aria-expanded': areControlsExpanded,
     'aria-label': 'Toggle Controls',
+    id: 'toggle-controls',
   };
 
+  // Keyboard navigation.
+  useEffect(() => {
+    if (areControlsExpanded) {
+      firstControlRef.current.focus();
+    }
+  }, [areControlsExpanded]);
+
+  // !Order matters.
+  const controls = ['clear-all', 'fill-all', 'preview'];
+
+  function handleKeyDown(e) {
+    const { id } = e.target;
+
+    if (
+      id === 'toggle-navbar' &&
+      (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+    ) {
+      document.getElementById('toggle-controls').focus();
+    }
+
+    if (
+      id === 'toggle-controls' &&
+      (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+    ) {
+      document.getElementById('toggle-navbar').focus();
+    }
+
+    if (controls.includes(id)) {
+      const i = controls.indexOf(id);
+
+      if (e.key === 'ArrowLeft') {
+        if (i === 0) {
+          document.getElementById('preview').focus();
+        } else {
+          document.getElementById(controls[i - 1]).focus();
+        }
+      }
+
+      if (e.key === 'ArrowRight') {
+        if (i === controls.length - 1) {
+          document.getElementById('clear-all').focus();
+        } else {
+          document.getElementById(controls[i + 1]).focus();
+        }
+      }
+
+      if (e.key === 'Tab') {
+        e.preventDefault();
+
+        if (e.shiftKey) {
+          document.getElementById('toggle-controls').focus();
+        } else {
+          // TODO: focus should move to Main. For now, let it be blur.
+          e.target.blur();
+        }
+      }
+
+      if (e.key === 'Escape') {
+        document.getElementById('toggle-controls').focus();
+      }
+    }
+  }
+
+  function handleBlur(e) {
+    if (e.relatedTarget === null || !controls.includes(e.relatedTarget.id))
+      toggleControls();
+  }
+
   return (
-    <div className={`Toolbar ${className}`} role="toolbar">
+    <div
+      className={`Toolbar ${className}`}
+      role="toolbar"
+      onKeyDown={handleKeyDown}
+    >
       <AppbarItem
         action={toggleNavbar}
         alt="Toggle Navigation"
@@ -69,12 +157,13 @@ export default function Toolbar({
         iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
       />
       <div
+        aria-label="Control Buttons"
         aria-orientation="horizontal"
         className={`Toolbar-ControlsWrapper${areControlsExpanded ? '' : ' Toolbar-ControlsWrapper_hidden'}`}
         id="control-btns"
         role="menu"
       >
-        <ul className="Toolbar-ControlsList">
+        <ul className="Toolbar-ControlsList" onBlur={handleBlur}>
           <AppbarItem
             hasInner
             isListItem
