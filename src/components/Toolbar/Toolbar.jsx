@@ -25,7 +25,7 @@ export default function Toolbar({
   const navbarToggleAttributes = {
     'aria-controls': 'navbar',
     'aria-expanded': isNavbarExpanded,
-    'aria-label': 'Toggle Navigation',
+    'aria-label': 'Navigation',
     id: 'toggle-navbar',
     /**
      * I know setting positive tab indices isn't the best practice, but
@@ -71,7 +71,8 @@ export default function Toolbar({
   const controlsToggleAttributes = {
     'aria-controls': 'control-btns',
     'aria-expanded': areControlsExpanded,
-    'aria-label': 'Toggle Controls',
+    'aria-haspopup': 'menu',
+    'aria-label': 'Control Buttons',
     id: 'toggle-controls',
   };
 
@@ -157,7 +158,7 @@ export default function Toolbar({
         iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
       />
       <div
-        aria-label="Control Buttons"
+        aria-labelledby="toggle-controls"
         aria-orientation="horizontal"
         className={`Toolbar-ControlsWrapper${areControlsExpanded ? '' : ' Toolbar-ControlsWrapper_hidden'}`}
         id="control-btns"

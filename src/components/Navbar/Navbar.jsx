@@ -241,6 +241,7 @@ export default function Navbar({
   return (
     <>
       <nav
+        aria-labelledby="toggle-navbar"
         className={`Navbar ${isExpanded ? '' : 'Navbar_hidden'} ${className}`.trimEnd()}
         id="navbar"
       >
