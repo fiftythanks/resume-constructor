@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import Personal from '@/pages/Personal';
+
 import AppLayout from '@/components/AppLayout';
 
 import capitalize from '@/utils/capitalize';
@@ -16,7 +18,7 @@ const possibleSectionIDs = [
 
 export default function App() {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
-  const [openedSectionID, setOpenedSectionID] = useState(null);
+  const [openedSectionID, setOpenedSectionID] = useState('personal');
 
   const [activeSectionIDs, setActiveSectionIDs] = useState([
     'personal',
@@ -28,12 +30,16 @@ export default function App() {
     'certifications',
   ]);
 
+  const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
+
+  /**
+   * This state determines whether to allow DnD and to render delete buttons
+   * with `NavItem`s or not.
+   */
+  const [editorMode, setEditorMode] = useState(false);
+
   function resetScreenReaderAnnouncement() {
     setScreenReaderAnnouncement(null);
-  }
-
-  function updateScreenReaderAnnouncement(announcement) {
-    setScreenReaderAnnouncement(announcement);
   }
 
   function openSection(sectionID) {
@@ -137,6 +143,24 @@ export default function App() {
     }
   }
 
+  function toggleNavbar() {
+    setIsNavbarExpanded(!isNavbarExpanded);
+
+    if (editorMode) setEditorMode(false);
+  }
+
+  function toggleEditorMode() {
+    setEditorMode(!editorMode);
+
+    if (editorMode) {
+      setScreenReaderAnnouncement('Editor Mode off');
+    } else {
+      setScreenReaderAnnouncement(
+        'Editor Mode on. To move focus to tabs for editing, press Tab while holding Shift. If you collapse the navbar either by pressing Escape or pressing the "Toggle Navbar" button, the editor mode will be turned off automatically.',
+      );
+    }
+  }
+
   function clearAll() {
     deleteSections(possibleSectionIDs);
   }
@@ -159,15 +183,23 @@ export default function App() {
         addSections={addSections}
         clearAll={clearAll}
         deleteSections={deleteSections}
+        editorMode={editorMode}
         fillAll={fillAll}
+        isNavbarExpanded={isNavbarExpanded}
         openedSectionID={openedSectionID}
         possibleSectionIDs={possibleSectionIDs}
         preview={preview}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         selectSection={openSection}
-        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
-      />
+        toggleEditorMode={toggleEditorMode}
+        toggleNavbar={toggleNavbar}
+      >
+        <Personal
+          className="AppLayout-Main"
+          isNavbarExpanded={isNavbarExpanded}
+        />
+      </AppLayout>
     </>
   );
 }

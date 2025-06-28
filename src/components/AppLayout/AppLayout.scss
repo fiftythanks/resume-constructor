@@ -3,10 +3,11 @@
 .AppLayout {
   display: grid;
   grid-template:
-    1fr calc(v.$appbar-button-size + 2 * 1rem) / calc(
+    auto 1fr calc(v.$appbar-button-size + 2 * 1rem) / calc(
       v.$appbar-button-size + 2 * 1rem
     )
     1fr;
+  row-gap: 1rem;
   align-items: center;
   justify-items: center;
   width: 100%;
@@ -15,12 +16,14 @@
   &_navbar {
     &_expanded {
       grid-template-areas:
+        'header  header'
         'navbar  main'
         'toolbar toolbar';
     }
 
     &_hidden {
       grid-template-areas:
+        'header  header'
         'main    main'
         'toolbar toolbar';
     }
@@ -29,13 +32,25 @@
   &-Navbar {
     grid-area: navbar;
     align-self: end;
+    overflow-y: visible;
   }
 
   &-Toolbar {
     grid-area: toolbar;
   }
 
+  &-Header {
+    grid-area: header;
+    padding-top: 1rem;
+  }
+
+  &-Title {
+    text-align: center;
+    font-size: 1.75rem;
+  }
+
   &-Main {
     grid-area: main;
+    padding-top: 1rem;
   }
 }

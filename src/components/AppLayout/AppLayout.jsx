@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Navbar from '@/components/Navbar';
 import Toolbar from '@/components/Toolbar';
@@ -11,41 +11,18 @@ export default function AppLayout({
   children,
   clearAll,
   deleteSections,
+  editorMode,
   fillAll,
+  isNavbarExpanded,
   openedSectionID,
   possibleSectionIDs,
   preview,
   reorderSections,
   resetScreenReaderAnnouncement,
   selectSection,
-  updateScreenReaderAnnouncement,
+  toggleEditorMode,
+  toggleNavbar,
 }) {
-  const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
-
-  /**
-   * This state determines whether to allow DnD and render delete buttons
-   * with `NavItem`s or not.
-   */
-  const [editorMode, setEditorMode] = useState(false);
-
-  function toggleNavbar() {
-    setIsNavbarExpanded(!isNavbarExpanded);
-
-    if (editorMode) setEditorMode(false);
-  }
-
-  function toggleEditorMode() {
-    setEditorMode(!editorMode);
-
-    if (editorMode) {
-      updateScreenReaderAnnouncement('Editor Mode off');
-    } else {
-      updateScreenReaderAnnouncement(
-        'Editor Mode on. To move focus to tabs for editing, press Tab while holding Shift. If you collapse the navbar either by pressing Escape or pressing the "Toggle Navbar" button, the editor mode will be turned off automatically.',
-      );
-    }
-  }
-
   const canAddSections =
     possibleSectionIDs.filter(
       (sectionID) => !activeSectionIDs.includes(sectionID),
@@ -131,6 +108,16 @@ export default function AppLayout({
     }
   }
 
+  const titles = {
+    personal: 'Personal Details',
+    links: 'Links',
+    skills: 'Technical Skills',
+    experience: 'Work Experience',
+    projects: 'Projects',
+    education: 'Education',
+    certifications: 'Certifications',
+  };
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className={`AppLayout ${navbarModifier}`} onKeyDown={handleKeyDown}>
@@ -157,7 +144,10 @@ export default function AppLayout({
         preview={preview}
         toggleNavbar={toggleNavbar}
       />
-      <main className="AppLayout-Main">{children}</main>
+      <header className="AppLayout-Header">
+        <h1 className="AppLayout-Title">{titles[`${openedSectionID}`]}</h1>
+      </header>
+      {children}
     </div>
   );
 }
