@@ -167,28 +167,58 @@ export default function Navbar({
   function handleKeyDown(e) {
     const { id } = e.target;
 
-    if (e.key === 'ArrowDown' && activeSectionIDs.length > 1 && !isDragging) {
-      e.preventDefault();
-
-      const i = activeSectionIDs.indexOf(id);
-
-      if (i < activeSectionIDs.length - 1) {
-        document.getElementById(activeSectionIDs[i + 1]).focus();
-      } else {
-        document.getElementById(activeSectionIDs[0]).focus();
-      }
-    } else if (
-      e.key === 'ArrowUp' &&
+    if (
+      possibleSectionIDs.includes(id) &&
       activeSectionIDs.length > 1 &&
       !isDragging
     ) {
-      e.preventDefault();
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
 
-      const i = activeSectionIDs.indexOf(id);
-      if (i > 0) {
-        document.getElementById(activeSectionIDs[i - 1]).focus();
-      } else {
-        document.getElementById(activeSectionIDs.at(-1)).focus();
+        const i = activeSectionIDs.indexOf(id);
+
+        if (i < activeSectionIDs.length - 1) {
+          document.getElementById(activeSectionIDs[i + 1]).focus();
+        } else {
+          document.getElementById(activeSectionIDs[0]).focus();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+
+        const i = activeSectionIDs.indexOf(id);
+        if (i > 0) {
+          document.getElementById(activeSectionIDs[i - 1]).focus();
+        } else {
+          document.getElementById(activeSectionIDs.at(-1)).focus();
+        }
+      }
+    } else if (
+      editorMode &&
+      activeSectionIDs.length > 1 &&
+      /^delete-[a-z]+/.test(id)
+    ) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+
+        const sectionID = id.replace('delete-', '');
+        const i = activeSectionIDs.indexOf(sectionID);
+
+        if (i < activeSectionIDs.length - 1) {
+          document.getElementById(`delete-${activeSectionIDs[i + 1]}`).focus();
+        } else {
+          document.getElementById(`delete-${activeSectionIDs[1]}`).focus();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+
+        const sectionID = id.replace('delete-', '');
+        const i = activeSectionIDs.indexOf(sectionID);
+
+        if (i > 1) {
+          document.getElementById(`delete-${activeSectionIDs[i - 1]}`).focus();
+        } else {
+          document.getElementById(`delete-${activeSectionIDs.at(-1)}`).focus();
+        }
       }
     }
   }
@@ -235,6 +265,17 @@ export default function Navbar({
       e.preventDefault();
 
       document.getElementById('add-sections').focus();
+    }
+
+    if (
+      e.key === 'Tab' &&
+      e.shiftKey === true &&
+      editorMode &&
+      activeSectionIDs.length > 1
+    ) {
+      e.preventDefault();
+
+      document.getElementById(activeSectionIDs[1]).focus();
     }
   }
 
