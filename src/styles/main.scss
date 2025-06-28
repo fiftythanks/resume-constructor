@@ -1,6 +1,7 @@
 @charset 'UTF-8'; /* To avoid any character encoding issue. */
 
 @forward 'base';
+@forward 'blocks';
 
 /**
  * TABLE OF CONTENTS
@@ -12,4 +13,8 @@
  * Typography................Global typography styles.
  * Custom-properties.........Global CSS custom properties.
  * Helpers...................Global CSS helper classes.
+ * 
+ * BLOCKS
+ * appbar-item...............A global BEM block.
+ * section......................A global BEM block.
  */

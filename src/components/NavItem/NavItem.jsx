@@ -9,7 +9,6 @@ import capitalize from '@/utils/capitalize';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
-import '@/styles/blocks/appbar-item.scss';
 import './NavItem.scss';
 
 export default function NavItem({

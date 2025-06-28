@@ -1,8 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
-import '@/styles/blocks/appbar-item.scss';
-
 export default function AppbarItem({
   alt,
   iconSrc,
