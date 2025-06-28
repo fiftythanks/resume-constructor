@@ -104,15 +104,29 @@ export default function AppLayout({
     }
 
     if (e.key === 'Escape') {
+      const deleteSectionBtns = possibleSectionIDs.map(
+        (sectionID) => `delete-${sectionID}`,
+      );
+
       const navbarChildrenIDs = [
         ...possibleSectionIDs,
+        ...deleteSectionBtns,
         'add-sections',
         'edit-sections',
       ];
 
       if (navbarChildrenIDs.includes(id)) {
-        toggleNavbar();
-        document.getElementById('toggle-navbar').focus();
+        if (editorMode) {
+          toggleEditorMode();
+
+          if (/^delete-/.test(id)) {
+            const sectionID = id.replace('delete-', '');
+            document.getElementById(sectionID).focus();
+          }
+        } else {
+          toggleNavbar();
+          document.getElementById('toggle-navbar').focus();
+        }
       }
     }
   }
