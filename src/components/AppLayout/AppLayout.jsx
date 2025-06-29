@@ -42,11 +42,13 @@ export default function AppLayout({
 
     if (e.key === 'Tab') {
       if (id === openedSectionID) {
-        e.preventDefault();
-
         if (e.shiftKey) {
+          e.preventDefault();
+
           document.getElementById('toggle-navbar').focus();
-        } else {
+        } else if (!editorMode) {
+          e.preventDefault();
+
           document
             .getElementById(`${openedSectionID}-tabpanel`)
             .querySelectorAll(focusableNodes)[0]
