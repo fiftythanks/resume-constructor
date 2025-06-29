@@ -47,6 +47,7 @@
   position: relative;
   gap: 0.5rem;
   align-items: center;
+  touch-action: none;
 
   &_dragged {
     /**
@@ -79,10 +80,6 @@
 
     &:hover {
       cursor: pointer;
-    }
-
-    &_drag {
-      touch-action: none;
     }
 
     &_disabled {
