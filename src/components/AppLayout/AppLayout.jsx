@@ -78,6 +78,23 @@ export default function AppLayout({
           }
         }
       }
+
+      if (
+        (id === 'toggle-controls' ||
+          id === 'clear-all' ||
+          id === 'fill-all' ||
+          id === 'preview') &&
+        !e.shiftKey
+      ) {
+        e.preventDefault();
+
+        const focusableNodes = ['button', 'input', 'textarea'];
+
+        document
+          .querySelector('main')
+          .querySelectorAll(focusableNodes)[0]
+          .focus();
+      }
     }
 
     if (e.key === 'Escape') {

@@ -4,6 +4,7 @@ export default function Personal({ className, isNavbarExpanded = false }) {
   return (
     <main
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
+      tabIndex={-1}
     >
       <form action="#" className="section--form">
         <ul className="section--list">

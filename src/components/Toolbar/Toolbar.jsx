@@ -151,7 +151,6 @@ export default function Toolbar({
           e.relatedTarget !== toggleControlsRef.current)) // [1]
     ) {
       toggleControls();
-      toggleControlsRef.current.focus();
     }
   }
 
