@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import Navbar from '@/components/Navbar';
 import Toolbar from '@/components/Toolbar';
 
 import './AppLayout.scss';
+
+const focusableNodes = ['button', 'input', 'textarea'];
 
 export default function AppLayout({
   activeSectionIDs,
@@ -23,6 +25,9 @@ export default function AppLayout({
   toggleEditorMode,
   toggleNavbar,
 }) {
+  // For keyboard navigation.
+  const lastFocusedElemIDRef = useRef('');
+
   const canAddSections =
     possibleSectionIDs.filter(
       (sectionID) => !activeSectionIDs.includes(sectionID),
@@ -39,7 +44,16 @@ export default function AppLayout({
       if (id === openedSectionID) {
         e.preventDefault();
 
-        // TODO: focus should move to the corresponding tabpanel
+        if (e.shiftKey) {
+          document.getElementById('toggle-navbar').focus();
+        } else {
+          document
+            .getElementById(`${openedSectionID}-tabpanel`)
+            .querySelectorAll(focusableNodes)[0]
+            .focus();
+
+          lastFocusedElemIDRef.current = openedSectionID;
+        }
       }
 
       if (id === 'edit-sections') {
@@ -88,12 +102,27 @@ export default function AppLayout({
       ) {
         e.preventDefault();
 
-        const focusableNodes = ['button', 'input', 'textarea'];
-
         document
           .querySelector('main')
           .querySelectorAll(focusableNodes)[0]
           .focus();
+
+        lastFocusedElemIDRef.current = 'toggle-controls';
+      }
+
+      const firstFocusableTabpanelNode = document
+        .querySelector('main')
+        .querySelectorAll(focusableNodes)[0];
+
+      if (
+        e.target === firstFocusableTabpanelNode &&
+        e.shiftKey &&
+        isNavbarExpanded &&
+        (lastFocusedElemIDRef.current === null ||
+          lastFocusedElemIDRef.current === openedSectionID)
+      ) {
+        e.preventDefault();
+        document.getElementById(openedSectionID).focus();
       }
     }
 

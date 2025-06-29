@@ -3,7 +3,9 @@ import React from 'react';
 export default function Personal({ className, isNavbarExpanded = false }) {
   return (
     <main
+      aria-labelledby="personal"
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
+      id="personal-tabpanel"
       tabIndex={-1}
     >
       <form action="#" className="section--form">
