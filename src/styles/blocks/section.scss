@@ -28,12 +28,14 @@
     list-style-type: none;
   }
 
-  &--field-label {
+  &--list-item {
     display: flex;
     flex-direction: column;
   }
 
-  &--label-text {
+  &--field-label {
+    display: flex;
+    flex-direction: column;
     font-size: 1.1rem;
   }
 
