@@ -37,30 +37,30 @@ export default function Toolbar({
   };
 
   const clearAllBtnAttributes = {
+    // TODO: Add more ARIA attributes when you create actual resume sections!
     'aria-controls':
       'links skills experience projects education certifications',
     'aria-label': 'Clear All',
     ref: firstControlRef,
     role: 'menuitem',
-    // TODO: Add more ARIA attributes when you create actual resume sections!
     id: 'clear-all',
     tabIndex: '-1',
   };
 
   const previewAttributes = {
+    // TODO: Add more ARIA attributes when you create actual resume preview!
     'aria-label': 'Open Preview',
     role: 'menuitem',
-    // TODO: Add more ARIA attributes when you create actual resume preview!
     id: 'preview',
     tabIndex: '-1',
   };
 
   const fillAllBtnAttributes = {
+    // TODO: Add more ARIA attributes when you create actual resume sections!
     'aria-controls':
       'personal links skills experience projects education certifications',
     'aria-label': 'Fill All',
     role: 'menuitem',
-    // TODO: Add more ARIA attributes when you create actual resume sections!
     id: 'fill-all',
     tabIndex: '-1',
   };
@@ -124,14 +124,12 @@ export default function Toolbar({
         }
       }
 
-      if (e.key === 'Tab') {
+      // `e.shifKey === false` behaviour is programmed in AppLayout.
+      if (e.key === 'Tab' && e.shiftKey) {
         e.preventDefault();
 
-        // `e.shifKey === false` behaviour is programmed in AppLayout.
-        if (e.shiftKey) {
-          toggleControls();
-          document.getElementById('toggle-controls').focus();
-        }
+        toggleControls();
+        document.getElementById('toggle-controls').focus();
       }
 
       if (e.key === 'Escape') {
@@ -142,10 +140,15 @@ export default function Toolbar({
   }
 
   function handleBlur(e) {
+    /**
+     * [1]: Otherwise click on "Toggle Controls" will run `toggleControls()`
+     * twice.
+     */
     if (
       controls.includes(e.target.id) &&
-      // Otherwise click on "Toggle Controls" will run `toggleControls()` twice.
-      e.relatedTarget !== toggleControlsRef.current
+      (e.relatedTarget === null ||
+        (!controls.includes(e.relatedTarget.id) &&
+          e.relatedTarget !== toggleControlsRef.current)) // [1]
     ) {
       toggleControls();
       toggleControlsRef.current.focus();
