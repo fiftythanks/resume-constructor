@@ -66,7 +66,6 @@ export default function Toolbar({
   };
 
   function toggleControls() {
-    console.log(`Controls are ${areControlsExpanded ? 'hidden' : 'expanded'}`);
     setAreControlsExpanded(!areControlsExpanded);
   }
 
@@ -204,9 +203,6 @@ export default function Toolbar({
         </ul>
       </div>
       <AppbarItem
-        /**
-         * TODO: make the button change its icon when the menu is expanded.
-         */
         action={toggleControls}
         alt="Toggle Controls"
         attributes={controlsToggleAttributes}
