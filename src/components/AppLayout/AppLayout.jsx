@@ -7,6 +7,16 @@ import './AppLayout.scss';
 
 const focusableNodes = ['button', 'input', 'textarea'];
 
+const titles = {
+  personal: 'Personal Details',
+  links: 'Links',
+  skills: 'Technical Skills',
+  experience: 'Work Experience',
+  projects: 'Projects',
+  education: 'Education',
+  certifications: 'Certifications',
+};
+
 export default function AppLayout({
   activeSectionIDs,
   addSections,
@@ -156,16 +166,6 @@ export default function AppLayout({
     }
   }
 
-  const titles = {
-    personal: 'Personal Details',
-    links: 'Links',
-    skills: 'Technical Skills',
-    experience: 'Work Experience',
-    projects: 'Projects',
-    education: 'Education',
-    certifications: 'Certifications',
-  };
-
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className={`AppLayout ${navbarModifier}`} onKeyDown={handleKeyDown}>
@@ -182,6 +182,7 @@ export default function AppLayout({
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         selectedSectionID={openedSectionID}
         selectSection={selectSection}
+        titles={titles}
         toggleEditorMode={toggleEditorMode}
       />
       <Toolbar

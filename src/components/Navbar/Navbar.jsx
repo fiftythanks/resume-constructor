@@ -66,6 +66,7 @@ export default function Navbar({
   selectedSectionID,
   selectSection,
   toggleEditorMode,
+  titles,
 }) {
   // For the "Add Sections" popup
   const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
@@ -141,6 +142,7 @@ export default function Navbar({
       key={sectionID}
       selectedSectionID={selectedSectionID}
       selectSection={() => selectSection(sectionID)}
+      titles={titles}
       deleteSection={() => {
         deleteSections([sectionID]);
       }}
@@ -305,6 +307,7 @@ export default function Navbar({
             id="personal"
             selectedSectionID={selectedSectionID}
             selectSection={() => selectSection('personal')}
+            titles={titles}
           />
           {/**
            * This structure is necessary to be able to limit the dragging to

@@ -5,22 +5,21 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import capitalize from '@/utils/capitalize';
-
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
 import './NavItem.scss';
 
 export default function NavItem({
-  iconSrc,
-  alt,
-  selectedSectionID,
-  selectSection,
-  id,
-  className,
-  editorMode,
-  deleteSection,
   activeSectionIDs,
+  alt,
+  className,
+  deleteSection,
+  editorMode,
+  iconSrc,
+  id,
+  selectSection,
+  selectedSectionID,
+  titles,
 }) {
   // Drag and drop logic
   const {
@@ -91,7 +90,7 @@ export default function NavItem({
         aria-controls={`${id}-tabpanel`}
         // To indicate that the tabbing functionality is disabled
         aria-disabled={editorMode}
-        aria-label={`${capitalize(id)}`}
+        aria-label={titles[`${id}`]}
         aria-selected={isSelected}
         className={mainClassName}
         id={id}
