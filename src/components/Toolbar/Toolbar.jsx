@@ -21,6 +21,7 @@ export default function Toolbar({
 }) {
   const [areControlsExpanded, setAreControlsExpanded] = useState(false);
   const firstControlRef = useRef(null);
+  const toggleControlsRef = useRef(null);
 
   const navbarToggleAttributes = {
     'aria-controls': 'navbar',
@@ -65,6 +66,7 @@ export default function Toolbar({
   };
 
   function toggleControls() {
+    console.log(`Controls are ${areControlsExpanded ? 'hidden' : 'expanded'}`);
     setAreControlsExpanded(!areControlsExpanded);
   }
 
@@ -74,6 +76,7 @@ export default function Toolbar({
     'aria-haspopup': 'menu',
     'aria-label': 'Control Buttons',
     id: 'toggle-controls',
+    ref: toggleControlsRef,
   };
 
   // Keyboard navigation.
@@ -125,23 +128,29 @@ export default function Toolbar({
       if (e.key === 'Tab') {
         e.preventDefault();
 
+        // `e.shifKey === false` behaviour is programmed in AppLayout.
         if (e.shiftKey) {
+          toggleControls();
           document.getElementById('toggle-controls').focus();
-        } else {
-          // TODO: focus should move to Main. For now, let it be blur.
-          e.target.blur();
         }
       }
 
       if (e.key === 'Escape') {
+        toggleControls();
         document.getElementById('toggle-controls').focus();
       }
     }
   }
 
   function handleBlur(e) {
-    if (e.relatedTarget === null || !controls.includes(e.relatedTarget.id))
+    if (
+      controls.includes(e.target.id) &&
+      // Otherwise click on "Toggle Controls" will run `toggleControls()` twice.
+      e.relatedTarget !== toggleControlsRef.current
+    ) {
       toggleControls();
+      toggleControlsRef.current.focus();
+    }
   }
 
   return (
@@ -195,6 +204,9 @@ export default function Toolbar({
         </ul>
       </div>
       <AppbarItem
+        /**
+         * TODO: make the button change its icon when the menu is expanded.
+         */
         action={toggleControls}
         alt="Toggle Controls"
         attributes={controlsToggleAttributes}
