@@ -28,6 +28,19 @@ module.exports = {
   plugins: ['import', 'perfectionist'],
   rules: {
     /**
+     * Explicit labelling is the surest way to make labels work as intended.
+     * Implicit labels may not work properly with some assistive technologies.
+     * Asserting both types of labelling is redundant.
+     * Read: https://stackoverflow.com/a/63932559/28655439.
+     */
+    'jsx-a11y/label-has-associated-control': [
+      2,
+      {
+        asserts: 'htmlFor',
+      },
+    ],
+
+    /**
      * To ensure `eslint-plugin-import` doesn't conflict with
      * `eslint-plugin-perfectionist`.
      */
