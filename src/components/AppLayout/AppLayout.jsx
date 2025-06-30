@@ -197,6 +197,7 @@ export default function AppLayout({
         <h1 className="AppLayout-Title">{titles[`${openedSectionID}`]}</h1>
       </header>
       {children}
+      {/* TODO: add "Previous" and "Next" buttons. */}
     </div>
   );
 }

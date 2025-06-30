@@ -1,4 +1,7 @@
+/* eslint-disable no-param-reassign */
 import React, { useState } from 'react';
+
+import { useImmer } from 'use-immer';
 
 import Personal from '@/pages/Personal';
 
@@ -37,6 +40,78 @@ export default function App() {
    * with `NavItem`s or not.
    */
   const [editorMode, setEditorMode] = useState(false);
+
+  const [resumeData, setResumeData] = useImmer({
+    personal: {
+      fullName: '',
+      jobTitle: '',
+      email: '',
+      phone: '',
+      address: '',
+      summary: '',
+    },
+    links: {
+      website: {
+        text: '',
+        link: '',
+      },
+      github: {
+        text: '',
+        link: '',
+      },
+      linkedin: {
+        text: '',
+        link: '',
+      },
+      telegram: {
+        text: '',
+        link: '',
+      },
+    },
+    skills: {
+      languages: ['', '', ''],
+      frameworks: ['', '', ''],
+      tools: ['', '', ''],
+    },
+    experience: [
+      {
+        companyName: '',
+        jobTitle: '',
+        duration: '',
+        address: '',
+        bulletPoints: ['', '', ''],
+      },
+    ],
+    projects: [
+      {
+        projectName: '',
+        stack: '',
+        bulletPoints: ['', '', ''],
+        code: {
+          text: '',
+          link: '',
+        },
+        demo: {
+          text: '',
+          link: '',
+        },
+      },
+    ],
+    education: [
+      {
+        uni: '',
+        degree: '',
+        graduation: '',
+        address: '',
+        bulletPoints: ['', '', ''],
+      },
+    ],
+    certifications: {
+      certificates: '',
+      skills: '',
+      interests: '',
+    },
+  });
 
   function resetScreenReaderAnnouncement() {
     setScreenReaderAnnouncement(null);
@@ -173,6 +248,67 @@ export default function App() {
     // do nothing
   }
 
+  // Resume data updater functions.
+  function updatePersonal(field, value) {
+    setResumeData((draft) => {
+      draft.personal[field] = value;
+    });
+  }
+
+  /* function updateLinks(field, value) {
+    setResumeData((draft) => {
+      draft.links[field] = value;
+    });
+  }
+
+  function updateSkills(field, value) {
+    setResumeData((draft) => {
+      draft.skills[field] = value;
+    });
+  }
+
+  function updateExperience(index, field, value) {
+    setResumeData((draft) => {
+      draft.experience[index][field] = value;
+    });
+  }
+
+  function updateProjects(index, field, value) {
+    setResumeData((draft) => {
+      draft.projects[index][field] = value;
+    });
+  }
+
+  function updateEducation(index, field, value) {
+    setResumeData((draft) => {
+      draft.education[index][field] = value;
+    });
+  }
+
+  function updateCertifications(field, value) {
+    setResumeData((draft) => {
+      draft.certifications[field] = value;
+    });
+  } */
+
+  // Section components.
+  const sections = {
+    personal: (
+      <Personal
+        className="AppLayout-Main"
+        data={resumeData.personal}
+        isNavbarExpanded={isNavbarExpanded}
+        updateData={updatePersonal}
+      />
+    ),
+    links: <h2>Links</h2>,
+    skills: <h2>Skills</h2>,
+    experience: <h2>Work Experience</h2>,
+    projects: <h2>Projects</h2>,
+    education: <h2>Education</h2>,
+    certifications: <h2>Certifications</h2>,
+  };
+
   return (
     <>
       <span aria-live="polite" className="visually-hidden">
@@ -195,10 +331,7 @@ export default function App() {
         toggleEditorMode={toggleEditorMode}
         toggleNavbar={toggleNavbar}
       >
-        <Personal
-          className="AppLayout-Main"
-          isNavbarExpanded={isNavbarExpanded}
-        />
+        {sections[openedSectionID]}
       </AppLayout>
     </>
   );

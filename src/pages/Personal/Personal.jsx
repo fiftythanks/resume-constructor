@@ -1,6 +1,11 @@
 import React from 'react';
 
-export default function Personal({ className, isNavbarExpanded = false }) {
+export default function Personal({
+  className,
+  data,
+  isNavbarExpanded = false,
+  updateData,
+}) {
   return (
     <main
       aria-labelledby="personal"
@@ -20,6 +25,8 @@ export default function Personal({ className, isNavbarExpanded = false }) {
               name="full-name"
               placeholder="John Doe"
               type="text"
+              value={data.fullName}
+              onChange={(e) => updateData('fullName', e.target.value)}
             />
           </li>
           <li className="section--list-item">
@@ -32,6 +39,8 @@ export default function Personal({ className, isNavbarExpanded = false }) {
               name="job-title"
               placeholder="Frontend Engineer"
               type="text"
+              value={data.jobTitle}
+              onChange={(e) => updateData('jobTitle', e.target.value)}
             />
           </li>
           <li className="section--list-item">
@@ -44,6 +53,8 @@ export default function Personal({ className, isNavbarExpanded = false }) {
               name="email"
               placeholder="john.doe@gmail.com"
               type="email"
+              value={data.email}
+              onChange={(e) => updateData('email', e.target.value)}
             />
           </li>
           <li className="section--list-item">
@@ -56,6 +67,8 @@ export default function Personal({ className, isNavbarExpanded = false }) {
               name="phone"
               placeholder="+7 666 534-32-33"
               type="tel"
+              value={data.phone}
+              onChange={(e) => updateData('phone', e.target.value)}
             />
           </li>
           <li className="section--list-item">
@@ -68,6 +81,8 @@ export default function Personal({ className, isNavbarExpanded = false }) {
               name="address"
               placeholder="Cool St, Cambridge"
               type="text"
+              value={data.address}
+              onChange={(e) => updateData('address', e.target.value)}
             />
           </li>
           <li className="section--list-item">
@@ -82,6 +97,8 @@ export default function Personal({ className, isNavbarExpanded = false }) {
               id="personal-details-summary"
               name="personal-details-summary"
               placeholder="Detail-oriented Frontend Engineer eager to create seamless user experiences."
+              value={data.summary}
+              onChange={(e) => updateData('summary', e.target.value)}
             />
           </li>
         </ul>
