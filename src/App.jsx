@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import { useImmer } from 'use-immer';
 
+import Links from '@/pages/Links';
 import Personal from '@/pages/Personal';
 
 import AppLayout from '@/components/AppLayout';
@@ -255,13 +256,13 @@ export default function App() {
     });
   }
 
-  /* function updateLinks(field, value) {
+  function updateLinks(field, type, value) {
     setResumeData((draft) => {
-      draft.links[field] = value;
+      draft.links[field][type] = value;
     });
   }
 
-  function updateSkills(field, value) {
+  /* function updateSkills(field, value) {
     setResumeData((draft) => {
       draft.skills[field] = value;
     });
@@ -301,7 +302,14 @@ export default function App() {
         updateData={updatePersonal}
       />
     ),
-    links: <h2>Links</h2>,
+    links: (
+      <Links
+        className="AppLayout-Main"
+        data={resumeData.links}
+        isNavbarExpanded={isNavbarExpanded}
+        updateData={updateLinks}
+      />
+    ),
     skills: <h2>Skills</h2>,
     experience: <h2>Work Experience</h2>,
     projects: <h2>Projects</h2>,
