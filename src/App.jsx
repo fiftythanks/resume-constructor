@@ -166,6 +166,8 @@ export default function App() {
     }
   }
 
+  // TODO: clear resume data on delete.
+  // TODO: open the next/previous/Personal section on opened section delete.
   function deleteSections(sectionIDs) {
     if (Array.isArray(sectionIDs)) {
       const newActiveSectionIDs = activeSectionIDs.slice();
