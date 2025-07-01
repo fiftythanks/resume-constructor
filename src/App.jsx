@@ -5,6 +5,7 @@ import { useImmer } from 'use-immer';
 
 import Links from '@/pages/Links';
 import Personal from '@/pages/Personal';
+import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
@@ -22,7 +23,7 @@ const possibleSectionIDs = [
 
 export default function App() {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
-  const [openedSectionID, setOpenedSectionID] = useState('personal');
+  const [openedSectionID, setOpenedSectionID] = useState('skills');
 
   const [activeSectionIDs, setActiveSectionIDs] = useState([
     'personal',
@@ -70,9 +71,48 @@ export default function App() {
       },
     },
     skills: {
-      languages: ['', '', ''],
-      frameworks: ['', '', ''],
-      tools: ['', '', ''],
+      languages: [
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+      ],
+      frameworks: [
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+      ],
+      tools: [
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+        {
+          id: crypto.randomUUID(),
+          value: '',
+        },
+      ],
     },
     experience: [
       {
@@ -264,13 +304,78 @@ export default function App() {
     });
   }
 
-  /* function updateSkills(field, value) {
-    setResumeData((draft) => {
-      draft.skills[field] = value;
-    });
-  }
+  const skillsFunctions = {
+    updateSkills(field, value) {
+      setResumeData((draft) => {
+        draft.skills[field] = value;
+      });
+    },
 
-  function updateExperience(index, field, value) {
+    addLanguage() {
+      setResumeData((draft) => {
+        draft.skills.languages.push({
+          id: crypto.randomUUID(),
+          value: '',
+        });
+      });
+    },
+
+    deleteLanguage(index) {
+      setResumeData((draft) => {
+        draft.skills.languages.splice(index, 1);
+      });
+    },
+
+    editLanguage(index, value) {
+      setResumeData((draft) => {
+        draft.skills.languages[index] = value;
+      });
+    },
+
+    addFramework() {
+      setResumeData((draft) => {
+        draft.skills.frameworks.push({
+          id: crypto.randomUUID(),
+          value: '',
+        });
+      });
+    },
+
+    deleteFramework(index) {
+      setResumeData((draft) => {
+        draft.skills.frameworks.splice(index, 1);
+      });
+    },
+
+    editFramework(index, value) {
+      setResumeData((draft) => {
+        draft.skills.frameworks[index] = value;
+      });
+    },
+
+    addTool() {
+      setResumeData((draft) => {
+        draft.skills.tools.push({
+          id: crypto.randomUUID(),
+          value: '',
+        });
+      });
+    },
+
+    deleteTool(index) {
+      setResumeData((draft) => {
+        draft.skills.tools.splice(index, 1);
+      });
+    },
+
+    editTool(index, value) {
+      setResumeData((draft) => {
+        draft.skills.tools[index] = value;
+      });
+    },
+  };
+
+  /* function updateExperience(index, field, value) {
     setResumeData((draft) => {
       draft.experience[index][field] = value;
     });
@@ -312,7 +417,14 @@ export default function App() {
         updateData={updateLinks}
       />
     ),
-    skills: <h2>Skills</h2>,
+    skills: (
+      <Skills
+        className="AppLayout-Main"
+        data={resumeData.skills}
+        functions={skillsFunctions}
+        isNavbarExpanded={isNavbarExpanded}
+      />
+    ),
     experience: <h2>Work Experience</h2>,
     projects: <h2>Projects</h2>,
     education: <h2>Education</h2>,

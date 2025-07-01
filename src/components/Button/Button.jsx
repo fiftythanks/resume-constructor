@@ -1,18 +1,20 @@
+/* eslint-disable no-param-reassign */
 import React from 'react';
 
 import './Button.scss';
 
 export default function Button({
   children,
-  onClick,
+  className = '',
   elements = [],
   id = null,
   isDisabled = false,
   isSubmit = false,
   label = null,
   modifiers = [],
+  onClick,
 }) {
-  let className = 'Button';
+  className = `${className} Button`.trimStart();
 
   // Add BEM element classes
   if (Array.isArray(elements)) {

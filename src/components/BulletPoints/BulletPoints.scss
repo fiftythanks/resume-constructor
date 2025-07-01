@@ -1,0 +1,65 @@
+@use '@/styles/utils/placeholders';
+
+.BulletPoints {
+  $gap: 1.25rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  border: 0;
+  padding: 0;
+
+  &-Legend {
+    margin-bottom: $gap;
+    padding: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  &-List {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  &-ListItem {
+    display: flex;
+    gap: 1rem;
+    touch-action: none;
+
+    &_dragged {
+      /**
+       * `z-index` must be 1 to make the dragged item display on
+       * top of all other elements.
+       * 
+       * In this case, the rule is effective without explicitly
+       * creating a new stacking context, because a stacking
+       * context is already created by `dnd-kit` when dragging takes
+       * place.
+       */
+      z-index: 1;
+    }
+  }
+
+  &-Field {
+    @extend %field;
+
+    width: 100%;
+  }
+
+  &-Button {
+    border: 0;
+    background: none;
+    padding-inline: 0;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &-Add {
+    align-self: center;
+  }
+}

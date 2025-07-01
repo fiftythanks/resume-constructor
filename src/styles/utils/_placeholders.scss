@@ -1,0 +1,11 @@
+%field {
+  border: 0;
+  border-radius: 5px;
+  background-color: var(--secondary-color);
+  padding: 0.5rem 0.75rem;
+  color: var(--text-color);
+
+  &::placeholder {
+    color: var(--placeholder-color);
+  }
+}

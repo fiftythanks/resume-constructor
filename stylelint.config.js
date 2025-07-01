@@ -10,6 +10,7 @@ const config = {
     '@stylistic/indentation': null,
 
     'max-nesting-depth': 3,
+    'scss/percent-placeholder-pattern': null,
     'selector-class-pattern': null,
   },
 };
