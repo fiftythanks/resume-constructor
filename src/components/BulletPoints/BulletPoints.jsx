@@ -37,6 +37,7 @@ export default function BulletPoints({
   name,
   legend,
   updateData,
+  updateScreenReaderAnnouncement,
 }) {
   // eslint-disable-next-line no-unused-vars
   const [isDragging, setIsDragging] = useState(false);
@@ -64,10 +65,35 @@ export default function BulletPoints({
 
     setIsDragging(false);
   }
+
+  // Screen reader announcements.
+  const announcements = {
+    onDragStart({ active }) {
+      return `Picked up draggable item ${data.findIndex((item) => item.id === active.id) + 1}.`;
+    },
+    onDragOver({ active, over }) {
+      if (over) {
+        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
+      }
+
+      return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} is no longer over a droppable area.`;
+    },
+    onDragEnd({ active, over }) {
+      if (over) {
+        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped over droppable area ${data.findIndex((item) => item.id === over.id) + 1}`;
+      }
+
+      return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
+    },
+    onDragCancel({ active }) {
+      return `Dragging was cancelled. Draggable item $${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
+    },
+  };
   return (
     <fieldset className={`${className} BulletPoints`.trimStart()}>
       <legend className="BulletPoints-Legend">{legend}</legend>
       <DndContext
+        accessibility={{ announcements }}
         collisionDetection={closestCenter}
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
         sensors={sensors}
@@ -81,7 +107,24 @@ export default function BulletPoints({
           <ul className="BulletPoints-List">
             {data.map((item, index) => {
               const { id, value } = item;
-              const del = () => deleteItem(index);
+              const del = () => {
+                deleteItem(index);
+                updateScreenReaderAnnouncement(
+                  `Bullet Point ${index + 1} was deleted.`,
+                );
+
+                if (index < data.length - 1) {
+                  document
+                    .getElementById(`delete-${name}-${index + 1}`)
+                    .focus();
+                } else if (index === 0) {
+                  document.getElementById(`add-${name}`).focus();
+                } else {
+                  document
+                    .getElementById(`delete-${name}-${index - 1}`)
+                    .focus();
+                }
+              };
               const edit = (e) =>
                 editItem(index, { ...data[index], value: e.target.value });
               return (
@@ -95,7 +138,7 @@ export default function BulletPoints({
                   id={id}
                   index={index}
                   key={id}
-                  name={name}
+                  name={`${name}-${index}`}
                   value={value}
                 />
               );
@@ -104,8 +147,9 @@ export default function BulletPoints({
         </SortableContext>
       </DndContext>
       <Button
+        aria-label={`Add ${capitalize(name)}`}
         className="BulletPoints-Add"
-        label={`Add ${capitalize(name)}`}
+        id={`add-${name}`}
         modifiers={['Button_bulletPoints']}
         onClick={addItem}
       >

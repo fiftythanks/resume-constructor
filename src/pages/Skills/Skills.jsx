@@ -7,12 +7,14 @@ export default function Skills({
   data,
   functions,
   isNavbarExpanded = false,
+  updateScreenReaderAnnouncement,
 }) {
   return (
     <main
       aria-labelledby="skills"
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
       id="skills-tabpanel"
+      role="tabpanel"
       tabIndex={-1}
     >
       <form action="#" className="section--form section--form__bullet-points">
@@ -22,8 +24,9 @@ export default function Skills({
           deleteItem={functions.deleteLanguage}
           editItem={functions.editLanguage}
           legend="Languages"
-          name="languages"
+          name="language"
           updateData={(value) => functions.updateSkills('languages', value)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
         />
         <BulletPoints
           addItem={functions.addFramework}
@@ -31,8 +34,9 @@ export default function Skills({
           deleteItem={functions.deleteFramework}
           editItem={functions.editFramework}
           legend="Frameworks, Libraries & Databases"
-          name="frameworks"
+          name="framework"
           updateData={(value) => functions.updateSkills('frameworks', value)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
         />
         <BulletPoints
           addItem={functions.addTool}
@@ -40,8 +44,9 @@ export default function Skills({
           deleteItem={functions.deleteTool}
           editItem={functions.editTool}
           legend="Tools & Other Technologies"
-          name="tools"
+          name="tool"
           updateData={(value) => functions.updateSkills('tools', value)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
         />
       </form>
     </main>

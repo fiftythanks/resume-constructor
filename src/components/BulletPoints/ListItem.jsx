@@ -42,16 +42,18 @@ export default function ListItem({ del, edit, id, index, name, value }) {
         <img alt="Drag" height="25px" src={dragSrc} width="25px" />
       </button>
       <input
+        aria-label={`Bullet point ${index + 1}`}
         className="BulletPoints-Field"
-        label="Bullet Point"
-        name={`${name}-${index}`}
+        name={name}
         placeholder={`Bullet point ${index + 1}`}
         type="text"
         value={value}
         onChange={edit}
       />
       <button
+        aria-label={`Delete Bullet Point ${index + 1}`}
         className="BulletPoints-Button BulletPoints-Button_delete"
+        id={`delete-${name}`}
         type="button"
         onClick={del}
       >

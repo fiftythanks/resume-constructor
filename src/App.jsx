@@ -158,6 +158,10 @@ export default function App() {
     setScreenReaderAnnouncement(null);
   }
 
+  function updateScreenReaderAnnouncement(announcement) {
+    setScreenReaderAnnouncement(announcement);
+  }
+
   function openSection(sectionID) {
     setOpenedSectionID(sectionID);
   }
@@ -423,6 +427,7 @@ export default function App() {
         data={resumeData.skills}
         functions={skillsFunctions}
         isNavbarExpanded={isNavbarExpanded}
+        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     experience: <h2>Work Experience</h2>,

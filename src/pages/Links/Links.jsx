@@ -11,6 +11,7 @@ export default function Links({
       aria-labelledby="links"
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
       id="links-tabpanel"
+      role="tabpanel"
       tabIndex={-1}
     >
       <form action="#" className="section--form">

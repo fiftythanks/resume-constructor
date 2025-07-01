@@ -11,6 +11,7 @@ export default function Personal({
       aria-labelledby="personal"
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
       id="personal-tabpanel"
+      role="tabpanel"
       tabIndex={-1}
     >
       <form action="#" className="section--form">
