@@ -51,6 +51,24 @@ export default function AppLayout({
     const { id } = e.target;
 
     if (e.key === 'Tab') {
+      if (
+        possibleSectionIDs.includes(id) &&
+        id !== openedSectionID &&
+        e.shiftKey &&
+        !editorMode
+      ) {
+        e.preventDefault();
+
+        if (
+          activeSectionIDs.indexOf(id) <
+          activeSectionIDs.indexOf(openedSectionID)
+        ) {
+          document.getElementById('toggle-navbar').focus();
+        } else {
+          document.getElementById(openedSectionID).focus();
+        }
+      }
+
       if (id === openedSectionID) {
         if (e.shiftKey) {
           e.preventDefault();
