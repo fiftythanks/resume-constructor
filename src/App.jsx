@@ -225,8 +225,259 @@ export default function App() {
     }
   }
 
-  // TODO: make screen readers announce full section names instead of IDs.
-  // TODO: clear resume data on delete.
+  function clear(sectionID) {
+    switch (sectionID) {
+      case 'certifications':
+        setResumeData((draft) => {
+          draft.certifications = {
+            certificates: '',
+            skills: '',
+            interests: '',
+          };
+        });
+        break;
+      case 'education':
+        setResumeData((draft) => {
+          draft.education = [
+            {
+              uni: '',
+              degree: '',
+              graduation: '',
+              address: '',
+              bulletPoints: ['', '', ''],
+            },
+          ];
+        });
+        break;
+      case 'experience':
+        setResumeData((draft) => {
+          draft.experience = [
+            {
+              companyName: '',
+              jobTitle: '',
+              duration: '',
+              address: '',
+              bulletPoints: ['', '', ''],
+            },
+          ];
+        });
+        break;
+      case 'links':
+        setResumeData((draft) => {
+          draft.links = {
+            website: {
+              text: '',
+              link: '',
+            },
+            github: {
+              text: '',
+              link: '',
+            },
+            linkedin: {
+              text: '',
+              link: '',
+            },
+            telegram: {
+              text: '',
+              link: '',
+            },
+          };
+        });
+        break;
+      case 'personal':
+        setResumeData((draft) => {
+          draft.personal = {
+            fullName: '',
+            jobTitle: '',
+            email: '',
+            phone: '',
+            address: '',
+            summary: '',
+          };
+        });
+        break;
+      case 'projects':
+        setResumeData((draft) => {
+          draft.projects = [
+            {
+              projectName: '',
+              stack: '',
+              bulletPoints: ['', '', ''],
+              code: {
+                text: '',
+                link: '',
+              },
+              demo: {
+                text: '',
+                link: '',
+              },
+            },
+          ];
+        });
+        break;
+      case 'skills':
+        setResumeData((draft) => {
+          draft.skills = {
+            languages: [
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+            ],
+            frameworks: [
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+            ],
+            tools: [
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+            ],
+          };
+        });
+        break;
+      // Clears all sections' data
+      default:
+        setResumeData({
+          personal: {
+            fullName: '',
+            jobTitle: '',
+            email: '',
+            phone: '',
+            address: '',
+            summary: '',
+          },
+          links: {
+            website: {
+              text: '',
+              link: '',
+            },
+            github: {
+              text: '',
+              link: '',
+            },
+            linkedin: {
+              text: '',
+              link: '',
+            },
+            telegram: {
+              text: '',
+              link: '',
+            },
+          },
+          skills: {
+            languages: [
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+            ],
+            frameworks: [
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+            ],
+            tools: [
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+              {
+                id: crypto.randomUUID(),
+                value: '',
+              },
+            ],
+          },
+          experience: [
+            {
+              companyName: '',
+              jobTitle: '',
+              duration: '',
+              address: '',
+              bulletPoints: ['', '', ''],
+            },
+          ],
+          projects: [
+            {
+              projectName: '',
+              stack: '',
+              bulletPoints: ['', '', ''],
+              code: {
+                text: '',
+                link: '',
+              },
+              demo: {
+                text: '',
+                link: '',
+              },
+            },
+          ],
+          education: [
+            {
+              uni: '',
+              degree: '',
+              graduation: '',
+              address: '',
+              bulletPoints: ['', '', ''],
+            },
+          ],
+          certifications: {
+            certificates: '',
+            skills: '',
+            interests: '',
+          },
+        });
+    }
+  }
+
   // TODO: open the next/previous/Personal section on opened section delete.
   // TODO: when all deletable sections are deleted, the focus should move to the Add Section button instead of the Toggle Editor Mode button.
   function deleteSections(sectionIDs) {
@@ -245,6 +496,7 @@ export default function App() {
               newActiveSectionIDs.indexOf(sectionID),
               1,
             );
+            clear(sectionID);
 
             newScreenReaderAnnouncement +=
               newScreenReaderAnnouncement === ''
@@ -301,6 +553,7 @@ export default function App() {
   }
 
   function clearAll() {
+    clear('personal');
     deleteSections(possibleSectionIDs);
   }
 
@@ -312,7 +565,7 @@ export default function App() {
     // do nothing
   }
 
-  // Resume data updater functions.
+  // Functions for modifying resume data.
   function updatePersonal(field, value) {
     setResumeData((draft) => {
       draft.personal[field] = value;
@@ -330,6 +583,10 @@ export default function App() {
       setResumeData((draft) => {
         draft.skills[field] = value;
       });
+    },
+
+    clear() {
+      clear('skills');
     },
 
     addLanguage() {
@@ -399,10 +656,10 @@ export default function App() {
   /* function updateExperience(index, field, value) {
     setResumeData((draft) => {
       draft.experience[index][field] = value;
-    });
-  }
-
-  function updateProjects(index, field, value) {
+      });
+      }
+      
+      function updateProjects(index, field, value) {
     setResumeData((draft) => {
       draft.projects[index][field] = value;
     });
@@ -421,7 +678,6 @@ export default function App() {
   } */
 
   // Section components.
-  // TODO: when the user navigates to an opened section, the screen reader must announce this section. Right now it isn't announced, for some reason.
   const sections = {
     personal: (
       <Personal
