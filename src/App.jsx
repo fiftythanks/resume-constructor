@@ -21,6 +21,16 @@ const possibleSectionIDs = [
   'certifications',
 ];
 
+const fullSectionNames = {
+  personal: 'Personal Details',
+  links: 'Links',
+  skills: 'Technical Skills',
+  experience: 'Work Experience',
+  projects: 'Projects',
+  education: 'Education',
+  certifications: 'Certifications',
+};
+
 export default function App() {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
   const [openedSectionID, setOpenedSectionID] = useState('skills');
@@ -164,12 +174,16 @@ export default function App() {
 
   function openSection(sectionID) {
     setOpenedSectionID(sectionID);
+    setScreenReaderAnnouncement(
+      `Section ${fullSectionNames[sectionID]} was opened.`,
+    );
   }
 
   function reorderSections(newActiveSectionIDs) {
     setActiveSectionIDs(newActiveSectionIDs);
   }
 
+  // TODO: when you add a bunch of sections, only the last one is announced, for some reason. Fix it.
   function addSections(sectionIDs) {
     if (Array.isArray(sectionIDs)) {
       const newActiveSectionIDs = activeSectionIDs.slice();
@@ -195,11 +209,12 @@ export default function App() {
 
       if (areAllSectionsActive) {
         if (sectionIDs.length === 1) {
-          setScreenReaderAnnouncement(`${capitalize(sectionIDs[0])} added.`);
-        } else {
-          // The first item is omitted because its the "Personal" page.
           setScreenReaderAnnouncement(
-            `${capitalize(sectionIDs[1])} ${sectionIDs.slice(2).join(', ')} added.`,
+            `Section ${fullSectionNames[sectionIDs[0]]} was added.`,
+          );
+        } else {
+          setScreenReaderAnnouncement(
+            `Sections ${sectionIDs.map((sectionID) => fullSectionNames[sectionID]).join(', ')} added.`,
           );
         }
       }
@@ -210,8 +225,10 @@ export default function App() {
     }
   }
 
+  // TODO: make screen readers announce full section names instead of IDs.
   // TODO: clear resume data on delete.
   // TODO: open the next/previous/Personal section on opened section delete.
+  // TODO: when all deletable sections are deleted, the focus should move to the Add Section button instead of the Toggle Editor Mode button.
   function deleteSections(sectionIDs) {
     if (Array.isArray(sectionIDs)) {
       const newActiveSectionIDs = activeSectionIDs.slice();
@@ -404,6 +421,7 @@ export default function App() {
   } */
 
   // Section components.
+  // TODO: when the user navigates to an opened section, the screen reader must announce this section. Right now it isn't announced, for some reason.
   const sections = {
     personal: (
       <Personal

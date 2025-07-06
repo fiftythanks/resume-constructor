@@ -9,12 +9,13 @@ export default function Links({
   return (
     <main
       aria-labelledby="links"
+      aria-owns="app-layout-heading links-tabpanel-form"
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
       id="links-tabpanel"
       role="tabpanel"
       tabIndex={-1}
     >
-      <form action="#" className="section--form">
+      <form action="#" className="section--form" id="links-tabpanel-form">
         <ul className="section--list">
           <li className="section--list-item">
             <label className="section--field-label" htmlFor="website-text">

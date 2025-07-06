@@ -39,12 +39,9 @@
     grid-area: toolbar;
   }
 
-  &-Header {
+  &-Title {
     grid-area: header;
     padding-top: 1rem;
-  }
-
-  &-Title {
     text-align: center;
     font-size: 1.75rem;
   }

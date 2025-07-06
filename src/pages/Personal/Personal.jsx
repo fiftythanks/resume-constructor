@@ -9,12 +9,13 @@ export default function Personal({
   return (
     <main
       aria-labelledby="personal"
+      aria-owns="app-layout-heading personal-tabpanel-form"
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
       id="personal-tabpanel"
       role="tabpanel"
       tabIndex={-1}
     >
-      <form action="#" className="section--form">
+      <form action="#" className="section--form" id="personal-tabpanel-form">
         <ul className="section--list">
           <li className="section--list-item">
             <label className="section--field-label" htmlFor="full-name">

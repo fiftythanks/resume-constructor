@@ -211,9 +211,9 @@ export default function AppLayout({
         preview={preview}
         toggleNavbar={toggleNavbar}
       />
-      <header className="AppLayout-Header">
-        <h1 className="AppLayout-Title">{titles[`${openedSectionID}`]}</h1>
-      </header>
+      <h1 className="AppLayout-Title" id="app-layout-heading">
+        {titles[`${openedSectionID}`]}
+      </h1>
       {children}
       {/* TODO: add "Previous" and "Next" buttons. */}
     </div>

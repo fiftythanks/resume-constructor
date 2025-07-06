@@ -12,12 +12,17 @@ export default function Skills({
   return (
     <main
       aria-labelledby="skills"
+      aria-owns="app-layout-heading skills-tabpanel-form"
       className={`${className} section${isNavbarExpanded ? ` section__navbar-expanded` : ''}`}
       id="skills-tabpanel"
       role="tabpanel"
       tabIndex={-1}
     >
-      <form action="#" className="section--form section--form__bullet-points">
+      <form
+        action="#"
+        className="section--form section--form__bullet-points"
+        id="skills-tabpanel-form"
+      >
         <BulletPoints
           addItem={functions.addLanguage}
           data={data.languages}
