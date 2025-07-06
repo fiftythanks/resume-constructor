@@ -478,7 +478,6 @@ export default function App() {
     }
   }
 
-  // TODO: open the next/previous/Personal section on opened section delete.
   // TODO: when all deletable sections are deleted, the focus should move to the Add Section button instead of the Toggle Editor Mode button.
   function deleteSections(sectionIDs) {
     if (Array.isArray(sectionIDs)) {
@@ -514,6 +513,23 @@ export default function App() {
           );
         }
       });
+
+      if (sectionIDs.includes(openedSectionID)) {
+        const firstDeleletedSectionIndex = activeSectionIDs.indexOf(
+          sectionIDs[0],
+        );
+        const lastDeleletedSectionIndex = activeSectionIDs.indexOf(
+          sectionIDs.at(-1),
+        );
+
+        if (lastDeleletedSectionIndex < activeSectionIDs.length - 1) {
+          setOpenedSectionID(activeSectionIDs[lastDeleletedSectionIndex + 1]);
+        } else if (sectionIDs[0] !== 'personal') {
+          setOpenedSectionID(activeSectionIDs[firstDeleletedSectionIndex - 1]);
+        } else {
+          setOpenedSectionID('personal');
+        }
+      }
 
       setActiveSectionIDs(newActiveSectionIDs);
 

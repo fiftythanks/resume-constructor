@@ -69,6 +69,7 @@ export default function AppLayout({
         }
       }
 
+      // TODO: if there's only the "Personal" section and the focus is on it, how can the user get to the control buttons? Fix it.
       if (id === openedSectionID) {
         if (e.shiftKey) {
           e.preventDefault();
