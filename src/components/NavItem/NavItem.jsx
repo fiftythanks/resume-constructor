@@ -60,6 +60,7 @@ export default function NavItem({
     `NavItem-Button appbar-item__inner appbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'appbar-item__inner_active' : ''}`.trimEnd();
 
   // Delete button
+  // TODO: move this logic to the `Navbar` component.
   function handleDeleteClick() {
     deleteSection();
 

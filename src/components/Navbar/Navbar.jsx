@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useState } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
@@ -171,6 +172,16 @@ export default function Navbar({
 
     if (
       possibleSectionIDs.includes(id) &&
+      activeSectionIDs.length === 1 &&
+      !isDragging
+    ) {
+      if (e.key === 'ArrowDown') {
+        document.getElementById('add-sections').focus();
+      } else if (e.key === 'ArrowUp') {
+        document.getElementById('edit-sections').focus();
+      }
+    } else if (
+      possibleSectionIDs.includes(id) &&
       activeSectionIDs.length > 1 &&
       !isDragging
     ) {
@@ -181,8 +192,10 @@ export default function Navbar({
 
         if (i < activeSectionIDs.length - 1) {
           document.getElementById(activeSectionIDs[i + 1]).focus();
+        } else if (canAddSections) {
+          document.getElementById('add-sections').focus();
         } else {
-          document.getElementById(activeSectionIDs[0]).focus();
+          document.getElementById('edit-sections').focus();
         }
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
@@ -191,7 +204,7 @@ export default function Navbar({
         if (i > 0) {
           document.getElementById(activeSectionIDs[i - 1]).focus();
         } else {
-          document.getElementById(activeSectionIDs.at(-1)).focus();
+          document.getElementById('edit-sections').focus();
         }
       }
     } else if (
@@ -221,6 +234,31 @@ export default function Navbar({
         } else {
           document.getElementById(`delete-${activeSectionIDs.at(-1)}`).focus();
         }
+      }
+    } else if (id === 'add-sections') {
+      if (e.key === 'ArrowDown') {
+        document.getElementById('edit-sections').focus();
+      } else if (e.key === 'ArrowUp') {
+        document.getElementById(activeSectionIDs.at(-1)).focus();
+      }
+    } else if (id === 'edit-sections') {
+      if (e.key === 'ArrowDown') {
+        document.getElementById(activeSectionIDs[0]).focus();
+      } else if (e.key === 'ArrowUp') {
+        if (canAddSections) {
+          document.getElementById('add-sections').focus();
+        } else {
+          document.getElementById(activeSectionIDs.at(-1)).focus();
+        }
+      } else if (
+        e.key === 'Tab' &&
+        e.shiftKey === true &&
+        editorMode &&
+        activeSectionIDs.length > 1
+      ) {
+        e.preventDefault();
+
+        document.getElementById(activeSectionIDs[1]).focus();
       }
     }
   }
@@ -254,39 +292,14 @@ export default function Navbar({
     }
   }
 
-  function handleKeyDownAddSections(e) {
-    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-      e.preventDefault();
-
-      document.getElementById('edit-sections').focus();
-    }
-  }
-
-  function handleKeyDownEditorMode(e) {
-    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && canAddSections) {
-      e.preventDefault();
-
-      document.getElementById('add-sections').focus();
-    }
-
-    if (
-      e.key === 'Tab' &&
-      e.shiftKey === true &&
-      editorMode &&
-      activeSectionIDs.length > 1
-    ) {
-      e.preventDefault();
-
-      document.getElementById(activeSectionIDs[1]).focus();
-    }
-  }
-
   return (
     <>
       <nav
         aria-labelledby="toggle-navbar"
         className={`Navbar ${isExpanded ? '' : 'Navbar_hidden'} ${className}`.trimEnd()}
         id="navbar"
+        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
       >
         <ul
           aria-label="Resume Sections"
@@ -295,8 +308,6 @@ export default function Navbar({
           className="Navbar-Items"
           id="resume-sections"
           role="tablist"
-          onKeyDown={handleKeyDown}
-          onKeyUp={handleKeyUp}
         >
           <NavItem
             activeSectionIDs={activeSectionIDs}
@@ -351,7 +362,6 @@ export default function Navbar({
             attributes={addSectionsAttributes}
             className="Navbar-Control Navbar-Control_onTop"
             iconSrc={icons.add}
-            onKeyDown={handleKeyDownAddSections}
             action={() => {
               showAddSectionsPopup();
             }}
@@ -365,7 +375,6 @@ export default function Navbar({
           iconSrc={editorMode ? icons.done : icons.edit}
           key="toggle-editor-mode"
           modifiers={[`${editorMode ? 'Navbar-Control_editing' : ''}`]}
-          onKeyDown={handleKeyDownEditorMode}
         />
       </nav>
       <AddSections

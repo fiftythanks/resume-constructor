@@ -478,7 +478,6 @@ export default function App() {
     }
   }
 
-  // TODO: when all deletable sections are deleted, the focus should move to the Add Section button instead of the Toggle Editor Mode button.
   function deleteSections(sectionIDs) {
     if (Array.isArray(sectionIDs)) {
       const newActiveSectionIDs = activeSectionIDs.slice();

@@ -69,7 +69,7 @@ export default function AppLayout({
         }
       }
 
-      // TODO: if there's only the "Personal" section and the focus is on it, how can the user get to the control buttons? Fix it.
+      // TODO: if there's only the "Personal" section and the focus is on it, how can the user get to the control buttons? And also, if there's more than one sections, but the last one is opened. When you press `Tab` on any closed tab, the focus moves to the opened tab. And you can't tab anywhere but the tabpanel from there. Fix it.
       if (id === openedSectionID) {
         if (e.shiftKey) {
           e.preventDefault();
