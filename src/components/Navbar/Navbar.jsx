@@ -243,7 +243,7 @@ export default function Navbar({
 
       // If there's only "Personal" left.
       if (activeSectionIDs.length === 2) {
-        document.getElementById('edit-sections').focus();
+        document.getElementById('personal').focus();
 
         // If the deleted item wasn't the last in the array
       } else if (i < activeSectionIDs.length - 1) {
@@ -343,6 +343,7 @@ export default function Navbar({
           </li>
         </ul>
 
+        {/* TODO: there needs to be some screen reader announcement to explain to the user that there are buttons "Add Section" and "Toggle Editor Mode". Without an announcement, there's no way to know that there are these buttons, unless the user is lucky to press "Tab" when he or she is focused on a closed tab. */}
         {/* Control buttons */}
         {canAddSections && (
           <AppbarItem
