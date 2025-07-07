@@ -26,6 +26,32 @@
     }
   }
 
+  &--form-header {
+    display: flex;
+    gap: 1rem;
+    /**
+     * Just like the margin between the bullet points header and bullet points,
+     * which is 1.25 rem.
+     */
+    margin-bottom: -0.75rem;
+  }
+
+  &--item-navigation {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &--delete-item {
+    margin-left: auto;
+    border: 0;
+    background: none;
+    padding-right: 0;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
   &--list {
     display: flex;
     flex-direction: column;

@@ -30,12 +30,16 @@ import './BulletPoints.scss';
 
 export default function BulletPoints({
   addItem,
-  className,
+  className = '',
   data,
   deleteItem,
   editItem,
   name,
   legend,
+  legendCentralized = false,
+  placeholder1 = null,
+  placeholder2 = null,
+  placeholder3 = null,
   updateData,
   updateScreenReaderAnnouncement,
 }) {
@@ -91,7 +95,11 @@ export default function BulletPoints({
   };
   return (
     <fieldset className={`${className} BulletPoints`.trimStart()}>
-      <legend className="BulletPoints-Legend">{legend}</legend>
+      <legend
+        className={`BulletPoints-Legend${legendCentralized ? ' BulletPoints-Legend_centralized' : ''}`}
+      >
+        {legend}
+      </legend>
       <DndContext
         accessibility={{ announcements }}
         collisionDetection={closestCenter}
@@ -127,6 +135,24 @@ export default function BulletPoints({
               };
               const edit = (e) =>
                 editItem(index, { ...data[index], value: e.target.value });
+
+              let placeholder = null;
+
+              if (index >= 0 && index <= 2) {
+                switch (index) {
+                  case 0:
+                    placeholder = placeholder1;
+                    break;
+                  case 1:
+                    placeholder = placeholder2;
+                    break;
+                  case 2:
+                    placeholder = placeholder3;
+                    break;
+                  default:
+                  // do nothing
+                }
+              }
               return (
                 /**
                  * It's separated into its own component because this
@@ -139,6 +165,7 @@ export default function BulletPoints({
                   index={index}
                   key={id}
                   name={`${name}-${index}`}
+                  placeholder={placeholder}
                   value={value}
                 />
               );
@@ -150,7 +177,7 @@ export default function BulletPoints({
         aria-label={`Add ${capitalize(name)}`}
         className="BulletPoints-Add"
         id={`add-${name}`}
-        modifiers={['Button_bulletPoints']}
+        modifiers={['Button_paddingInline_large']}
         onClick={addItem}
       >
         Add

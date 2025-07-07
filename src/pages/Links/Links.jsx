@@ -6,6 +6,11 @@ export default function Links({
   isNavbarExpanded = false,
   updateData,
 }) {
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    updateData(name, value);
+  };
+
   return (
     <main
       aria-labelledby="links"
@@ -24,11 +29,11 @@ export default function Links({
             <input
               className="section--field"
               id="website-text"
-              name="website-text"
+              name="websiteText"
               placeholder="johndoe.com"
               type="text"
-              value={data.website.text}
-              onChange={(e) => updateData('website', 'text', e.target.value)}
+              value={data.websiteText}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -38,11 +43,11 @@ export default function Links({
             <input
               className="section--field"
               id="website-link"
-              name="website-link"
+              name="websiteLink"
               placeholder="https://johndoe.com/"
               type="text"
-              value={data.website.link}
-              onChange={(e) => updateData('website', 'link', e.target.value)}
+              value={data.websiteLink}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -52,11 +57,11 @@ export default function Links({
             <input
               className="section--field"
               id="github-text"
-              name="github-text"
+              name="githubText"
               placeholder="github.com/johndoe"
               type="text"
-              value={data.github.text}
-              onChange={(e) => updateData('github', 'text', e.target.value)}
+              value={data.githubText}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -66,11 +71,11 @@ export default function Links({
             <input
               className="section--field"
               id="github-link"
-              name="github-link"
+              name="githubLink"
               placeholder="https://github.com/johndoe/"
               type="text"
-              value={data.github.link}
-              onChange={(e) => updateData('github', 'link', e.target.value)}
+              value={data.githubLink}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -80,11 +85,11 @@ export default function Links({
             <input
               className="section--field"
               id="linkedin-text"
-              name="linkedin-text"
+              name="linkedinText"
               placeholder="linkedin.com/johndoe"
               type="text"
-              value={data.linkedin.text}
-              onChange={(e) => updateData('linkedin', 'text', e.target.value)}
+              value={data.linkedinText}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -94,11 +99,11 @@ export default function Links({
             <input
               className="section--field"
               id="linkedin-link"
-              name="linkedin-link"
+              name="linkedinLink"
               placeholder="https://linkedin.com/johndoe/"
               type="text"
-              value={data.linkedin.link}
-              onChange={(e) => updateData('linkedin', 'link', e.target.value)}
+              value={data.linkedinLink}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -108,11 +113,11 @@ export default function Links({
             <input
               className="section--field"
               id="telegram-text"
-              name="telegram-text"
+              name="telegramText"
               placeholder="@johndoe"
               type="text"
-              value={data.telegram.text}
-              onChange={(e) => updateData('telegram', 'text', e.target.value)}
+              value={data.telegramText}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -122,11 +127,11 @@ export default function Links({
             <input
               className="section--field"
               id="telegram-link"
-              name="telegram-link"
+              name="telegramLink"
               placeholder="https://t.me/johndoe/"
               type="text"
-              value={data.telegram.link}
-              onChange={(e) => updateData('telegram', 'link', e.target.value)}
+              value={data.telegramLink}
+              onChange={handleInputChange}
             />
           </li>
         </ul>

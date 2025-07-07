@@ -8,7 +8,27 @@
     cursor: pointer;
   }
 
-  &_bulletPoints {
-    padding-inline: 2rem;
+  &_paddingInline {
+    &_none {
+      padding-inline: 0;
+    }
+
+    &_small {
+      padding-inline: 0.35rem;
+    }
+
+    &_medium {
+      padding-inline: 1rem;
+    }
+
+    &_large {
+      padding-inline: 2rem;
+    }
+  }
+
+  &_paddingBlock {
+    &_none {
+      padding-block: 0;
+    }
   }
 }

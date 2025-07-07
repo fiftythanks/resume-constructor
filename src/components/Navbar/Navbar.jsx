@@ -353,8 +353,6 @@ export default function Navbar({
             </DndContext>
           </li>
         </ul>
-
-        {/* TODO: there needs to be some screen reader announcement to explain to the user that there are buttons "Add Section" and "Toggle Editor Mode". Without an announcement, there's no way to know that there are these buttons, unless the user is lucky to press "Tab" when he or she is focused on a closed tab. */}
         {/* Control buttons */}
         {canAddSections && (
           <AppbarItem

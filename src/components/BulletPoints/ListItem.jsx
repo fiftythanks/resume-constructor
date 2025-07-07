@@ -10,15 +10,23 @@ import dragSrc from '@/assets/icons/drag.svg';
 
 import './BulletPoints.scss';
 
-export default function ListItem({ del, edit, id, index, name, value }) {
+export default function ListItem({
+  del,
+  edit,
+  id,
+  index,
+  name,
+  placeholder = null,
+  value,
+}) {
   const {
     attributes,
+    isDragging,
     listeners,
     setNodeRef,
     setActivatorNodeRef,
     transform,
     transition,
-    isDragging,
   } = useSortable({ id });
 
   const style = {
@@ -45,7 +53,7 @@ export default function ListItem({ del, edit, id, index, name, value }) {
         aria-label={`Bullet point ${index + 1}`}
         className="BulletPoints-Field"
         name={name}
-        placeholder={`Bullet point ${index + 1}`}
+        placeholder={placeholder || `Bullet point ${index + 1}`}
         type="text"
         value={value}
         onChange={edit}

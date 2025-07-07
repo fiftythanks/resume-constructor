@@ -6,6 +6,11 @@ export default function Personal({
   isNavbarExpanded = false,
   updateData,
 }) {
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    updateData(name, value);
+  };
+
   return (
     <main
       aria-labelledby="personal"
@@ -24,11 +29,11 @@ export default function Personal({
             <input
               className="section--field"
               id="full-name"
-              name="full-name"
+              name="fullName"
               placeholder="John Doe"
               type="text"
               value={data.fullName}
-              onChange={(e) => updateData('fullName', e.target.value)}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -38,11 +43,11 @@ export default function Personal({
             <input
               className="section--field"
               id="job-title"
-              name="job-title"
+              name="jobTitle"
               placeholder="Frontend Engineer"
               type="text"
               value={data.jobTitle}
-              onChange={(e) => updateData('jobTitle', e.target.value)}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -56,7 +61,7 @@ export default function Personal({
               placeholder="john.doe@gmail.com"
               type="email"
               value={data.email}
-              onChange={(e) => updateData('email', e.target.value)}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -70,7 +75,7 @@ export default function Personal({
               placeholder="+7 666 534-32-33"
               type="tel"
               value={data.phone}
-              onChange={(e) => updateData('phone', e.target.value)}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -84,7 +89,7 @@ export default function Personal({
               placeholder="Cool St, Cambridge"
               type="text"
               value={data.address}
-              onChange={(e) => updateData('address', e.target.value)}
+              onChange={handleInputChange}
             />
           </li>
           <li className="section--list-item">
@@ -97,10 +102,10 @@ export default function Personal({
             <textarea
               className="section--field section--field__textarea"
               id="personal-details-summary"
-              name="personal-details-summary"
+              name="summary"
               placeholder="Detail-oriented Frontend Engineer eager to create seamless user experiences."
               value={data.summary}
-              onChange={(e) => updateData('summary', e.target.value)}
+              onChange={handleInputChange}
             />
           </li>
         </ul>
