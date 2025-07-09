@@ -20,7 +20,7 @@ export default function Projects({
 
   function addProject() {
     functions.addProject();
-    // TODO: Focus the first input of the new project
+    document.getElementById('project-name').focus();
   }
 
   function getProjectFunctions(index) {
