@@ -3,12 +3,14 @@ import React from 'react';
 export default function Links({
   className,
   data,
+  functions,
   isNavbarExpanded = false,
-  updateData,
 }) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    updateData(name, value);
+    const [field, type] = name.split('-');
+
+    functions.updateLinks(field, type, value);
   };
 
   return (
@@ -29,7 +31,7 @@ export default function Links({
             <input
               className="section--field"
               id="website-text"
-              name="websiteText"
+              name="website-text"
               placeholder="johndoe.com"
               type="text"
               value={data.websiteText}
@@ -43,7 +45,7 @@ export default function Links({
             <input
               className="section--field"
               id="website-link"
-              name="websiteLink"
+              name="website-link"
               placeholder="https://johndoe.com/"
               type="text"
               value={data.websiteLink}
@@ -57,7 +59,7 @@ export default function Links({
             <input
               className="section--field"
               id="github-text"
-              name="githubText"
+              name="github-text"
               placeholder="github.com/johndoe"
               type="text"
               value={data.githubText}
@@ -71,7 +73,7 @@ export default function Links({
             <input
               className="section--field"
               id="github-link"
-              name="githubLink"
+              name="github-link"
               placeholder="https://github.com/johndoe/"
               type="text"
               value={data.githubLink}
@@ -85,7 +87,7 @@ export default function Links({
             <input
               className="section--field"
               id="linkedin-text"
-              name="linkedinText"
+              name="linkedin-text"
               placeholder="linkedin.com/johndoe"
               type="text"
               value={data.linkedinText}
@@ -99,7 +101,7 @@ export default function Links({
             <input
               className="section--field"
               id="linkedin-link"
-              name="linkedinLink"
+              name="linkedin-link"
               placeholder="https://linkedin.com/johndoe/"
               type="text"
               value={data.linkedinLink}
@@ -113,7 +115,7 @@ export default function Links({
             <input
               className="section--field"
               id="telegram-text"
-              name="telegramText"
+              name="telegram-text"
               placeholder="@johndoe"
               type="text"
               value={data.telegramText}
@@ -127,7 +129,7 @@ export default function Links({
             <input
               className="section--field"
               id="telegram-link"
-              name="telegramLink"
+              name="telegram-link"
               placeholder="https://t.me/johndoe/"
               type="text"
               value={data.telegramLink}

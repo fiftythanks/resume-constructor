@@ -3,12 +3,12 @@ import React from 'react';
 export default function Personal({
   className,
   data,
+  functions,
   isNavbarExpanded = false,
-  updateData,
 }) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    updateData(name, value);
+    functions.updatePersonal(name, value);
   };
 
   return (

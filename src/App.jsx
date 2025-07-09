@@ -732,17 +732,29 @@ export default function App() {
   }
 
   // Functions for modifying resume data.
-  function updatePersonal(field, value) {
-    setResumeData((draft) => {
-      draft.personal[field] = value;
-    });
-  }
+  const personalFunctions = {
+    updatePersonal(field, value) {
+      setResumeData((draft) => {
+        draft.personal[field] = value;
+      });
+    },
 
-  function updateLinks(field, type, value) {
-    setResumeData((draft) => {
-      draft.links[field][type] = value;
-    });
-  }
+    clear() {
+      clear('personal');
+    },
+  };
+
+  const linksFunctions = {
+    updateLinks(field, type, value) {
+      setResumeData((draft) => {
+        draft.links[field][type] = value;
+      });
+    },
+
+    clear() {
+      clear('links');
+    },
+  };
 
   const skillsFunctions = {
     updateSkills(field, value) {
@@ -1142,16 +1154,16 @@ export default function App() {
       <Personal
         className="AppLayout-Main"
         data={resumeData.personal}
+        functions={personalFunctions}
         isNavbarExpanded={isNavbarExpanded}
-        updateData={updatePersonal}
       />
     ),
     links: (
       <Links
         className="AppLayout-Main"
         data={resumeData.links}
+        functions={linksFunctions}
         isNavbarExpanded={isNavbarExpanded}
-        updateData={updateLinks}
       />
     ),
     skills: (
