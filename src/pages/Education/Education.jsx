@@ -20,15 +20,7 @@ export default function Education({
 
   function addDegree() {
     functions.addDegree();
-    // TODO: Focus the first input of the new degree
-  }
-
-  function deleteDegree(index) {
-    if (data.degrees.length === 1) {
-      // TODO: Focus the add button if the last degree is deleted
-    }
-
-    functions.deleteDegree(index);
+    document.getElementById('university-name').focus();
   }
 
   function getDegreeFunctions(index) {
@@ -131,7 +123,7 @@ export default function Education({
               className="section--delete-item"
               id="delete-degree"
               type="button"
-              onClick={() => deleteDegree(shownDegreeIndex)}
+              onClick={() => functions.deleteDegree(shownDegreeIndex)}
             >
               <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
             </button>
