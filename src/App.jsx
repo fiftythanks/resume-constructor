@@ -37,7 +37,7 @@ const fullSectionNames = {
 
 export default function App() {
   const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
-  const [openedSectionID, setOpenedSectionID] = useState('experience');
+  const [openedSectionID, setOpenedSectionID] = useState('personal');
 
   const [activeSectionIDs, setActiveSectionIDs] = useState([
     'personal',
@@ -1125,7 +1125,7 @@ export default function App() {
   };
 
   const certificationsFunctions = {
-    edit(field, value) {
+    updateCertifications(field, value) {
       setResumeData((draft) => {
         draft.certifications[field] = value;
       });
