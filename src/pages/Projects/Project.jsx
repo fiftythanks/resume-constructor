@@ -23,6 +23,7 @@ export default function Project({
             className="section--field"
             id="project-name"
             name="projectName"
+            placeholder="TravelPlanner"
             type="text"
             value={data.projectName}
             onChange={handleInputChange}
@@ -36,6 +37,7 @@ export default function Project({
             className="section--field"
             id="stack"
             name="stack"
+            placeholder="HTML, CSS, React, TypeScript, Redux, Bootstrap, Express.js, PostgreSQL"
             type="text"
             value={data.stack}
             onChange={handleInputChange}
@@ -51,9 +53,9 @@ export default function Project({
         editItem={functions.editBulletPoint}
         legend="Bullet Points"
         name="project-bullet-points"
-        placeholder1="Utilized Redux for state management to handle complex application data flow."
-        placeholder2="Developed a user-friendly interface with React, focusing on accessibility and responsive design."
-        placeholder3="Designed RESTful APIs using Node.js and Express to handle data persistence and retrieval."
+        placeholder1="Developed a user-friendly web application for travel planning, allowing users to create and manage their itineraries."
+        placeholder2="Utilized Redux for state management, enabling efficient data flow and improved application performance."
+        placeholder3="Designed RESTful APIs using Node.js and Express.js, facilitating data retrieval and storage from the PostgreSQL database."
         updateData={functions.updateBulletPoints}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
@@ -67,6 +69,7 @@ export default function Project({
             className="section--field"
             id="code-text"
             name="codeText"
+            placeholder="GitHub Repo"
             type="text"
             value={data.codeText}
             onChange={handleInputChange}
@@ -80,6 +83,7 @@ export default function Project({
             className="section--field"
             id="code-link"
             name="codeLink"
+            placeholder="https://www.github.com/johndoe/TravelPlanner"
             type="text"
             value={data.codeLink}
             onChange={handleInputChange}
@@ -93,6 +97,7 @@ export default function Project({
             className="section--field"
             id="demo-text"
             name="demoText"
+            placeholder="Live Preview"
             type="text"
             value={data.demoText}
             onChange={handleInputChange}
@@ -106,6 +111,7 @@ export default function Project({
             className="section--field"
             id="demo-link"
             name="demoLink"
+            placeholder="https://john-doe-travel-planner.herokuapp.com"
             type="text"
             value={data.demoLink}
             onChange={handleInputChange}

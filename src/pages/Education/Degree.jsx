@@ -23,6 +23,7 @@ export default function Degree({
             className="section--field"
             id="university-name"
             name="universityName"
+            placeholder="e.g. University of California, Berkeley"
             type="text"
             value={data.universityName}
             onChange={handleInputChange}
@@ -35,8 +36,8 @@ export default function Degree({
           <input
             className="section--field"
             id="degree"
-            /* TODO: add placeholder */
             name="degree"
+            placeholder="e.g. B.S. in Computer Science"
             type="text"
             value={data.degree}
             onChange={handleInputChange}
@@ -50,6 +51,7 @@ export default function Degree({
             className="section--field"
             id="graduation"
             name="graduation"
+            placeholder="e.g. May 2021"
             type="text"
             value={data.graduation}
             onChange={handleInputChange}
@@ -63,6 +65,7 @@ export default function Degree({
             className="section--field"
             id="address"
             name="address"
+            placeholder="e.g. Berkeley, CA, USA"
             type="text"
             value={data.address}
             onChange={handleInputChange}
@@ -77,9 +80,9 @@ export default function Degree({
         editItem={functions.editBulletPoint}
         legend="Bullet Points"
         name="degree-bullet-points"
-        placeholder1="e.g., Relevant coursework, academic achievements, or thesis details."
-        placeholder2=""
-        placeholder3=""
+        placeholder1="Relevant coursework: Data Structures, Algorithms, Web Development"
+        placeholder2="Graduated with Honors, GPA: 3.8/4.0"
+        placeholder3="Led a team project to build a React-based student portal"
         updateData={functions.updateBulletPoints}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
