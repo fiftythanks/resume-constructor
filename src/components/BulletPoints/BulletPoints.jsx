@@ -94,7 +94,9 @@ export default function BulletPoints({
     },
   };
   return (
-    <fieldset className={`${className} BulletPoints`.trimStart()}>
+    <fieldset
+      className={`${className} BulletPoints ${data.length === 0 ? 'BulletPoints_empty' : ''}`.trim()}
+    >
       <legend
         className={`BulletPoints-Legend${legendCentralized ? ' BulletPoints-Legend_centralized' : ''}`}
       >

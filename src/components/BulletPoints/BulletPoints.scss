@@ -1,7 +1,6 @@
 @use '@/styles/utils/placeholders';
 
 .BulletPoints {
-  /* TODO: if there's no bullet points, make the gap smaller. */
   $gap: 1.25rem;
 
   display: flex;
@@ -9,6 +8,10 @@
   gap: $gap;
   border: 0;
   padding: 0;
+
+  &_empty {
+    gap: 0;
+  }
 
   &-Legend {
     margin-bottom: $gap;
