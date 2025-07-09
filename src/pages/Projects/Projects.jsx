@@ -23,14 +23,6 @@ export default function Projects({
     // TODO: Focus the first input of the new project
   }
 
-  function deleteProject(index) {
-    if (data.projects.length === 1) {
-      // TODO: Focus the add button if the last project is deleted
-    }
-
-    functions.deleteProject(index);
-  }
-
   function getProjectFunctions(index) {
     return {
       addBulletPoint() {
@@ -132,7 +124,7 @@ export default function Projects({
               className="section--delete-item"
               id="delete-project"
               type="button"
-              onClick={() => deleteProject(shownProjectIndex)}
+              onClick={() => functions.deleteProject(shownProjectIndex)}
             >
               <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
             </button>

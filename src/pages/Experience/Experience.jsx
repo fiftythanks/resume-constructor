@@ -23,14 +23,6 @@ export default function Experience({
     document.getElementById('company-name').focus();
   }
 
-  function deleteJob(index) {
-    if (data.jobs.length === 1) {
-      document.getElementById('add-job').focus();
-    }
-
-    functions.deleteJob(index);
-  }
-
   function getJobFunctions(index) {
     return {
       addBulletPoint() {
@@ -130,7 +122,7 @@ export default function Experience({
               className="section--delete-item"
               id="delete-job"
               type="button"
-              onClick={() => deleteJob(shownJobIndex)}
+              onClick={() => functions.deleteJob(shownJobIndex)}
             >
               <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
             </button>
