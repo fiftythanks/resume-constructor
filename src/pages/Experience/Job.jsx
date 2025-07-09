@@ -25,6 +25,7 @@ export default function Job({
             name="companyName"
             placeholder="Google"
             type="text"
+            // TODO: remove `|| ''`
             value={data.companyName || ''}
             onChange={handleInputChange}
           />
@@ -39,6 +40,7 @@ export default function Job({
             name="jobTitle"
             placeholder="Senior Frontend Engineer"
             type="text"
+            // TODO: remove `|| ''`
             value={data.jobTitle || ''}
             onChange={handleInputChange}
           />
@@ -53,6 +55,7 @@ export default function Job({
             name="duration"
             placeholder="Feb 2021 – Present"
             type="text"
+            // TODO: remove `|| ''`
             value={data.duration || ''}
             onChange={handleInputChange}
           />
@@ -67,6 +70,7 @@ export default function Job({
             name="address"
             placeholder="Mountain View, CA"
             type="text"
+            // TODO: remove `|| ''`
             value={data.address || ''}
             onChange={handleInputChange}
           />

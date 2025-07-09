@@ -1151,64 +1151,41 @@ export default function App() {
   // Section components.
   const sections = {
     personal: (
-      <Personal
-        className="AppLayout-Main"
-        data={resumeData.personal}
-        functions={personalFunctions}
-        isNavbarExpanded={isNavbarExpanded}
-      />
+      <Personal data={resumeData.personal} functions={personalFunctions} />
     ),
-    links: (
-      <Links
-        className="AppLayout-Main"
-        data={resumeData.links}
-        functions={linksFunctions}
-        isNavbarExpanded={isNavbarExpanded}
-      />
-    ),
+    links: <Links data={resumeData.links} functions={linksFunctions} />,
     skills: (
       <Skills
-        className="AppLayout-Main"
         data={resumeData.skills}
         functions={skillsFunctions}
-        isNavbarExpanded={isNavbarExpanded}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     experience: (
       <Experience
-        className="AppLayout-Main"
         data={resumeData.experience}
         functions={experienceFunctions}
-        isNavbarExpanded={isNavbarExpanded}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     projects: (
       <Projects
-        className="AppLayout-Main"
         data={resumeData.projects}
         functions={projectFunctions}
-        isNavbarExpanded={isNavbarExpanded}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     education: (
       <Education
-        className="AppLayout-Main"
         data={resumeData.education}
         functions={educationFunctions}
-        isNavbarExpanded={isNavbarExpanded}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     certifications: (
       <Certifications
-        className="AppLayout-Main"
         data={resumeData.certifications}
         functions={certificationsFunctions}
-        isNavbarExpanded={isNavbarExpanded}
-        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
   };
@@ -1227,6 +1204,7 @@ export default function App() {
         fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
         openedSectionID={openedSectionID}
+        openSection={openSection}
         possibleSectionIDs={possibleSectionIDs}
         preview={preview}
         reorderSections={reorderSections}

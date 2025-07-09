@@ -27,6 +27,8 @@ export default function AppLayout({
   fillAll,
   isNavbarExpanded,
   openedSectionID,
+  // eslint-disable-next-line no-unused-vars
+  openSection,
   possibleSectionIDs,
   preview,
   reorderSections,
@@ -211,11 +213,20 @@ export default function AppLayout({
         preview={preview}
         toggleNavbar={toggleNavbar}
       />
+      {/* This heading is here intentionally for layout purposes. */}
       <h1 className="AppLayout-Title" id="app-layout-heading">
         {titles[`${openedSectionID}`]}
       </h1>
-      {children}
-      {/* TODO: add "Previous" and "Next" buttons. */}
+      {/* TODO: add navigation buttons to this `<main>` wrapper. */}
+      <main
+        aria-owns={`app-layout-heading ${openedSectionID}-tabpanel`}
+        className={`AppLayout-Main ${isNavbarExpanded ? ` AppLayout-Main_navbar_expanded` : ''}`.trimEnd()}
+        tabIndex={-1}
+      >
+        {children}
+      </main>
+
+      {/* TODO: if you focused to a section from the navbar via your keyboard and then opened another section by clicking "Next"/"Previous" button, the `Shift+Tab` combination — when the first focusable element of the section is focused — should focus the tab corresponding to the opened section instead of the tab that corresponds to the section you focused to initially. */}
     </div>
   );
 }
