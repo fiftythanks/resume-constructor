@@ -1213,6 +1213,7 @@ export default function App() {
         toggleEditorMode={toggleEditorMode}
         toggleNavbar={toggleNavbar}
       >
+        {/* TODO: are sections as tabpanels controlled by the tabs valid when the tabs are hidden? Should I maybe conditionalise the ARIA attributes? */}
         {sections[openedSectionID]}
       </AppLayout>
     </>

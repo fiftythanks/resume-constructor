@@ -38,7 +38,7 @@ export default function AppLayout({
   toggleNavbar,
 }) {
   // For keyboard navigation.
-  const lastFocusedElemIDRef = useRef('');
+  let wasToolbarLastFocusedElem = useRef(false);
 
   const canAddSections =
     possibleSectionIDs.filter(
@@ -84,7 +84,7 @@ export default function AppLayout({
             .querySelectorAll(focusableNodes)[0]
             .focus();
 
-          lastFocusedElemIDRef.current = openedSectionID;
+          wasToolbarLastFocusedElem = false;
         }
       }
 
@@ -139,7 +139,7 @@ export default function AppLayout({
           .querySelectorAll(focusableNodes)[0]
           .focus();
 
-        lastFocusedElemIDRef.current = 'toggle-controls';
+        wasToolbarLastFocusedElem.current = true;
       }
 
       const firstFocusableTabpanelNode = document
@@ -150,8 +150,7 @@ export default function AppLayout({
         e.target === firstFocusableTabpanelNode &&
         e.shiftKey &&
         isNavbarExpanded &&
-        (lastFocusedElemIDRef.current === null ||
-          lastFocusedElemIDRef.current === openedSectionID)
+        !wasToolbarLastFocusedElem.current
       ) {
         e.preventDefault();
         document.getElementById(openedSectionID).focus();
@@ -225,8 +224,6 @@ export default function AppLayout({
       >
         {children}
       </main>
-
-      {/* TODO: if you focused to a section from the navbar via your keyboard and then opened another section by clicking "Next"/"Previous" button, the `Shift+Tab` combination — when the first focusable element of the section is focused — should focus the tab corresponding to the opened section instead of the tab that corresponds to the section you focused to initially. */}
     </div>
   );
 }
