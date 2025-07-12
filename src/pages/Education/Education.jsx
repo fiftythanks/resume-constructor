@@ -77,7 +77,6 @@ export default function Education({
               <Button
                 aria-label="Show Next Degree"
                 id="show-next-degree"
-                // TODO: fix. There's no `showDegree` method there.
                 onClick={() => functions.showDegree(shownDegreeIndex + 1)}
                 modifiers={[
                   'Button_paddingBlock_none',

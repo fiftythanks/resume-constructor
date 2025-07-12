@@ -1100,7 +1100,7 @@ export default function App() {
 
     showDegree(index) {
       setResumeData((draft) => {
-        draft.shownDegreeIndex = index;
+        draft.education.shownDegreeIndex = index;
       });
     },
 
