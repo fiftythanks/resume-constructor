@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 
+import Button from '@/components/Button';
 import Navbar from '@/components/Navbar';
 import Toolbar from '@/components/Toolbar';
 
@@ -27,7 +28,6 @@ export default function AppLayout({
   fillAll,
   isNavbarExpanded,
   openedSectionID,
-  // eslint-disable-next-line no-unused-vars
   openSection,
   possibleSectionIDs,
   preview,
@@ -185,6 +185,8 @@ export default function AppLayout({
     }
   }
 
+  const openedSectionIndex = activeSectionIDs.indexOf(openedSectionID);
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className={`AppLayout ${navbarModifier}`} onKeyDown={handleKeyDown}>
@@ -216,13 +218,41 @@ export default function AppLayout({
       <h1 className="AppLayout-Title" id="app-layout-heading">
         {titles[`${openedSectionID}`]}
       </h1>
-      {/* TODO: add navigation buttons to this `<main>` wrapper. */}
       <main
         aria-owns={`app-layout-heading ${openedSectionID}-tabpanel`}
         className={`AppLayout-Main ${isNavbarExpanded ? ` AppLayout-Main_navbar_expanded` : ''}`.trimEnd()}
         tabIndex={-1}
       >
         {children}
+        <div className="AppLayout-NavBtns">
+          {openedSectionIndex > 0 && (
+            <Button
+              aria-label="Open Previous Section"
+              className="AppLayout-NavBtn"
+              id="previous-section"
+              modifiers={['Button_width_medium']}
+              onClick={() =>
+                openSection(activeSectionIDs[openedSectionIndex - 1])
+              }
+            >
+              Previous
+            </Button>
+          )}
+          {activeSectionIDs.length > 1 &&
+            openedSectionIndex < activeSectionIDs.length - 1 && (
+              <Button
+                aria-label="Open Next Section"
+                className="AppLayout-NavBtn"
+                id="next-section"
+                modifiers={['Button_width_medium']}
+                onClick={() =>
+                  openSection(activeSectionIDs[openedSectionIndex + 1])
+                }
+              >
+                Next
+              </Button>
+            )}
+        </div>
       </main>
     </div>
   );

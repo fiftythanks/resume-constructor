@@ -31,4 +31,10 @@
       padding-block: 0;
     }
   }
+
+  &_width {
+    &_medium {
+      min-width: 6rem;
+    }
+  }
 }
