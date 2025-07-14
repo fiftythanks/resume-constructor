@@ -51,7 +51,7 @@ module.exports = {
       {
         customGroups: [
           {
-            elementNamePattern: ['react', 'react-dom'],
+            elementNamePattern: ['^react$', '^react-dom$'],
             groupName: 'react',
           },
           {
