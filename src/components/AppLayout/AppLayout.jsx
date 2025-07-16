@@ -30,7 +30,6 @@ export default function AppLayout({
   openedSectionID,
   openSection,
   possibleSectionIDs,
-  preview,
   reorderSections,
   resetScreenReaderAnnouncement,
   selectSection,
@@ -211,7 +210,6 @@ export default function AppLayout({
         clearAll={clearAll}
         fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
-        preview={preview}
         toggleNavbar={toggleNavbar}
       />
       {/* This heading is here intentionally for layout purposes. */}

@@ -15,6 +15,14 @@ import AppLayout from '@/components/AppLayout';
 
 import capitalize from '@/utils/capitalize';
 
+// TODO: in many places in the app, logical props are passed as other props: `isOpened={isOpened}`. This is redundant. Logical props should be passed with one word, `isOpened`. Check all components and fix it wherever needed.
+
+// TODO: also, `modifiers[]` props are not very convenient. Should I maybe make them simple strings? Is it worth my time?
+
+// TODO: also, why on earth is this component so large? Something needs to be done with it. Consider separating it to more components.
+
+// TODO: add local storage use for the data so that you don't lose everything when the browser crashes abruply or something else happens.
+
 const possibleSectionIDs = [
   'personal',
   'links',
@@ -210,6 +218,7 @@ export default function App() {
       ],
       shownDegreeIndex: 0,
     },
+    // TODO: it should be certifications, skills and interests... Refactor the corresponding componends and this state.
     certifications: {
       certificates: '',
       skills: '',
@@ -727,10 +736,6 @@ export default function App() {
     addSections(possibleSectionIDs);
   }
 
-  function preview() {
-    // do nothing
-  }
-
   // Functions for modifying resume data.
   const personalFunctions = {
     updatePersonal(field, value) {
@@ -1206,7 +1211,6 @@ export default function App() {
         openedSectionID={openedSectionID}
         openSection={openSection}
         possibleSectionIDs={possibleSectionIDs}
-        preview={preview}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         selectSection={openSection}

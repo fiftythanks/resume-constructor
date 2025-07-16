@@ -2,4 +2,36 @@
   #FONTS
 \*------------------------------------*/
 
-/* This file contains all @font-face declarations, if any. */
+/* This file contains all @font-face declarations. */
+
+@font-face {
+  font-family: 'Garamond';
+  src:
+    url('@/assets/fonts/EBGaramond-Regular.woff') format('woff'),
+    url('@/assets/fonts/EBGaramond-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Garamond';
+  src:
+    url('@/assets/fonts/EBGaramond-Bold.woff') format('woff'),
+    url('@/assets/fonts/EBGaramond-Bold.woff2') format('woff2');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Garamond';
+  src:
+    url('@/assets/fonts/EBGaramond-BoldItalic.woff') format('woff'),
+    url('@/assets/fonts/EBGaramond-BoldItalic.woff2') format('woff2');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Garamond';
+  src:
+    url('@/assets/fonts/EBGaramond-Italic.woff') format('woff'),
+    url('@/assets/fonts/EBGaramond-Italic.woff2') format('woff2');
+  font-style: italic;
+}

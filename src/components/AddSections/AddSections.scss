@@ -1,8 +1,6 @@
 @use '@/styles/utils/variables' as vars;
 
 .AddSections {
-  gap: 1.5rem;
-
   &-List {
     $gap: 1.5rem;
     $padding-inline: 1rem;

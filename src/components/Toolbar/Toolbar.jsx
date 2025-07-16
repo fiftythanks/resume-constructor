@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import AppbarItem from '@/components/AppbarItem';
+import Preview from '@/components/Preview';
 
 import clearSrc from '@/assets/icons/clear.svg';
 import crossSrc from '@/assets/icons/cross.svg';
@@ -16,12 +17,13 @@ export default function Toolbar({
   clearAll,
   fillAll,
   isNavbarExpanded,
-  preview,
   toggleNavbar,
 }) {
   const [areControlsExpanded, setAreControlsExpanded] = useState(false);
   const firstControlRef = useRef(null);
   const toggleControlsRef = useRef(null);
+  // eslint-disable-next-line no-unused-vars
+  const [isPreviewModalShown, setIsPreviewModalShown] = useState(false);
 
   const navbarToggleAttributes = {
     'aria-controls': 'navbar',
@@ -79,13 +81,14 @@ export default function Toolbar({
   };
 
   // Keyboard navigation.
+  // TODO: probably unnecessary `useEffect`? Analyse what else you could use here instead of it and if you find a better solution, refactor.
   useEffect(() => {
     if (areControlsExpanded) {
       firstControlRef.current.focus();
     }
   }, [areControlsExpanded]);
 
-  // !Order matters.
+  //! Order matters.
   const controls = ['clear-all', 'fill-all', 'preview'];
 
   function handleKeyDown(e) {
@@ -154,63 +157,74 @@ export default function Toolbar({
     }
   }
 
+  function showPreviewModal() {
+    setIsPreviewModalShown(true);
+  }
+
+  function closePreviewModal() {
+    setIsPreviewModalShown(false);
+  }
+
   return (
-    <div
-      className={`Toolbar ${className}`}
-      role="toolbar"
-      onKeyDown={handleKeyDown}
-    >
-      <AppbarItem
-        action={toggleNavbar}
-        alt="Toggle Navigation"
-        attributes={navbarToggleAttributes}
-        className="Toolbar-Item Toolbar-Item_toggleNavbar"
-        iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
-      />
+    <>
       <div
-        aria-labelledby="toggle-controls"
-        aria-orientation="horizontal"
-        className={`Toolbar-ControlsWrapper${areControlsExpanded ? '' : ' Toolbar-ControlsWrapper_hidden'}`}
-        id="control-btns"
-        role="menu"
+        className={`Toolbar ${className}`}
+        role="toolbar"
+        onKeyDown={handleKeyDown}
       >
-        <ul className="Toolbar-ControlsList" onBlur={handleBlur}>
-          <AppbarItem
-            hasInner
-            isListItem
-            action={clearAll}
-            alt="Clear All"
-            iconSrc={clearSrc}
-            innerAttributes={clearAllBtnAttributes}
-            innerClassName="Toolbar-Item Toolbar-Item_clearAll"
-          />
-          <AppbarItem
-            hasInner
-            isListItem
-            action={fillAll}
-            alt="Fill All"
-            iconSrc={fillSrc}
-            innerAttributes={fillAllBtnAttributes}
-            innerClassName="Toolbar-Item Toolbar-Item_fillAll"
-          />
-          <AppbarItem
-            hasInner
-            isListItem
-            action={preview}
-            alt="Preview"
-            iconSrc={previewSrc}
-            innerAttributes={previewAttributes}
-            innerClassName="Toolbar-Item Toolbar-Item_preview"
-          />
-        </ul>
+        <AppbarItem
+          action={toggleNavbar}
+          alt="Toggle Navigation"
+          attributes={navbarToggleAttributes}
+          className="Toolbar-Item Toolbar-Item_toggleNavbar"
+          iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
+        />
+        <div
+          aria-labelledby="toggle-controls"
+          aria-orientation="horizontal"
+          className={`Toolbar-ControlsWrapper${areControlsExpanded ? '' : ' Toolbar-ControlsWrapper_hidden'}`}
+          id="control-btns"
+          role="menu"
+        >
+          <ul className="Toolbar-ControlsList" onBlur={handleBlur}>
+            <AppbarItem
+              hasInner
+              isListItem
+              action={clearAll}
+              alt="Clear All"
+              iconSrc={clearSrc}
+              innerAttributes={clearAllBtnAttributes}
+              innerClassName="Toolbar-Item Toolbar-Item_clearAll"
+            />
+            <AppbarItem
+              hasInner
+              isListItem
+              action={fillAll}
+              alt="Fill All"
+              iconSrc={fillSrc}
+              innerAttributes={fillAllBtnAttributes}
+              innerClassName="Toolbar-Item Toolbar-Item_fillAll"
+            />
+            <AppbarItem
+              hasInner
+              isListItem
+              action={showPreviewModal}
+              alt="Preview"
+              iconSrc={previewSrc}
+              innerAttributes={previewAttributes}
+              innerClassName="Toolbar-Item Toolbar-Item_preview"
+            />
+          </ul>
+        </div>
+        <AppbarItem
+          action={toggleControls}
+          alt="Toggle Controls"
+          attributes={controlsToggleAttributes}
+          className="Toolbar-Item Toolbar-Item_toggleControls"
+          iconSrc={kebabSrc}
+        />
       </div>
-      <AppbarItem
-        action={toggleControls}
-        alt="Toggle Controls"
-        attributes={controlsToggleAttributes}
-        className="Toolbar-Item Toolbar-Item_toggleControls"
-        iconSrc={kebabSrc}
-      />
-    </div>
+      <Preview isShown={isPreviewModalShown} onClose={closePreviewModal} />
+    </>
   );
 }

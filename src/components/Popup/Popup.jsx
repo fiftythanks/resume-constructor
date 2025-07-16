@@ -1,19 +1,23 @@
+/* eslint-disable no-param-reassign */
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import './Popup.scss';
 
 export default function Popup({
-  children,
-  isShown,
-  onClose,
-  title,
+  // TODO: it's probably better if it were initialized to an empty string. Consider it.
   block = null,
-  modifiers = [],
+  children,
+  externalRef,
   id,
+  isShown,
+  modifiers = [],
+  title,
+  onClose,
 }) {
   const ref = useRef(null);
 
+  // TODO: why on earth is `useEffect` here? It can be done easily with just checking `isShown`'s value! Refactor.
   useEffect(() => {
     const node = ref.current;
 
@@ -51,8 +55,11 @@ export default function Popup({
       aria-labelledby={`${id}-title`}
       className={popupClassName}
       id={id}
-      ref={ref}
       onClose={onClose}
+      ref={(node) => {
+        ref.current = node;
+        if (externalRef !== undefined) externalRef.current = node;
+      }}
     >
       <h2 className={titleClassName} id={`${id}-title`}>
         {title}

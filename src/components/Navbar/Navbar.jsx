@@ -375,6 +375,7 @@ export default function Navbar({
           modifiers={[`${editorMode ? 'Navbar-Control_editing' : ''}`]}
         />
       </nav>
+      {/* TODO: is this actually a good architecural choice? Should I maybe controlled the rendering of this components via some state in the `App.jsx` component? I mean, so that `Navbar.jsx` doesn't have this component inside, since it's a totally different component and it isn't a child of `Navbar.jsx` at all. Is portalling components like this a good thing? Analyse and refactor if necessary. */}
       <AddSections
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
