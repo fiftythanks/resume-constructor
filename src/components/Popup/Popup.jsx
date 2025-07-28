@@ -51,6 +51,7 @@ export default function Popup({
   }
 
   return createPortal(
+    // TODO: switch from `dialog` to a custom modal implementation. `dialog` seriously lowers performance in the `Preview` component. Or you can try to find another solution for it.
     <dialog
       aria-labelledby={`${id}-title`}
       className={popupClassName}

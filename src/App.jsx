@@ -23,6 +23,8 @@ import capitalize from '@/utils/capitalize';
 
 // TODO: add local storage use for the data so that you don't lose everything when the browser crashes abruply or something else happens.
 
+// TODO: consider changing all compile-time constants to UPPER_SNAKE_CASE.
+
 const possibleSectionIDs = [
   'personal',
   'links',
