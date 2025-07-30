@@ -167,6 +167,7 @@ export default function App() {
     projects: {
       projects: [
         {
+          id: crypto.randomUUID(),
           projectName: '',
           stack: '',
           bulletPoints: [
@@ -198,10 +199,11 @@ export default function App() {
     education: {
       degrees: [
         {
-          uni: '',
+          address: '',
           degree: '',
           graduation: '',
-          address: '',
+          id: crypto.randomUUID(),
+          uni: '',
           bulletPoints: [
             {
               id: crypto.randomUUID(),
@@ -305,10 +307,11 @@ export default function App() {
           draft.education = {
             degrees: [
               {
-                uni: '',
+                address: '',
                 degree: '',
                 graduation: '',
-                address: '',
+                id: crypto.randomUUID(),
+                uni: '',
                 bulletPoints: [
                   {
                     id: crypto.randomUUID(),
@@ -398,6 +401,7 @@ export default function App() {
           draft.projects = {
             projects: [
               {
+                id: crypto.randomUUID(),
                 projectName: '',
                 stack: '',
                 bulletPoints: [
@@ -578,6 +582,7 @@ export default function App() {
           projects: {
             projects: [
               {
+                id: crypto.randomUUID(),
                 projectName: '',
                 stack: '',
                 bulletPoints: [
@@ -609,10 +614,11 @@ export default function App() {
           education: {
             degrees: [
               {
-                uni: '',
+                address: '',
                 degree: '',
                 graduation: '',
-                address: '',
+                id: crypto.randomUUID(),
+                uni: '',
                 bulletPoints: [
                   {
                     id: crypto.randomUUID(),
@@ -952,6 +958,7 @@ export default function App() {
     addProject() {
       setResumeData((draft) => {
         draft.projects.projects.push({
+          id: crypto.randomUUID(),
           projectName: '',
           stack: '',
           bulletPoints: [
@@ -1059,10 +1066,11 @@ export default function App() {
     addDegree() {
       setResumeData((draft) => {
         draft.education.degrees.push({
-          uni: '',
+          address: '',
           degree: '',
           graduation: '',
-          address: '',
+          id: crypto.randomUUID(),
+          uni: '',
           bulletPoints: [
             {
               id: crypto.randomUUID(),
