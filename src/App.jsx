@@ -25,6 +25,9 @@ import capitalize from '@/utils/capitalize';
 
 // TODO: consider changing all compile-time constants to UPPER_SNAKE_CASE.
 
+// The app needs a Russian version, since I will be using it for my job search. There needs to be a toggle or something like that. Russian language needs a different typeface, and the style of the resume should be a bit different, I think.
+// TODO: add Russian version.
+
 const possibleSectionIDs = [
   'personal',
   'links',

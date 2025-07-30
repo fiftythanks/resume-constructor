@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
 });
 
 export default function ResumeSection({ data, sectionName, style }) {
+  // TODO: examine where you need conditional rendering and where you don't. Not using it by default for all sections and fields isn't the most user-friendly approach.
   switch (sectionName) {
     case 'certifications': {
       return (
