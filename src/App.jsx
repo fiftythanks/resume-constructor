@@ -1214,6 +1214,7 @@ export default function App() {
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
         clearAll={clearAll}
+        data={resumeData}
         deleteSections={deleteSections}
         editorMode={editorMode}
         fillAll={fillAll}

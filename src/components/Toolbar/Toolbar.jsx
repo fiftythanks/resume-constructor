@@ -13,8 +13,10 @@ import previewSrc from '@/assets/icons/preview.svg';
 import './Toolbar.scss';
 
 export default function Toolbar({
+  activeSectionIDs,
   className,
   clearAll,
+  data,
   fillAll,
   isNavbarExpanded,
   toggleNavbar,
@@ -224,7 +226,12 @@ export default function Toolbar({
           iconSrc={kebabSrc}
         />
       </div>
-      <Preview isShown={isPreviewModalShown} onClose={closePreviewModal} />
+      <Preview
+        activeSectionIDs={activeSectionIDs}
+        data={data}
+        isShown={isPreviewModalShown}
+        onClose={closePreviewModal}
+      />
     </>
   );
 }

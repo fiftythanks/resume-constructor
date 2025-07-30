@@ -23,6 +23,7 @@ export default function AppLayout({
   addSections,
   children,
   clearAll,
+  data,
   deleteSections,
   editorMode,
   fillAll,
@@ -206,8 +207,10 @@ export default function AppLayout({
         toggleEditorMode={toggleEditorMode}
       />
       <Toolbar
+        activeSectionIDs={activeSectionIDs}
         className="AppLayout-Toolbar"
         clearAll={clearAll}
+        data={data}
         fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
         toggleNavbar={toggleNavbar}
