@@ -41,7 +41,7 @@ export default function Toolbar({
   };
 
   const clearAllBtnAttributes = {
-    // TODO: Add more ARIA attributes when you create actual resume sections!
+    // TODO: add more ARIA attributes when you create actual resume sections.
     'aria-controls':
       'links skills experience projects education certifications',
     'aria-label': 'Clear All',
@@ -52,7 +52,7 @@ export default function Toolbar({
   };
 
   const previewAttributes = {
-    // TODO: Add more ARIA attributes when you create actual resume preview!
+    // TODO: add more ARIA attributes when you create actual resume preview.
     'aria-label': 'Open Preview',
     role: 'menuitem',
     id: 'preview',
@@ -60,7 +60,7 @@ export default function Toolbar({
   };
 
   const fillAllBtnAttributes = {
-    // TODO: Add more ARIA attributes when you create actual resume sections!
+    // TODO: add more ARIA attributes when you create actual resume sections.
     'aria-controls':
       'personal links skills experience projects education certifications',
     'aria-label': 'Fill All',
@@ -83,7 +83,7 @@ export default function Toolbar({
   };
 
   // Keyboard navigation.
-  // TODO: probably unnecessary `useEffect`? Analyse what else you could use here instead of it and if you find a better solution, refactor.
+  // ? Probably unnecessary `useEffect`? Analyse what else you could use here instead of it, and if you find a better solution, refactor.
   useEffect(() => {
     if (areControlsExpanded) {
       firstControlRef.current.focus();
@@ -129,7 +129,7 @@ export default function Toolbar({
         }
       }
 
-      // `e.shifKey === false` behaviour is programmed in AppLayout.
+      // `e.shifKey === false` behaviour is programmed in `AppLayout`.
       if (e.key === 'Tab' && e.shiftKey) {
         e.preventDefault();
 

@@ -94,8 +94,8 @@ export default function BulletPoints({
     },
   };
   // TODO: add the possibility of creating sub-bullet points.
-  // TODO: add the possibility of making text bold.
-  // ? Maybe even add this to all fields, and not only bold? Would be great to let users decide where they need bold text, where italic and where underlined. Also, interesting experience with adding text editing features in form fields.
+  // TODO: add the possibility of making text bold (italic? underlined?).
+  // ? Should I add text styling features to all fields in the app? Would be great to let users decide where they need bold text, where italic and where underlined. Also, interesting experience with adding text styling features in form fields.
   return (
     <fieldset
       className={`${className} BulletPoints ${data.length === 0 ? 'BulletPoints_empty' : ''}`.trim()}

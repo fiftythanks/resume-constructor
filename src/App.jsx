@@ -15,18 +15,41 @@ import AppLayout from '@/components/AppLayout';
 
 import capitalize from '@/utils/capitalize';
 
-// TODO: in many places in the app, logical props are passed as other props: `isOpened={isOpened}`. This is redundant. Logical props should be passed with one word, `isOpened`. Check all components and fix it wherever needed.
+// --------- Application-wide TODOs, FIXMEs and dilemmas ---------
 
-// TODO: also, `modifiers[]` props are not very convenient. Should I maybe make them simple strings? Is it worth my time?
+// ? `modifiers[]` props aren't convenient. Should I make them simple strings?
 
-// TODO: also, why on earth is this component so large? Something needs to be done with it. Consider separating it to more components.
+/**
+ * So that you don't lose everything when the browser crashes abruply or
+ * something else happens. And simply because it's more user-friendly.
+ */
+// TODO (application-wide): add local storage use for the data.
 
-// TODO: add local storage use for the data so that you don't lose everything when the browser crashes abruply or something else happens.
+// TODO (application-wide): change all compile-time constants' names to UPPER_SNAKE_CASE.
 
-// TODO: consider changing all compile-time constants to UPPER_SNAKE_CASE.
+/**
+ * The app needs a Russian version, since I will be using it for my job search.
+ * There needs to be a toggle or something like that. Russian language needs a
+ * different typeface, and the style of the resume should be a bit different, I
+ * think.
+ */
+// TODO (application-wide): add Russian version.
 
-// The app needs a Russian version, since I will be using it for my job search. There needs to be a toggle or something like that. Russian language needs a different typeface, and the style of the resume should be a bit different, I think.
-// TODO: add Russian version.
+/**
+ * I've just stumbled upon one great article about accessibility,
+ * https://blog.logrocket.com/ux-design/wcag-3-vs-2-ux/.
+ * I should go through it thoroughly, as well as through all basic WCAG
+ * guidelines, and see what I should change in the app to reasonably
+ * improve accessibility.
+ */
+// TODO (application-wide): fix color contrasts with APCA (https://apcacontrast.com/).
+// TODO (application-wide): go through the article and change whatever needs a change.
+
+// ? Are tabpanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
+
+// --------- Component-specific TODOs, FIXMEs and questions ---------
+
+// TODO: modularise the component.
 
 const possibleSectionIDs = [
   'personal',
@@ -225,7 +248,8 @@ export default function App() {
       ],
       shownDegreeIndex: 0,
     },
-    // TODO: it should be certifications, skills and interests... Refactor the corresponding componends and this state.
+    // It should be certifications, skills and interests.
+    // TODO (application-wide): refactor `Certifications` and this state.
     certifications: {
       certificates: '',
       skills: '',
@@ -252,7 +276,7 @@ export default function App() {
     setActiveSectionIDs(newActiveSectionIDs);
   }
 
-  // TODO: when you add a bunch of sections, only the last one is announced, for some reason. Fix it.
+  // FIXME (application-wide): when you add a bunch of sections, only the last one is announced, for some reason. Fix it.
   function addSections(sectionIDs) {
     if (Array.isArray(sectionIDs)) {
       const newActiveSectionIDs = activeSectionIDs.slice();
@@ -743,6 +767,7 @@ export default function App() {
     deleteSections(possibleSectionIDs);
   }
 
+  // TODO: make the function real.
   function fillAll() {
     addSections(possibleSectionIDs);
   }
@@ -1231,7 +1256,6 @@ export default function App() {
         toggleEditorMode={toggleEditorMode}
         toggleNavbar={toggleNavbar}
       >
-        {/* TODO: are sections as tabpanels controlled by the tabs valid when the tabs are hidden? Should I maybe conditionalise the ARIA attributes? */}
         {sections[openedSectionID]}
       </AppLayout>
     </>

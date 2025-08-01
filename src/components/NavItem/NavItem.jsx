@@ -95,7 +95,7 @@ export default function NavItem({
         aria-selected={isSelected}
         className={mainClassName}
         id={id}
-        // TODO: screen reader announcements (when sections are implemented)
+        // TODO: add screen reader announcements (when all sections are implemented).
         role="tab"
         type="button"
         onClick={!editorMode ? selectSection : null}
