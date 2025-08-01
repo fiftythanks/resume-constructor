@@ -24,8 +24,8 @@ import ResumeSection from './ResumeSection';
  * Also, don't forget to implement some logic that will import a particular
  * font subset depending on the language of the resume. Or maybe just add
  * Russian letters to the subset by default. Anyway,
- * TODO: add Russian-language support.
  */
+// TODO: add Russian-language support.
 import garamondBold from '@/assets/fonts/EBGaramond-Bold-latin.ttf';
 import garamondItalic from '@/assets/fonts/EBGaramond-Italic-latin.ttf';
 import garamondRegular from '@/assets/fonts/EBGaramond-Regular-latin.ttf';
@@ -33,6 +33,12 @@ import garamondRegular from '@/assets/fonts/EBGaramond-Regular-latin.ttf';
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
 import './Preview.scss';
+
+// ? Toolbar or not toolbar? If "toolbar", then a download button is redundant. Otherwise, add a download button.
+
+// ? Are "Next" and "Previous" buttons needed?
+
+// TODO: add a11y.
 
 Font.register({
   family: 'EBGaramond',
@@ -124,7 +130,9 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
     }
   }, [isShown, viewportWidth]);
 
-  // TODO: examine where you need conditional rendering and where you don't. Using it by default for all sections and fields adds redundancy.
+  // Using it by default for all sections and fields adds redundancy.
+  // TODO: examine where you need conditional rendering and where you don't. Refactor accordingly.
+
   return (
     <Popup
       block="Preview"
@@ -134,17 +142,14 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
       title="Preview"
       onClose={onClose}
     >
-      {/* TODO: don't forget a11y! */}
-      {/* Conditional rendering for this component is necessary since PDF rendering takes a lot of time. But the parent `Popup` component is a different story. It isn't heavy and is implemented as the native `<dialog>` element under the hood. It would be redundant to conditionally render `<Popup>`. That's why only `<PDFViewer>` is rendered conditionally. */}
+      {/* Conditional rendering for this component is necessary since PDF rendering takes a lot of time. But the parent `Popup` component is a different story. It isn't heavy and is implemented as the native `<dialog>` element under the hood. It would be redundant to conditionally render `Popup`. That's why only `PDFViewer` is rendered conditionally. */}
       {isShown && (
         <PDFViewer
-          className="Preview-Iframe"
           height={iframeHeight}
           showToolbar={false}
           style={styles.iframe}
         >
-          {/* TODO: add close button. */}
-          {/* TODO: add download button. */}
+          {/* TODO: add a close button. */}
           <Document style={styles.document}>
             <Page size="A4" style={styles.page}>
               <View>
@@ -163,7 +168,6 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
                         data.personal.email && (
                           <>
                             <Link
-                              className="Preview-Link"
                               href={`mailto:${data.personal.email}`}
                               src={`mailto:${data.personal.email}`}
                               wrap={false}

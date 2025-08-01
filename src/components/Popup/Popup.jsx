@@ -5,7 +5,11 @@ import { createPortal } from 'react-dom';
 import './Popup.scss';
 
 export default function Popup({
-  // TODO: it's probably better if it were initialized to an empty string. Consider it.
+  /**
+   * And if you decide it needs refactoring, check all other
+   * components for the same pattern and refactor them as well.
+   */
+  // ? It would probably be better if it were initialized to an empty string. Consider it.
   block = null,
   children,
   externalRef,
@@ -17,7 +21,11 @@ export default function Popup({
 }) {
   const ref = useRef(null);
 
-  // TODO: why on earth is `useEffect` here? It can be done easily with just checking `isShown`'s value! Refactor.
+  /**
+   * Why on earth is `useEffect` here? It can be done easily with just checking
+   * `isShown`'s value!
+   */
+  // TODO: refactor.
   useEffect(() => {
     const node = ref.current;
 
@@ -51,7 +59,6 @@ export default function Popup({
   }
 
   return createPortal(
-    // TODO: switch from `dialog` to a custom modal implementation. `dialog` seriously lowers performance in the `Preview` component. Or you can try to find another solution for it.
     <dialog
       aria-labelledby={`${id}-title`}
       className={popupClassName}

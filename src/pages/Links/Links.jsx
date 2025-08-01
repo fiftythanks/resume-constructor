@@ -1,5 +1,11 @@
 import React from 'react';
 
+// TODO: make it possible to reorder links.
+
+// TODO: add an option of replacing icons with vertical bars for separation.
+
+// ? Since the email is on the same line as the links, and since it's all the contents of one section, it's kind of strange to keep two different components for all of this info, `Personal` and `Links`. It's probably more reasonable to merge the components. As a bonus, the navbar will become lower and it will be easier to adapt the app for small screen sizes, like iPhone 5's.
+
 export default function Links({ data, functions }) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -8,10 +14,6 @@ export default function Links({ data, functions }) {
     functions.updateLinks(field, type, value);
   };
 
-  // TODO: this section shouldn't be draggable in the navbar! You can't put links anywhere but the resume header!
-  // TODO: I think it would be great to make it possible to reorder links.
-  // TODO: there should be an option of replacing icons with vertical bars for separation.
-  // ? Since the email is on the same line as the links, and since it's all the contents of one section, it's kind of strange to keep two different components for all of this info, `Personal` and `Links`. It's probably more reasonable to merge the components. As a bonus, the navbar will become lower and it will be easier to adapt the app for small screen sizes, like iPhone 5's.
   return (
     <form
       action="#"
