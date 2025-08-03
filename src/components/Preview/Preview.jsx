@@ -29,7 +29,9 @@ import ResumeSection from './ResumeSection';
 import garamondBold from '@/assets/fonts/EBGaramond-Bold-latin.ttf';
 import garamondItalic from '@/assets/fonts/EBGaramond-Italic-latin.ttf';
 import garamondRegular from '@/assets/fonts/EBGaramond-Regular-latin.ttf';
+import closeSrc from '@/assets/icons/cross.svg';
 
+// FIXME (application-wide): a hook import, as far as I remember, shouldn't be below asset imports. Check the config.
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
 import './Preview.scss';
@@ -39,6 +41,8 @@ import './Preview.scss';
 // ? Are "Next" and "Previous" buttons needed?
 
 // TODO: add a11y.
+
+// FIXME: PDF won't render on Apple mobile devices. Find a workaround. Maybe render PDFs as an image? ReactPDF has features for this.
 
 Font.register({
   family: 'EBGaramond',
@@ -142,6 +146,9 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
       title="Preview"
       onClose={onClose}
     >
+      <button className="Preview-CloseBtn" type="button" onClick={onClose}>
+        <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
+      </button>
       {/* Conditional rendering for this component is necessary since PDF rendering takes a lot of time. But the parent `Popup` component is a different story. It isn't heavy and is implemented as the native `<dialog>` element under the hood. It would be redundant to conditionally render `Popup`. That's why only `PDFViewer` is rendered conditionally. */}
       {isShown && (
         <PDFViewer
@@ -149,7 +156,6 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
           showToolbar={false}
           style={styles.iframe}
         >
-          {/* TODO: add a close button. */}
           <Document style={styles.document}>
             <Page size="A4" style={styles.page}>
               <View>

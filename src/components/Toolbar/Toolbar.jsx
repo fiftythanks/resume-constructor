@@ -159,10 +159,12 @@ export default function Toolbar({
     }
   }
 
+  // ? Should the close button be focused when you open the modal with keyboard? Change it, maybe?
   function showPreviewModal() {
     setIsPreviewModalShown(true);
   }
 
+  // TODO: add proper keyboard a11y, like in the `AddSections` modal.
   function closePreviewModal() {
     setIsPreviewModalShown(false);
   }

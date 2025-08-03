@@ -100,6 +100,10 @@ export default function AddSections({
           All
         </Button>
       </ul>
+      {/**
+       * Should it be in the bottom? It's visually in an upper corner of the
+       * modal. Shouldn't it be on top of `AddSections-List` in the DOM?
+       */}
       <button
         className="AddSections-CloseBtn"
         type="button"

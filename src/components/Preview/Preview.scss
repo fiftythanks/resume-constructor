@@ -1,4 +1,18 @@
 .Preview {
   /* TODO: think of a better number. */
   padding-inline: 2rem;
+
+  &-CloseBtn {
+    position: absolute;
+    top: 1rem;
+    right: 0.5rem;
+    border: 0;
+    background: none;
+    width: 2rem;
+    height: 2rem;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
