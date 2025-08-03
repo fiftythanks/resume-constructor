@@ -1,5 +1,4 @@
-/* eslint-disable no-param-reassign */
-import React, { useState } from 'react';
+import React from 'react';
 
 import Certifications from '@/pages/Certifications';
 import Education from '@/pages/Education';
@@ -11,9 +10,8 @@ import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
-import capitalize from '@/utils/capitalize';
-
-import useResumeData from './hooks/useResumeData';
+import useAppState from '@/hooks/useAppState';
+import useResumeData from '@/hooks/useResumeData';
 
 // --------- Application-wide TODOs, FIXMEs and dilemmas ---------
 
@@ -51,50 +49,10 @@ import useResumeData from './hooks/useResumeData';
 
 // TODO: modularise the component.
 
-const possibleSectionIDs = [
-  'personal',
-  'links',
-  'skills',
-  'experience',
-  'projects',
-  'education',
-  'certifications',
-];
-
-const fullSectionNames = {
-  personal: 'Personal Details',
-  links: 'Links',
-  skills: 'Technical Skills',
-  experience: 'Work Experience',
-  projects: 'Projects',
-  education: 'Education',
-  certifications: 'Certifications',
-};
-
 export default function App() {
-  const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
-  const [openedSectionID, setOpenedSectionID] = useState('personal');
-
-  const [activeSectionIDs, setActiveSectionIDs] = useState([
-    'personal',
-    'links',
-    'skills',
-    'experience',
-    'projects',
-    'education',
-    'certifications',
-  ]);
-
-  const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
-
-  /**
-   * This state determines whether to allow DnD and to render delete buttons
-   * with `NavItem`s or not.
-   */
-  const [editorMode, setEditorMode] = useState(false);
-
   const {
     certificationsFunctions,
+    // eslint-disable-next-line no-unused-vars
     clear,
     educationFunctions,
     experienceFunctions,
@@ -105,167 +63,24 @@ export default function App() {
     skillsFunctions,
   } = useResumeData();
 
-  function resetScreenReaderAnnouncement() {
-    setScreenReaderAnnouncement(null);
-  }
-
-  function updateScreenReaderAnnouncement(announcement) {
-    setScreenReaderAnnouncement(announcement);
-  }
-
-  function openSection(sectionID) {
-    setOpenedSectionID(sectionID);
-    setScreenReaderAnnouncement(
-      `Section ${fullSectionNames[sectionID]} was opened.`,
-    );
-  }
-
-  function reorderSections(newActiveSectionIDs) {
-    setActiveSectionIDs(newActiveSectionIDs);
-  }
-
-  // FIXME (application-wide): when you add a bunch of sections, only the last one is announced, for some reason. Fix it.
-  function addSections(sectionIDs) {
-    if (Array.isArray(sectionIDs)) {
-      const newActiveSectionIDs = activeSectionIDs.slice();
-
-      sectionIDs.forEach((sectionID) => {
-        if (possibleSectionIDs.includes(sectionID)) {
-          if (!activeSectionIDs.includes(sectionID)) {
-            newActiveSectionIDs.push(sectionID);
-          }
-        } else {
-          throw new Error(
-            'Incorrect section ID. Available section IDs: personal, links, skills, experience, projects, education, certifications',
-          );
-        }
-      });
-
-      setActiveSectionIDs(newActiveSectionIDs);
-
-      const areAllSectionsActive =
-        newActiveSectionIDs.filter(
-          (sectionID) => !possibleSectionIDs.includes(sectionID),
-        ).length === 0;
-
-      if (areAllSectionsActive) {
-        if (sectionIDs.length === 1) {
-          setScreenReaderAnnouncement(
-            `Section ${fullSectionNames[sectionIDs[0]]} was added.`,
-          );
-        } else {
-          setScreenReaderAnnouncement(
-            `Sections ${sectionIDs.map((sectionID) => fullSectionNames[sectionID]).join(', ')} added.`,
-          );
-        }
-      }
-    } else {
-      throw new TypeError(
-        'Incorrect argument! `addSections` accepts only arrays.',
-      );
-    }
-  }
-
-  function deleteSections(sectionIDs) {
-    if (Array.isArray(sectionIDs)) {
-      const newActiveSectionIDs = activeSectionIDs.slice();
-      let newScreenReaderAnnouncement = '';
-      let wasOpenedSectionDeleted = false;
-
-      sectionIDs.forEach((sectionID) => {
-        if (possibleSectionIDs.includes(sectionID)) {
-          if (
-            activeSectionIDs.includes(sectionID) &&
-            sectionID !== 'personal'
-          ) {
-            newActiveSectionIDs.splice(
-              newActiveSectionIDs.indexOf(sectionID),
-              1,
-            );
-            clear(sectionID);
-
-            newScreenReaderAnnouncement +=
-              newScreenReaderAnnouncement === ''
-                ? capitalize(sectionID)
-                : `, ${sectionID}`;
-
-            if (openedSectionID === sectionID) {
-              setOpenedSectionID(null);
-              wasOpenedSectionDeleted = true;
-            }
-          }
-        } else {
-          throw new Error(
-            'Incorrect section ID. Available section IDs: personal, links, skills, experience, projects, education, certifications',
-          );
-        }
-      });
-
-      if (sectionIDs.includes(openedSectionID)) {
-        const firstDeleletedSectionIndex = activeSectionIDs.indexOf(
-          sectionIDs[0],
-        );
-        const lastDeleletedSectionIndex = activeSectionIDs.indexOf(
-          sectionIDs.at(-1),
-        );
-
-        if (lastDeleletedSectionIndex < activeSectionIDs.length - 1) {
-          setOpenedSectionID(activeSectionIDs[lastDeleletedSectionIndex + 1]);
-        } else if (sectionIDs[0] !== 'personal') {
-          setOpenedSectionID(activeSectionIDs[firstDeleletedSectionIndex - 1]);
-        } else {
-          setOpenedSectionID('personal');
-        }
-      }
-
-      setActiveSectionIDs(newActiveSectionIDs);
-
-      if (newScreenReaderAnnouncement !== '') {
-        newScreenReaderAnnouncement += ' deleted.';
-
-        if (wasOpenedSectionDeleted) {
-          newScreenReaderAnnouncement +=
-            ' Opened section deleted. No section is opened currently.';
-        }
-
-        setScreenReaderAnnouncement(newScreenReaderAnnouncement);
-      }
-    } else {
-      throw new TypeError(
-        'Incorrect argument! `deleteSections` accepts only arrays.',
-      );
-    }
-  }
-
-  function toggleNavbar() {
-    setIsNavbarExpanded(!isNavbarExpanded);
-
-    if (editorMode) setEditorMode(false);
-  }
-
-  function toggleEditorMode() {
-    setEditorMode(!editorMode);
-
-    if (editorMode) {
-      setScreenReaderAnnouncement('Editor Mode off');
-    } else {
-      setScreenReaderAnnouncement(
-        'Editor Mode on. To move focus to tabs for editing, press Tab while holding Shift. If you collapse the navbar either by pressing Escape or pressing the "Toggle Navbar" button, the editor mode will be turned off automatically.',
-      );
-    }
-  }
-
-  // It's not `clearAll`, it's `deleteAll`.
-  // TODO: rename to `deleteAll`.
-  function clearAll() {
-    clear('personal');
-    deleteSections(possibleSectionIDs);
-  }
-
-  // TODO: make the function real.
-  function fillAll() {
-    addSections(possibleSectionIDs);
-  }
+  const {
+    activeSectionIDs,
+    addSections,
+    clearAll,
+    deleteSections,
+    editorMode,
+    fillAll,
+    isNavbarExpanded,
+    openSection,
+    openedSectionID,
+    possibleSectionIDs,
+    reorderSections,
+    resetScreenReaderAnnouncement,
+    screenReaderAnnouncement,
+    toggleEditorMode,
+    toggleNavbar,
+    updateScreenReaderAnnouncement,
+  } = useAppState();
 
   // Section components.
   const sections = {
@@ -312,7 +127,7 @@ export default function App() {
   return (
     <>
       <span aria-live="polite" className="visually-hidden">
-        {screenReaderAnouncement}
+        {screenReaderAnnouncement}
       </span>
       <AppLayout
         activeSectionIDs={activeSectionIDs}

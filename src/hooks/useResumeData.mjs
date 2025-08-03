@@ -2,7 +2,7 @@
 import { useImmer } from 'use-immer';
 
 // ? Put it to a separate file?
-const initialResumeData = {
+const INITIAL_RESUME_DATA = {
   personal: {
     fullName: '',
     jobTitle: '',
@@ -168,7 +168,7 @@ const initialResumeData = {
 
 // TODO: create a `clearAll` function.
 export default function useResumeData() {
-  const [resumeData, setResumeData] = useImmer(initialResumeData);
+  const [resumeData, setResumeData] = useImmer(INITIAL_RESUME_DATA);
 
   function clear(sectionID) {
     switch (sectionID) {
