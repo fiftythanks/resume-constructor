@@ -9,6 +9,8 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
+// FIXME: there's an issue some field(s). You can't insert data in it/them. Fix it.
+
 export default function Education({
   data,
   functions,

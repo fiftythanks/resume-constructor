@@ -6,6 +6,8 @@ import React from 'react';
 
 // ? Since the email is on the same line as the links, and since it's all the contents of one section, it's kind of strange to keep two different components for all of this info, `Personal` and `Links`. It's probably more reasonable to merge the components. As a bonus, the navbar will become lower and it will be easier to adapt the app for small screen sizes, like iPhone 5's.
 
+// FIXME: when the component rerenders, all data gets lost. Fix it.
+
 export default function Links({ data, functions }) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
