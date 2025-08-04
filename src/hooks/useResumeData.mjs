@@ -545,7 +545,7 @@ export default function useResumeData() {
   const educationFunctions = {
     editDegree(index, field, value) {
       setResumeData((draft) => {
-        draft.education[index][field] = value;
+        draft.education.degrees[index][field] = value;
       });
     },
 

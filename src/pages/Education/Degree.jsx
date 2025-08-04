@@ -22,10 +22,10 @@ export default function Degree({
           <input
             className="section--field"
             id="university-name"
-            name="universityName"
+            name="uni"
             placeholder="e.g. University of California, Berkeley"
             type="text"
-            value={data.universityName}
+            value={data.uni}
             onChange={handleInputChange}
           />
         </li>
