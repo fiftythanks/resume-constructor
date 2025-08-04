@@ -13,9 +13,12 @@ import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
-// --------- Application-wide TODOs, FIXMEs and dilemmas ---------
+// ===========================================
+// Application-wide TODOs, FIXMEs and dilemmas
+// ===========================================
 
 // ? `modifiers[]` props aren't convenient. Should I make them simple strings?
+// ? Are tabpanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
 
 /**
  * So that you don't lose everything when the browser crashes abruply or
@@ -43,9 +46,24 @@ import AppLayout from '@/components/AppLayout';
 // TODO (application-wide): fix color contrasts with APCA (https://apcacontrast.com/).
 // TODO (application-wide): go through the article and change whatever needs a change.
 
-// ? Are tabpanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
+// TODO (application-wide): determine which fields are those that aren't desirable in a software engineer's resume and add hints to their labels that explain that they aren't desirable.
 
-// --------- Component-specific TODOs, FIXMEs and questions ---------
+/**
+ * Maybe it should be a separate component that contains a guide on creating a
+ * software engineer's resume. Maybe it should be in the form of small tips near
+ * every field all around the application.
+ *
+ * The latter is what I've seen in all other similar projects. The former is a
+ * much more interesting and impressive approach that would probably put the
+ * project to a new level.
+ */
+// TODO (application-wide): add tips on how to fill each section properly, in which order sections should be, etc.
+
+// ==============================================
+// Component-specific TODOs, FIXMEs and dilemmas
+// ==============================================
+
+// There's no such TODOs, FIXMEs or dilemmas at the moment.
 
 export default function App() {
   const {
