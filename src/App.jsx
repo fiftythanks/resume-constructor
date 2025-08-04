@@ -66,7 +66,7 @@ export default function App() {
   const {
     activeSectionIDs,
     addSections,
-    clearAll,
+    deleteAll,
     deleteSections,
     editorMode,
     fillAll,
@@ -132,8 +132,8 @@ export default function App() {
       <AppLayout
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
-        clearAll={clearAll}
         data={resumeData}
+        deleteAll={deleteAll}
         deleteSections={(sectionIDs) => deleteSections(sectionIDs, clear)}
         editorMode={editorMode}
         fillAll={fillAll}

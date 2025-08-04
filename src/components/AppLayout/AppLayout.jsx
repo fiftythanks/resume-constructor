@@ -22,7 +22,7 @@ export default function AppLayout({
   activeSectionIDs,
   addSections,
   children,
-  clearAll,
+  deleteAll,
   data,
   deleteSections,
   editorMode,
@@ -127,7 +127,7 @@ export default function AppLayout({
 
       if (
         (id === 'toggle-controls' ||
-          id === 'clear-all' ||
+          id === 'delete-all' ||
           id === 'fill-all' ||
           id === 'preview') &&
         !e.shiftKey
@@ -209,8 +209,8 @@ export default function AppLayout({
       <Toolbar
         activeSectionIDs={activeSectionIDs}
         className="AppLayout-Toolbar"
-        clearAll={clearAll}
         data={data}
+        deleteAll={deleteAll}
         fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
         toggleNavbar={toggleNavbar}

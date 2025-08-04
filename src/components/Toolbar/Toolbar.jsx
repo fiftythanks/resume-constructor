@@ -15,7 +15,7 @@ import './Toolbar.scss';
 export default function Toolbar({
   activeSectionIDs,
   className,
-  clearAll,
+  deleteAll,
   data,
   fillAll,
   isNavbarExpanded,
@@ -40,14 +40,14 @@ export default function Toolbar({
     tabIndex: '2',
   };
 
-  const clearAllBtnAttributes = {
+  const deleteAllBtnAttributes = {
     // TODO: add more ARIA attributes when you create actual resume sections.
     'aria-controls':
       'links skills experience projects education certifications',
-    'aria-label': 'Clear All',
+    'aria-label': 'Delete All',
     ref: firstControlRef,
     role: 'menuitem',
-    id: 'clear-all',
+    id: 'delete-all',
     tabIndex: '-1',
   };
 
@@ -91,7 +91,7 @@ export default function Toolbar({
   }, [areControlsExpanded]);
 
   //! Order matters.
-  const controls = ['clear-all', 'fill-all', 'preview'];
+  const controls = ['delete-all', 'fill-all', 'preview'];
 
   function handleKeyDown(e) {
     const { id } = e.target;
@@ -123,7 +123,7 @@ export default function Toolbar({
 
       if (e.key === 'ArrowRight') {
         if (i === controls.length - 1) {
-          document.getElementById('clear-all').focus();
+          document.getElementById('delete-all').focus();
         } else {
           document.getElementById(controls[i + 1]).focus();
         }
@@ -194,11 +194,11 @@ export default function Toolbar({
             <AppbarItem
               hasInner
               isListItem
-              action={clearAll}
+              action={deleteAll}
               alt="Clear All"
               iconSrc={clearSrc}
-              innerAttributes={clearAllBtnAttributes}
-              innerClassName="Toolbar-Item Toolbar-Item_clearAll"
+              innerAttributes={deleteAllBtnAttributes}
+              innerClassName="Toolbar-Item Toolbar-Item_deleteAll"
             />
             <AppbarItem
               hasInner

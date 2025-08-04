@@ -177,12 +177,10 @@ export default function useAppState() {
     }
   }
 
-  // It's not `clearAll`, it's `deleteAll`.
-  // TODO: rename to `deleteAll`.
   // FIXME (application-wide): right now, wherever `clearAll` is used, it's used incorrectly, which results in resume data not being cleared, only deleted. Fix it.
-  function clearAll(clear) {
+  function deleteAll(clear) {
     if (typeof clear === 'function') clear('personal');
-    deleteSections(POSSIBLE_SECTION_IDS);
+    deleteSections(POSSIBLE_SECTION_IDS, clear);
   }
 
   // TODO: make the function real.
@@ -226,7 +224,7 @@ export default function useAppState() {
   return {
     activeSectionIDs,
     addSections,
-    clearAll,
+    deleteAll,
     deleteSections,
     editorMode,
     fillAll,
