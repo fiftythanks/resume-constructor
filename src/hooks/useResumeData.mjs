@@ -168,12 +168,12 @@ const INITIAL_RESUME_DATA = {
 
 // TODO: create a `clearAll` function.
 export default function useResumeData() {
-  const [resumeData, setResumeData] = useImmer(INITIAL_RESUME_DATA);
+  const [data, setData] = useImmer(INITIAL_RESUME_DATA);
 
   function clear(sectionID) {
     switch (sectionID) {
       case 'certifications':
-        setResumeData((draft) => {
+        setData((draft) => {
           draft.certifications = {
             certificates: '',
             skills: '',
@@ -182,7 +182,7 @@ export default function useResumeData() {
         });
         break;
       case 'education':
-        setResumeData((draft) => {
+        setData((draft) => {
           draft.education = {
             degrees: [
               {
@@ -212,7 +212,7 @@ export default function useResumeData() {
         });
         break;
       case 'experience':
-        setResumeData((draft) => {
+        setData((draft) => {
           draft.experience = {
             jobs: [
               {
@@ -242,7 +242,7 @@ export default function useResumeData() {
         });
         break;
       case 'links':
-        setResumeData((draft) => {
+        setData((draft) => {
           draft.links = {
             website: {
               text: '',
@@ -264,7 +264,7 @@ export default function useResumeData() {
         });
         break;
       case 'personal':
-        setResumeData((draft) => {
+        setData((draft) => {
           draft.personal = {
             fullName: '',
             jobTitle: '',
@@ -276,7 +276,7 @@ export default function useResumeData() {
         });
         break;
       case 'projects':
-        setResumeData((draft) => {
+        setData((draft) => {
           draft.projects = {
             projects: [
               {
@@ -312,7 +312,7 @@ export default function useResumeData() {
         });
         break;
       case 'skills':
-        setResumeData((draft) => {
+        setData((draft) => {
           draft.skills = {
             languages: [
               {
@@ -361,7 +361,7 @@ export default function useResumeData() {
         break;
       // Clears all sections' data
       default:
-        setResumeData({
+        setData({
           personal: {
             fullName: '',
             jobTitle: '',
@@ -532,7 +532,7 @@ export default function useResumeData() {
 
   const certificationsFunctions = {
     updateCertifications(field, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.certifications[field] = value;
       });
     },
@@ -544,13 +544,13 @@ export default function useResumeData() {
 
   const educationFunctions = {
     editDegree(index, field, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.education.degrees[index][field] = value;
       });
     },
 
     addDegree() {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.education.degrees.push({
           address: '',
           degree: '',
@@ -577,7 +577,7 @@ export default function useResumeData() {
     },
 
     deleteDegree(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         if (draft.education.shownDegreeIndex === index) {
           if (
             index === draft.education.degrees.length - 1 &&
@@ -600,19 +600,19 @@ export default function useResumeData() {
     },
 
     showDegree(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.education.shownDegreeIndex = index;
       });
     },
 
     updateBulletPoints(index, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.education.degrees[index].bulletPoints = value;
       });
     },
 
     addBulletPoint(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.education.degrees[index].bulletPoints.push({
           id: crypto.randomUUID(),
           value: '',
@@ -621,13 +621,13 @@ export default function useResumeData() {
     },
 
     deleteBulletPoint(degreeIndex, itemIndex) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.education.degrees[degreeIndex].bulletPoints.splice(itemIndex, 1);
       });
     },
 
     editBulletPoint(degreeIndex, itemIndex, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.education.degrees[degreeIndex].bulletPoints[itemIndex] = value;
       });
     },
@@ -639,13 +639,13 @@ export default function useResumeData() {
 
   const experienceFunctions = {
     editJob(index, field, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.experience.jobs[index][field] = value;
       });
     },
 
     addJob() {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.experience.jobs.push({
           address: '',
           companyName: '',
@@ -674,7 +674,7 @@ export default function useResumeData() {
     },
 
     deleteJob(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         /**
          * If a job that was shown is deleted and there are other jobs,
          * the next job should be shown unless the deleted job was the
@@ -704,19 +704,19 @@ export default function useResumeData() {
     },
 
     showJob(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.experience.shownJobIndex = index;
       });
     },
 
     updateBulletPoints(index, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.experience.jobs[index].bulletPoints = value;
       });
     },
 
     addBulletPoint(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.experience.jobs[index].bulletPoints.push({
           id: crypto.randomUUID(),
           value: '',
@@ -725,13 +725,13 @@ export default function useResumeData() {
     },
 
     deleteBulletPoint(jobIndex, itemIndex) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.experience.jobs[jobIndex].bulletPoints.splice(itemIndex, 1);
       });
     },
 
     editBulletPoint(jobIndex, itemIndex, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.experience.jobs[jobIndex].bulletPoints[itemIndex] = value;
       });
     },
@@ -743,7 +743,7 @@ export default function useResumeData() {
 
   const linksFunctions = {
     updateLinks(field, type, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.links[field][type] = value;
       });
     },
@@ -755,7 +755,7 @@ export default function useResumeData() {
 
   const personalFunctions = {
     updatePersonal(field, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.personal[field] = value;
       });
     },
@@ -767,13 +767,13 @@ export default function useResumeData() {
 
   const projectFunctions = {
     editProject(index, field, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.projects.projects[index][field] = value;
       });
     },
 
     addProject() {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.projects.projects.push({
           id: crypto.randomUUID(),
           projectName: '',
@@ -806,7 +806,7 @@ export default function useResumeData() {
     },
 
     deleteProject(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         /**
          * If a project that was shown is deleted and there are other projects,
          * the next project should be shown unless the deleted project was the
@@ -836,19 +836,19 @@ export default function useResumeData() {
     },
 
     showProject(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.projects.shownProjectIndex = index;
       });
     },
 
     updateBulletPoints(index, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.projects.projects[index].bulletPoints = value;
       });
     },
 
     addBulletPoint(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.projects.projects[index].bulletPoints.push({
           id: crypto.randomUUID(),
           value: '',
@@ -857,13 +857,13 @@ export default function useResumeData() {
     },
 
     deleteBulletPoint(projectIndex, itemIndex) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.projects.projects[projectIndex].bulletPoints.splice(itemIndex, 1);
       });
     },
 
     editBulletPoint(projectIndex, itemIndex, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.projects.projects[projectIndex].bulletPoints[itemIndex] = value;
       });
     },
@@ -875,7 +875,7 @@ export default function useResumeData() {
 
   const skillsFunctions = {
     updateSkills(field, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills[field] = value;
       });
     },
@@ -885,7 +885,7 @@ export default function useResumeData() {
     },
 
     addLanguage() {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.languages.push({
           id: crypto.randomUUID(),
           value: '',
@@ -894,19 +894,19 @@ export default function useResumeData() {
     },
 
     deleteLanguage(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.languages.splice(index, 1);
       });
     },
 
     editLanguage(index, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.languages[index] = value;
       });
     },
 
     addFramework() {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.frameworks.push({
           id: crypto.randomUUID(),
           value: '',
@@ -915,19 +915,19 @@ export default function useResumeData() {
     },
 
     deleteFramework(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.frameworks.splice(index, 1);
       });
     },
 
     editFramework(index, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.frameworks[index] = value;
       });
     },
 
     addTool() {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.tools.push({
           id: crypto.randomUUID(),
           value: '',
@@ -936,13 +936,13 @@ export default function useResumeData() {
     },
 
     deleteTool(index) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.tools.splice(index, 1);
       });
     },
 
     editTool(index, value) {
-      setResumeData((draft) => {
+      setData((draft) => {
         draft.skills.tools[index] = value;
       });
     },
@@ -951,12 +951,12 @@ export default function useResumeData() {
   return {
     certificationsFunctions,
     clear,
+    data,
     educationFunctions,
     experienceFunctions,
     linksFunctions,
     personalFunctions,
     projectFunctions,
-    resumeData,
     skillsFunctions,
   };
 }

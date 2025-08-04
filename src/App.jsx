@@ -50,14 +50,13 @@ import AppLayout from '@/components/AppLayout';
 export default function App() {
   const {
     certificationsFunctions,
-    // eslint-disable-next-line no-unused-vars
     clear,
+    data,
     educationFunctions,
     experienceFunctions,
     linksFunctions,
     personalFunctions,
     projectFunctions,
-    resumeData,
     skillsFunctions,
   } = useResumeData();
 
@@ -82,41 +81,39 @@ export default function App() {
 
   // Section components.
   const sections = {
-    personal: (
-      <Personal data={resumeData.personal} functions={personalFunctions} />
-    ),
-    links: <Links data={resumeData.links} functions={linksFunctions} />,
+    personal: <Personal data={data.personal} functions={personalFunctions} />,
+    links: <Links data={data.links} functions={linksFunctions} />,
     skills: (
       <Skills
-        data={resumeData.skills}
+        data={data.skills}
         functions={skillsFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     experience: (
       <Experience
-        data={resumeData.experience}
+        data={data.experience}
         functions={experienceFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     projects: (
       <Projects
-        data={resumeData.projects}
+        data={data.projects}
         functions={projectFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     education: (
       <Education
-        data={resumeData.education}
+        data={data.education}
         functions={educationFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     certifications: (
       <Certifications
-        data={resumeData.certifications}
+        data={data.certifications}
         functions={certificationsFunctions}
       />
     ),
@@ -130,7 +127,8 @@ export default function App() {
       <AppLayout
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
-        data={resumeData}
+        data={data}
+        // TODO (application-wide): do something with `deleteAll` and `deleteSections`. Functions from `useResumeData` and `useAppState` shouldn't be coupled. Should they?
         deleteAll={() => deleteAll(clear)}
         deleteSections={(sectionIDs) => deleteSections(sectionIDs, clear)}
         editorMode={editorMode}
