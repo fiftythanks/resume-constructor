@@ -104,7 +104,6 @@ export default function useAppState() {
     }
   }
 
-  // FIXME (application-wide): right now, wherever `deleteSections` is used, it's used incorrectly, which results in resume data not being cleared. Fix it.
   function deleteSections(sectionIDs, clear) {
     if (Array.isArray(sectionIDs)) {
       const newActiveSectionIDs = activeSectionIDs.slice();

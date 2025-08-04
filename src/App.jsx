@@ -134,7 +134,7 @@ export default function App() {
         addSections={addSections}
         clearAll={clearAll}
         data={resumeData}
-        deleteSections={deleteSections}
+        deleteSections={(sectionIDs) => deleteSections(sectionIDs, clear)}
         editorMode={editorMode}
         fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
