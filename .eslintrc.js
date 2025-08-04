@@ -74,12 +74,17 @@ module.exports = {
             elementNamePattern: '^@/assets/.*',
             groupName: 'assets',
           },
+          {
+            elementNamePattern: '^@/hooks/.*',
+            groupName: 'hooks',
+          },
         ],
 
         groups: [
           'react',
           'builtin',
           'external',
+          'hooks',
           'layout',
           'pages',
           'components',

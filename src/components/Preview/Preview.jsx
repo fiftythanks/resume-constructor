@@ -11,6 +11,9 @@ import {
   View,
 } from '@react-pdf/renderer';
 
+// FIXME (application-wide): a hook import, as far as I remember, shouldn't be below asset imports. Check the config.
+import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
+
 import Popup from '@/components/Popup';
 
 import Icon from './Icon';
@@ -30,9 +33,6 @@ import garamondBold from '@/assets/fonts/EBGaramond-Bold-latin.ttf';
 import garamondItalic from '@/assets/fonts/EBGaramond-Italic-latin.ttf';
 import garamondRegular from '@/assets/fonts/EBGaramond-Regular-latin.ttf';
 import closeSrc from '@/assets/icons/cross.svg';
-
-// FIXME (application-wide): a hook import, as far as I remember, shouldn't be below asset imports. Check the config.
-import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
 import './Preview.scss';
 

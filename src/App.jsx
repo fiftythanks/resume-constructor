@@ -1,5 +1,8 @@
 import React from 'react';
 
+import useAppState from '@/hooks/useAppState';
+import useResumeData from '@/hooks/useResumeData';
+
 import Certifications from '@/pages/Certifications';
 import Education from '@/pages/Education';
 import Experience from '@/pages/Experience';
@@ -9,9 +12,6 @@ import Projects from '@/pages/Projects';
 import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
-
-import useAppState from '@/hooks/useAppState';
-import useResumeData from '@/hooks/useResumeData';
 
 // --------- Application-wide TODOs, FIXMEs and dilemmas ---------
 
@@ -46,8 +46,6 @@ import useResumeData from '@/hooks/useResumeData';
 // ? Are tabpanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
 
 // --------- Component-specific TODOs, FIXMEs and questions ---------
-
-// TODO: modularise the component.
 
 export default function App() {
   const {
