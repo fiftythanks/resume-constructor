@@ -177,7 +177,6 @@ export default function useAppState() {
     }
   }
 
-  // FIXME (application-wide): right now, wherever `deleteAll` is used, it's used incorrectly, which results in resume data not being cleared, only deleted. Fix it.
   function deleteAll(clear) {
     deleteSections(POSSIBLE_SECTION_IDS, clear);
   }

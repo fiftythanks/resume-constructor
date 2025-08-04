@@ -133,7 +133,7 @@ export default function App() {
         activeSectionIDs={activeSectionIDs}
         addSections={addSections}
         data={resumeData}
-        deleteAll={deleteAll}
+        deleteAll={() => deleteAll(clear)}
         deleteSections={(sectionIDs) => deleteSections(sectionIDs, clear)}
         editorMode={editorMode}
         fillAll={fillAll}
