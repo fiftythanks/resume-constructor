@@ -4,7 +4,7 @@ import capitalize from '@/utils/capitalize';
 
 // TODO: either pass it to `INITIAL_ACTIVE_SECTION_IDS` or merge them for now. What's the purpose of having two identical arrays that won't change?
 //! Order matters.
-const POSSIBLE_SECTION_IDS = [
+const POSSIBLE_SECTION_IDS = Object.freeze([
   'personal',
   'links',
   'skills',
@@ -12,10 +12,9 @@ const POSSIBLE_SECTION_IDS = [
   'projects',
   'education',
   'certifications',
-];
-Object.freeze(POSSIBLE_SECTION_IDS);
+]);
 
-const FULL_SECTION_NAMES = {
+const FULL_SECTION_NAMES = Object.freeze({
   personal: 'Personal Details',
   links: 'Links',
   skills: 'Technical Skills',
@@ -23,10 +22,9 @@ const FULL_SECTION_NAMES = {
   projects: 'Projects',
   education: 'Education',
   certifications: 'Certifications',
-};
-Object.freeze(FULL_SECTION_NAMES);
+});
 
-const INITIAL_ACTIVE_SECTION_IDS = [
+const INITIAL_ACTIVE_SECTION_IDS = Object.freeze([
   'personal',
   'links',
   'skills',
@@ -34,8 +32,7 @@ const INITIAL_ACTIVE_SECTION_IDS = [
   'projects',
   'education',
   'certifications',
-];
-Object.freeze(INITIAL_ACTIVE_SECTION_IDS);
+]);
 
 export default function useAppState() {
   const [editorMode, setEditorMode] = useState(false);
