@@ -899,6 +899,7 @@ export default function useResumeData() {
       });
     },
 
+    // TODO: refactor to update value directly instead of the object that has both the value and the ID.
     editLanguage(index, value) {
       setData((draft) => {
         draft.skills.languages[index] = value;
@@ -920,6 +921,7 @@ export default function useResumeData() {
       });
     },
 
+    // TODO: refactor to update value directly instead of the object that has both the value and the ID.
     editFramework(index, value) {
       setData((draft) => {
         draft.skills.frameworks[index] = value;
@@ -941,6 +943,7 @@ export default function useResumeData() {
       });
     },
 
+    // TODO: refactor to update value directly instead of the object that has both the value and the ID.
     editTool(index, value) {
       setData((draft) => {
         draft.skills.tools[index] = value;

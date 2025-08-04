@@ -191,6 +191,7 @@ export default function Toolbar({
           role="menu"
         >
           <ul className="Toolbar-ControlsList" onBlur={handleBlur}>
+            {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
             <AppbarItem
               hasInner
               isListItem
@@ -200,6 +201,7 @@ export default function Toolbar({
               innerAttributes={deleteAllBtnAttributes}
               innerClassName="Toolbar-Item Toolbar-Item_deleteAll"
             />
+            {/* TODO: add a warning that clicking "Fill All" will result in loss of all data. */}
             <AppbarItem
               hasInner
               isListItem

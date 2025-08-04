@@ -177,13 +177,9 @@ export default function useAppState() {
     }
   }
 
+  // FIXME: `Personal` isn't cleared. Fix it.
   function deleteAll(clear) {
     deleteSections(POSSIBLE_SECTION_IDS, clear);
-  }
-
-  // TODO: make the function real.
-  function fillAll() {
-    addSections(POSSIBLE_SECTION_IDS);
   }
 
   function openSection(sectionID) {
@@ -225,7 +221,6 @@ export default function useAppState() {
     deleteAll,
     deleteSections,
     editorMode,
-    fillAll,
     isNavbarExpanded,
     openSection,
     openedSectionID,

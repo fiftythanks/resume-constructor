@@ -13,12 +13,14 @@ import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
+import fillAll from '@/utils/fillAll';
+
 // ===========================================
 // Application-wide TODOs, FIXMEs and dilemmas
 // ===========================================
 
 // ? `modifiers[]` props aren't convenient. Should I make them simple strings?
-// ? Are tabpanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
+// ? Are tabulletPointanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
 
 /**
  * So that you don't lose everything when the browser crashes abruply or
@@ -84,7 +86,6 @@ export default function App() {
     deleteAll,
     deleteSections,
     editorMode,
-    fillAll,
     isNavbarExpanded,
     openSection,
     openedSectionID,
@@ -137,6 +138,16 @@ export default function App() {
     ),
   };
 
+  const sectionFunctions = {
+    certificationsFunctions,
+    educationFunctions,
+    experienceFunctions,
+    linksFunctions,
+    personalFunctions,
+    projectFunctions,
+    skillsFunctions,
+  };
+
   return (
     <>
       <span aria-live="polite" className="visually-hidden">
@@ -150,7 +161,6 @@ export default function App() {
         deleteAll={() => deleteAll(clear)}
         deleteSections={(sectionIDs) => deleteSections(sectionIDs, clear)}
         editorMode={editorMode}
-        fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
         openedSectionID={openedSectionID}
         openSection={openSection}
@@ -160,6 +170,18 @@ export default function App() {
         selectSection={openSection}
         toggleEditorMode={toggleEditorMode}
         toggleNavbar={toggleNavbar}
+        // TODO: Looks dirty. Improve it.
+        fillAll={() =>
+          fillAll(
+            activeSectionIDs,
+            addSections,
+            clear,
+            // Should be `clearAll`. But `clearAll` isn't implemented yet.
+            deleteAll,
+            possibleSectionIDs,
+            sectionFunctions,
+          )
+        }
       >
         {sections[openedSectionID]}
       </AppLayout>
