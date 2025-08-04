@@ -177,9 +177,8 @@ export default function useAppState() {
     }
   }
 
-  // FIXME (application-wide): right now, wherever `clearAll` is used, it's used incorrectly, which results in resume data not being cleared, only deleted. Fix it.
+  // FIXME (application-wide): right now, wherever `deleteAll` is used, it's used incorrectly, which results in resume data not being cleared, only deleted. Fix it.
   function deleteAll(clear) {
-    if (typeof clear === 'function') clear('personal');
     deleteSections(POSSIBLE_SECTION_IDS, clear);
   }
 
