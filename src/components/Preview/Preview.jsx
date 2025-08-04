@@ -11,7 +11,6 @@ import {
   View,
 } from '@react-pdf/renderer';
 
-// FIXME (application-wide): a hook import, as far as I remember, shouldn't be below asset imports. Check the config.
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
 import Popup from '@/components/Popup';

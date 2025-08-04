@@ -6,8 +6,6 @@ import React from 'react';
 
 // ? Since the email is on the same line as the links, and since it's all the contents of one section, it's kind of strange to keep two different components for all of this info, `Personal` and `Links`. It's probably more reasonable to merge the components. As a bonus, the navbar will become lower and it will be easier to adapt the app for small screen sizes, like iPhone 5's.
 
-// FIXME: when the component rerenders, all data gets lost. Fix it.
-
 export default function Links({ data, functions }) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -35,7 +33,7 @@ export default function Links({ data, functions }) {
             name="website-text"
             placeholder="johndoe.com"
             type="text"
-            value={data.websiteText}
+            value={data.website.text}
             onChange={handleInputChange}
           />
         </li>
@@ -49,7 +47,7 @@ export default function Links({ data, functions }) {
             name="website-link"
             placeholder="https://johndoe.com/"
             type="text"
-            value={data.websiteLink}
+            value={data.website.link}
             onChange={handleInputChange}
           />
         </li>
@@ -63,7 +61,7 @@ export default function Links({ data, functions }) {
             name="github-text"
             placeholder="github.com/johndoe"
             type="text"
-            value={data.githubText}
+            value={data.github.text}
             onChange={handleInputChange}
           />
         </li>
@@ -77,7 +75,7 @@ export default function Links({ data, functions }) {
             name="github-link"
             placeholder="https://github.com/johndoe/"
             type="text"
-            value={data.githubLink}
+            value={data.github.link}
             onChange={handleInputChange}
           />
         </li>
@@ -91,7 +89,7 @@ export default function Links({ data, functions }) {
             name="linkedin-text"
             placeholder="linkedin.com/johndoe"
             type="text"
-            value={data.linkedinText}
+            value={data.linkedin.text}
             onChange={handleInputChange}
           />
         </li>
@@ -105,7 +103,7 @@ export default function Links({ data, functions }) {
             name="linkedin-link"
             placeholder="https://linkedin.com/johndoe/"
             type="text"
-            value={data.linkedinLink}
+            value={data.linkedin.link}
             onChange={handleInputChange}
           />
         </li>
@@ -119,7 +117,7 @@ export default function Links({ data, functions }) {
             name="telegram-text"
             placeholder="@johndoe"
             type="text"
-            value={data.telegramText}
+            value={data.telegram.text}
             onChange={handleInputChange}
           />
         </li>
@@ -133,7 +131,7 @@ export default function Links({ data, functions }) {
             name="telegram-link"
             placeholder="https://t.me/johndoe/"
             type="text"
-            value={data.telegramLink}
+            value={data.telegram.link}
             onChange={handleInputChange}
           />
         </li>
