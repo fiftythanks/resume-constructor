@@ -6,6 +6,7 @@ const StylelintPlugin = require('stylelint-webpack-plugin');
 module.exports = {
   entry: {
     app: './src/index.jsx',
+    'pdf.worker': 'pdfjs-dist/build/pdf.worker.mjs',
   },
   resolve: {
     extensions: ['.jsx', '.mjs', '.js', '.json'],
