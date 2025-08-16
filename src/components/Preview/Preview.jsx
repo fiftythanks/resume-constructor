@@ -12,6 +12,9 @@ import * as pdfjsLib from 'pdfjs-dist/webpack';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
+// TODO: remove as soon as you use `Button`.
+// eslint-disable-next-line no-unused-vars
+import Button from '@/components/Button';
 import Popup from '@/components/Popup';
 
 import ResumeDocument from './ResumeDocument';
@@ -23,9 +26,9 @@ import './Preview.scss';
 // Setting worker path to worker bundle.
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
 
-// TODO: render PDF as an image instead of an embedded pdf.
 // TODO: add "Next Page" and "Previeous Page" buttons.
 // TODO: add a download button.
+// TODO: clean up in the component.
 
 // It's how the aspect ratio is defined in the `react-pdf` library.
 // https://github.com/diegomura/react-pdf/blob/ee5c96b80326ba4441b71be4c7a85ba9f61d4174/packages/layout/src/page/getSize.ts
@@ -34,6 +37,7 @@ const A4_ASPECT_RATIO = 595.28 / 841.89;
 export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   // Starting from 1
+  // TODO: remove as soon as you use `openedPageIndex`.
   // eslint-disable-next-line no-unused-vars
   const [openedPageIndex, setOpenedPageIndex] = useState(1);
   const [canvasNode, setCanvasNode] = useState(null);
@@ -133,25 +137,21 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
       <button className="Preview-CloseBtn" type="button" onClick={onClose}>
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>
+      <div className="Preview-CanvasContainer">
+        {instance.loading && (
+          // TODO: add styling.
+          <p>Loading...</p>
+        )}
 
-      {/* Conditional rendering for `canvas` is necessary since PDF rendering takes a lot of time. But the parent `Popup` component is a different story. It isn't heavy and is implemented as the native `<dialog>` element under the hood. It would be redundant to conditionally render `Popup`. That's why only `canvas` is rendered conditionally. */}
-      {isShown && (
-        <div className="Preview-CanvasContainer">
-          {instance.loading && (
-            // TODO: add styling.
-            <p>Loading...</p>
-          )}
+        {instance.error && (
+          // TODO: add styling.
+          <p>Something went wrong. Try reloading the page.</p>
+        )}
 
-          {instance.error && (
-            // TODO: add styling.
-            <p>Something went wrong. Try reloading the page.</p>
-          )}
-
-          <div style={{ width: canvasSize.width, height: canvasSize.height }}>
-            <canvas ref={canvasCallbackRef} />
-          </div>
+        <div style={{ width: canvasSize.width, height: canvasSize.height }}>
+          <canvas ref={canvasCallbackRef} />
         </div>
-      )}
+      </div>
     </Popup>
   );
 }
