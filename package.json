@@ -6,11 +6,10 @@
   "scripts": {
     "test": "jest --passWithNoTests",
     "prepare": "husky",
-    "start": "webpack serve --open-app-name 'google-chrome' --config webpack.dev.js",
+    "start-g": "webpack serve --open-app-name 'google-chrome' --config webpack.dev.js",
+    "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "p": "git add . && git commit && git push origin main",
-    "d": "git checkout gh-pages 2>/dev/null || git checkout -b gh-pages && git merge main --no-edit && npm run build && git add dist -f && git commit -m 'Deployment commit' && git subtree push --prefix dist origin gh-pages && git checkout main",
-    "pd": "npm run p && npm run deploy"
+    "p": "git add . && git commit && git push origin main"
   },
   "keywords": [],
   "author": "Mikhail Sholokhov",
