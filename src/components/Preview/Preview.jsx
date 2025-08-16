@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 
-import { usePDF } from '@react-pdf/renderer';
+import { PDFDownloadLink, usePDF } from '@react-pdf/renderer';
 import * as pdfjsLib from 'pdfjs-dist/webpack';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
@@ -24,7 +24,6 @@ import './Preview.scss';
 // Setting worker path to worker bundle.
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
 
-// TODO: add "Next Page" and "Previeous Page" buttons.
 // TODO: add a download button.
 // TODO: clean up in the component.
 // TODO (application-wide): either use different states for the live preview and this preview, or somehow make this preview not update every time state updates, since it changes on every keystroke, and it slows the app down significantly.
@@ -138,18 +137,34 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
       <button className="Preview-CloseBtn" type="button" onClick={onClose}>
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>
-      <div className="Preview-NavBtns">
+      <div className="Preview-ActionBtns">
         {openedPageIndex > 1 && (
           <Button
-            className="Preview-NavBtn"
+            className="Preview-ActionBtn"
             onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
           >
             Previous Page
           </Button>
         )}
+        <PDFDownloadLink document={document} fileName="Resume.pdf">
+          {/* eslint-disable-next-line no-unused-vars */}
+          {({ blob, url, loading, error }) => {
+            if (loading) return null;
+            if (error) throw error;
+
+            return (
+              <Button
+                className="Preview-DownloadBtn Preview-ActionBtn"
+                modifiers={['Button_paddingInline_medium']}
+              >
+                Download
+              </Button>
+            );
+          }}
+        </PDFDownloadLink>
         {numPages > openedPageIndex && (
           <Button
-            className="Preview-NavBtn"
+            className="Preview-ActionBtn"
             onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
           >
             Next Page
@@ -171,18 +186,34 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
           <canvas ref={canvasCallbackRef} />
         </div>
       </div>
-      <div className="Preview-NavBtns">
+      <div className="Preview-ActionBtns">
         {openedPageIndex > 1 && (
           <Button
-            className="Preview-NavBtn"
+            className="Preview-ActionBtn"
             onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
           >
             Previous Page
           </Button>
         )}
+        <PDFDownloadLink document={document} fileName="resume.pdf">
+          {/* eslint-disable-next-line no-unused-vars */}
+          {({ blob, url, loading, error }) => {
+            if (loading) return null;
+            if (error) throw error;
+
+            return (
+              <Button
+                className="Preview-DownloadBtn Preview-ActionBtn"
+                modifiers={['Button_paddingInline_medium']}
+              >
+                Download
+              </Button>
+            );
+          }}
+        </PDFDownloadLink>
         {numPages > openedPageIndex && (
           <Button
-            className="Preview-NavBtn"
+            className="Preview-ActionBtn"
             onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
           >
             Next Page
