@@ -171,14 +171,12 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
         )}
       </div>
       <div className="Preview-CanvasContainer">
-        {instance.loading && (
-          // TODO: add styling.
-          <p>Loading...</p>
-        )}
+        {instance.loading && <p className="Preview-PdfTextAlt">Loading...</p>}
 
         {instance.error && (
-          // TODO: add styling.
-          <p>Something went wrong. Try reloading the page.</p>
+          <p className="Preview-PdfTextAlt">
+            Something went wrong. Try reloading the page.
+          </p>
         )}
 
         <div style={{ width: canvasSize.width, height: canvasSize.height }}>
