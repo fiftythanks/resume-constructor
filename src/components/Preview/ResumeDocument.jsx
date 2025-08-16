@@ -21,11 +21,10 @@ import ResumeSection from './ResumeSection';
  * Also, don't forget to implement some logic that will import a particular
  * font subset depending on the language of the resume. Or maybe just add
  * Russian letters to the subset by default. Anyway,
- * TODO: add Russian-language support.
  */
-import garamondBold from '@/assets/fonts/EBGaramond-Bold-latin.ttf';
-import garamondItalic from '@/assets/fonts/EBGaramond-Italic-latin.ttf';
-import garamondRegular from '@/assets/fonts/EBGaramond-Regular-latin.ttf';
+import garamondBold from '@/assets/fonts/EBGaramond-Bold.ttf';
+import garamondItalic from '@/assets/fonts/EBGaramond-Italic.ttf';
+import garamondRegular from '@/assets/fonts/EBGaramond-Regular.ttf';
 
 Font.register({
   family: 'EBGaramond',
