@@ -71,6 +71,7 @@ export default function App() {
   const {
     certificationsFunctions,
     clear,
+    clearAll,
     data,
     educationFunctions,
     experienceFunctions,
@@ -176,8 +177,7 @@ export default function App() {
             activeSectionIDs,
             addSections,
             clear,
-            // Should be `clearAll`. But `clearAll` isn't implemented yet.
-            deleteAll,
+            clearAll,
             possibleSectionIDs,
             sectionFunctions,
           )

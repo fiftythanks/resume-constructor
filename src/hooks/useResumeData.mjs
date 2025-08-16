@@ -166,339 +166,613 @@ const INITIAL_RESUME_DATA = {
   },
 };
 
-// TODO: create a `clearAll` function.
 export default function useResumeData() {
   const [data, setData] = useImmer(INITIAL_RESUME_DATA);
 
-  function clear(sectionID) {
-    switch (sectionID) {
-      case 'certifications':
-        setData((draft) => {
-          draft.certifications = {
-            certificates: '',
-            skills: '',
-            interests: '',
-          };
-        });
-        break;
-      case 'education':
-        setData((draft) => {
-          draft.education = {
-            degrees: [
-              {
-                address: '',
-                degree: '',
-                graduation: '',
-                id: crypto.randomUUID(),
-                uni: '',
-                bulletPoints: [
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
+  function clear(sectionIDs) {
+    // If it's a string, then it's just one ID.
+    if (typeof sectionIDs === 'string') {
+      switch (sectionIDs) {
+        case 'certifications':
+          setData((draft) => {
+            draft.certifications = {
+              certificates: '',
+              skills: '',
+              interests: '',
+            };
+          });
+          break;
+        case 'education':
+          setData((draft) => {
+            draft.education = {
+              degrees: [
+                {
+                  address: '',
+                  degree: '',
+                  graduation: '',
+                  id: crypto.randomUUID(),
+                  uni: '',
+                  bulletPoints: [
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                  ],
+                },
+              ],
+              shownDegreeIndex: 0,
+            };
+          });
+          break;
+        case 'experience':
+          setData((draft) => {
+            draft.experience = {
+              jobs: [
+                {
+                  address: '',
+                  companyName: '',
+                  duration: '',
+                  id: crypto.randomUUID(),
+                  jobTitle: '',
+                  bulletPoints: [
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                  ],
+                },
+              ],
+              shownJobIndex: 0,
+            };
+          });
+          break;
+        case 'links':
+          setData((draft) => {
+            draft.links = {
+              website: {
+                text: '',
+                link: '',
+              },
+              github: {
+                text: '',
+                link: '',
+              },
+              linkedin: {
+                text: '',
+                link: '',
+              },
+              telegram: {
+                text: '',
+                link: '',
+              },
+            };
+          });
+          break;
+        case 'personal':
+          setData((draft) => {
+            draft.personal = {
+              fullName: '',
+              jobTitle: '',
+              email: '',
+              phone: '',
+              address: '',
+              summary: '',
+            };
+          });
+          break;
+        case 'projects':
+          setData((draft) => {
+            draft.projects = {
+              projects: [
+                {
+                  id: crypto.randomUUID(),
+                  projectName: '',
+                  stack: '',
+                  bulletPoints: [
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                  ],
+                  code: {
+                    text: '',
+                    link: '',
                   },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
+                  demo: {
+                    text: '',
+                    link: '',
                   },
+                },
+              ],
+              shownProjectIndex: 0,
+            };
+          });
+          break;
+        case 'skills':
+          setData((draft) => {
+            draft.skills = {
+              languages: [
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+              ],
+              frameworks: [
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+              ],
+              tools: [
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+              ],
+            };
+          });
+          break;
+        // Clears all sections' data
+        default:
+          setData({
+            personal: {
+              fullName: '',
+              jobTitle: '',
+              email: '',
+              phone: '',
+              address: '',
+              summary: '',
+            },
+            links: {
+              website: {
+                text: '',
+                link: '',
+              },
+              github: {
+                text: '',
+                link: '',
+              },
+              linkedin: {
+                text: '',
+                link: '',
+              },
+              telegram: {
+                text: '',
+                link: '',
+              },
+            },
+            skills: {
+              languages: [
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+              ],
+              frameworks: [
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+              ],
+              tools: [
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+                {
+                  id: crypto.randomUUID(),
+                  value: '',
+                },
+              ],
+            },
+            experience: {
+              jobs: [
+                {
+                  address: '',
+                  companyName: '',
+                  duration: '',
+                  id: crypto.randomUUID(),
+                  jobTitle: '',
+                  bulletPoints: [
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                  ],
+                },
+              ],
+              shownJobIndex: 0,
+            },
+            projects: {
+              projects: [
+                {
+                  id: crypto.randomUUID(),
+                  projectName: '',
+                  stack: '',
+                  bulletPoints: [
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                  ],
+                  code: {
+                    text: '',
+                    link: '',
+                  },
+                  demo: {
+                    text: '',
+                    link: '',
+                  },
+                },
+              ],
+              shownProjectIndex: 0,
+            },
+            education: {
+              degrees: [
+                {
+                  address: '',
+                  degree: '',
+                  graduation: '',
+                  id: crypto.randomUUID(),
+                  uni: '',
+                  bulletPoints: [
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                    {
+                      id: crypto.randomUUID(),
+                      value: '',
+                    },
+                  ],
+                },
+              ],
+              shownDegreeIndex: 0,
+            },
+            certifications: {
+              certificates: '',
+              skills: '',
+              interests: '',
+            },
+          });
+      }
+    } else if (Array.isArray(sectionIDs)) {
+      sectionIDs.forEach((sectionID) => {
+        switch (sectionID) {
+          case 'certifications':
+            setData((draft) => {
+              draft.certifications = {
+                certificates: '',
+                skills: '',
+                interests: '',
+              };
+            });
+            break;
+          case 'education':
+            setData((draft) => {
+              draft.education = {
+                degrees: [
                   {
+                    address: '',
+                    degree: '',
+                    graduation: '',
                     id: crypto.randomUUID(),
-                    value: '',
+                    uni: '',
+                    bulletPoints: [
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                    ],
                   },
                 ],
-              },
-            ],
-            shownDegreeIndex: 0,
-          };
-        });
-        break;
-      case 'experience':
-        setData((draft) => {
-          draft.experience = {
-            jobs: [
-              {
-                address: '',
-                companyName: '',
-                duration: '',
-                id: crypto.randomUUID(),
+                shownDegreeIndex: 0,
+              };
+            });
+            break;
+          case 'experience':
+            setData((draft) => {
+              draft.experience = {
+                jobs: [
+                  {
+                    address: '',
+                    companyName: '',
+                    duration: '',
+                    id: crypto.randomUUID(),
+                    jobTitle: '',
+                    bulletPoints: [
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                    ],
+                  },
+                ],
+                shownJobIndex: 0,
+              };
+            });
+            break;
+          case 'links':
+            setData((draft) => {
+              draft.links = {
+                website: {
+                  text: '',
+                  link: '',
+                },
+                github: {
+                  text: '',
+                  link: '',
+                },
+                linkedin: {
+                  text: '',
+                  link: '',
+                },
+                telegram: {
+                  text: '',
+                  link: '',
+                },
+              };
+            });
+            break;
+          case 'personal':
+            setData((draft) => {
+              draft.personal = {
+                fullName: '',
                 jobTitle: '',
-                bulletPoints: [
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                ],
-              },
-            ],
-            shownJobIndex: 0,
-          };
-        });
-        break;
-      case 'links':
-        setData((draft) => {
-          draft.links = {
-            website: {
-              text: '',
-              link: '',
-            },
-            github: {
-              text: '',
-              link: '',
-            },
-            linkedin: {
-              text: '',
-              link: '',
-            },
-            telegram: {
-              text: '',
-              link: '',
-            },
-          };
-        });
-        break;
-      case 'personal':
-        setData((draft) => {
-          draft.personal = {
-            fullName: '',
-            jobTitle: '',
-            email: '',
-            phone: '',
-            address: '',
-            summary: '',
-          };
-        });
-        break;
-      case 'projects':
-        setData((draft) => {
-          draft.projects = {
-            projects: [
-              {
-                id: crypto.randomUUID(),
-                projectName: '',
-                stack: '',
-                bulletPoints: [
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                ],
-                code: {
-                  text: '',
-                  link: '',
-                },
-                demo: {
-                  text: '',
-                  link: '',
-                },
-              },
-            ],
-            shownProjectIndex: 0,
-          };
-        });
-        break;
-      case 'skills':
-        setData((draft) => {
-          draft.skills = {
-            languages: [
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-            ],
-            frameworks: [
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-            ],
-            tools: [
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-            ],
-          };
-        });
-        break;
-      // Clears all sections' data
-      default:
-        setData({
-          personal: {
-            fullName: '',
-            jobTitle: '',
-            email: '',
-            phone: '',
-            address: '',
-            summary: '',
-          },
-          links: {
-            website: {
-              text: '',
-              link: '',
-            },
-            github: {
-              text: '',
-              link: '',
-            },
-            linkedin: {
-              text: '',
-              link: '',
-            },
-            telegram: {
-              text: '',
-              link: '',
-            },
-          },
-          skills: {
-            languages: [
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-            ],
-            frameworks: [
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-            ],
-            tools: [
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-              {
-                id: crypto.randomUUID(),
-                value: '',
-              },
-            ],
-          },
-          experience: {
-            jobs: [
-              {
+                email: '',
+                phone: '',
                 address: '',
-                companyName: '',
-                duration: '',
-                id: crypto.randomUUID(),
+                summary: '',
+              };
+            });
+            break;
+          case 'projects':
+            setData((draft) => {
+              draft.projects = {
+                projects: [
+                  {
+                    id: crypto.randomUUID(),
+                    projectName: '',
+                    stack: '',
+                    bulletPoints: [
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                    ],
+                    code: {
+                      text: '',
+                      link: '',
+                    },
+                    demo: {
+                      text: '',
+                      link: '',
+                    },
+                  },
+                ],
+                shownProjectIndex: 0,
+              };
+            });
+            break;
+          case 'skills':
+            setData((draft) => {
+              draft.skills = {
+                languages: [
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                ],
+                frameworks: [
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                ],
+                tools: [
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                ],
+              };
+            });
+            break;
+          // Clears all sections' data
+          default:
+            setData({
+              personal: {
+                fullName: '',
                 jobTitle: '',
-                bulletPoints: [
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                ],
-              },
-            ],
-            shownJobIndex: 0,
-          },
-          projects: {
-            projects: [
-              {
-                id: crypto.randomUUID(),
-                projectName: '',
-                stack: '',
-                bulletPoints: [
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                  {
-                    id: crypto.randomUUID(),
-                    value: '',
-                  },
-                ],
-                code: {
-                  text: '',
-                  link: '',
-                },
-                demo: {
-                  text: '',
-                  link: '',
-                },
-              },
-            ],
-            shownProjectIndex: 0,
-          },
-          education: {
-            degrees: [
-              {
+                email: '',
+                phone: '',
                 address: '',
-                degree: '',
-                graduation: '',
-                id: crypto.randomUUID(),
-                uni: '',
-                bulletPoints: [
+                summary: '',
+              },
+              links: {
+                website: {
+                  text: '',
+                  link: '',
+                },
+                github: {
+                  text: '',
+                  link: '',
+                },
+                linkedin: {
+                  text: '',
+                  link: '',
+                },
+                telegram: {
+                  text: '',
+                  link: '',
+                },
+              },
+              skills: {
+                languages: [
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                ],
+                frameworks: [
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                  {
+                    id: crypto.randomUUID(),
+                    value: '',
+                  },
+                ],
+                tools: [
                   {
                     id: crypto.randomUUID(),
                     value: '',
@@ -513,16 +787,111 @@ export default function useResumeData() {
                   },
                 ],
               },
-            ],
-            shownDegreeIndex: 0,
-          },
-          certifications: {
-            certificates: '',
-            skills: '',
-            interests: '',
-          },
-        });
+              experience: {
+                jobs: [
+                  {
+                    address: '',
+                    companyName: '',
+                    duration: '',
+                    id: crypto.randomUUID(),
+                    jobTitle: '',
+                    bulletPoints: [
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                    ],
+                  },
+                ],
+                shownJobIndex: 0,
+              },
+              projects: {
+                projects: [
+                  {
+                    id: crypto.randomUUID(),
+                    projectName: '',
+                    stack: '',
+                    bulletPoints: [
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                    ],
+                    code: {
+                      text: '',
+                      link: '',
+                    },
+                    demo: {
+                      text: '',
+                      link: '',
+                    },
+                  },
+                ],
+                shownProjectIndex: 0,
+              },
+              education: {
+                degrees: [
+                  {
+                    address: '',
+                    degree: '',
+                    graduation: '',
+                    id: crypto.randomUUID(),
+                    uni: '',
+                    bulletPoints: [
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                      {
+                        id: crypto.randomUUID(),
+                        value: '',
+                      },
+                    ],
+                  },
+                ],
+                shownDegreeIndex: 0,
+              },
+              certifications: {
+                certificates: '',
+                skills: '',
+                interests: '',
+              },
+            });
+        }
+      });
     }
+  }
+
+  function clearAll() {
+    clear([
+      'personal',
+      'links',
+      'skills',
+      'experience',
+      'projects',
+      'education',
+      'certifications',
+    ]);
   }
 
   // Functions for modifying resume data.
@@ -954,6 +1323,7 @@ export default function useResumeData() {
   return {
     certificationsFunctions,
     clear,
+    clearAll,
     data,
     educationFunctions,
     experienceFunctions,

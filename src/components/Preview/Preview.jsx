@@ -24,7 +24,6 @@ import './Preview.scss';
 // Setting worker path to worker bundle.
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
 
-// TODO: add a download button.
 // TODO: clean up in the component.
 // TODO (application-wide): either use different states for the live preview and this preview, or somehow make this preview not update every time state updates, since it changes on every keystroke, and it slows the app down significantly.
 // FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
@@ -60,6 +59,7 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
     updateInstance(document);
   }, [document, updateInstance]);
 
+  // ? Does the canvas need debouncing? It was needed when there was an actual embedded PDF, but now? Canvas can itself resize properly, you just need to apply CSS, right?
   /**
    * This one is for changing the size of the canvas to always keep it A4 when
    * the browser window is resized.
