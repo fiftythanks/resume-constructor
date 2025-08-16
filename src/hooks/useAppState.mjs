@@ -133,6 +133,8 @@ export default function useAppState() {
               setOpenedSectionID(null);
               wasOpenedSectionDeleted = true;
             }
+          } else if (typeof clear === 'function' && sectionID === 'personal') {
+            clear(sectionID);
           }
         } else {
           throw new Error(
@@ -177,7 +179,6 @@ export default function useAppState() {
     }
   }
 
-  // FIXME: `Personal` isn't cleared. Fix it.
   function deleteAll(clear) {
     deleteSections(POSSIBLE_SECTION_IDS, clear);
   }
