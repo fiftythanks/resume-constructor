@@ -1,5 +1,8 @@
 import React from 'react';
 
+// eslint-disable-next-line import/no-unresolved
+import { SpeedInsights } from '@vercel/speed-insights/react';
+
 import useAppState from '@/hooks/useAppState';
 import useResumeData from '@/hooks/useResumeData';
 
@@ -185,6 +188,7 @@ export default function App() {
       >
         {sections[openedSectionID]}
       </AppLayout>
+      <SpeedInsights />
     </>
   );
 }

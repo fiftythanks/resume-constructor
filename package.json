@@ -79,6 +79,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@react-pdf/renderer": "^4.3.0",
+    "@vercel/speed-insights": "^1.2.0",
     "immer": "^10.1.1",
     "pdfjs-dist": "^5.4.54",
     "react": "^19.1.0",
