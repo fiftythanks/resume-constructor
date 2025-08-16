@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const DEBOUNCE_DELAY_MS = 250;
+const DEBOUNCE_DELAY_MS = 1000;
 
 export default function useDebouncedWindowSize() {
   const [windowSize, setWindowSize] = useState({

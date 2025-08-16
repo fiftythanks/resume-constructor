@@ -1,3 +1,5 @@
+@use '@/styles/utils/variables' as vars;
+
 .Preview {
   /* TODO: think of a better number. */
   padding-inline: 2rem;
@@ -14,5 +16,9 @@
     &:hover {
       cursor: pointer;
     }
+  }
+
+  &-CanvasContainer {
+    aspect-ratio: vars.$a4-aspect-ratio;
   }
 }

@@ -1,6 +1,14 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-import { PDFViewer } from '@react-pdf/renderer';
+import { usePDF } from '@react-pdf/renderer';
+import * as pdfjsLib from 'pdfjs-dist/webpack';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
@@ -12,7 +20,10 @@ import closeSrc from '@/assets/icons/cross.svg';
 
 import './Preview.scss';
 
-// TODO: render PDF as an image instead of an embedded PDF.
+// Setting worker path to worker bundle.
+pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
+
+// TODO: render PDF as an image instead of an embedded pdf.
 // TODO: add "Next Page" and "Previeous Page" buttons.
 // TODO: add a download button.
 
@@ -21,25 +32,94 @@ import './Preview.scss';
 const A4_ASPECT_RATIO = 595.28 / 841.89;
 
 export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
-  const [iframeHeight, setIframeHeight] = useState(0);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  // Starting from 1
+  // eslint-disable-next-line no-unused-vars
+  const [openedPageIndex, setOpenedPageIndex] = useState(1);
+  const [canvasNode, setCanvasNode] = useState(null);
   const popupRef = useRef(null);
   const viewportWidth = useDebouncedWindowSize().innerWidth;
 
+  const canvasCallbackRef = useCallback((node) => {
+    if (node !== null) {
+      setCanvasNode(node);
+    }
+  }, []);
+
+  // ? Messy... Is there a way to make it cleaner?
+  const document = useMemo(
+    () => <ResumeDocument activeSectionIDs={activeSectionIDs} data={data} />,
+    [activeSectionIDs, data],
+  );
+
+  const [instance, updateInstance] = usePDF({ document });
+
+  useEffect(() => {
+    updateInstance(document);
+  }, [document, updateInstance]);
+
+  /**
+   * This one is for changing the size of the canvas to always keep it A4 when
+   * the browser window is resized.
+   */
   useLayoutEffect(() => {
     if (isShown && popupRef.current !== null) {
-      // Inline padding of the modal. Defined in Preview.scss.
+      // Inline padding of the modal. Defined in `Preview.scss`.
       const paddingInline = parseFloat(
         getComputedStyle(popupRef.current).paddingInline,
       );
+      const width = viewportWidth - 2 * paddingInline;
 
+      // ? Why is it a state? Does it need to be a state?
       /**
        * Width is calculated automatically. It simply takes up as much space as
-       * it can. This is desired. This line calculates what height the iframe
+       * it can. This is desired. This line calculates what height the canvas
        * should be to preserve the A4 paper aspect ratio in portrait mode.
        */
-      setIframeHeight((viewportWidth - 2 * paddingInline) / A4_ASPECT_RATIO);
+      setCanvasSize({ width, height: width / A4_ASPECT_RATIO });
     }
   }, [isShown, viewportWidth]);
+
+  // And this one is for rendering the document with `pdf.js`.
+  useEffect(() => {
+    if (instance.url === null || canvasNode === null) return undefined;
+
+    let isCancelled = false;
+    let renderTask = null;
+
+    async function loadAndRender() {
+      try {
+        const pdf = await pdfjsLib.getDocument(instance.url).promise;
+        if (isCancelled) return undefined;
+
+        const page = await pdf.getPage(openedPageIndex);
+        if (isCancelled) return undefined;
+
+        const viewport = page.getViewport({ scale: 2.0 });
+        const canvas = canvasNode;
+        const canvasContext = canvas.getContext('2d');
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+
+        renderTask = page.render({ canvasContext, viewport });
+        await renderTask.promise;
+
+        return undefined;
+      } catch (e) {
+        return undefined;
+      }
+    }
+
+    loadAndRender();
+
+    return () => {
+      isCancelled = true;
+      renderTask?.cancel();
+    };
+  }, [canvasNode, instance, openedPageIndex]);
 
   return (
     <Popup
@@ -53,11 +133,24 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
       <button className="Preview-CloseBtn" type="button" onClick={onClose}>
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>
-      {/* Conditional rendering for this component is necessary since PDF rendering takes a lot of time. But the parent `Popup` component is a different story. It isn't heavy and is implemented as the native `<dialog>` element under the hood. It would be redundant to conditionally render `Popup`. That's why only `PDFViewer` is rendered conditionally. */}
+
+      {/* Conditional rendering for `canvas` is necessary since PDF rendering takes a lot of time. But the parent `Popup` component is a different story. It isn't heavy and is implemented as the native `<dialog>` element under the hood. It would be redundant to conditionally render `Popup`. That's why only `canvas` is rendered conditionally. */}
       {isShown && (
-        <PDFViewer height={iframeHeight} showToolbar={false}>
-          <ResumeDocument activeSectionIDs={activeSectionIDs} data={data} />
-        </PDFViewer>
+        <div className="Preview-CanvasContainer">
+          {instance.loading && (
+            // TODO: add styling.
+            <p>Loading...</p>
+          )}
+
+          {instance.error && (
+            // TODO: add styling.
+            <p>Something went wrong. Try reloading the page.</p>
+          )}
+
+          <div style={{ width: canvasSize.width, height: canvasSize.height }}>
+            <canvas ref={canvasCallbackRef} />
+          </div>
+        </div>
       )}
     </Popup>
   );

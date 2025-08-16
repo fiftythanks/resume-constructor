@@ -49,6 +49,7 @@ Font.register({
   ],
 });
 
+// TODO: centralise link items in the Links section.
 const styles = StyleSheet.create({
   page: {
     fontFamily: 'EBGaramond',
@@ -93,89 +94,151 @@ export default function ResumeDocument({ activeSectionIDs, data }) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View>
-          {data.personal.fullName && (
-            <Text style={styles.fullName}>{data.personal.fullName}</Text>
-          )}
-          <View style={styles.headerInfo}>
-            {data.personal.jobTitle && (
-              <Text style={styles.jobTitle}>{data.personal.jobTitle}</Text>
-            )}
-            {(data.personal.phone || data.personal.address) && (
-              <Text>
-                {!activeSectionIDs.includes('links') && data.personal.email && (
-                  <>
-                    <Link
-                      href={`mailto:${data.personal.email}`}
-                      src={`mailto:${data.personal.email}`}
-                      wrap={false}
-                    >
-                      {data.personal.email}
-                    </Link>
-                    {'  |  '}
-                  </>
-                )}
-                {data.personal.phone && (
-                  <>
-                    {data.personal.phone}
-                    {data.personal.address && '  |  '}
-                  </>
-                )}
-                {data.personal.address && data.personal.address}
-              </Text>
-            )}
-            {activeSectionIDs.includes('links') && (
-              <View style={styles.links}>
-                {data.personal.email && (
-                  <View style={styles.linksItem}>
-                    <Icon style={styles.linksIcon} type="email" />
-                    <Text>
-                      <Link
-                        href={`mailto:${data.personal.email}`}
-                        src={`mailto:${data.personal.email}`}
-                        wrap={false}
-                      >
-                        {data.personal.email}
-                      </Link>
-                    </Text>
-                  </View>
-                )}
-                {Object.entries(data.links).map(
-                  ([type, item]) =>
-                    item.text && (
-                      <View key={type} style={styles.linksItem}>
-                        <Icon style={styles.linksIcon} type={type} />
-                        <Text>
-                          <Link href={item.link} src={item.link} wrap={false}>
-                            {item.text}
-                          </Link>
-                        </Text>
-                      </View>
-                    ),
-                )}
-              </View>
-            )}
-          </View>
-        </View>
-        {data.personal.summary && (
-          <View style={styles.section}>
-            <Text>{data.personal.summary}</Text>
-          </View>
-        )}
-        {activeSectionIDs.map((sectionID) => {
-          if (sectionID !== 'personal' && sectionID !== 'links') {
-            return (
-              <ResumeSection
-                data={data[sectionID]}
-                key={sectionID}
-                sectionName={sectionID}
-                style={styles.section}
+        <View
+          render={() => (
+            <>
+              <Text
+                style={styles.fullName}
+                render={() =>
+                  data.personal.fullName !== '' && `${data.personal.fullName}`
+                }
               />
-            );
-          }
+              <View
+                style={styles.headerInfo}
+                render={() => (
+                  <>
+                    <Text
+                      style={styles.jobTitle}
+                      render={() =>
+                        data.personal.jobTitle !== '' &&
+                        `${data.personal.jobTitle}`
+                      }
+                    />
+                    <Text
+                      render={() =>
+                        (data.personal.phone !== '' ||
+                          data.personal.address !== '') && (
+                          <>
+                            {/* FIXME: it shouldn't be the `activeSectionIDs` check, since you can add a section and leave it empty. It should be a check of whether there are links present. */}
+                            {!activeSectionIDs.includes('links') &&
+                              data.personal.email !== '' && (
+                                <>
+                                  <Link
+                                    href={`mailto:${data.personal.email}`}
+                                    src={`mailto:${data.personal.email}`}
+                                    wrap={false}
+                                  >
+                                    {data.personal.email}
+                                  </Link>
+                                  {'  |  '}
+                                </>
+                              )}
 
-          return null;
-        })}
+                            {data.personal.phone !== '' && (
+                              <>
+                                {data.personal.phone}
+                                {data.personal.address !== '' && '  |  '}
+                              </>
+                            )}
+                            {data.personal.address !== '' &&
+                              data.personal.address}
+                          </>
+                        )
+                      }
+                    />
+
+                    <View
+                      style={styles.links}
+                      render={() =>
+                        // FIXME: it shouldn't be the `activeSectionIDs` check, since you can add a section and leave it empty. It should be a check of whether there are links present.
+                        // TODO: change the Telegram link to a generic link in case something else needs to be added.
+                        activeSectionIDs.includes('links') && (
+                          <>
+                            <View
+                              style={styles.linksItem}
+                              render={() =>
+                                data.personal.email !== '' && (
+                                  <>
+                                    <Icon
+                                      style={styles.linksIcon}
+                                      type="email"
+                                    />
+                                    <Text
+                                      render={() => (
+                                        <Link
+                                          href={`mailto:${data.personal.email}`}
+                                          src={`mailto:${data.personal.email}`}
+                                          wrap={false}
+                                        >
+                                          {data.personal.email}
+                                        </Link>
+                                      )}
+                                    />
+                                  </>
+                                )
+                              }
+                            />
+                            {Object.entries(data.links).map(([type, item]) => (
+                              <View
+                                key={type}
+                                style={styles.linksItem}
+                                render={() =>
+                                  item.text !== '' && (
+                                    <>
+                                      <Icon
+                                        style={styles.linksIcon}
+                                        type={type}
+                                      />
+                                      <Text
+                                        render={() => (
+                                          <Link
+                                            href={item.link}
+                                            src={item.link}
+                                            wrap={false}
+                                          >
+                                            {item.text}
+                                          </Link>
+                                        )}
+                                      />
+                                    </>
+                                  )
+                                }
+                              />
+                            ))}
+                          </>
+                        )
+                      }
+                    />
+                  </>
+                )}
+              />
+            </>
+          )}
+        />
+        <View
+          style={styles.section}
+          render={() =>
+            data.personal.summary !== '' && <Text>{data.personal.summary}</Text>
+          }
+        />
+        <View
+          render={() => (
+            <>
+              {activeSectionIDs.map(
+                (sectionID) =>
+                  sectionID !== 'personal' &&
+                  sectionID !== 'links' && (
+                    <ResumeSection
+                      data={data[sectionID]}
+                      key={sectionID}
+                      sectionName={sectionID}
+                      style={styles.section}
+                    />
+                  ),
+              )}
+            </>
+          )}
+        />
       </Page>
     </Document>
   );

@@ -26,12 +26,12 @@ const FULL_SECTION_NAMES = Object.freeze({
 
 const INITIAL_ACTIVE_SECTION_IDS = Object.freeze([
   'personal',
-  'links',
-  'skills',
-  'experience',
-  'projects',
-  'education',
-  'certifications',
+  // 'links',
+  // 'skills',
+  // 'experience',
+  // 'projects',
+  // 'education',
+  // 'certifications',
 ]);
 
 export default function useAppState() {
