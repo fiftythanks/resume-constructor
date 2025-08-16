@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
 
 // Using it by default for all sections and fields adds redundancy.
 // TODO: examine where you need conditional rendering and where you don't. Refactor accordingly.
+// FIXME: if there are more than one page, components get squashed and the second page doesn't appear.
 export default function ResumeDocument({ activeSectionIDs, data }) {
   return (
     <Document>

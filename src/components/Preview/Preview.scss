@@ -21,4 +21,11 @@
   &-CanvasContainer {
     aspect-ratio: vars.$a4-aspect-ratio;
   }
+
+  &-Navbtns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    width: 100%;
+  }
 }

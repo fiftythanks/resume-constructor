@@ -12,8 +12,6 @@ import * as pdfjsLib from 'pdfjs-dist/webpack';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
-// TODO: remove as soon as you use `Button`.
-// eslint-disable-next-line no-unused-vars
 import Button from '@/components/Button';
 import Popup from '@/components/Popup';
 
@@ -29,6 +27,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
 // TODO: add "Next Page" and "Previeous Page" buttons.
 // TODO: add a download button.
 // TODO: clean up in the component.
+// TODO (application-wide): either use different states for the live preview and this preview, or somehow make this preview not update every time state updates, since it changes on every keystroke, and it slows the app down significantly.
+// FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
 
 // It's how the aspect ratio is defined in the `react-pdf` library.
 // https://github.com/diegomura/react-pdf/blob/ee5c96b80326ba4441b71be4c7a85ba9f61d4174/packages/layout/src/page/getSize.ts
@@ -36,11 +36,10 @@ const A4_ASPECT_RATIO = 595.28 / 841.89;
 
 export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  // Starting from 1
-  // TODO: remove as soon as you use `openedPageIndex`.
-  // eslint-disable-next-line no-unused-vars
-  const [openedPageIndex, setOpenedPageIndex] = useState(1);
   const [canvasNode, setCanvasNode] = useState(null);
+  const [numPages, setNumPages] = useState(0);
+  // 1-based indices.
+  const [openedPageIndex, setOpenedPageIndex] = useState(1);
   const popupRef = useRef(null);
   const viewportWidth = useDebouncedWindowSize().innerWidth;
 
@@ -96,6 +95,8 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
         const pdf = await pdfjsLib.getDocument(instance.url).promise;
         if (isCancelled) return undefined;
 
+        setNumPages(pdf.numPages);
+
         const page = await pdf.getPage(openedPageIndex);
         if (isCancelled) return undefined;
 
@@ -137,6 +138,24 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
       <button className="Preview-CloseBtn" type="button" onClick={onClose}>
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>
+      <div className="Preview-NavBtns">
+        {openedPageIndex > 1 && (
+          <Button
+            className="Preview-NavBtn"
+            onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
+          >
+            Previous Page
+          </Button>
+        )}
+        {numPages > openedPageIndex && (
+          <Button
+            className="Preview-NavBtn"
+            onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
+          >
+            Next Page
+          </Button>
+        )}
+      </div>
       <div className="Preview-CanvasContainer">
         {instance.loading && (
           // TODO: add styling.
@@ -151,6 +170,24 @@ export default function Preview({ activeSectionIDs, data, isShown, onClose }) {
         <div style={{ width: canvasSize.width, height: canvasSize.height }}>
           <canvas ref={canvasCallbackRef} />
         </div>
+      </div>
+      <div className="Preview-NavBtns">
+        {openedPageIndex > 1 && (
+          <Button
+            className="Preview-NavBtn"
+            onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
+          >
+            Previous Page
+          </Button>
+        )}
+        {numPages > openedPageIndex && (
+          <Button
+            className="Preview-NavBtn"
+            onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
+          >
+            Next Page
+          </Button>
+        )}
       </div>
     </Popup>
   );
