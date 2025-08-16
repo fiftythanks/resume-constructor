@@ -25,7 +25,6 @@ import './Preview.scss';
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
 
 // TODO: clean up in the component.
-// TODO (application-wide): either use different states for the live preview and this preview, or somehow make this preview not update every time state updates, since it changes on every keystroke, and it slows the app down significantly.
 // FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
 
 // It's how the aspect ratio is defined in the `react-pdf` library.

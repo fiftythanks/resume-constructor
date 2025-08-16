@@ -230,12 +230,15 @@ export default function Toolbar({
           iconSrc={kebabSrc}
         />
       </div>
-      <Preview
-        activeSectionIDs={activeSectionIDs}
-        data={data}
-        isShown={isPreviewModalShown}
-        onClose={closePreviewModal}
-      />
+      {/* ? What about the `Popup` component? It's strange to use `.showModal()` and `.close()` when in reality it's just conditional rendering... Think if you need to change something here.` */}
+      {isPreviewModalShown && (
+        <Preview
+          activeSectionIDs={activeSectionIDs}
+          data={data}
+          isShown={isPreviewModalShown}
+          onClose={closePreviewModal}
+        />
+      )}
     </>
   );
 }

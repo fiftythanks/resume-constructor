@@ -1,5 +1,6 @@
 import React from 'react';
 
+// It's a strange ESLint error. Otherwise, everything works perfectly.
 // eslint-disable-next-line import/no-unresolved
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
