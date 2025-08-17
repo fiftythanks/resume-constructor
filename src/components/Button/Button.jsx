@@ -22,7 +22,7 @@ export default function Button({
       className += ` ${elements.join(' ')}`;
     }
   } else {
-    throw new TypeError('Elements must be provided wrapped in an array!');
+    throw new TypeError('Elements must be wrapped in an array!');
   }
 
   // Add BEM modifier classes
@@ -30,6 +30,7 @@ export default function Button({
     if (modifiers.length > 0) {
       className += ` ${modifiers.join(' ')}`;
 
+      // TODO: remove this logic. There's no such modifier in the stylesheet.
       if (!modifiers.includes('_disabled') && isDisabled) {
         className += ' _disabled';
       }
