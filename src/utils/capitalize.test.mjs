@@ -20,7 +20,7 @@ describe('capitalize()', () => {
     });
   });
 
-  it.each([
+  const testCases = [
     { value: 5, type: 'number' },
     { value: null, type: 'null' },
     { value: undefined, type: 'undefined' },
@@ -30,9 +30,14 @@ describe('capitalize()', () => {
     { value: { string: 'string' }, type: 'object' },
     { value: ['string', 'string'], type: 'array' },
     { value: function () {}, type: 'function' },
-  ])('throws TypeError when the argument is $type', ({ value }) => {
-    expect(() => capitalize(value)).toThrow(
-      TypeError('Incorrect argument! `capitalize` accepts strings only.'),
-    );
-  });
+  ];
+
+  it.each(testCases)(
+    'throws TypeError when the argument is $type',
+    ({ value }) => {
+      expect(() => capitalize(value)).toThrow(
+        TypeError('Incorrect argument! `capitalize` accepts strings only.'),
+      );
+    },
+  );
 });
