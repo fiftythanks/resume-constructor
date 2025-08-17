@@ -14,10 +14,19 @@ export default function Button({
   modifiers = [],
   onClick,
 }) {
-  className = `${className} Button`.trimStart();
+  if (typeof className === 'string') {
+    className = `${className} Button`.trimStart();
+  } else {
+    throw new TypeError('`className` must be a string!');
+  }
 
   // Add BEM element classes
   if (Array.isArray(elements)) {
+    elements.forEach((element) => {
+      if (typeof element !== 'string')
+        throw new TypeError('Elements must be strings!');
+    });
+
     if (elements.length > 0) {
       className += ` ${elements.join(' ')}`;
     }
@@ -27,6 +36,11 @@ export default function Button({
 
   // Add BEM modifier classes
   if (Array.isArray(modifiers)) {
+    modifiers.forEach((modifier) => {
+      if (typeof modifier !== 'string')
+        throw new TypeError('Modifiers must be strings!');
+    });
+
     if (modifiers.length > 0) {
       className += ` ${modifiers.join(' ')}`;
 

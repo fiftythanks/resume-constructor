@@ -81,24 +81,65 @@ describe('Button', () => {
     }).toThrow(TypeError('Modifiers must be wrapped in an array!'));
   });
 
-  // it.each([
-  //   { value: 5, type: 'number' },
-  //   { value: null, type: 'null' },
-  //   { value: undefined, type: 'undefined' },
-  //   { value: Symbol('string'), type: 'symbol' },
-  //   { value: true, type: 'boolean' },
-  //   { value: 151324314n, type: 'bigint' },
-  //   { value: { string: 'string' }, type: 'object' },
-  //   { value: ['string', 'test'], type: 'array' },
-  //   { value: function () {}, type: 'function' },
-  // ])('throws if `elements` contains a $type', ({ value }) => {
-  //   // Prevents Jest from logging the error to the console.
-  //   const consoleErrorSpy = jest
-  //     .spyOn(console, 'error')
-  //     .mockImplementation(() => {});
+  it.each([
+    { value: 5, type: 'number' },
+    { value: null, type: 'null' },
+    { value: undefined, type: 'undefined' },
+    { value: Symbol('string'), type: 'symbol' },
+    { value: true, type: 'boolean' },
+    { value: 151324314n, type: 'bigint' },
+    { value: { string: 'string' }, type: 'object' },
+    { value: ['string', 'test'], type: 'array' },
+    { value: function () {}, type: 'function' },
+  ])('throws if `elements` contains a $type', ({ value }) => {
+    // Prevents Jest from logging the error to the console.
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
-  //   expect(() => {
-  //     render(<Button elements={['Button', value]}>Click me</Button>);
-  //   }).toThrow();
-  // });
+    expect(() => {
+      render(<Button elements={['Button', value]}>Click me</Button>);
+    }).toThrow(TypeError('Elements must be strings!'));
+  });
+
+  it.each([
+    { value: 5, type: 'number' },
+    { value: null, type: 'null' },
+    { value: undefined, type: 'undefined' },
+    { value: Symbol('string'), type: 'symbol' },
+    { value: true, type: 'boolean' },
+    { value: 151324314n, type: 'bigint' },
+    { value: { string: 'string' }, type: 'object' },
+    { value: ['string', 'test'], type: 'array' },
+    { value: function () {}, type: 'function' },
+  ])('throws if `modifiers` contains a $type', ({ value }) => {
+    // Prevents Jest from logging the error to the console.
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    expect(() => {
+      render(<Button modifiers={['Button', value]}>Click me</Button>);
+    }).toThrow(TypeError('Modifiers must be strings!'));
+  });
+
+  it.each([
+    { value: 5, type: 'number' },
+    { value: null, type: 'null' },
+    { value: Symbol('string'), type: 'symbol' },
+    { value: true, type: 'boolean' },
+    { value: 151324314n, type: 'bigint' },
+    { value: { string: 'string' }, type: 'object' },
+    { value: ['string', 'test'], type: 'array' },
+    { value: function () {}, type: 'function' },
+  ])('throws if `className` is $type', ({ value }) => {
+    // Prevents Jest from logging the error to the console.
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    expect(() => {
+      render(<Button className={value}>Click me</Button>);
+    }).toThrow(TypeError('`className` must be a string!'));
+  });
 });
