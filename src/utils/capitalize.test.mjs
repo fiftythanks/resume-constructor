@@ -36,7 +36,7 @@ describe('capitalize()', () => {
     'throws TypeError when the argument is $type',
     ({ value }) => {
       expect(() => capitalize(value)).toThrow(
-        TypeError('Incorrect argument! `capitalize` accepts strings only.'),
+        TypeError('Incorrect argument! capitalize() accepts strings only.'),
       );
     },
   );

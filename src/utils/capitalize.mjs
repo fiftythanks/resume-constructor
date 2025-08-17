@@ -1,7 +1,7 @@
 export default function capitalize(word) {
   if (typeof word !== 'string') {
     throw new TypeError(
-      'Incorrect argument! `capitalize` accepts strings only.',
+      'Incorrect argument! capitalize() accepts strings only.',
     );
   }
 
