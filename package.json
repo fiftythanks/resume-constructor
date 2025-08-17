@@ -85,8 +85,8 @@
     "@vercel/speed-insights": "^1.2.0",
     "immer": "^10.1.1",
     "pdfjs-dist": "^5.4.54",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "use-immer": "^0.11.0"
   }
 }
