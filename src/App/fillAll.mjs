@@ -1,4 +1,10 @@
+/**
+ * What does `fillAll` mean? It's too vague, I don't understand this
+ * function myself!
+ */
+// TODO: change `fillAll` to a more telling name.
 export default function fillAll(
+  // TODO: remove `activeSectionIDs` from the parameters.
   activeSectionIDs,
   addSections,
   clear,

@@ -17,7 +17,7 @@ import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
-import fillAll from '@/utils/fillAll';
+import fillAll from './fillAll';
 
 // ===========================================
 // Application-wide TODOs, FIXMEs and dilemmas
