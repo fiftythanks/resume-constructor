@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
+import AppbarIcon from '@/components/AppbarIcon';
+
 // TODO: identify and get rid of duplicated logic.
 export default function AppbarItem({
   alt,
@@ -28,17 +30,6 @@ export default function AppbarItem({
     }
   } else {
     throw new TypeError('`modifiers` must be an array!');
-  }
-
-  // The icon's class name construction.
-  let iconClassName = 'appbar-item__icon';
-
-  if (Array.isArray(iconModifiers)) {
-    if (iconModifiers.length > 0) {
-      iconClassName += ` ${iconModifiers.join(' ')}`;
-    }
-  } else {
-    throw new TypeError('`iconModifiers` must be an array!');
   }
 
   if (hasInner) {
@@ -74,23 +65,11 @@ export default function AppbarItem({
               onKeyDown={onKeyDown}
               {...innerAttributes}
             >
-              <img
-                alt={alt}
-                className={iconClassName}
-                height="25px"
-                src={iconSrc}
-                width="25px"
-              />
+              <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
             </button>
           ) : (
             <div className={innerClassName} {...innerAttributes}>
-              <img
-                alt={alt}
-                className={iconClassName}
-                height="25px"
-                src={iconSrc}
-                width="25px"
-              />
+              <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
             </div>
           )}
         </li>
@@ -109,23 +88,11 @@ export default function AppbarItem({
             onKeyDown={onKeyDown}
             {...innerAttributes}
           >
-            <img
-              alt={alt}
-              className={iconClassName}
-              height="25px"
-              src={iconSrc}
-              width="25px"
-            />
+            <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
           </button>
         ) : (
           <div className={innerClassName} {...innerAttributes}>
-            <img
-              alt={alt}
-              className={iconClassName}
-              height="25px"
-              src={iconSrc}
-              width="25px"
-            />
+            <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
           </div>
         )}
       </div>
@@ -145,23 +112,11 @@ export default function AppbarItem({
       onKeyDown={onKeyDown}
       {...attributes}
     >
-      <img
-        alt={alt}
-        className={iconClassName}
-        height="25px"
-        src={iconSrc}
-        width="25px"
-      />
+      <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
     </button>
   ) : (
     <div className={noInnerClassName} {...attributes}>
-      <img
-        alt={alt}
-        className={iconClassName}
-        height="25px"
-        src={iconSrc}
-        width="25px"
-      />
+      <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
     </div>
   );
 }
