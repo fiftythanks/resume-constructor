@@ -2,6 +2,7 @@
 import React from 'react';
 
 import AppbarBlock from './AppbarBlock';
+import AppbarBlockItem from './AppbarBlockItem';
 import AppbarButton from './AppbarButton';
 import AppbarListItem from './AppbarListItem';
 
@@ -69,12 +70,14 @@ export default function AppbarItem({
     if (isListItem) {
       return (
         <AppbarListItem
+          action={action}
           alt={alt}
           attributes={attributes}
           className={outerClassName}
           iconModifiers={iconModifiers}
           iconSrc={iconSrc}
           innerAttributes={innerAttributes}
+          innerClassName={innerClassName}
           onBlur={onBlur}
           onClick={action}
           onKeyDown={onKeyDown}
@@ -84,28 +87,18 @@ export default function AppbarItem({
 
     // If the outer element is a div.
     return (
-      <div className={outerClassName} {...attributes}>
-        {action !== null ? (
-          <AppbarButton
-            alt={alt}
-            className={innerClassName}
-            iconModifiers={iconModifiers}
-            iconSrc={iconSrc}
-            onBlur={onBlur}
-            onClick={action}
-            onKeyDown={onKeyDown}
-            {...innerAttributes}
-          />
-        ) : (
-          <AppbarBlock
-            alt={alt}
-            className={innerClassName}
-            iconModifiers={iconModifiers}
-            iconSrc={iconSrc}
-            {...innerAttributes}
-          />
-        )}
-      </div>
+      <AppbarBlockItem
+        action={action}
+        alt={alt}
+        attributes={attributes}
+        className={outerClassName}
+        iconModifiers={iconModifiers}
+        iconSrc={iconSrc}
+        innerAttributes={innerAttributes}
+        innerClassName={innerClassName}
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
+      />
     );
   }
 
