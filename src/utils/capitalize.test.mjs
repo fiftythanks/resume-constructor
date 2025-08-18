@@ -21,15 +21,15 @@ describe('capitalize()', () => {
   });
 
   const testCases = [
-    { value: 5, type: 'number' },
-    { value: null, type: 'null' },
-    { value: undefined, type: 'undefined' },
-    { value: Symbol('string'), type: 'symbol' },
-    { value: true, type: 'boolean' },
-    { value: 151324314n, type: 'bigint' },
-    { value: { string: 'string' }, type: 'object' },
-    { value: ['string', 'string'], type: 'array' },
-    { value: function () {}, type: 'function' },
+    { value: 5, type: 'Number' },
+    { value: null, type: 'Null' },
+    { value: undefined, type: 'Undefined' },
+    { value: Symbol('string'), type: 'Symbol' },
+    { value: true, type: 'Boolean' },
+    { value: 151324314n, type: 'BigInt' },
+    { value: { string: 'string' }, type: 'Object' },
+    { value: ['string', 'string'], type: 'Array' },
+    { value: function () {}, type: 'Function' },
   ];
 
   it.each(testCases)(
