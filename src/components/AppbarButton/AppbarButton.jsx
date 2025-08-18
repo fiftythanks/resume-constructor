@@ -10,7 +10,6 @@ export default function AppbarButton({
   alt,
   canBeActivated,
   className,
-  iconModifiers,
   iconSrc,
   onBlur,
   onClick,
@@ -26,7 +25,7 @@ export default function AppbarButton({
       onKeyDown={onKeyDown}
       {...attributes}
     >
-      <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
+      <AppbarIcon alt={alt} src={iconSrc} />
     </button>
   );
 }
