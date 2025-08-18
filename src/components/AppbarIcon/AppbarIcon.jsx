@@ -1,25 +1,19 @@
 import React from 'react';
 
-export default function AppbarIcon({
-  alt,
-  src,
-  className = 'appbar-item__icon',
-  modifiers = [],
-}) {
-  let iconClassName;
+import './AppbarIcon.scss';
 
-  if (typeof className === 'string') {
-    // If there's no `appbar-item__icon` class in the string.
-    if (!/(.* +)?(appbar-item__icon)( +.*)?/.test(className)) {
-      // Trim in case an empty string is passed.
-      iconClassName = `appbar-item__icon ${className}`.trimEnd();
+export default function AppbarIcon({ alt, src, className, modifiers = [] }) {
+  let iconClassName = 'AppbarIcon';
+
+  if (className !== undefined) {
+    if (typeof className === 'string') {
+      iconClassName += ` ${className}`;
     } else {
-      iconClassName = className;
+      throw new TypeError('`className` must be a string!');
     }
-  } else {
-    throw new TypeError('`className` must be a string!');
   }
 
+  // TODO: get rid of modifiers, there's no need in them.
   if (Array.isArray(modifiers)) {
     iconClassName += ` ${modifiers.join(' ')}`;
   } else {

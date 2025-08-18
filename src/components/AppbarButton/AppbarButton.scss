@@ -1,6 +1,6 @@
 @use '@/styles/utils/variables' as v;
 
-.appbar-item {
+.AppbarButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,16 +20,5 @@
 
   &_active {
     background-color: var(--opened-section-color);
-  }
-
-  &__icon {
-    width: 25px;
-    height: auto;
-
-    &_rotate {
-      &_90deg {
-        transform: rotate(90deg);
-      }
-    }
   }
 }

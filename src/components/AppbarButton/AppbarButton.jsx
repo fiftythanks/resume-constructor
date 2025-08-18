@@ -3,6 +3,8 @@ import React from 'react';
 
 import AppbarIcon from '@/components/AppbarIcon';
 
+import './AppbarButton.scss';
+
 export default function AppbarButton({
   active,
   alt,
@@ -17,7 +19,7 @@ export default function AppbarButton({
 }) {
   return (
     <button
-      className={`appbar-item appbar-item_action${canBeActivated && active ? ' appbar-item_active' : ''} ${className}`.trimEnd()}
+      className={`AppbarButton AppbarButton_action${canBeActivated && active ? ' AppbarButton_active' : ''} ${className}`.trimEnd()}
       type="button"
       onBlur={onBlur}
       onClick={onClick}
