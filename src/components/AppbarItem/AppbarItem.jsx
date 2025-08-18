@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
+// TODO: identify and get rid of duplicated logic.
 export default function AppbarItem({
   alt,
   iconSrc,
@@ -82,7 +83,7 @@ export default function AppbarItem({
               />
             </button>
           ) : (
-            <div className={innerModifiers} {...innerAttributes}>
+            <div className={innerClassName} {...innerAttributes}>
               <img
                 alt={alt}
                 className={iconClassName}
@@ -101,7 +102,7 @@ export default function AppbarItem({
       <div className={outerClassName} {...attributes}>
         {action !== null ? (
           <button
-            className={`appbar-item__inner appbar-item__inner_action ${canBeActivated && isActive ? 'appbar-item__inner_active' : ''}`.trim()}
+            className={innerClassName}
             type="button"
             onBlur={onBlur}
             onClick={action}
@@ -110,17 +111,17 @@ export default function AppbarItem({
           >
             <img
               alt={alt}
-              className="appbar-item__icon"
+              className={iconClassName}
               height="25px"
               src={iconSrc}
               width="25px"
             />
           </button>
         ) : (
-          <div className="appbar-item__inner" {...innerAttributes}>
+          <div className={innerClassName} {...innerAttributes}>
             <img
               alt={alt}
-              className="appbar-item__icon"
+              className={iconClassName}
               height="25px"
               src={iconSrc}
               width="25px"
@@ -132,12 +133,12 @@ export default function AppbarItem({
   }
 
   // If there's no inner/outer element, only an element and an icon.
-  const noInnerNoActionClassName =
-    `${outerClassName} appbar-item_no-inner appbar-item_action ${canBeActivated && isActive ? 'appbar-item_active' : ''}`.trim();
+  const noInnerClassName =
+    `${outerClassName} appbar-item_no-inner ${action !== null ? 'appbar-item_action' : ' '}${canBeActivated && isActive ? 'appbar-item_active' : ''}`.trim();
 
   return action !== null ? (
     <button
-      className={noInnerNoActionClassName}
+      className={noInnerClassName}
       type="button"
       onBlur={onBlur}
       onClick={action}
@@ -153,7 +154,7 @@ export default function AppbarItem({
       />
     </button>
   ) : (
-    <div className={`${outerClassName} appbar-item_no-inner`} {...attributes}>
+    <div className={noInnerClassName} {...attributes}>
       <img
         alt={alt}
         className={iconClassName}
