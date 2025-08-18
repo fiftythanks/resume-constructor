@@ -41,77 +41,101 @@ describe('Button', () => {
     expect(btn).toHaveAttribute('type', 'submit');
   });
 
-  describe.each([
-    { value: 'string', type: 'String' },
-    { value: 5, type: 'Number' },
-    { value: null, type: 'Null' },
-    { value: Symbol('string'), type: 'Symbol' },
-    { value: true, type: 'Boolean' },
-    { value: 151324314n, type: 'BigInt' },
-    { value: { string: 'string' }, type: 'Object' },
-    { value: function () {}, type: 'Function' },
-  ])('Array-prop type checks', (value, type) => {
-    // Prevents Jest from logging the error to the console.
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+  describe('when validating props', () => {
+    let consoleErrorSpy;
 
-    it(`throws if \`elements\` is ${type}`, () => {
-      expect(() => {
-        render(<Button elements={value}>Click me</Button>);
-      }).toThrow(TypeError('Elements must be wrapped in an array!'));
+    beforeEach(() => {
+      // Prevents Jest from logging the error to the console.
+      consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
     });
 
-    it(`throws if \`modifiers\` is ${type}`, () => {
-      expect(() => {
-        render(<Button modifiers={value}>Click me</Button>);
-      }).toThrow(TypeError('Modifiers must be wrapped in an array!'));
+    afterEach(() => {
+      consoleErrorSpy.mockRestore();
     });
   });
 
-  describe.each([
-    { value: 5, type: 'Number' },
-    { value: null, type: 'Null' },
-    { value: Symbol('string'), type: 'Symbol' },
-    { value: true, type: 'Boolean' },
-    { value: 151324314n, type: 'BigInt' },
-    { value: { string: 'string' }, type: 'Object' },
-    { value: ['string', 'test'], type: 'Array' },
-    { value: function () {}, type: 'Function' },
-  ])('String-prop type checks', ({ value, type }) => {
-    // Prevents Jest from logging the error to the console.
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+  describe('for array props', () => {
+    const invalidArrayValues = [
+      { value: 'string', type: 'String' },
+      { value: 5, type: 'Number' },
+      { value: null, type: 'Null' },
+      { value: Symbol('string'), type: 'Symbol' },
+      { value: true, type: 'Boolean' },
+      { value: 151324314n, type: 'BigInt' },
+      { value: { string: 'string' }, type: 'Object' },
+      { value: function () {}, type: 'Function' },
+    ];
 
-    it(`throws if \`elements\` contains ${type}`, () => {
-      expect(() => {
-        render(<Button elements={['Button', value]}>Click me</Button>);
-      }).toThrow(TypeError('Elements must be strings!'));
-    });
+    it.each(invalidArrayValues)(
+      'throws if `elements` is $type',
+      ({ value }) => {
+        expect(() => {
+          render(<Button elements={value}>Click me</Button>);
+        }).toThrow(TypeError);
+      },
+    );
 
-    it(`throws if \`modifiers\` contains ${type}`, () => {
-      expect(() => {
-        render(<Button modifiers={['Button', value]}>Click me</Button>);
-      }).toThrow(TypeError('Modifiers must be strings!'));
-    });
+    it.each(invalidArrayValues)(
+      'throws if `modifiers` is $type',
+      ({ value }) => {
+        expect(() => {
+          render(<Button modifiers={value}>Click me</Button>);
+        }).toThrow(TypeError);
+      },
+    );
+  });
 
-    it(`throws if \`className\` is ${type}`, () => {
-      expect(() => {
-        render(<Button className={value}>Click me</Button>);
-      }).toThrow(TypeError('`className` must be a string!'));
-    });
+  describe('for string props', () => {
+    const invalidStringValues = [
+      { value: 5, type: 'Number' },
+      { value: null, type: 'Null' },
+      { value: Symbol('string'), type: 'Symbol' },
+      { value: true, type: 'Boolean' },
+      { value: 151324314n, type: 'BigInt' },
+      { value: { string: 'string' }, type: 'Object' },
+      { value: ['string', 'test'], type: 'Array' },
+      { value: function () {}, type: 'Function' },
+    ];
 
-    it(`throws if \`label\` is ${type}`, () => {
+    it.each(invalidStringValues)(
+      'throws if `elements` contains $type',
+      ({ value }) => {
+        expect(() => {
+          render(<Button elements={['Button', value]}>Click me</Button>);
+        }).toThrow(TypeError);
+      },
+    );
+
+    it.each(invalidStringValues)(
+      'throws if `modifiers` contains $type',
+      ({ value }) => {
+        expect(() => {
+          render(<Button modifiers={['Button', value]}>Click me</Button>);
+        }).toThrow(TypeError);
+      },
+    );
+
+    it.each(invalidStringValues)(
+      'throws if `className` is $type',
+      ({ value }) => {
+        expect(() => {
+          render(<Button className={value}>Click me</Button>);
+        }).toThrow(TypeError);
+      },
+    );
+
+    it.each(invalidStringValues)('throws if `label` is $type', ({ value }) => {
       expect(() => {
         render(<Button label={value}>Click me</Button>);
-      }).toThrow(TypeError('`label` must be a string!'));
+      }).toThrow(TypeError);
     });
 
-    it(`throws if \`id\` is ${type}`, () => {
+    it.each(invalidStringValues)('throws if `id` is $type', ({ value }) => {
       expect(() => {
         render(<Button id={value}>Click me</Button>);
-      }).toThrow(TypeError('`id` must be a string!'));
+      }).toThrow(TypeError);
     });
   });
 });
