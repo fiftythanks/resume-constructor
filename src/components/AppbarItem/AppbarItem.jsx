@@ -1,9 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
-import AppbarBlock from './AppbarBlock';
 import AppbarBlockItem from './AppbarBlockItem';
-import AppbarButton from './AppbarButton';
+import AppbarItemNoInner from './AppbarItemNoInner';
 import AppbarListItem from './AppbarListItem';
 
 // TODO: identify and get rid of duplicated logic.
@@ -106,24 +105,16 @@ export default function AppbarItem({
   const noInnerClassName =
     `${outerClassName} appbar-item_no-inner ${action !== null ? 'appbar-item_action' : ' '}${canBeActivated && isActive ? 'appbar-item_active' : ''}`.trim();
 
-  return action !== null ? (
-    <AppbarButton
+  return (
+    <AppbarItemNoInner
+      action={action}
       alt={alt}
+      attributes={{ ...attributes, ...innerAttributes }}
       className={noInnerClassName}
       iconModifiers={iconModifiers}
       iconSrc={iconSrc}
       onBlur={onBlur}
-      onClick={action}
       onKeyDown={onKeyDown}
-      {...attributes}
-    />
-  ) : (
-    <AppbarBlock
-      alt={alt}
-      className={noInnerClassName}
-      iconModifiers={iconModifiers}
-      iconSrc={iconSrc}
-      {...attributes}
     />
   );
 }
