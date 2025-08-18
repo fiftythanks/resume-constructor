@@ -5,6 +5,8 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+import AppbarButton from '@/components/AppbarButton';
+
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
 import './NavItem.scss';
@@ -81,43 +83,44 @@ export default function NavItem({
   const deleteClassName =
     `NavItem-ControlBtn NavItem-ControlBtn_delete ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd();
 
+  const buttonAttributes = {
+    // TODO: add screen reader announcements (when all sections are implemented).
+
+    id,
+    'aria-controls': `${id}-tabpanel`,
+
+    // To indicate that the tabbing functionality is disabled
+    'aria-disabled': editorMode,
+
+    'aria-label': titles[id],
+    'aria-selected': isSelected,
+    role: 'tab',
+    ...dragProps,
+
+    // If there's no selected section, "personal" is focusable.
+    tabIndex:
+      isSelected ||
+      editorMode ||
+      (id === 'personal' && selectedSectionID === null)
+        ? '0'
+        : '-1',
+  };
+
   return (
     <li
       className={outerClassName}
       ref={id === 'personal' ? null : setNodeRef}
       style={id === 'personal' ? null : style}
     >
-      <button
-        aria-controls={`${id}-tabpanel`}
-        // To indicate that the tabbing functionality is disabled
-        aria-disabled={editorMode}
-        aria-label={titles[`${id}`]}
-        aria-selected={isSelected}
+      <AppbarButton
+        alt={alt}
+        attributes={buttonAttributes}
         className={mainClassName}
-        id={id}
-        // TODO: add screen reader announcements (when all sections are implemented).
-        role="tab"
-        type="button"
+        iconSrc={iconSrc}
         onClick={!editorMode ? selectSection : null}
-        {...dragProps}
-        // If there's no selected section, "personal" is focusable.
-        tabIndex={
-          isSelected ||
-          editorMode ||
-          (id === 'personal' && selectedSectionID === null)
-            ? '0'
-            : '-1'
-        }
-      >
-        <img
-          alt={alt}
-          className="appbar-item__icon"
-          height="25px"
-          src={iconSrc}
-          width="25px"
-        />
-      </button>
+      />
 
+      {/* Delete-section button. */}
       {id !== 'personal' && (
         <button
           aria-label={`Delete ${id}`}
