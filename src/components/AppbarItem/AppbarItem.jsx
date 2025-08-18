@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
-import AppbarIcon from '@/components/AppbarIcon';
+import AppbarIcon from './AppbarIcon';
 
 // TODO: identify and get rid of duplicated logic.
 export default function AppbarItem({
@@ -22,12 +22,23 @@ export default function AppbarItem({
   onKeyDown = null,
 }) {
   // The outer (compared to the inner) element's class name construction.
-  let outerClassName = `${className} appbar-item`;
+  let outerClassName;
+
+  if (typeof className === 'string') {
+    // If there's no "appbar-item" class in the string.
+    if (!/(.* +)?(appbar-item)( +.*)?/.test(className)) {
+      // Trim in case an empty string is passed.
+      outerClassName = `appbar-item ${className}`.trimEnd();
+    } else {
+      outerClassName = className;
+    }
+  } else {
+    throw new TypeError('`className` must be a string!');
+  }
 
   if (Array.isArray(modifiers)) {
-    if (modifiers.length > 0) {
-      outerClassName += ` ${modifiers.join(' ')}`;
-    }
+    // Trim in case leading or trailing spaces appear
+    outerClassName = `${outerClassName} ${modifiers.join(' ')}`.trim();
   } else {
     throw new TypeError('`modifiers` must be an array!');
   }
@@ -37,16 +48,16 @@ export default function AppbarItem({
     let innerClassName = 'appbar-item__inner';
 
     if (action !== null) {
-      innerClassName += ' appbar-item__inner_action';
+      innerClassName = `${innerClassName} appbar-item__inner_action`.trim();
 
       if (canBeActivated && isActive) {
-        innerClassName += ' appbar-item__inner_active';
+        innerClassName = `${innerClassName} appbar-item__inner_active`.trim();
       }
     }
 
     if (Array.isArray(innerModifiers)) {
       if (innerModifiers.length > 0) {
-        innerClassName += ` ${innerModifiers.join(' ')}`;
+        innerClassName = `${innerClassName} ${innerModifiers.join(' ')}`.trim();
       }
     } else {
       throw new TypeError('`innerModifiers` must be an array!');
