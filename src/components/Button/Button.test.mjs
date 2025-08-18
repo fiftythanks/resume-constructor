@@ -73,7 +73,7 @@ describe('Button', () => {
       ({ value }) => {
         expect(() => {
           render(<Button elements={value}>Click me</Button>);
-        }).toThrow(TypeError);
+        }).toThrow('Elements must be wrapped in an array!');
       },
     );
 
@@ -82,7 +82,7 @@ describe('Button', () => {
       ({ value }) => {
         expect(() => {
           render(<Button modifiers={value}>Click me</Button>);
-        }).toThrow(TypeError);
+        }).toThrow('Modifiers must be wrapped in an array!');
       },
     );
   });
@@ -104,7 +104,7 @@ describe('Button', () => {
       ({ value }) => {
         expect(() => {
           render(<Button elements={['Button', value]}>Click me</Button>);
-        }).toThrow(TypeError);
+        }).toThrow('Elements must be strings!');
       },
     );
 
@@ -113,7 +113,7 @@ describe('Button', () => {
       ({ value }) => {
         expect(() => {
           render(<Button modifiers={['Button', value]}>Click me</Button>);
-        }).toThrow(TypeError);
+        }).toThrow('Modifiers must be strings!');
       },
     );
 
@@ -122,20 +122,20 @@ describe('Button', () => {
       ({ value }) => {
         expect(() => {
           render(<Button className={value}>Click me</Button>);
-        }).toThrow(TypeError);
+        }).toThrow('`className` must be a string!');
       },
     );
 
     it.each(invalidStringValues)('throws if `label` is $type', ({ value }) => {
       expect(() => {
         render(<Button label={value}>Click me</Button>);
-      }).toThrow(TypeError);
+      }).toThrow('`label` must be a string!');
     });
 
     it.each(invalidStringValues)('throws if `id` is $type', ({ value }) => {
       expect(() => {
         render(<Button id={value}>Click me</Button>);
-      }).toThrow(TypeError);
+      }).toThrow('`id` must be a string!');
     });
   });
 
@@ -157,7 +157,7 @@ describe('Button', () => {
     ])('throws if `onClick` is $type', ({ value }) => {
       expect(() => {
         render(<Button onClick={value}>Click me</Button>);
-      }).toThrow(TypeError);
+      }).toThrow('`onClick` must be a string!');
     });
   });
 });
