@@ -1,10 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
-import AppbarIcon from './AppbarIcon';
+import AppbarIcon from '@/components/AppbarIcon';
 
 export default function AppbarButton({
+  active,
   alt,
+  canBeActivated,
   className,
   iconModifiers,
   iconSrc,
@@ -15,7 +17,7 @@ export default function AppbarButton({
 }) {
   return (
     <button
-      className={className}
+      className={`appbar-item appbar-item_action${canBeActivated && active ? ' appbar-item_active' : ''} ${className}`.trimEnd()}
       type="button"
       onBlur={onBlur}
       onClick={onClick}

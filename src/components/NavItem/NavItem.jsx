@@ -54,10 +54,10 @@ export default function NavItem({
 
   // Outer element
   const outerClassName =
-    `NavItem appbar-item ${className} ${isDragging ? 'NavItem_dragged' : ''} ${isSelected ? 'NavItem_selected' : ''}`.trimEnd();
+    `NavItem ${className} ${isDragging ? 'NavItem_dragged' : ''} ${isSelected ? 'NavItem_selected' : ''}`.trimEnd();
 
   const mainClassName =
-    `NavItem-Button appbar-item__inner appbar-item__inner_action ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'appbar-item__inner_active' : ''}`.trimEnd();
+    `NavItem-Button ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'NavItem-Button_active' : ''}`.trimEnd();
 
   // Delete button
   // TODO: move this logic to the `Navbar` component.

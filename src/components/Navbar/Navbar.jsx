@@ -22,7 +22,7 @@ import {
 } from '@dnd-kit/sortable';
 
 import AddSections from '@/components/AddSections';
-import AppbarItem from '@/components/AppbarItem';
+import AppbarButton from '@/components/AppbarButton';
 import NavItem from '@/components/NavItem';
 
 import capitalize from '@/utils/capitalize';
@@ -163,7 +163,7 @@ export default function Navbar({
     id: 'add-sections',
   };
 
-  const editorClassName = `Navbar-Control${canAddSections ? '' : ' Navbar-Control_onTop'}`;
+  const editorClassName = `Navbar-Control${canAddSections ? '' : ' Navbar-Control_onTop'}${editorMode ? ' Navbar-Control_editing' : ''}`;
 
   const editorAttributes = {
     'aria-label': 'Toggle Editor Mode',
@@ -361,24 +361,21 @@ export default function Navbar({
         </ul>
         {/* Control buttons */}
         {canAddSections && (
-          <AppbarItem
+          <AppbarButton
             alt="Add Sections"
             attributes={addSectionsAttributes}
             className="Navbar-Control Navbar-Control_onTop"
             iconSrc={icons.add}
-            action={() => {
-              showAddSectionsPopup();
-            }}
+            onClick={showAddSectionsPopup}
           />
         )}
-        <AppbarItem
-          action={toggleEditorMode}
+        <AppbarButton
           alt="Edit Sections"
           attributes={editorAttributes}
           className={editorClassName}
           iconSrc={editorMode ? icons.done : icons.edit}
           key="toggle-editor-mode"
-          modifiers={[`${editorMode ? 'Navbar-Control_editing' : ''}`]}
+          onClick={toggleEditorMode}
         />
       </nav>
       <AddSections

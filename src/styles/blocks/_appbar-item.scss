@@ -1,19 +1,16 @@
 @use '@/styles/utils/variables' as v;
 
 .appbar-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 5px;
+  background-color: var(--secondary-color);
   padding: 0;
   min-width: v.$appbar-button-size;
   min-height: v.$appbar-button-size;
   user-select: none;
-
-  &_no-inner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 5px;
-    background-color: var(--secondary-color);
-  }
 
   &_action {
     &:hover {
@@ -23,30 +20,6 @@
 
   &_active {
     background-color: var(--opened-section-color);
-  }
-
-  &__inner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 5px;
-    background-color: var(--secondary-color);
-    padding: 0;
-    width: 100%;
-    min-width: v.$appbar-button-size;
-    height: 100%;
-    min-height: v.$appbar-button-size;
-
-    &_action {
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
-    &_active {
-      background-color: var(--opened-section-color);
-    }
   }
 
   &__icon {

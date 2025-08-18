@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import AppbarItem from '@/components/AppbarItem';
+import AppbarButton from '@/components/AppbarButton';
 import Preview from '@/components/Preview';
 
 import clearSrc from '@/assets/icons/clear.svg';
@@ -176,12 +176,12 @@ export default function Toolbar({
         role="toolbar"
         onKeyDown={handleKeyDown}
       >
-        <AppbarItem
-          action={toggleNavbar}
+        <AppbarButton
           alt="Toggle Navigation"
           attributes={navbarToggleAttributes}
           className="Toolbar-Item Toolbar-Item_toggleNavbar"
           iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
+          onClick={toggleNavbar}
         />
         <div
           aria-labelledby="toggle-controls"
@@ -191,43 +191,43 @@ export default function Toolbar({
           role="menu"
         >
           <ul className="Toolbar-ControlsList" onBlur={handleBlur}>
-            {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
-            <AppbarItem
-              hasInner
-              isListItem
-              action={deleteAll}
-              alt="Clear All"
-              iconSrc={clearSrc}
-              innerAttributes={deleteAllBtnAttributes}
-              innerClassName="Toolbar-Item Toolbar-Item_deleteAll"
-            />
-            {/* TODO: add a warning that clicking "Fill All" will result in loss of all data. */}
-            <AppbarItem
-              hasInner
-              isListItem
-              action={fillAll}
-              alt="Fill All"
-              iconSrc={fillSrc}
-              innerAttributes={fillAllBtnAttributes}
-              innerClassName="Toolbar-Item Toolbar-Item_fillAll"
-            />
-            <AppbarItem
-              hasInner
-              isListItem
-              action={showPreviewModal}
-              alt="Preview"
-              iconSrc={previewSrc}
-              innerAttributes={previewAttributes}
-              innerClassName="Toolbar-Item Toolbar-Item_preview"
-            />
+            <li>
+              {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
+              <AppbarButton
+                alt="Clear All"
+                attributes={deleteAllBtnAttributes}
+                className="Toolbar-Item Toolbar-Item_deleteAll"
+                iconSrc={clearSrc}
+                onClick={deleteAll}
+              />
+            </li>
+            <li>
+              {/* TODO: add a warning that clicking "Fill All" will result in loss of all data. */}
+              <AppbarButton
+                alt="Fill All"
+                attributes={fillAllBtnAttributes}
+                className="Toolbar-Item Toolbar-Item_fillAll"
+                iconSrc={fillSrc}
+                onClick={fillAll}
+              />
+            </li>
+            <li>
+              <AppbarButton
+                alt="Preview"
+                attributes={previewAttributes}
+                className="Toolbar-Item Toolbar-Item_preview"
+                iconSrc={previewSrc}
+                onClick={showPreviewModal}
+              />
+            </li>
           </ul>
         </div>
-        <AppbarItem
-          action={toggleControls}
+        <AppbarButton
           alt="Toggle Controls"
           attributes={controlsToggleAttributes}
           className="Toolbar-Item Toolbar-Item_toggleControls"
           iconSrc={kebabSrc}
+          onClick={toggleControls}
         />
       </div>
       {/* ? What about the `Popup` component? It's strange to use `.showModal()` and `.close()` when in reality it's just conditional rendering... Think if you need to change something here.` */}
