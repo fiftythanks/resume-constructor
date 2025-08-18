@@ -1,14 +1,14 @@
-import joinItems from './joinItems';
+import joinSkills from './joinSkills';
 
-describe('joinItems()', () => {
+describe('joinSkills()', () => {
   it('joins "value" property values of an array of { value: ... } elements with a ", " separator', () => {
-    const items = [
+    const skills = [
       { value: 'string' },
       { value: 'another string' },
       { value: 'third' },
     ];
 
-    expect(joinItems(items)).toBe('string, another string, third');
+    expect(joinSkills(skills)).toBe('string, another string, third');
   });
 
   it.each([
@@ -22,8 +22,8 @@ describe('joinItems()', () => {
     { value: { string: 'string' }, type: 'Object' },
     { value: function () {}, type: 'Function' },
   ])('throws TypeError if the argument is $type', ({ value }) => {
-    expect(() => joinItems(value)).toThrow(
-      'Incorrect argument! joinItems() accepts arrays only.',
+    expect(() => joinSkills(value)).toThrow(
+      'Incorrect argument! joinSkills() accepts arrays only.',
     );
   });
 
@@ -36,13 +36,13 @@ describe('joinItems()', () => {
     { item: true, type: 'Boolean' },
     { item: 151324314n, type: 'BigInt' },
   ])('throws if the input array has $type elements', ({ item }) => {
-    expect(() => joinItems([{ value: 'string' }, item])).toThrow(
+    expect(() => joinSkills([{ value: 'string' }, item])).toThrow(
       'Incorrect argument! Input array must consist of objects with a property "value" that has a string value.',
     );
   });
 
   it('throws if the input array has object elements that do not have a property "value"', () => {
-    expect(() => joinItems([{ Value: 'string' }])).toThrow(
+    expect(() => joinSkills([{ Value: 'string' }])).toThrow(
       'Incorrect argument! Input array must consist of objects with a property "value" that has a string value.',
     );
   });
@@ -60,7 +60,7 @@ describe('joinItems()', () => {
   ])(
     'throws if the input array has object elements that have a property "value" whose value is $type',
     ({ value }) => {
-      expect(() => joinItems([{ value }])).toThrow(
+      expect(() => joinSkills([{ value }])).toThrow(
         'Incorrect argument! Input array must consist of objects with a property "value" that has a string value.',
       );
     },

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link, StyleSheet, Text, View } from '@react-pdf/renderer';
 
-import joinItems from '@/utils/joinItems';
+import joinSkills from './joinSkills';
 
 const styles = StyleSheet.create({
   bold: {
@@ -260,7 +260,7 @@ export default function ResumeSection({ data, sectionName, style }) {
                     render={() => (
                       <>
                         <Text style={styles.bold}>Languages:</Text>
-                        {` ${joinItems(data.languages)}.`}
+                        {` ${joinSkills(data.languages)}.`}
                       </>
                     )}
                   />
@@ -272,7 +272,7 @@ export default function ResumeSection({ data, sectionName, style }) {
                         <Text style={styles.bold}>
                           Frameworks, Libraries & Databases:
                         </Text>
-                        {` ${joinItems(data.frameworks)}.`}
+                        {` ${joinSkills(data.frameworks)}.`}
                       </>
                     )}
                   />
@@ -284,7 +284,7 @@ export default function ResumeSection({ data, sectionName, style }) {
                         <Text style={styles.bold}>
                           Tools & Other Technologies:
                         </Text>
-                        {` ${joinItems(data.tools)}.`}
+                        {` ${joinSkills(data.tools)}.`}
                       </>
                     )}
                   />
