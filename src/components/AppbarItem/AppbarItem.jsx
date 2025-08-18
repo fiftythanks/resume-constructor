@@ -3,6 +3,7 @@ import React from 'react';
 
 import AppbarBlock from './AppbarBlock';
 import AppbarButton from './AppbarButton';
+import AppbarListItem from './AppbarListItem';
 
 // TODO: identify and get rid of duplicated logic.
 export default function AppbarItem({
@@ -67,28 +68,17 @@ export default function AppbarItem({
     // If the outer element is a list item.
     if (isListItem) {
       return (
-        <li className={outerClassName} {...attributes}>
-          {action !== null ? (
-            <AppbarButton
-              alt={alt}
-              className={innerClassName}
-              iconModifiers={iconModifiers}
-              iconSrc={iconSrc}
-              onBlur={onBlur}
-              onClick={action}
-              onKeyDown={onKeyDown}
-              {...innerAttributes}
-            />
-          ) : (
-            <AppbarBlock
-              alt={alt}
-              className={innerClassName}
-              iconModifiers={iconModifiers}
-              iconSrc={iconSrc}
-              {...innerAttributes}
-            />
-          )}
-        </li>
+        <AppbarListItem
+          alt={alt}
+          attributes={attributes}
+          className={outerClassName}
+          iconModifiers={iconModifiers}
+          iconSrc={iconSrc}
+          innerAttributes={innerAttributes}
+          onBlur={onBlur}
+          onClick={action}
+          onKeyDown={onKeyDown}
+        />
       );
     }
 
