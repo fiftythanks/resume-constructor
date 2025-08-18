@@ -8,12 +8,16 @@ export default function AppbarIcon({
 }) {
   let iconClassName;
 
-  if (className !== 'appbar-item__icon') {
-    if (typeof className === 'string') {
-      iconClassName = 'appbar-item__icon';
+  if (typeof className === 'string') {
+    // If there's no `appbar-item__icon` class in the string.
+    if (!/(.* +)?(appbar-item__icon)( +.*)?/.test(className)) {
+      // Trim in case an empty string is passed.
+      iconClassName = `appbar-item__icon ${className}`.trimEnd();
     } else {
-      throw new TypeError('`className` must be a string!');
+      iconClassName = className;
     }
+  } else {
+    throw new TypeError('`className` must be a string!');
   }
 
   if (Array.isArray(modifiers)) {
