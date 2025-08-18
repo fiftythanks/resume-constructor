@@ -62,6 +62,14 @@ export default function Button({
     throw new TypeError('`id` must be a string!');
   }
 
+  /**
+   * There's no reason to create an instance of this component
+   * without `onClick`, hence `undefined` should also throw.
+   */
+  if (typeof onClick !== 'function') {
+    throw new TypeError('`onClick` must be a string!');
+  }
+
   return (
     <button
       aria-label={label}

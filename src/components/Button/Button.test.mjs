@@ -138,4 +138,26 @@ describe('Button', () => {
       }).toThrow(TypeError);
     });
   });
+
+  describe('for functional props', () => {
+    const invalidFunctionValues = [
+      { value: 'string', type: 'String' },
+      { value: 5, type: 'Number' },
+      { value: null, type: 'Null' },
+      { value: Symbol('string'), type: 'Symbol' },
+      { value: true, type: 'Boolean' },
+      { value: 151324314n, type: 'BigInt' },
+      { value: { string: 'string' }, type: 'Object' },
+      { value: ['string', 'test'], type: 'Array' },
+    ];
+
+    it.each([
+      ...invalidFunctionValues,
+      { value: undefined, type: 'Undefined' },
+    ])('throws if `onClick` is $type', ({ value }) => {
+      expect(() => {
+        render(<Button onClick={value}>Click me</Button>);
+      }).toThrow(TypeError);
+    });
+  });
 });
