@@ -1,21 +1,21 @@
 import capitalize from './capitalize';
 
 describe('capitalize()', () => {
-  describe('Returns a capitalised string when the argument is a string', () => {
-    test('when the argument is a lowercase string and it starts with a letter', () => {
+  describe('when the argument is a string', () => {
+    it('returns the capitalised string when the string starts with a letter', () => {
       expect(capitalize('string')).toBe('String');
     });
 
-    test('when the argument is a capitalised string', () => {
+    test('returns the capitalised string when the string is capitalised', () => {
       expect(capitalize('String')).toBe('String');
     });
 
-    test('when the argument is a string that starts with a non-letter symbol', () => {
+    test('returns the capitalised string when the string starts with a non-letter symbol', () => {
       expect(capitalize('1fd')).toBe('1fd');
       expect(capitalize('%ds')).toBe('%ds');
     });
 
-    test('when the argument is an empty string', () => {
+    test('returns the capitalised string when the string is empty', () => {
       expect(capitalize('')).toBe('');
     });
   });
@@ -36,7 +36,7 @@ describe('capitalize()', () => {
     'throws TypeError when the argument is $type',
     ({ value }) => {
       expect(() => capitalize(value)).toThrow(
-        TypeError('Incorrect argument! capitalize() accepts strings only.'),
+        'Incorrect argument! capitalize() accepts strings only.',
       );
     },
   );
