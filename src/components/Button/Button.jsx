@@ -1,5 +1,3 @@
-// TODO: get rid of this. No param reassign should occur here.
-/* eslint-disable no-param-reassign */
 import React from 'react';
 
 import './Button.scss';
@@ -15,8 +13,10 @@ export default function Button({
   isSubmit = false,
   modifiers = [],
 }) {
+  let btnClassName;
+
   if (typeof className === 'string') {
-    className = `${className} Button`.trimStart();
+    btnClassName = `${className} Button`.trimStart();
   } else {
     throw new TypeError('`className` must be a string!');
   }
@@ -29,7 +29,7 @@ export default function Button({
     });
 
     if (elements.length > 0) {
-      className += ` ${elements.join(' ')}`;
+      btnClassName += ` ${elements.join(' ')}`;
     }
   } else {
     throw new TypeError('Elements must be wrapped in an array!');
@@ -43,11 +43,11 @@ export default function Button({
     });
 
     if (modifiers.length > 0) {
-      className += ` ${modifiers.join(' ')}`;
+      btnClassName += ` ${modifiers.join(' ')}`;
 
       // TODO: remove this logic. There's no such modifier in the stylesheet.
       if (!modifiers.includes('_disabled') && isDisabled) {
-        className += ' _disabled';
+        btnClassName += ' _disabled';
       }
     }
   } else {
@@ -65,7 +65,7 @@ export default function Button({
   return (
     <button
       aria-label={label}
-      className={className}
+      className={btnClassName}
       id={id}
       type={isSubmit ? 'submit' : 'button'}
       onClick={onClick}
