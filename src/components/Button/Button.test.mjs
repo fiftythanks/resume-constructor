@@ -101,5 +101,17 @@ describe('Button', () => {
         render(<Button className={value}>Click me</Button>);
       }).toThrow(TypeError('`className` must be a string!'));
     });
+
+    it(`throws if \`label\` is ${type}`, () => {
+      expect(() => {
+        render(<Button label={value}>Click me</Button>);
+      }).toThrow(TypeError('`label` must be a string!'));
+    });
+
+    it(`throws if \`id\` is ${type}`, () => {
+      expect(() => {
+        render(<Button id={value}>Click me</Button>);
+      }).toThrow(TypeError('`id` must be a string!'));
+    });
   });
 });

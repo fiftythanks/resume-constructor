@@ -1,3 +1,4 @@
+// TODO: get rid of this. No param reassign should occur here.
 /* eslint-disable no-param-reassign */
 import React from 'react';
 
@@ -5,14 +6,14 @@ import './Button.scss';
 
 export default function Button({
   children,
+  id,
+  label,
+  onClick,
   className = '',
   elements = [],
-  id = null,
   isDisabled = false,
   isSubmit = false,
-  label = null,
   modifiers = [],
-  onClick,
 }) {
   if (typeof className === 'string') {
     className = `${className} Button`.trimStart();
@@ -51,6 +52,14 @@ export default function Button({
     }
   } else {
     throw new TypeError('Modifiers must be wrapped in an array!');
+  }
+
+  if (label !== undefined && typeof label !== 'string') {
+    throw new TypeError('`label` must be a string!');
+  }
+
+  if (id !== undefined && typeof id !== 'string') {
+    throw new TypeError('`id` must be a string!');
   }
 
   return (
