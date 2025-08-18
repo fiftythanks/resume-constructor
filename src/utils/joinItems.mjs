@@ -19,7 +19,7 @@ export default function joinItems(items) {
         typeof item.value !== 'string'
       ) {
         throw new TypeError(
-          'Incorrect argument! Input array must consist of objects with properties "value" with string values.',
+          'Incorrect argument! Input array must consist of objects with a property "value" that has a string value.',
         );
       }
 

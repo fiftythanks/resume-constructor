@@ -23,7 +23,7 @@ describe('joinItems()', () => {
     { value: function () {}, type: 'function' },
   ])('throws TypeError if the argument is $type', ({ value }) => {
     expect(() => joinItems(value)).toThrow(
-      TypeError('Incorrect argument! joinItems() accepts arrays only.'),
+      'Incorrect argument! joinItems() accepts arrays only.',
     );
   });
 
@@ -37,9 +37,32 @@ describe('joinItems()', () => {
     { item: 151324314n, type: 'bigint' },
   ])('throws if the input array has $type elements', ({ item }) => {
     expect(() => joinItems([{ value: 'string' }, item])).toThrow(
-      TypeError(
-        'Incorrect argument! Input array must consist of objects with properties "value" with string values.',
-      ),
+      'Incorrect argument! Input array must consist of objects with a property "value" that has a string value.',
     );
   });
+
+  it('throws if the input array has object elements that do not have a property "value"', () => {
+    expect(() => joinItems([{ Value: 'string' }])).toThrow(
+      'Incorrect argument! Input array must consist of objects with a property "value" that has a string value.',
+    );
+  });
+
+  it.each([
+    { value: 5, type: 'number' },
+    { value: null, type: 'null' },
+    { value: undefined, type: 'undefined' },
+    { value: Symbol('string'), type: 'symbol' },
+    { value: true, type: 'boolean' },
+    { value: 151324314n, type: 'bigint' },
+    { value: { string: 'string' }, type: 'object' },
+    { value: ['string'], type: 'array' },
+    { value: function () {}, type: 'function' },
+  ])(
+    'throws if the input array has object elements that have a property "value" whose value is $type',
+    ({ value }) => {
+      expect(() => joinItems([{ value }])).toThrow(
+        'Incorrect argument! Input array must consist of objects with a property "value" that has a string value.',
+      );
+    },
+  );
 });
