@@ -1,8 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
-import AppbarIcon from '@/components/AppbarIcon';
-
 import './AppbarButton.scss';
 
 export default function AppbarButton({
@@ -25,7 +23,13 @@ export default function AppbarButton({
       onKeyDown={onKeyDown}
       {...attributes}
     >
-      <AppbarIcon alt={alt} src={iconSrc} />
+      <img
+        alt={alt}
+        className="AppbarButton-Icon"
+        height="25px"
+        src={iconSrc}
+        width="25px"
+      />
     </button>
   );
 }

@@ -21,4 +21,9 @@
   &_active {
     background-color: var(--opened-section-color);
   }
+
+  &-Icon {
+    width: 25px;
+    height: auto;
+  }
 }
