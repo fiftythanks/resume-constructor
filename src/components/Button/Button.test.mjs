@@ -6,7 +6,7 @@ import Button from './Button';
 
 describe('Button', () => {
   it('renders with the correct accessible name from its children', () => {
-    render(<Button onClick={() => {}}>Click me</Button>);
+    render(<Button>Click me</Button>);
 
     const btn = screen.getByRole('button', { name: /click me/i });
 
@@ -14,11 +14,7 @@ describe('Button', () => {
   });
 
   it('uses the `label` prop for its accessible name when provided', () => {
-    render(
-      <Button label="Close Dialog" onClick={() => {}}>
-        X
-      </Button>,
-    );
+    render(<Button label="Close Dialog">X</Button>);
 
     const btn = screen.getByRole('button', { name: /close dialog/i });
 
@@ -38,11 +34,7 @@ describe('Button', () => {
   });
 
   it('has type "submit" when `isSubmit` is `true`', () => {
-    render(
-      <Button isSubmit={true} onClick={() => {}}>
-        Click me
-      </Button>,
-    );
+    render(<Button isSubmit={true}>Click me</Button>);
 
     const btn = screen.getByRole('button', { name: /click me/i });
 
@@ -159,13 +151,13 @@ describe('Button', () => {
       { value: ['string', 'test'], type: 'Array' },
     ];
 
-    it.each([
-      ...invalidFunctionValues,
-      { value: undefined, type: 'Undefined' },
-    ])('throws if `onClick` is $type', ({ value }) => {
-      expect(() => {
-        render(<Button onClick={value}>Click me</Button>);
-      }).toThrow('`onClick` must be a string!');
-    });
+    it.each(invalidFunctionValues)(
+      'throws if `onClick` is $type',
+      ({ value }) => {
+        expect(() => {
+          render(<Button onClick={value}>Click me</Button>);
+        }).toThrow('`onClick` must be a string!');
+      },
+    );
   });
 });
