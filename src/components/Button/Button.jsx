@@ -9,7 +9,6 @@ export default function Button({
   onClick,
   className = '',
   elements = [],
-  isDisabled = false,
   isSubmit = false,
   modifiers = [],
 }) {
@@ -44,11 +43,6 @@ export default function Button({
 
     if (modifiers.length > 0) {
       btnClassName += ` ${modifiers.join(' ')}`;
-
-      // TODO: remove this logic. There's no such modifier in the stylesheet.
-      if (!modifiers.includes('_disabled') && isDisabled) {
-        btnClassName += ' _disabled';
-      }
     }
   } else {
     throw new TypeError('Modifiers must be wrapped in an array!');
