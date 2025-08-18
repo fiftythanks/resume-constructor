@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
+import AppbarButton from './AppbarButton';
 import AppbarIcon from './AppbarIcon';
 
 // TODO: identify and get rid of duplicated logic.
@@ -68,16 +69,16 @@ export default function AppbarItem({
       return (
         <li className={outerClassName} {...attributes}>
           {action !== null ? (
-            <button
+            <AppbarButton
+              alt={alt}
               className={innerClassName}
-              type="button"
+              iconModifiers={iconModifiers}
+              iconSrc={iconSrc}
               onBlur={onBlur}
               onClick={action}
               onKeyDown={onKeyDown}
               {...innerAttributes}
-            >
-              <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
-            </button>
+            />
           ) : (
             <div className={innerClassName} {...innerAttributes}>
               <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
@@ -91,16 +92,16 @@ export default function AppbarItem({
     return (
       <div className={outerClassName} {...attributes}>
         {action !== null ? (
-          <button
+          <AppbarButton
+            alt={alt}
             className={innerClassName}
-            type="button"
+            iconModifiers={iconModifiers}
+            iconSrc={iconSrc}
             onBlur={onBlur}
             onClick={action}
             onKeyDown={onKeyDown}
             {...innerAttributes}
-          >
-            <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
-          </button>
+          />
         ) : (
           <div className={innerClassName} {...innerAttributes}>
             <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
@@ -115,16 +116,16 @@ export default function AppbarItem({
     `${outerClassName} appbar-item_no-inner ${action !== null ? 'appbar-item_action' : ' '}${canBeActivated && isActive ? 'appbar-item_active' : ''}`.trim();
 
   return action !== null ? (
-    <button
+    <AppbarButton
+      alt={alt}
       className={noInnerClassName}
-      type="button"
+      iconModifiers={iconModifiers}
+      iconSrc={iconSrc}
       onBlur={onBlur}
       onClick={action}
       onKeyDown={onKeyDown}
       {...attributes}
-    >
-      <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
-    </button>
+    />
   ) : (
     <div className={noInnerClassName} {...attributes}>
       <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
