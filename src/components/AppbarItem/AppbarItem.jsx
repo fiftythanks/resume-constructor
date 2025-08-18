@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
+import AppbarBlock from './AppbarBlock';
 import AppbarButton from './AppbarButton';
-import AppbarIcon from './AppbarIcon';
 
 // TODO: identify and get rid of duplicated logic.
 export default function AppbarItem({
@@ -80,9 +80,13 @@ export default function AppbarItem({
               {...innerAttributes}
             />
           ) : (
-            <div className={innerClassName} {...innerAttributes}>
-              <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
-            </div>
+            <AppbarBlock
+              alt={alt}
+              className={innerClassName}
+              iconModifiers={iconModifiers}
+              iconSrc={iconSrc}
+              {...innerAttributes}
+            />
           )}
         </li>
       );
@@ -103,9 +107,13 @@ export default function AppbarItem({
             {...innerAttributes}
           />
         ) : (
-          <div className={innerClassName} {...innerAttributes}>
-            <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
-          </div>
+          <AppbarBlock
+            alt={alt}
+            className={innerClassName}
+            iconModifiers={iconModifiers}
+            iconSrc={iconSrc}
+            {...innerAttributes}
+          />
         )}
       </div>
     );
@@ -127,8 +135,12 @@ export default function AppbarItem({
       {...attributes}
     />
   ) : (
-    <div className={noInnerClassName} {...attributes}>
-      <AppbarIcon alt={alt} modifiers={iconModifiers} src={iconSrc} />
-    </div>
+    <AppbarBlock
+      alt={alt}
+      className={noInnerClassName}
+      iconModifiers={iconModifiers}
+      iconSrc={iconSrc}
+      {...attributes}
+    />
   );
 }
