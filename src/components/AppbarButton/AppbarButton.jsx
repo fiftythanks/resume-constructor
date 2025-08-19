@@ -4,9 +4,7 @@ import React from 'react';
 import './AppbarButton.scss';
 
 export default function AppbarButton({
-  active,
   alt,
-  canBeActivated,
   className,
   iconSrc,
   onBlur,
@@ -14,9 +12,17 @@ export default function AppbarButton({
   onKeyDown,
   attributes = {},
 }) {
+  if (alt === undefined) {
+    throw new ReferenceError('`alt` must be provided!');
+  }
+
+  if (iconSrc === undefined) {
+    throw new ReferenceError('`iconSrc` must be provided!');
+  }
+
   return (
     <button
-      className={`AppbarButton AppbarButton_action${canBeActivated && active ? ' AppbarButton_active' : ''} ${className}`.trimEnd()}
+      className={`AppbarButton AppbarButton_action ${className}`.trimEnd()}
       type="button"
       onBlur={onBlur}
       onClick={onClick}
