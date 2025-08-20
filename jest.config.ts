@@ -1,10 +1,26 @@
-/**
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/configuration
- */
+import {
+  createJsWithTsEsmPreset,
+  type JestConfigWithTsJest,
+  pathsToModuleNameMapper,
+} from 'ts-jest';
 
-/** @type {import('jest').Config} */
-const config = {
+import { compilerOptions } from './tsconfig.json';
+
+const jestConfig: JestConfigWithTsJest = {
+  ...createJsWithTsEsmPreset(),
+
+  extensionsToTreatAsEsm: ['.mts', '.ts', '.tsx'],
+
+  transform: {
+    '^.+\\.m?tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
+    '^.+\\.m?jsx?$': 'babel-jest',
+  },
+
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -91,6 +107,7 @@ const config = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
+    ...pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -101,9 +118,6 @@ const config = {
 
   // An enum that specifies notification mode. Requires { notify: true }
   // notifyMode: "failure-change",
-
-  // A preset that is used as a base for Jest's configuration
-  // preset: undefined,
 
   // Run tests from one or more projects
   // projects: undefined,
@@ -173,12 +187,6 @@ const config = {
   // This option allows use of a custom test runner
   // testRunner: "jest-circus/runner",
 
-  // A map from regular expressions to paths to transformers
-  transform: {
-    '\\.[jt]sx?$': 'babel-jest',
-    '^.+\\.mjs$': 'babel-jest',
-  },
-
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
   //   "/node_modules/",
@@ -198,4 +206,4 @@ const config = {
   // watchman: true,
 };
 
-module.exports = config;
+export default jestConfig;

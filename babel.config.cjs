@@ -8,19 +8,16 @@ module.exports = {
       {
         extensions: ['.jsx', '.mjs', '.js'],
         resolvePath(sourcePath, currentFile) {
-          // Only handle relative paths with no extension
+          // This logic remains exactly the same.
           if (sourcePath.startsWith('.') && path.extname(sourcePath) === '') {
-            // Construct the potential .mjs file path relative to the current file.
             const possibleMjsPath = path.join(
               path.dirname(currentFile),
               `${sourcePath}.mjs`,
             );
             try {
-              // If the .mjs file exists, append the extension.
               fs.accessSync(possibleMjsPath, fs.constants.F_OK);
               return `${sourcePath}.mjs`;
-            } catch (err) {
-              // If the .mjs file doesn't exist, return the original path.
+            } catch {
               return sourcePath;
             }
           }

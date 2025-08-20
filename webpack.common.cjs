@@ -1,15 +1,16 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const ESLintPlugin = require('eslint-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 
 module.exports = {
   entry: {
-    app: './src/index.jsx',
+    app: path.resolve(__dirname, 'src/index.tsx'),
     'pdf.worker': 'pdfjs-dist/build/pdf.worker.mjs',
   },
   resolve: {
-    extensions: ['.jsx', '.mjs', '.js', '.json'],
+    extensions: ['.tsx', '.ts', '.jsx', '.mjs', '.js', '.json'],
     alias: {
       '@/*': path.resolve(__dirname, 'src/*'),
     },
@@ -19,7 +20,7 @@ module.exports = {
       title: 'Production',
       template: './src/index.html',
     }),
-    new ESLintPlugin({ configType: 'eslintrc' }),
+    new ESLintPlugin({ configType: 'flat' }),
     new StylelintPlugin({}),
   ],
   output: {
@@ -34,6 +35,7 @@ module.exports = {
         use: [
           // Creates `style` nodes from JS strings
           'style-loader',
+
           // Translates CSS into CommonJS
           {
             loader: 'css-loader',
@@ -42,8 +44,10 @@ module.exports = {
               importLoaders: 2,
             },
           },
+
           // Processes CSS with PostCSS
           'postcss-loader',
+
           // Compiles Sass to CSS
           'sass-loader',
         ],
@@ -60,6 +64,7 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
       },
+      // TODO: get rid of `babel-loader` as soon as you fully migrate to TypeScript.
       {
         test: /\.m?jsx?$/,
         exclude: /node_modules/,
@@ -72,6 +77,19 @@ module.exports = {
         },
         resolve: {
           fullySpecified: false,
+        },
+      },
+      {
+        test: /\.m?tsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            compilerOptions: {
+              noEmit: false,
+              allowImportingTsExtensions: false,
+            },
+          },
         },
       },
     ],
