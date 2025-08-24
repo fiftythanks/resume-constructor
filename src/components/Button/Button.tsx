@@ -1,5 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
+import { clsx } from 'clsx/lite';
+
 import './Button.scss';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,6 +17,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  *
  * The accessible name is determined by the `children` prop, but can be
  * overridden for screen readers by the `label` prop or `aria-label` attribute.
+ *
+ * @param elements BEM-element class names.
+ * @param modifiers BEM-modifier class names.
  */
 export default function Button({
   children,
@@ -27,19 +32,8 @@ export default function Button({
   onClick,
   ...rest
 }: ButtonProps) {
-  let btnClassName = 'Button';
+  const btnClassName = clsx('Button', className, elements, modifiers);
 
-  if (className) btnClassName += ` ${className}`;
-
-  // Add BEM element classes
-  if (elements) {
-    btnClassName += ` ${elements.join(' ')}`;
-  }
-
-  // Add BEM modifier classes
-  if (modifiers) {
-    btnClassName += ` ${modifiers.join(' ')}`;
-  }
   return (
     <button
       aria-label={label}
