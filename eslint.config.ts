@@ -200,7 +200,7 @@ export default tseslint.config([
             },
           ],
 
-          groups: ['shorhand-prop', 'unknown', 'callback', 'multiline-prop'],
+          groups: ['shorthand-prop', 'unknown', 'callback', 'multiline-prop'],
         },
       ],
 
@@ -230,6 +230,9 @@ export default tseslint.config([
       ],
       'import-x/parsers': {
         '@typescript-eslint/parser': ['.mts', '.ts', '.tsx'],
+      },
+      react: {
+        version: 'detect',
       },
     },
   },
