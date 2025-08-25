@@ -1,4 +1,8 @@
-import React, { ButtonHTMLAttributes, ReactNode } from 'react';
+import React, {
+  ButtonHTMLAttributes,
+  MouseEventHandler,
+  ReactNode,
+} from 'react';
 
 import { clsx } from 'clsx/lite';
 
@@ -8,6 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   elements?: string | string[];
   modifiers?: string | string[];
+  onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 /**
