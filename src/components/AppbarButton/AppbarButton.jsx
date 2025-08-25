@@ -1,5 +1,8 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
+
+import { clsx } from 'clsx/lite';
+
+import Button from '@/components/Button';
 
 import './AppbarButton.scss';
 
@@ -12,17 +15,11 @@ export default function AppbarButton({
   onKeyDown,
   attributes = {},
 }) {
-  if (alt === undefined) {
-    throw new ReferenceError('`alt` must be provided!');
-  }
-
-  if (iconSrc === undefined) {
-    throw new ReferenceError('`iconSrc` must be provided!');
-  }
+  const btnClassName = clsx('AppbarButton', className);
 
   return (
-    <button
-      className={`AppbarButton AppbarButton_action ${className}`.trimEnd()}
+    <Button
+      className={btnClassName}
       type="button"
       onBlur={onBlur}
       onClick={onClick}
@@ -36,6 +33,6 @@ export default function AppbarButton({
         src={iconSrc}
         width="25px"
       />
-    </button>
+    </Button>
   );
 }

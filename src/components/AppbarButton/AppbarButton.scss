@@ -12,10 +12,8 @@
   min-height: v.$appbar-button-size;
   user-select: none;
 
-  &_action {
-    &:hover {
-      cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
   }
 
   &_active {
