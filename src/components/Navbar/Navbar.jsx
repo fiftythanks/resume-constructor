@@ -22,7 +22,7 @@ import {
 } from '@dnd-kit/sortable';
 
 import AddSections from '@/components/AddSections';
-import AppbarButton from '@/components/AppbarButton';
+import AppbarIconButton from '@/components/AppbarIconButton';
 import NavItem from '@/components/NavItem';
 
 import capitalize from '@/utils/capitalize';
@@ -361,7 +361,7 @@ export default function Navbar({
         </ul>
         {/* Control buttons */}
         {canAddSections && (
-          <AppbarButton
+          <AppbarIconButton
             alt="Add Sections"
             attributes={addSectionsAttributes}
             className="Navbar-Control Navbar-Control_onTop"
@@ -369,7 +369,7 @@ export default function Navbar({
             onClick={showAddSectionsPopup}
           />
         )}
-        <AppbarButton
+        <AppbarIconButton
           alt="Edit Sections"
           attributes={editorAttributes}
           className={editorClassName}

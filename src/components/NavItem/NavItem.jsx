@@ -1,11 +1,10 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import AppbarButton from '@/components/AppbarButton';
+import AppbarIconButton from '@/components/AppbarIconButton';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
@@ -112,7 +111,7 @@ export default function NavItem({
       ref={id === 'personal' ? null : setNodeRef}
       style={id === 'personal' ? null : style}
     >
-      <AppbarButton
+      <AppbarIconButton
         alt={alt}
         attributes={buttonAttributes}
         className={mainClassName}

@@ -1,6 +1,6 @@
 @use '@/styles/utils/variables' as v;
 
-.AppbarButton {
+.AppbarIconButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8,8 +8,8 @@
   border-radius: 5px;
   background-color: var(--secondary-color);
   padding: 0;
-  min-width: v.$appbar-button-size;
-  min-height: v.$appbar-button-size;
+  min-width: v.$appbar-icon-button-size;
+  min-height: v.$appbar-icon-button-size;
   user-select: none;
 
   &:hover {

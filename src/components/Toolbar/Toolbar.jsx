@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import AppbarButton from '@/components/AppbarButton';
+import AppbarIconButton from '@/components/AppbarIconButton';
 import Preview from '@/components/Preview';
 
 import clearSrc from '@/assets/icons/clear.svg';
@@ -24,7 +24,6 @@ export default function Toolbar({
   const [areControlsExpanded, setAreControlsExpanded] = useState(false);
   const firstControlRef = useRef(null);
   const toggleControlsRef = useRef(null);
-  // eslint-disable-next-line no-unused-vars
   const [isPreviewModalShown, setIsPreviewModalShown] = useState(false);
 
   const navbarToggleAttributes = {
@@ -176,7 +175,7 @@ export default function Toolbar({
         role="toolbar"
         onKeyDown={handleKeyDown}
       >
-        <AppbarButton
+        <AppbarIconButton
           alt="Toggle Navigation"
           attributes={navbarToggleAttributes}
           className="Toolbar-Item Toolbar-Item_toggleNavbar"
@@ -193,7 +192,7 @@ export default function Toolbar({
           <ul className="Toolbar-ControlsList" onBlur={handleBlur}>
             <li>
               {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
-              <AppbarButton
+              <AppbarIconButton
                 alt="Clear All"
                 attributes={deleteAllBtnAttributes}
                 className="Toolbar-Item Toolbar-Item_deleteAll"
@@ -203,7 +202,7 @@ export default function Toolbar({
             </li>
             <li>
               {/* TODO: add a warning that clicking "Fill All" will result in loss of all data. */}
-              <AppbarButton
+              <AppbarIconButton
                 alt="Fill All"
                 attributes={fillAllBtnAttributes}
                 className="Toolbar-Item Toolbar-Item_fillAll"
@@ -212,7 +211,7 @@ export default function Toolbar({
               />
             </li>
             <li>
-              <AppbarButton
+              <AppbarIconButton
                 alt="Preview"
                 attributes={previewAttributes}
                 className="Toolbar-Item Toolbar-Item_preview"
@@ -222,7 +221,7 @@ export default function Toolbar({
             </li>
           </ul>
         </div>
-        <AppbarButton
+        <AppbarIconButton
           alt="Toggle Controls"
           attributes={controlsToggleAttributes}
           className="Toolbar-Item Toolbar-Item_toggleControls"

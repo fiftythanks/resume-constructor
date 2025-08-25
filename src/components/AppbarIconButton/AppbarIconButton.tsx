@@ -2,9 +2,9 @@ import React, { ButtonHTMLAttributes, MouseEventHandler } from 'react';
 
 import { clsx } from 'clsx/lite';
 
-import './AppbarButton.scss';
+import './AppbarIconButton.scss';
 
-interface AppbarButtonProps
+interface AppbarIconButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   alt: string;
   iconSrc: string;
@@ -28,19 +28,19 @@ interface AppbarButtonProps
  *   onClick={openPreview}
  * />
  */
-export default function AppbarButton({
+export default function AppbarIconButton({
   alt,
   className,
   iconSrc,
   ...rest
-}: AppbarButtonProps) {
-  const btnClassName = clsx('AppbarButton', className);
+}: AppbarIconButtonProps) {
+  const btnClassName = clsx('AppbarIconButton', className);
 
   return (
     <button className={btnClassName} type="button" {...rest}>
       <img
         alt={alt}
-        className="AppbarButton-Icon"
+        className="AppbarIconButton-Icon"
         height="25px"
         src={iconSrc}
         width="25px"
