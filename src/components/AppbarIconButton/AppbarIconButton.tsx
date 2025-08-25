@@ -4,7 +4,7 @@ import { clsx } from 'clsx/lite';
 
 import './AppbarIconButton.scss';
 
-interface AppbarIconButtonProps
+export interface AppbarIconButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   alt: string;
   iconSrc: string;
