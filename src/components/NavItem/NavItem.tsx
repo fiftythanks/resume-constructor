@@ -8,7 +8,7 @@ import useNavItemSortable from './useNavItemSortable';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
-import type { SectionId, SectionTitles } from '@/types/resumeData';
+import type { SectionId } from '@/types/resumeData';
 
 import './NavItem.scss';
 
@@ -18,9 +18,17 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   editorMode: boolean;
   iconSrc: string;
   id: SectionId;
-  selectedSectionId: string;
+  isSelected: boolean;
   selectSection: MouseEventHandler<HTMLButtonElement>;
-  titles: SectionTitles;
+  tabIndex: -1 | 0;
+  title:
+    | 'Certifications'
+    | 'Education'
+    | 'Links'
+    | 'Personal Details'
+    | 'Projects'
+    | 'Technical Skills'
+    | 'Work Experience';
 }
 
 export default function NavItem({
@@ -29,18 +37,17 @@ export default function NavItem({
   deleteSection,
   editorMode,
   iconSrc,
+  isSelected,
   id,
-  selectedSectionId,
   selectSection,
-  titles,
+  tabIndex,
+  title,
   ...rest
 }: NavItemProps) {
   const { dragProps, isDragging, setNodeRef, style } = useNavItemSortable(
     editorMode,
     id,
   );
-
-  const isSelected = selectedSectionId === id;
 
   const listItemClassName = clsx(
     'NavItem',
@@ -59,24 +66,16 @@ export default function NavItem({
     // TODO: add screen reader announcements (when all sections are implemented).
 
     id,
+    tabIndex,
     'aria-controls': `${id}-tabpanel`,
+    'aria-label': title,
+    'aria-selected': isSelected,
+    role: 'tab',
 
     // To indicate that the tabbing functionality is disabled
     'aria-disabled': editorMode,
 
-    'aria-label': titles[id],
-    'aria-selected': isSelected,
-    role: 'tab',
     ...dragProps,
-
-    // If there's no selected section, "personal" is focusable.
-    tabIndex:
-      isSelected ||
-      editorMode ||
-      // FIXME: `null`? `selectedSectionId` shouldn't ever be null. It's always an ID.
-      (id === 'personal' && selectedSectionId === null)
-        ? 0
-        : -1,
   };
 
   const deleteBtnClassName = clsx(
@@ -102,7 +101,7 @@ export default function NavItem({
       {/* Delete-section button. */}
       {id !== 'personal' && (
         <button
-          aria-label={`Delete ${titles[id]}`}
+          aria-label={`Delete ${title}`}
           className={deleteBtnClassName}
           id={`delete-${id}`}
           type="button"

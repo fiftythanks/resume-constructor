@@ -156,21 +156,27 @@ export default function Navbar({
     };
   }
 
-  const items = draggableSectionIDs.map((sectionID) => (
-    <NavItem
-      activeSectionIDs={activeSectionIDs}
-      alt={capitalize(sectionID)}
-      className="Navbar-NavItem Navbar-NavItem_draggable"
-      deleteSection={getDeleteSectionFunc(sectionID)}
-      editorMode={editorMode}
-      iconSrc={icons[sectionID]}
-      id={sectionID}
-      key={sectionID}
-      selectedSectionID={selectedSectionID}
-      selectSection={() => selectSection(sectionID)}
-      titles={titles}
-    />
-  ));
+  const items = draggableSectionIDs.map((sectionID) => {
+    const isSelected = selectedSectionID === sectionID;
+    const tabIndex = isSelected || editorMode ? 0 : -1;
+
+    return (
+      <NavItem
+        activeSectionIDs={activeSectionIDs}
+        alt={capitalize(sectionID)}
+        className="Navbar-NavItem Navbar-NavItem_draggable"
+        deleteSection={getDeleteSectionFunc(sectionID)}
+        editorMode={editorMode}
+        iconSrc={icons[sectionID]}
+        id={sectionID}
+        isSelected={isSelected}
+        key={sectionID}
+        selectSection={() => selectSection(sectionID)}
+        tabIndex={tabIndex}
+        title={titles[sectionID]}
+      />
+    );
+  });
 
   const addSectionsAttributes = {
     'aria-label': 'Add Sections',
@@ -314,6 +320,15 @@ export default function Navbar({
     }
   }
 
+  // If there's no selected section, "Personal" is focusable.
+  const personalNavItemTabIndex =
+    selectedSectionID === 'personal' ||
+    editorMode ||
+    // FIXME: `null`? `selectedSectionID` shouldn't ever be null. It's always an ID. Or an empty string at least.
+    selectedSectionID === null
+      ? 0
+      : -1;
+
   return (
     <>
       <nav
@@ -338,9 +353,10 @@ export default function Navbar({
             editorMode={editorMode}
             iconSrc={icons.personal}
             id="personal"
-            selectedSectionID={selectedSectionID}
+            isSelected={selectedSectionID === 'personal'}
             selectSection={() => selectSection('personal')}
-            titles={titles}
+            tabIndex={personalNavItemTabIndex}
+            title={titles[sectionID]}
           />
           {/**
            * This structure is necessary to be able to limit the dragging to
