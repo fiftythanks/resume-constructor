@@ -9,6 +9,8 @@ import AppbarIconButton from '@/components/AppbarIconButton';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
+import type { SectionId, SectionTitles } from '@/types/resumeData';
+
 import './NavItem.scss';
 
 interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
@@ -16,25 +18,10 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   deleteSection: MouseEventHandler<HTMLButtonElement>;
   editorMode: boolean;
   iconSrc: string;
-  id:
-    | 'certifications'
-    | 'education'
-    | 'experience'
-    | 'links'
-    | 'personal'
-    | 'projects'
-    | 'skills';
+  id: SectionId;
   selectedSectionId: string;
   selectSection: MouseEventHandler<HTMLButtonElement>;
-  titles: {
-    certifications: 'Certifications';
-    education: 'Education';
-    experience: 'Work Experience';
-    links: 'Links';
-    personal: 'Personal Details';
-    projects: 'Projects';
-    skills: 'Technical Skills';
-  };
+  titles: SectionTitles;
 }
 
 export default function NavItem({
