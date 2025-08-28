@@ -12,8 +12,7 @@ import deleteSrc from '@/assets/icons/delete-cross.svg';
 import './NavItem.scss';
 
 interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
-  // TODO: change to `activeSectionIds`.
-  activeSectionIDs: string[];
+  activeSectionIds: string[];
   alt: string;
   deleteSection: () => void;
   editorMode: boolean;
@@ -26,8 +25,7 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
     | 'personal'
     | 'projects'
     | 'skills';
-  // TODO: change ot `selectedSectionId`.
-  selectedSectionID: string;
+  selectedSectionId: string;
   selectSection: MouseEventHandler<HTMLButtonElement>;
   titles: {
     certifications: 'Certifications';
@@ -41,14 +39,14 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
 }
 
 export default function NavItem({
-  activeSectionIDs,
+  activeSectionIds,
   alt,
   className,
   deleteSection,
   editorMode,
   iconSrc,
   id,
-  selectedSectionID,
+  selectedSectionId,
   selectSection,
   titles,
   ...rest
@@ -82,7 +80,7 @@ export default function NavItem({
     };
   }
 
-  const isSelected = selectedSectionID === id;
+  const isSelected = selectedSectionId === id;
 
   // Outer element
   const outerClassName = clsx(
@@ -93,8 +91,7 @@ export default function NavItem({
   );
 
   // Inner element
-  // TODO: change to `innerClassName`.
-  const mainClassName = clsx(
+  const innerClassName = clsx(
     'NavItem-Button',
     id === 'personal' && editorMode && 'NavItem-Button_editing',
     isSelected && !editorMode && 'NavItem-Button_active',
@@ -105,28 +102,26 @@ export default function NavItem({
   function handleDeleteClick() {
     deleteSection();
 
-    const i = activeSectionIDs.indexOf(id);
+    const i = activeSectionIds.indexOf(id);
 
     // If there's only "Personal" left.
-    if (activeSectionIDs.length === 2) {
+    if (activeSectionIds.length === 2) {
       document.getElementById('edit-sections')?.focus();
 
       // If the deleted item wasn't the last in the array
-    } else if (i < activeSectionIDs.length - 1) {
-      document.getElementById(`delete-${activeSectionIDs[i + 1]}`)?.focus();
+    } else if (i < activeSectionIds.length - 1) {
+      document.getElementById(`delete-${activeSectionIds[i + 1]}`)?.focus();
     } else {
-      document.getElementById(`delete-${activeSectionIDs[i - 1]}`)?.focus();
+      document.getElementById(`delete-${activeSectionIds[i - 1]}`)?.focus();
     }
   }
 
-  // TODO: rename to `deleteBtnClassName`.
-  const deleteClassName = clsx(
+  const deleteBtnClassName = clsx(
     'NavItem-ControlBtn NavItem-ControlBtn_delete',
     editorMode && 'NavItem-ControlBtn_disabled',
   );
 
-  // TODO: rename to `btnAttributes`.
-  const buttonAttributes = {
+  const btnAttributes = {
     // TODO: add screen reader announcements (when all sections are implemented).
 
     id,
@@ -144,8 +139,8 @@ export default function NavItem({
     tabIndex:
       isSelected ||
       editorMode ||
-      // FIXME: `null`? `selectedSectionID` shouldn't ever be null. It's always an ID.
-      (id === 'personal' && selectedSectionID === null)
+      // FIXME: `null`? `selectedSectionId` shouldn't ever be null. It's always an ID.
+      (id === 'personal' && selectedSectionId === null)
         ? 0
         : -1,
   };
@@ -159,17 +154,17 @@ export default function NavItem({
     >
       <AppbarIconButton
         alt={alt}
-        className={mainClassName}
+        className={innerClassName}
         iconSrc={iconSrc}
         onClick={!editorMode ? selectSection : undefined}
-        {...buttonAttributes}
+        {...btnAttributes}
       />
 
       {/* Delete-section button. */}
       {id !== 'personal' && (
         <button
           aria-label={`Delete ${titles[id]}`}
-          className={deleteClassName}
+          className={deleteBtnClassName}
           id={`delete-${id}`}
           type="button"
           onClick={handleDeleteClick}
