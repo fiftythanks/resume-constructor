@@ -1,14 +1,44 @@
-import React from 'react';
+import React, { LiHTMLAttributes, MouseEventHandler } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { clsx } from 'clsx/lite';
 
 import AppbarIconButton from '@/components/AppbarIconButton';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
 import './NavItem.scss';
+
+interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
+  // TODO: change to `activeSectionIds`.
+  activeSectionIDs: string[];
+  alt: string;
+  deleteSection: () => void;
+  editorMode: boolean;
+  iconSrc: string;
+  id:
+    | 'certifications'
+    | 'education'
+    | 'experience'
+    | 'links'
+    | 'personal'
+    | 'projects'
+    | 'skills';
+  // TODO: change ot `selectedSectionId`.
+  selectedSectionID: string;
+  selectSection: MouseEventHandler<HTMLButtonElement>;
+  titles: {
+    certifications: 'Certifications';
+    education: 'Education';
+    experience: 'Work Experience';
+    links: 'Links';
+    personal: 'Personal Details';
+    projects: 'Projects';
+    skills: 'Technical Skills';
+  };
+}
 
 export default function NavItem({
   activeSectionIDs,
@@ -18,10 +48,11 @@ export default function NavItem({
   editorMode,
   iconSrc,
   id,
-  selectSection,
   selectedSectionID,
+  selectSection,
   titles,
-}) {
+  ...rest
+}: NavItemProps) {
   // Drag and drop logic
   const {
     attributes,
@@ -42,7 +73,7 @@ export default function NavItem({
 
   if (id === 'personal' || !editorMode) {
     dragProps = {};
-  } else if (id !== 'personal' && editorMode) {
+  } else {
     dragProps = {
       ...listeners,
       'aria-roledescription': 'draggable',
@@ -54,11 +85,20 @@ export default function NavItem({
   const isSelected = selectedSectionID === id;
 
   // Outer element
-  const outerClassName =
-    `NavItem ${className} ${isDragging ? 'NavItem_dragged' : ''} ${isSelected ? 'NavItem_selected' : ''}`.trimEnd();
+  const outerClassName = clsx(
+    'NavItem',
+    className,
+    isDragging && 'NavItem_dragged',
+    isSelected && 'NavItem_selected',
+  );
 
-  const mainClassName =
-    `NavItem-Button ${id !== 'personal' && editorMode ? 'NavItem-Button_editing' : ''} ${isSelected && !editorMode ? 'NavItem-Button_active' : ''}`.trimEnd();
+  // Inner element
+  // TODO: change to `innerClassName`.
+  const mainClassName = clsx(
+    'NavItem-Button',
+    id === 'personal' && editorMode && 'NavItem-Button_editing',
+    isSelected && !editorMode && 'NavItem-Button_active',
+  );
 
   // Delete button
   // TODO: move this logic to the `Navbar` component.
@@ -69,19 +109,23 @@ export default function NavItem({
 
     // If there's only "Personal" left.
     if (activeSectionIDs.length === 2) {
-      document.getElementById('edit-sections').focus();
+      document.getElementById('edit-sections')?.focus();
 
       // If the deleted item wasn't the last in the array
     } else if (i < activeSectionIDs.length - 1) {
-      document.getElementById(`delete-${activeSectionIDs[i + 1]}`).focus();
+      document.getElementById(`delete-${activeSectionIDs[i + 1]}`)?.focus();
     } else {
-      document.getElementById(`delete-${activeSectionIDs[i - 1]}`).focus();
+      document.getElementById(`delete-${activeSectionIDs[i - 1]}`)?.focus();
     }
   }
 
-  const deleteClassName =
-    `NavItem-ControlBtn NavItem-ControlBtn_delete ${editorMode ? '' : 'NavItem-ControlBtn_disabled'}`.trimEnd();
+  // TODO: rename to `deleteBtnClassName`.
+  const deleteClassName = clsx(
+    'NavItem-ControlBtn NavItem-ControlBtn_delete',
+    editorMode && 'NavItem-ControlBtn_disabled',
+  );
 
+  // TODO: rename to `btnAttributes`.
   const buttonAttributes = {
     // TODO: add screen reader announcements (when all sections are implemented).
 
@@ -100,29 +144,31 @@ export default function NavItem({
     tabIndex:
       isSelected ||
       editorMode ||
+      // FIXME: `null`? `selectedSectionID` shouldn't ever be null. It's always an ID.
       (id === 'personal' && selectedSectionID === null)
-        ? '0'
-        : '-1',
+        ? 0
+        : -1,
   };
 
   return (
     <li
       className={outerClassName}
       ref={id === 'personal' ? null : setNodeRef}
-      style={id === 'personal' ? null : style}
+      style={id === 'personal' ? undefined : style}
+      {...rest}
     >
       <AppbarIconButton
         alt={alt}
-        attributes={buttonAttributes}
         className={mainClassName}
         iconSrc={iconSrc}
-        onClick={!editorMode ? selectSection : null}
+        onClick={!editorMode ? selectSection : undefined}
+        {...buttonAttributes}
       />
 
       {/* Delete-section button. */}
       {id !== 'personal' && (
         <button
-          aria-label={`Delete ${id}`}
+          aria-label={`Delete ${titles[id]}`}
           className={deleteClassName}
           id={`delete-${id}`}
           type="button"
