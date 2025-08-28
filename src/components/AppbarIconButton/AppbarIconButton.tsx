@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes, MouseEventHandler } from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 
 import { clsx } from 'clsx/lite';
 
@@ -8,7 +8,6 @@ export interface AppbarIconButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   alt: string;
   iconSrc: string;
-  onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 /**
