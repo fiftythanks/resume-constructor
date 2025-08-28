@@ -138,11 +138,30 @@ export default function Navbar({
     (sectionID) => sectionID !== 'personal',
   );
 
+  function getDeleteSectionFunc(sectionID) {
+    return function deleteSection() {
+      deleteSections([sectionID]);
+
+      const i = activeSectionIDs.indexOf(sectionID);
+
+      // If we delete the last deletable section.
+      if (activeSectionIDs.length === 2) {
+        document.getElementById('edit-sections').focus();
+        // If the deleted section isn't going to be the last deletable section.
+      } else if (i < activeSectionIDs.length - 1) {
+        document.getElementById(`delete-${activeSectionIDs[i + 1]}`).focus();
+      } else {
+        document.getElementById(`delete-${activeSectionIDs[i - 1]}`).focus();
+      }
+    };
+  }
+
   const items = draggableSectionIDs.map((sectionID) => (
     <NavItem
       activeSectionIDs={activeSectionIDs}
       alt={capitalize(sectionID)}
       className="Navbar-NavItem Navbar-NavItem_draggable"
+      deleteSection={getDeleteSectionFunc(sectionID)}
       editorMode={editorMode}
       iconSrc={icons[sectionID]}
       id={sectionID}
@@ -150,9 +169,6 @@ export default function Navbar({
       selectedSectionID={selectedSectionID}
       selectSection={() => selectSection(sectionID)}
       titles={titles}
-      deleteSection={() => {
-        deleteSections([sectionID]);
-      }}
     />
   ));
 

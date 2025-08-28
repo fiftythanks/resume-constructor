@@ -12,9 +12,8 @@ import deleteSrc from '@/assets/icons/delete-cross.svg';
 import './NavItem.scss';
 
 interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
-  activeSectionIds: string[];
   alt: string;
-  deleteSection: () => void;
+  deleteSection: MouseEventHandler<HTMLButtonElement>;
   editorMode: boolean;
   iconSrc: string;
   id:
@@ -39,7 +38,6 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
 }
 
 export default function NavItem({
-  activeSectionIds,
   alt,
   className,
   deleteSection,
@@ -98,24 +96,6 @@ export default function NavItem({
   );
 
   // Delete button
-  // TODO: move this logic to the `Navbar` component.
-  function handleDeleteClick() {
-    deleteSection();
-
-    const i = activeSectionIds.indexOf(id);
-
-    // If there's only "Personal" left.
-    if (activeSectionIds.length === 2) {
-      document.getElementById('edit-sections')?.focus();
-
-      // If the deleted item wasn't the last in the array
-    } else if (i < activeSectionIds.length - 1) {
-      document.getElementById(`delete-${activeSectionIds[i + 1]}`)?.focus();
-    } else {
-      document.getElementById(`delete-${activeSectionIds[i - 1]}`)?.focus();
-    }
-  }
-
   const deleteBtnClassName = clsx(
     'NavItem-ControlBtn NavItem-ControlBtn_delete',
     editorMode && 'NavItem-ControlBtn_disabled',
@@ -167,7 +147,7 @@ export default function NavItem({
           className={deleteBtnClassName}
           id={`delete-${id}`}
           type="button"
-          onClick={handleDeleteClick}
+          onClick={deleteSection}
         >
           <img
             alt="Delete"
