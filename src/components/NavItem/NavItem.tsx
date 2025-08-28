@@ -1,11 +1,10 @@
 import React, { LiHTMLAttributes, MouseEventHandler } from 'react';
 
-// `dnd-kit` docs: https://docs.dndkit.com/
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { clsx } from 'clsx/lite';
 
 import AppbarIconButton from '@/components/AppbarIconButton';
+
+import useNavItemSortable from './useNavItemSortable';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
@@ -36,56 +35,24 @@ export default function NavItem({
   titles,
   ...rest
 }: NavItemProps) {
-  // Drag and drop logic
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  let dragProps;
-
-  if (id === 'personal' || !editorMode) {
-    dragProps = {};
-  } else {
-    dragProps = {
-      ...listeners,
-      'aria-roledescription': 'draggable',
-      'aria-describedby': attributes['aria-describedby'],
-      ref: setActivatorNodeRef,
-    };
-  }
+  const { dragProps, isDragging, setNodeRef, style } = useNavItemSortable(
+    editorMode,
+    id,
+  );
 
   const isSelected = selectedSectionId === id;
 
-  // Outer element
-  const outerClassName = clsx(
+  const listItemClassName = clsx(
     'NavItem',
     className,
     isDragging && 'NavItem_dragged',
     isSelected && 'NavItem_selected',
   );
 
-  // Inner element
-  const innerClassName = clsx(
+  const btnClassName = clsx(
     'NavItem-Button',
     id === 'personal' && editorMode && 'NavItem-Button_editing',
     isSelected && !editorMode && 'NavItem-Button_active',
-  );
-
-  // Delete button
-  const deleteBtnClassName = clsx(
-    'NavItem-ControlBtn NavItem-ControlBtn_delete',
-    editorMode && 'NavItem-ControlBtn_disabled',
   );
 
   const btnAttributes = {
@@ -112,16 +79,21 @@ export default function NavItem({
         : -1,
   };
 
+  const deleteBtnClassName = clsx(
+    'NavItem-ControlBtn NavItem-ControlBtn_delete',
+    editorMode && 'NavItem-ControlBtn_disabled',
+  );
+
   return (
     <li
-      className={outerClassName}
+      className={listItemClassName}
       ref={id === 'personal' ? null : setNodeRef}
       style={id === 'personal' ? undefined : style}
       {...rest}
     >
       <AppbarIconButton
         alt={alt}
-        className={innerClassName}
+        className={btnClassName}
         iconSrc={iconSrc}
         onClick={!editorMode ? selectSection : undefined}
         {...btnAttributes}
