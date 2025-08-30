@@ -6,7 +6,7 @@ import AppbarIconButton from '@/components/AppbarIconButton';
 
 import useNavItemSortable from './useNavItemSortable';
 
-import deleteSrc from '@/assets/icons/delete-cross.svg';
+import deleteBtnIconSrc from '@/assets/icons/delete-cross.svg';
 
 import type { SectionId, SectionTitle } from '@/types/resumeData';
 
@@ -17,6 +17,7 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   editorMode: boolean;
   iconSrc: string;
   id: SectionId;
+  isDraggable: boolean;
   isSelected: boolean;
   onDeleteSection: MouseEventHandler<HTMLButtonElement>;
   onSelectSection: MouseEventHandler<HTMLButtonElement>;
@@ -29,6 +30,7 @@ export default function NavItem({
   className,
   editorMode,
   iconSrc,
+  isDraggable,
   isSelected,
   id,
   tabIndex,
@@ -37,7 +39,7 @@ export default function NavItem({
   onSelectSection,
   ...rest
 }: NavItemProps) {
-  const { dragProps, isDragging, setNodeRef, style } = useNavItemSortable(
+  const { dndAttributes, isDragging, setNodeRef, style } = useNavItemSortable(
     editorMode,
     id,
   );
@@ -51,7 +53,7 @@ export default function NavItem({
 
   const btnClassName = clsx(
     'NavItem-Button',
-    id === 'personal' && editorMode && 'NavItem-Button_editing',
+    isDraggable && editorMode && 'NavItem-Button_dragMe',
     isSelected && !editorMode && 'NavItem-Button_active',
   );
 
@@ -68,7 +70,7 @@ export default function NavItem({
     // To indicate that the tabbing functionality is disabled
     'aria-disabled': editorMode,
 
-    ...dragProps,
+    ...dndAttributes,
   };
 
   const deleteBtnClassName = clsx(
@@ -104,7 +106,7 @@ export default function NavItem({
             alt="Delete"
             className="NavItem-ControlBtnIcon"
             height="12px"
-            src={deleteSrc}
+            src={deleteBtnIconSrc}
             width="12px"
           />
         </button>

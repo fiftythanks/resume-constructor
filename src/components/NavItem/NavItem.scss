@@ -89,7 +89,8 @@
       background-color: var(--opened-section-color);
     }
 
-    &_editing {
+    /* Shake animation showing that the item is draggable. */
+    &_dragMe {
       animation: shake-lr 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite
         both;
     }

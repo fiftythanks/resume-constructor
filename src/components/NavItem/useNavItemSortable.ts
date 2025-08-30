@@ -4,7 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 import type { SectionId } from '@/types/resumeData';
 
-type DragProps =
+type DndAttributes =
   | Record<string, never>
   | {
       'aria-describedby': string;
@@ -13,7 +13,7 @@ type DragProps =
     };
 
 interface UseDragAndDropReturn {
-  dragProps: DragProps;
+  dndAttributes: DndAttributes;
   isDragging: boolean;
   setNodeRef: (node: HTMLElement | null) => void;
   style: {
@@ -41,12 +41,12 @@ export default function useDragAndDrop(
     transition,
   };
 
-  let dragProps;
+  let dndAttributes;
 
   if (id === 'personal' || !editorMode) {
-    dragProps = {};
+    dndAttributes = {};
   } else {
-    dragProps = {
+    dndAttributes = {
       'aria-roledescription': 'draggable',
       'aria-describedby': attributes['aria-describedby'],
       ref: setActivatorNodeRef,
@@ -55,7 +55,7 @@ export default function useDragAndDrop(
   }
 
   return {
-    dragProps,
+    dndAttributes,
     isDragging,
     setNodeRef,
     style,
