@@ -8,7 +8,7 @@ import useNavItemSortable from './useNavItemSortable';
 
 import deleteSrc from '@/assets/icons/delete-cross.svg';
 
-import type { SectionId } from '@/types/resumeData';
+import type { SectionId, SectionTitle } from '@/types/resumeData';
 
 import './NavItem.scss';
 
@@ -21,14 +21,7 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   isSelected: boolean;
   selectSection: MouseEventHandler<HTMLButtonElement>;
   tabIndex: -1 | 0;
-  title:
-    | 'Certifications'
-    | 'Education'
-    | 'Links'
-    | 'Personal Details'
-    | 'Projects'
-    | 'Technical Skills'
-    | 'Work Experience';
+  title: SectionTitle;
 }
 
 export default function NavItem({
