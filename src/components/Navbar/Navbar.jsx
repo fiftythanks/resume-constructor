@@ -165,15 +165,15 @@ export default function Navbar({
         activeSectionIDs={activeSectionIDs}
         alt={capitalize(sectionID)}
         className="Navbar-NavItem Navbar-NavItem_draggable"
-        deleteSection={getDeleteSectionFunc(sectionID)}
         editorMode={editorMode}
         iconSrc={icons[sectionID]}
         id={sectionID}
         isSelected={isSelected}
         key={sectionID}
-        selectSection={() => selectSection(sectionID)}
         tabIndex={tabIndex}
         title={titles[sectionID]}
+        onDeleteSection={getDeleteSectionFunc(sectionID)}
+        onSelectSection={() => selectSection(sectionID)}
       />
     );
   });

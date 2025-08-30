@@ -14,12 +14,12 @@ import './NavItem.scss';
 
 interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   alt: string;
-  deleteSection: MouseEventHandler<HTMLButtonElement>;
   editorMode: boolean;
   iconSrc: string;
   id: SectionId;
   isSelected: boolean;
-  selectSection: MouseEventHandler<HTMLButtonElement>;
+  onDeleteSection: MouseEventHandler<HTMLButtonElement>;
+  onSelectSection: MouseEventHandler<HTMLButtonElement>;
   tabIndex: -1 | 0;
   title: SectionTitle;
 }
@@ -27,14 +27,14 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
 export default function NavItem({
   alt,
   className,
-  deleteSection,
   editorMode,
   iconSrc,
   isSelected,
   id,
-  selectSection,
   tabIndex,
   title,
+  onDeleteSection,
+  onSelectSection,
   ...rest
 }: NavItemProps) {
   const { dragProps, isDragging, setNodeRef, style } = useNavItemSortable(
@@ -87,7 +87,7 @@ export default function NavItem({
         alt={alt}
         className={btnClassName}
         iconSrc={iconSrc}
-        onClick={!editorMode ? selectSection : undefined}
+        onClick={!editorMode ? onSelectSection : undefined}
         {...btnAttributes}
       />
 
@@ -98,7 +98,7 @@ export default function NavItem({
           className={deleteBtnClassName}
           id={`delete-${id}`}
           type="button"
-          onClick={deleteSection}
+          onClick={onDeleteSection}
         >
           <img
             alt="Delete"
