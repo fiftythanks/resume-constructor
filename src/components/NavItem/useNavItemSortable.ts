@@ -12,7 +12,7 @@ type DndAttributes =
       ref: (element: HTMLElement | null) => void;
     };
 
-interface UseDragAndDropReturn {
+interface UseNavItemSortableReturn {
   dndAttributes: DndAttributes;
   isDragging: boolean;
   setNodeRef: (node: HTMLElement | null) => void;
@@ -22,10 +22,10 @@ interface UseDragAndDropReturn {
   };
 }
 
-export default function useDragAndDrop(
+export default function useNavItemSortable(
   editorMode: boolean,
   id: SectionId,
-): UseDragAndDropReturn {
+): UseNavItemSortableReturn {
   const {
     attributes,
     listeners,
