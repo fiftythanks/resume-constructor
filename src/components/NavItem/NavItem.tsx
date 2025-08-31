@@ -21,8 +21,8 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   onDeleteSection: MouseEventHandler<HTMLButtonElement>;
   onSelectSection: MouseEventHandler<HTMLButtonElement>;
   sectionId: SectionId;
+  sectionTitle: SectionTitle;
   tabIndex: -1 | 0;
-  title: SectionTitle;
 }
 
 export default function NavItem({
@@ -33,8 +33,8 @@ export default function NavItem({
   isEditorMode,
   isSelected,
   sectionId,
+  sectionTitle,
   tabIndex,
-  title,
   onDeleteSection,
   onSelectSection,
   ...rest
@@ -65,7 +65,7 @@ export default function NavItem({
     sectionId,
     tabIndex,
     'aria-controls': `${sectionId}-tabpanel`,
-    'aria-label': title,
+    'aria-label': sectionTitle,
     'aria-selected': isSelected,
     role: 'tab',
 
@@ -93,7 +93,7 @@ export default function NavItem({
       {/* Delete-section button. */}
       {isDraggable && (
         <button
-          aria-label={`Delete ${title}`}
+          aria-label={`Delete ${sectionTitle}`}
           className={deleteBtnClassName}
           id={`delete-${sectionId}`}
           type="button"
