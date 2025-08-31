@@ -11,9 +11,9 @@ interface DndAttributes {
 }
 
 interface UseNavItemSortableParams {
-  id: SectionId;
   isDraggable: boolean;
   isEditorMode: boolean;
+  sectionId: SectionId;
 }
 
 type UseNavItemSortableReturn = null | {
@@ -27,9 +27,9 @@ type UseNavItemSortableReturn = null | {
 };
 
 export default function useNavItemSortable({
-  id,
   isDraggable,
   isEditorMode,
+  sectionId,
 }: UseNavItemSortableParams): UseNavItemSortableReturn {
   const {
     attributes,
@@ -39,7 +39,7 @@ export default function useNavItemSortable({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id: sectionId });
 
   if (!isEditorMode || !isDraggable) {
     return null;

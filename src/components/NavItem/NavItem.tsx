@@ -15,12 +15,12 @@ import './NavItem.scss';
 interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   alt: string;
   iconSrc: string;
-  id: SectionId;
   isDraggable: boolean;
   isEditorMode: boolean;
   isSelected: boolean;
   onDeleteSection: MouseEventHandler<HTMLButtonElement>;
   onSelectSection: MouseEventHandler<HTMLButtonElement>;
+  sectionId: SectionId;
   tabIndex: -1 | 0;
   title: SectionTitle;
 }
@@ -32,14 +32,14 @@ export default function NavItem({
   isDraggable,
   isEditorMode,
   isSelected,
-  id,
+  sectionId,
   tabIndex,
   title,
   onDeleteSection,
   onSelectSection,
   ...rest
 }: NavItemProps) {
-  const dnd = useNavItemSortable({ isEditorMode, id, isDraggable });
+  const dnd = useNavItemSortable({ isEditorMode, sectionId, isDraggable });
 
   const dndAttributes = dnd !== null ? dnd.dndAttributes : {};
   const isDragging = dnd !== null ? dnd.isDragging : false;
@@ -62,9 +62,9 @@ export default function NavItem({
   const btnAttributes = {
     // TODO: add screen reader announcements (when all sections are implemented).
 
-    id,
+    sectionId,
     tabIndex,
-    'aria-controls': `${id}-tabpanel`,
+    'aria-controls': `${sectionId}-tabpanel`,
     'aria-label': title,
     'aria-selected': isSelected,
     role: 'tab',
@@ -95,7 +95,7 @@ export default function NavItem({
         <button
           aria-label={`Delete ${title}`}
           className={deleteBtnClassName}
-          id={`delete-${id}`}
+          id={`delete-${sectionId}`}
           type="button"
           onClick={onDeleteSection}
         >
