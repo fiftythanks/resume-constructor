@@ -25,7 +25,13 @@ export interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   tabIndex: -1 | 0;
 }
 
-// TODO: add JSDoc.
+/**
+ * A navbar item for the `Navbar` component. Accepts all attributes
+ * that the `<li>` element accepts, as well as custom props specific to
+ * the navbar items.
+ *
+ * Has the "Tab" ARIA role.
+ */
 export default function NavItem({
   alt,
   className,

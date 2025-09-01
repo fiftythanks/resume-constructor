@@ -26,7 +26,13 @@ interface UseNavItemSortableReturn {
   };
 }
 
-// TODO: add JSDoc.
+/**
+ * A custom hook for the `NavItem` component. It's function is providing the
+ * component with drag-and-drop–enabling values.
+ *
+ * Enables drag-and-drop only when
+ * `isDraggable === true && isEditorMode === true`.
+ */
 export default function useNavItemSortable({
   isDraggable,
   isEditorMode,
