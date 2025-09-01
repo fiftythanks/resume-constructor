@@ -16,16 +16,17 @@ interface UseNavItemSortableParams {
   sectionId: SectionId;
 }
 
-type UseNavItemSortableReturn = null | {
-  dndAttributes: DndAttributes;
+interface UseNavItemSortableReturn {
+  dndAttributes: DndAttributes | Record<string, never>;
   isDragging: boolean;
   setNodeRef: (node: HTMLElement | null) => void;
   style: {
     transform: string | undefined;
     transition: string | undefined;
   };
-};
+}
 
+// TODO: add JSDoc.
 export default function useNavItemSortable({
   isDraggable,
   isEditorMode,
@@ -39,23 +40,22 @@ export default function useNavItemSortable({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: sectionId });
-
-  if (!isEditorMode || !isDraggable) {
-    return null;
-  }
+  } = useSortable({ id: sectionId, disabled: isDraggable && isEditorMode });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  const dndAttributes = {
-    'aria-roledescription': 'draggable',
-    'aria-describedby': attributes['aria-describedby'],
-    ref: setActivatorNodeRef,
-    ...listeners,
-  };
+  const dndAttributes =
+    isDraggable && isEditorMode
+      ? {
+          'aria-roledescription': 'draggable',
+          'aria-describedby': attributes['aria-describedby'],
+          ref: setActivatorNodeRef,
+          ...listeners,
+        }
+      : {};
 
   return {
     dndAttributes,

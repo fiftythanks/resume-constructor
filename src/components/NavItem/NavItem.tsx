@@ -12,7 +12,7 @@ import type { SectionId, SectionTitle } from '@/types/resumeData';
 
 import './NavItem.scss';
 
-interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
+export interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   alt: string;
   iconSrc: string;
   isDraggable: boolean;
@@ -25,6 +25,7 @@ interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
   tabIndex: -1 | 0;
 }
 
+// TODO: add JSDoc.
 export default function NavItem({
   alt,
   className,
@@ -39,12 +40,11 @@ export default function NavItem({
   onSelectSection,
   ...rest
 }: NavItemProps) {
-  const dnd = useNavItemSortable({ isEditorMode, sectionId, isDraggable });
-
-  const dndAttributes = dnd !== null ? dnd.dndAttributes : {};
-  const isDragging = dnd !== null ? dnd.isDragging : false;
-  const setNodeRef = dnd !== null ? dnd.setNodeRef : null;
-  const style = dnd !== null ? dnd.style : undefined;
+  const { dndAttributes, isDragging, setNodeRef, style } = useNavItemSortable({
+    isEditorMode,
+    sectionId,
+    isDraggable,
+  });
 
   const listItemClassName = clsx(
     'NavItem',
@@ -75,11 +75,6 @@ export default function NavItem({
     ...dndAttributes,
   };
 
-  const deleteBtnClassName = clsx(
-    'NavItem-ControlBtn NavItem-ControlBtn_delete',
-    isEditorMode && 'NavItem-ControlBtn_disabled',
-  );
-
   return (
     <li className={listItemClassName} ref={setNodeRef} style={style} {...rest}>
       <AppbarIconButton
@@ -91,10 +86,10 @@ export default function NavItem({
       />
 
       {/* Delete-section button. */}
-      {isDraggable && (
+      {isDraggable && isEditorMode && (
         <button
           aria-label={`Delete ${sectionTitle}`}
-          className={deleteBtnClassName}
+          className="NavItem-ControlBtn NavItem-ControlBtn_delete"
           id={`delete-${sectionId}`}
           type="button"
           onClick={onDeleteSection}
