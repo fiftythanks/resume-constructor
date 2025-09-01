@@ -10,13 +10,13 @@ interface DndAttributes {
   ref: (element: HTMLElement | null) => void;
 }
 
-interface UseNavItemSortableParams {
+interface UseNavbarItemSortableParams {
   isDraggable: boolean;
   isEditorMode: boolean;
   sectionId: SectionId;
 }
 
-interface UseNavItemSortableReturn {
+interface UseNavbarItemSortableReturn {
   dndAttributes: DndAttributes | Record<string, never>;
   isDragging: boolean;
   setNodeRef: (node: HTMLElement | null) => void;
@@ -27,17 +27,17 @@ interface UseNavItemSortableReturn {
 }
 
 /**
- * A custom hook for the `NavItem` component. It's function is providing the
+ * A custom hook for the `NavbarItem` component. It's function is providing the
  * component with drag-and-drop–enabling values.
  *
  * Enables drag-and-drop only when
  * `isDraggable === true && isEditorMode === true`.
  */
-export default function useNavItemSortable({
+export default function useNavbarItemSortable({
   isDraggable,
   isEditorMode,
   sectionId,
-}: UseNavItemSortableParams): UseNavItemSortableReturn {
+}: UseNavbarItemSortableParams): UseNavbarItemSortableReturn {
   const {
     attributes,
     listeners,

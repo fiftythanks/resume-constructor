@@ -4,12 +4,12 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import NavItem, { NavItemProps } from './NavItem';
+import NavbarItem, { NavbarItemProps } from './NavbarItem';
 
 // TODO: now, ask AI if the test is good.
 
-describe('NavItem', () => {
-  function getProps(overrides: Partial<NavItemProps> = {}): NavItemProps {
+describe('NavbarItem', () => {
+  function getProps(overrides: Partial<NavbarItemProps> = {}): NavbarItemProps {
     return {
       alt: 'Alternative text',
       iconSrc: 'path/to/icon.svg',
@@ -28,7 +28,7 @@ describe('NavItem', () => {
   describe('tab', () => {
     it('should render with an accessible name from the `sectionTitle` prop', () => {
       const props = getProps();
-      render(<NavItem {...props} />);
+      render(<NavbarItem {...props} />);
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
 
@@ -38,7 +38,7 @@ describe('NavItem', () => {
     it('should call `onSelectSection` on click when `isEditorMode === false', async () => {
       const user = userEvent.setup();
       const props = getProps();
-      render(<NavItem {...props} />);
+      render(<NavbarItem {...props} />);
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
       await user.click(tab);
@@ -49,7 +49,7 @@ describe('NavItem', () => {
     it('should not call `onSelectSection` on click when `isEditorMode === true', async () => {
       const user = userEvent.setup();
       const props = getProps({ isEditorMode: true });
-      render(<NavItem {...props} />);
+      render(<NavbarItem {...props} />);
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
       await user.click(tab);
@@ -61,7 +61,7 @@ describe('NavItem', () => {
   describe('icon', () => {
     it('should render with an accessible name from the `alt` prop', () => {
       const props = getProps();
-      render(<NavItem {...props} />);
+      render(<NavbarItem {...props} />);
 
       const icon = screen.getByRole('img', { name: props.alt });
 
@@ -70,7 +70,7 @@ describe('NavItem', () => {
 
     it('should be a correct icon specified with the `iconSrc` prop', () => {
       const props = getProps();
-      render(<NavItem {...props} />);
+      render(<NavbarItem {...props} />);
       const icon = screen.getByRole('img', { name: props.alt });
 
       const src = icon.getAttribute('src');
@@ -83,7 +83,7 @@ describe('NavItem', () => {
     describe('render conditions', () => {
       it('should render when `isEditorMode === true && isDraggable === true`', () => {
         const props = getProps({ isEditorMode: true });
-        render(<NavItem {...props} />);
+        render(<NavbarItem {...props} />);
 
         const button = screen.getByRole('button', {
           name: `Delete ${props.sectionTitle}`,
@@ -94,7 +94,7 @@ describe('NavItem', () => {
 
       it('should not render when `isEditorMode === false && isDraggable === true`', () => {
         const props = getProps();
-        render(<NavItem {...props} />);
+        render(<NavbarItem {...props} />);
 
         const btn = screen.queryByRole('button', {
           name: `Delete ${props.sectionTitle}`,
@@ -105,7 +105,7 @@ describe('NavItem', () => {
 
       it('should not render when `isEditorMode === true && isDraggable === false`', () => {
         const props = getProps({ isEditorMode: true, isDraggable: false });
-        render(<NavItem {...props} />);
+        render(<NavbarItem {...props} />);
 
         const btn = screen.queryByRole('button', {
           name: `Delete ${props.sectionTitle}`,
@@ -116,7 +116,7 @@ describe('NavItem', () => {
 
       it('should not render when `isEditorMode === false && isDraggable === false`', () => {
         const props = getProps({ isDraggable: false });
-        render(<NavItem {...props} />);
+        render(<NavbarItem {...props} />);
 
         const btn = screen.queryByRole('button', {
           name: `Delete ${props.sectionTitle}`,
@@ -129,7 +129,7 @@ describe('NavItem', () => {
     it('should call `onDeleteSection` on click', async () => {
       const user = userEvent.setup();
       const props = getProps({ isEditorMode: true });
-      render(<NavItem {...props} />);
+      render(<NavbarItem {...props} />);
 
       const deleteBtn = screen.getByRole('button', {
         name: `Delete ${props.sectionTitle}`,

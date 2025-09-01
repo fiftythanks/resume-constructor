@@ -4,15 +4,15 @@ import { clsx } from 'clsx/lite';
 
 import AppbarIconButton from '@/components/AppbarIconButton';
 
-import useNavItemSortable from './useNavItemSortable';
+import useNavbarItemSortable from './useNavbarItemSortable';
 
 import deleteBtnIconSrc from '@/assets/icons/delete-cross.svg';
 
 import type { SectionId, SectionTitle } from '@/types/resumeData';
 
-import './NavItem.scss';
+import './NavbarItem.scss';
 
-export interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
+export interface NavbarItemProps extends LiHTMLAttributes<HTMLLIElement> {
   alt: string;
   iconSrc: string;
   isDraggable: boolean;
@@ -32,7 +32,7 @@ export interface NavItemProps extends LiHTMLAttributes<HTMLLIElement> {
  *
  * Has the "Tab" ARIA role.
  */
-export default function NavItem({
+export default function NavbarItem({
   alt,
   className,
   iconSrc,
@@ -45,24 +45,25 @@ export default function NavItem({
   onDeleteSection,
   onSelectSection,
   ...rest
-}: NavItemProps) {
-  const { dndAttributes, isDragging, setNodeRef, style } = useNavItemSortable({
-    isEditorMode,
-    sectionId,
-    isDraggable,
-  });
+}: NavbarItemProps) {
+  const { dndAttributes, isDragging, setNodeRef, style } =
+    useNavbarItemSortable({
+      isEditorMode,
+      sectionId,
+      isDraggable,
+    });
 
   const listItemClassName = clsx(
-    'NavItem',
+    'NavbarItem',
     className,
-    isDragging && 'NavItem_dragged',
-    isSelected && 'NavItem_selected',
+    isDragging && 'NavbarItem_dragged',
+    isSelected && 'NavbarItem_selected',
   );
 
   const btnClassName = clsx(
-    'NavItem-Button',
-    isDraggable && isEditorMode && 'NavItem-Button_dragMe',
-    isSelected && !isEditorMode && 'NavItem-Button_active',
+    'NavbarItem-Button',
+    isDraggable && isEditorMode && 'NavbarItem-Button_dragMe',
+    isSelected && !isEditorMode && 'NavbarItem-Button_active',
   );
 
   const btnAttributes = {
@@ -95,14 +96,14 @@ export default function NavItem({
       {isDraggable && isEditorMode && (
         <button
           aria-label={`Delete ${sectionTitle}`}
-          className="NavItem-ControlBtn NavItem-ControlBtn_delete"
+          className="NavbarItem-ControlBtn NavbarItem-ControlBtn_delete"
           id={`delete-${sectionId}`}
           type="button"
           onClick={onDeleteSection}
         >
           <img
             alt="Delete"
-            className="NavItem-ControlBtnIcon"
+            className="NavbarItem-ControlBtnIcon"
             height="12px"
             src={deleteBtnIconSrc}
             width="12px"
