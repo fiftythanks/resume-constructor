@@ -8,7 +8,7 @@ import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
 
 // TODO: either pass it to `INITIAL_ACTIVE_SECTION_IDS` or merge them for now. What's the purpose of having two identical arrays that won't change?
 //! Order matters.
-const POSSIBLE_SECTION_IDS: Readonly<SectionIds> = Object.freeze([
+const SECTION_IDS: Readonly<SectionIds> = Object.freeze([
   'personal',
   'links',
   'skills',
@@ -19,7 +19,7 @@ const POSSIBLE_SECTION_IDS: Readonly<SectionIds> = Object.freeze([
 ]);
 
 // TODO: rename to SECTION_TITLES
-const FULL_SECTION_NAMES: Readonly<SectionTitles> = Object.freeze({
+const SECTION_TITLES: Readonly<SectionTitles> = Object.freeze({
   personal: 'Personal Details',
   links: 'Links',
   skills: 'Technical Skills',
@@ -74,11 +74,11 @@ export default function useAppState() {
 
     if (sectionIdsToAdd.length === 1) {
       setScreenReaderAnnouncement(
-        `Section ${FULL_SECTION_NAMES[sectionIdsToAdd[0]]} was added.`,
+        `Section ${SECTION_TITLES[sectionIdsToAdd[0]]} was added.`,
       );
     } else if (sectionIdsToAdd.length > 1) {
       const addedSectionTitles = sectionIdsToAdd
-        .map((sectionId) => FULL_SECTION_NAMES[sectionId])
+        .map((sectionId) => SECTION_TITLES[sectionId])
         .join(', ');
 
       setScreenReaderAnnouncement(`Sections ${addedSectionTitles} were added.`);
@@ -156,13 +156,13 @@ export default function useAppState() {
   function deleteAll(
     clear: (sectionId: SectionId | SectionId[]) => void,
   ): void {
-    deleteSections([...POSSIBLE_SECTION_IDS], clear);
+    deleteSections([...SECTION_IDS], clear);
   }
 
   function openSection(sectionId: SectionId): void {
     setOpenedSectionId(sectionId);
     setScreenReaderAnnouncement(
-      `Section ${FULL_SECTION_NAMES[sectionId]} was opened.`,
+      `Section ${SECTION_TITLES[sectionId]} was opened.`,
     );
   }
 
@@ -205,6 +205,6 @@ export default function useAppState() {
     toggleEditorMode,
     toggleNavbar,
     updateScreenReaderAnnouncement,
-    possibleSectionIDs: POSSIBLE_SECTION_IDS,
+    possibleSectionIDs: SECTION_IDS,
   };
 }
