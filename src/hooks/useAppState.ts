@@ -18,7 +18,6 @@ const SECTION_IDS: Readonly<SectionIds> = Object.freeze([
   'certifications',
 ]);
 
-// TODO: rename to SECTION_TITLES
 const SECTION_TITLES: Readonly<SectionTitles> = Object.freeze({
   personal: 'Personal Details',
   links: 'Links',
@@ -40,6 +39,11 @@ const INITIAL_ACTIVE_SECTION_IDS: SectionId[] = [
   // 'certifications',
 ];
 
+/**
+ * A hook intended for generating and passing all necessary application state,
+ * data and functions, such as what section is currently opened, is the navbar
+ * expanded, all sections' IDs, functions to add or delete sections and more.
+ */
 export default function useAppState() {
   const [editorMode, setEditorMode] = useState(false);
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
@@ -53,10 +57,16 @@ export default function useAppState() {
 
   // Screen Reader Announcement Functions
 
+  /**
+   * Resets the screen reader annoncement, making it an empty string.
+   */
   function resetScreenReaderAnnouncement(): void {
     setScreenReaderAnnouncement('');
   }
 
+  /**
+   * Updates the screen reader announcement.
+   */
   function updateScreenReaderAnnouncement(announcement: string): void {
     setScreenReaderAnnouncement(announcement);
   }
@@ -64,6 +74,13 @@ export default function useAppState() {
   // General Functions for Handling Sections
 
   // FIXME (application-wide): when you add a bunch of sections, only the last one is announced, for some reason. Fix it. (Should be fixed already. Check.)
+  // TODO: make it possible to add just one section by passing its ID as a sting.
+  // ? Should I rename it to `activateSections`, since it **activates** sections?
+  /**
+   * Activates sections. In other words, adds them to the navbar and makes it
+   * possible to enter the corresponding resume data. Automatically announces
+   * its outcome to screen readers.
+   */
   function addSections(sectionIds: SectionId[]) {
     const sectionIdsToAdd = sectionIds.filter(
       (sectionId) => !activeSectionIds.includes(sectionId),
@@ -85,6 +102,19 @@ export default function useAppState() {
     }
   }
 
+  // TODO: make it possible to delete just one section by passing its ID as a single string.
+  /**
+   * Deletes sections from the navbar and clears them. The Personal section can
+   * only be cleared, it won't be deleted if passed.
+   *
+   * If the opened section is deleted, two outcomes are possible:
+   *
+   * - The deleted section is the last active section, and then the section
+   * before it is opened automatically.
+   * - Otherwise, the next section is opened.
+   *
+   * Automatically announces its outcome to screen readers.
+   */
   function deleteSections(
     sectionIds: SectionId[],
     clear: (sectionId: SectionId | SectionId[]) => void,
@@ -113,7 +143,6 @@ export default function useAppState() {
         // TODO: change it to be a more sophisticated logic. It should work similarly to how focus works when you delete an open section.
         // If an opened section is deleted, open Personal.
         if (openedSectionId === sectionId) {
-          setOpenedSectionId('personal');
           wasOpenedSectionDeleted = true;
         }
       } else if (sectionId === 'personal') {
@@ -141,7 +170,7 @@ export default function useAppState() {
 
     setActiveSectionIds([...newActiveSectionIds]);
 
-    // TOOD: make the announcement "The section(s) ... was/were deleted. The opened section was deleted. The new opened section is [SectionName]". Use CLSX for the task.(Or maybe without the definite articles, to conform to language in all other announcements.)
+    // TODO: make the announcement "The section(s) ... was/were deleted. The opened section was deleted. The new opened section is [SectionName]". Use CLSX for the task.(Or maybe without the definite articles, to conform to language in all other announcements.)
     if (newScreenReaderAnnouncement !== '') {
       newScreenReaderAnnouncement += ' deleted.';
 
@@ -153,12 +182,21 @@ export default function useAppState() {
     }
   }
 
+  /**
+   * Deletes all sections except undeletable ones. Opens the Personal section
+   * unless it's already opened. Automatically announces the outcome to the
+   * screen reader.
+   */
   function deleteAll(
     clear: (sectionId: SectionId | SectionId[]) => void,
   ): void {
     deleteSections([...SECTION_IDS], clear);
   }
 
+  /**
+   * Opens the specified section. Automatically announces the outcome to the
+   * screen reader.
+   */
   function openSection(sectionId: SectionId): void {
     setOpenedSectionId(sectionId);
     setScreenReaderAnnouncement(
@@ -166,12 +204,20 @@ export default function useAppState() {
     );
   }
 
+  // TODO (application-wide): Why is there no screen reader announcement? Is it because `dnd-kit` provides them? Examine where this function is used.
+  /**
+   * Reorders active sections (which is visible in the navbar). Doesn't
+   * automatically announce its outcome to the screen reader.
+   */
   function reorderSections(newActiveSectionIds: SectionId[]): void {
     setActiveSectionIds(newActiveSectionIds);
   }
 
   // Navbar Functions
 
+  /**
+   * Toggles the navbar's editor mode.
+   */
   function toggleEditorMode(): void {
     setEditorMode(!editorMode);
 
@@ -184,6 +230,9 @@ export default function useAppState() {
     }
   }
 
+  /**
+   * Toggles the navbar's visibility.
+   */
   function toggleNavbar(): void {
     setIsNavbarExpanded(!isNavbarExpanded);
 
