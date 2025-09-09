@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import capitalize from '@/utils/capitalize';
+import getArrayWithoutDuplicates from '@/utils/getArrayWithoutDuplicates';
 
 import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
 
@@ -76,7 +77,6 @@ export default function useAppState() {
   // FIXME (application-wide): when you add a bunch of sections, only the last one is announced, for some reason. Fix it. (Should be fixed already. Check.)
   // TODO: make it possible to add just one section by passing its ID as a sting.
   // ? Should I rename it to `activateSections`, since it **activates** sections?
-  // TODO: The function doesn't check if `sectionIds` contains duplicates.
   /**
    * Activates sections. In other words, adds them to the navbar and makes it
    * possible to enter the corresponding resume data. Automatically announces
@@ -84,7 +84,7 @@ export default function useAppState() {
    */
   const addSections = useCallback(
     (sectionIds: SectionId[]) => {
-      const sectionIdsToAdd = sectionIds.filter(
+      const sectionIdsToAdd = getArrayWithoutDuplicates(sectionIds).filter(
         (sectionId) => !activeSectionIds.includes(sectionId),
       );
 
