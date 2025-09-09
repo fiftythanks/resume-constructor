@@ -55,6 +55,7 @@ export default function useAppState() {
 
   const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
+  // TODO: handle screen reader announcements inside a `useEffect`. Announcements should come *after* updates, not before them.
   // Screen Reader Announcement Functions
 
   /**
@@ -104,8 +105,8 @@ export default function useAppState() {
 
   // TODO: make it possible to delete just one section by passing its ID as a single string.
   /**
-   * Deletes sections from the navbar and clears them. The Personal section can
-   * only be cleared, it won't be deleted if passed.
+   * Deletes sections from the navbar. If an undeletable section's ID is passed,
+   * nothing is done with it.
    *
    * If the opened section is deleted, two outcomes are possible:
    *
@@ -115,10 +116,7 @@ export default function useAppState() {
    *
    * Automatically announces its outcome to screen readers.
    */
-  function deleteSections(
-    sectionIds: SectionId[],
-    clear: (sectionId: SectionId | SectionId[]) => void,
-  ): void {
+  function deleteSections(sectionIds: SectionId[]): void {
     const newActiveSectionIds = new Set(activeSectionIds);
     let newScreenReaderAnnouncement = '';
     let wasOpenedSectionDeleted = false;
@@ -127,12 +125,10 @@ export default function useAppState() {
       // TODO (application-wide): add an array/set of the IDs of sections that are undraggable and undeletable and in every such place like this check if the collection contains the ID instead of checking like `sectionId !== 'personal'`.
       /**
        * If the section ID isn't "personal" and is currently active, it's
-       * corresponding section is eligible for deletion. Otherwise, no need to * do anything unless it's "personal", in which case the section must be
-       * cleared, but not deleted.
+       * corresponding section is eligible for deletion. Otherwise, no need to * do anything.
        */
       if (activeSectionIds.includes(sectionId) && sectionId !== 'personal') {
         newActiveSectionIds.delete(sectionId);
-        clear(sectionId);
 
         // TODO (application-wide): this use of `capitalize` is dirty. Refactor. As well as in all other components that do this.
         newScreenReaderAnnouncement +=
@@ -145,8 +141,6 @@ export default function useAppState() {
         if (openedSectionId === sectionId) {
           wasOpenedSectionDeleted = true;
         }
-      } else if (sectionId === 'personal') {
-        clear(sectionId);
       }
     });
 
@@ -187,10 +181,9 @@ export default function useAppState() {
    * unless it's already opened. Automatically announces the outcome to the
    * screen reader.
    */
-  function deleteAll(
-    clear: (sectionId: SectionId | SectionId[]) => void,
-  ): void {
-    deleteSections([...SECTION_IDS], clear);
+  function deleteAll(): void {
+    // TODO: There's no need to freeze the object if I can't pass it. Either do something to make it passable or unfreeze the object.
+    deleteSections([...SECTION_IDS]);
   }
 
   /**
@@ -239,6 +232,7 @@ export default function useAppState() {
     if (editorMode) setEditorMode(false);
   }
 
+  // TODO: memoize all functions. They are new functions every rerender. This is too costly.
   return {
     activeSectionIds,
     addSections,
