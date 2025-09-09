@@ -8,7 +8,7 @@ import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
 
 // TODO: either pass it to `INITIAL_ACTIVE_SECTION_IDS` or merge them for now. What's the purpose of having two identical arrays that won't change?
 //! Order matters.
-const SECTION_IDS: Readonly<SectionIds> = Object.freeze([
+const SECTION_IDS: SectionIds = [
   'personal',
   'links',
   'skills',
@@ -16,9 +16,9 @@ const SECTION_IDS: Readonly<SectionIds> = Object.freeze([
   'projects',
   'education',
   'certifications',
-]);
+];
 
-const SECTION_TITLES: Readonly<SectionTitles> = Object.freeze({
+const SECTION_TITLES: SectionTitles = {
   personal: 'Personal Details',
   links: 'Links',
   skills: 'Technical Skills',
@@ -26,7 +26,7 @@ const SECTION_TITLES: Readonly<SectionTitles> = Object.freeze({
   projects: 'Projects',
   education: 'Education',
   certifications: 'Certifications',
-});
+};
 
 // TODO: decide which initial sections to use.
 const INITIAL_ACTIVE_SECTION_IDS: SectionId[] = [
@@ -55,7 +55,6 @@ export default function useAppState() {
 
   const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
-  // TODO: handle screen reader announcements inside a `useEffect`. Announcements should come *after* updates, not before them.
   // Screen Reader Announcement Functions
 
   /**
@@ -77,6 +76,7 @@ export default function useAppState() {
   // FIXME (application-wide): when you add a bunch of sections, only the last one is announced, for some reason. Fix it. (Should be fixed already. Check.)
   // TODO: make it possible to add just one section by passing its ID as a sting.
   // ? Should I rename it to `activateSections`, since it **activates** sections?
+  // TODO: The function doesn't check if `sectionIds` contains duplicates.
   /**
    * Activates sections. In other words, adds them to the navbar and makes it
    * possible to enter the corresponding resume data. Automatically announces
@@ -182,8 +182,7 @@ export default function useAppState() {
    * screen reader.
    */
   function deleteAll(): void {
-    // TODO: There's no need to freeze the object if I can't pass it. Either do something to make it passable or unfreeze the object.
-    deleteSections([...SECTION_IDS]);
+    deleteSections(SECTION_IDS);
   }
 
   /**
