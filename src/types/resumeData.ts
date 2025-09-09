@@ -7,6 +7,16 @@ export type SectionId =
   | 'projects'
   | 'skills';
 
+export type SectionIds = [
+  'personal',
+  'links',
+  'skills',
+  'experience',
+  'projects',
+  'education',
+  'certifications',
+];
+
 export type SectionTitle =
   | 'Certifications'
   | 'Education'
