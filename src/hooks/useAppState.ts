@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import capitalize from '@/utils/capitalize';
 import getArrayWithoutDuplicates from '@/utils/getArrayWithoutDuplicates';
 
 import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
@@ -44,17 +43,96 @@ const INITIAL_ACTIVE_SECTION_IDS: SectionId[] = [
  * expanded, all sections' IDs, functions to add or delete sections and more.
  */
 export default function useAppState() {
+  // TODO: rename `editorMode` to `isEditorModeOn` or something similar.
   const [editorMode, setEditorMode] = useState(false);
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
   const [openedSectionId, setOpenedSectionId] = useState<SectionId>('personal');
+  const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
   const [activeSectionIds, setActiveSectionIds] = useState<SectionId[]>(
     INITIAL_ACTIVE_SECTION_IDS,
   );
 
-  const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
+  const previousActiveSectionIdsRef = useRef(new Set(activeSectionIds));
+  const previousOpenedSectionIdRef = useRef(openedSectionId);
+  const previousEditorModeRef = useRef(editorMode);
 
-  // Screen Reader Announcement Functions
+  // Announce section addition/deletion to screen readers.
+  useEffect(() => {
+    // In case new sections are added.
+    const newSectionIds = activeSectionIds.filter(
+      (sectionId) => !previousActiveSectionIdsRef.current.has(sectionId),
+    );
+
+    if (newSectionIds.length > 0) {
+      if (newSectionIds.length === 1) {
+        setScreenReaderAnnouncement(
+          `Section ${SECTION_TITLES[newSectionIds[0]]} was added.`,
+        );
+      } else if (newSectionIds.length > 1) {
+        const addedSectionTitles = newSectionIds
+          .map((sectionId) => SECTION_TITLES[sectionId])
+          .join(', ');
+
+        setScreenReaderAnnouncement(
+          `Sections ${addedSectionTitles} were added.`,
+        );
+      }
+
+      previousActiveSectionIdsRef.current = new Set(activeSectionIds);
+    }
+
+    // In case sections are deleted.
+    const deletedSectionIds = [...previousActiveSectionIdsRef.current].filter(
+      (sectionId) => !activeSectionIds.includes(sectionId),
+    );
+
+    if (deletedSectionIds.length > 0) {
+      if (deletedSectionIds.length === 1) {
+        setScreenReaderAnnouncement(
+          `Section ${SECTION_TITLES[deletedSectionIds[0]]} was deleted.`,
+        );
+      } else if (deletedSectionIds.length > 1) {
+        const deletedSectionTitles = deletedSectionIds
+          .map((sectionId) => SECTION_TITLES[sectionId])
+          .join(', ');
+
+        setScreenReaderAnnouncement(
+          `Sections ${deletedSectionTitles} were deleted.`,
+        );
+      }
+
+      previousActiveSectionIdsRef.current = new Set(activeSectionIds);
+    }
+  }, [activeSectionIds]);
+
+  // Announce opening a new section to screen readers.
+  useEffect(() => {
+    if (previousOpenedSectionIdRef.current !== openedSectionId) {
+      setScreenReaderAnnouncement(
+        `Previous opened section was closed. New opened section is ${SECTION_TITLES[openedSectionId]}`,
+      );
+
+      previousOpenedSectionIdRef.current = openedSectionId;
+    }
+  }, [openedSectionId]);
+
+  // Announce toggling the editor mode to screen readers.
+  useEffect(() => {
+    if (previousEditorModeRef.current !== editorMode) {
+      if (editorMode) {
+        setScreenReaderAnnouncement('Editor Mode off');
+      } else {
+        setScreenReaderAnnouncement(
+          'Editor Mode on. To move focus to tabs for editing, press Tab while holding Shift. If you collapse the navbar either by pressing Escape or pressing the "Toggle Navbar" button, the editor mode will be turned off automatically.',
+        );
+      }
+
+      previousEditorModeRef.current = editorMode;
+    }
+  }, [editorMode]);
+
+  // Screen-reader announcement functions.
 
   /**
    * Resets the screen reader annoncement, making it an empty string.
@@ -72,15 +150,14 @@ export default function useAppState() {
     [],
   );
 
-  // General Functions for Handling Sections
+  // General functions for manipulating sections' state.
 
   // FIXME (application-wide): when you add a bunch of sections, only the last one is announced, for some reason. Fix it. (Should be fixed already. Check.)
   // TODO: make it possible to add just one section by passing its ID as a sting.
   // ? Should I rename it to `activateSections`, since it **activates** sections?
   /**
    * Activates sections. In other words, adds them to the navbar and makes it
-   * possible to enter the corresponding resume data. Automatically announces
-   * its outcome to screen readers.
+   * possible to enter the corresponding resume data.
    */
   const addSections = useCallback(
     (sectionIds: SectionId[]) => {
@@ -90,20 +167,6 @@ export default function useAppState() {
 
       const newActiveSectionIds = [...activeSectionIds, ...sectionIdsToAdd];
       setActiveSectionIds(newActiveSectionIds);
-
-      if (sectionIdsToAdd.length === 1) {
-        setScreenReaderAnnouncement(
-          `Section ${SECTION_TITLES[sectionIdsToAdd[0]]} was added.`,
-        );
-      } else if (sectionIdsToAdd.length > 1) {
-        const addedSectionTitles = sectionIdsToAdd
-          .map((sectionId) => SECTION_TITLES[sectionId])
-          .join(', ');
-
-        setScreenReaderAnnouncement(
-          `Sections ${addedSectionTitles} were added.`,
-        );
-      }
     },
     [activeSectionIds],
   );
@@ -118,13 +181,10 @@ export default function useAppState() {
    * - The deleted section is the last active section, and then the section
    * before it is opened automatically.
    * - Otherwise, the next section is opened.
-   *
-   * Automatically announces its outcome to screen readers.
    */
   const deleteSections = useCallback(
     (sectionIds: SectionId[]) => {
       const newActiveSectionIds = new Set(activeSectionIds);
-      let newScreenReaderAnnouncement = '';
       let wasOpenedSectionDeleted = false;
 
       sectionIds.forEach((sectionId) => {
@@ -136,12 +196,6 @@ export default function useAppState() {
          */
         if (activeSectionIds.includes(sectionId) && sectionId !== 'personal') {
           newActiveSectionIds.delete(sectionId);
-
-          // TODO (application-wide): this use of `capitalize` is dirty. Refactor. As well as in all other components that do this.
-          newScreenReaderAnnouncement +=
-            newScreenReaderAnnouncement === ''
-              ? capitalize(sectionId)
-              : `, ${sectionId}`;
 
           // TODO: change it to be a more sophisticated logic. It should work similarly to how focus works when you delete an open section.
           // If an opened section is deleted, open Personal.
@@ -170,45 +224,27 @@ export default function useAppState() {
       }
 
       setActiveSectionIds([...newActiveSectionIds]);
-
-      // TODO: make the announcement "The section(s) ... was/were deleted. The opened section was deleted. The new opened section is [SectionName]". Use CLSX for the task.(Or maybe without the definite articles, to conform to language in all other announcements.)
-      if (newScreenReaderAnnouncement !== '') {
-        newScreenReaderAnnouncement += ' deleted.';
-
-        if (wasOpenedSectionDeleted) {
-          newScreenReaderAnnouncement += ' Opened section deleted.';
-        }
-
-        setScreenReaderAnnouncement(newScreenReaderAnnouncement);
-      }
     },
     [activeSectionIds, openedSectionId],
   );
 
   /**
    * Deletes all sections except undeletable ones. Opens the Personal section
-   * unless it's already opened. Automatically announces the outcome to the
-   * screen reader.
+   * unless it's already opened.
    */
   const deleteAll = useCallback(() => {
     deleteSections(SECTION_IDS);
   }, [deleteSections]);
 
   /**
-   * Opens the specified section. Automatically announces the outcome to the
-   * screen reader.
+   * Opens the specified section.
    */
   const openSection = useCallback((sectionId: SectionId) => {
     setOpenedSectionId(sectionId);
-    setScreenReaderAnnouncement(
-      `Section ${SECTION_TITLES[sectionId]} was opened.`,
-    );
   }, []);
 
-  // TODO (application-wide): Why is there no screen reader announcement? Is it because `dnd-kit` provides them? Examine where this function is used.
   /**
-   * Reorders active sections (which is visible in the navbar). Doesn't
-   * automatically announce its outcome to the screen reader.
+   * Reorders active sections (which is visible in the navbar).
    */
   const reorderSections = useCallback(
     (newActiveSectionIds: SectionId[]) =>
@@ -216,23 +252,16 @@ export default function useAppState() {
     [],
   );
 
-  // Navbar Functions
+  // Navbar functions
 
   /**
    * Toggles the navbar's editor mode.
    */
   const toggleEditorMode = useCallback(() => {
     setEditorMode(!editorMode);
-
-    if (editorMode) {
-      setScreenReaderAnnouncement('Editor Mode off');
-    } else {
-      setScreenReaderAnnouncement(
-        'Editor Mode on. To move focus to tabs for editing, press Tab while holding Shift. If you collapse the navbar either by pressing Escape or pressing the "Toggle Navbar" button, the editor mode will be turned off automatically.',
-      );
-    }
   }, [editorMode]);
 
+  // TODO: check if there is a need in another screen reader announcement.
   /**
    * Toggles the navbar's visibility.
    */
