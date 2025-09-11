@@ -207,6 +207,13 @@ export default tseslint.config([
       // Can't configure it to my needs, brings more bad than good.
       'perfectionist/sort-objects': 'off',
 
+      /**
+       * Doesn't allow to declare functions that are used inside components
+       * before the components if the names of the functions are farther in
+       * the alphabet.
+       */
+      'perfectionist/sort-modules': 'off',
+
       'react/jsx-no-bind': [
         2,
         {
