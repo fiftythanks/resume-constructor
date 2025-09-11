@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import getArrayWithoutDuplicates from '@/utils/getArrayWithoutDuplicates';
-
 import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
+
+// TODO: split this hook in three separate hooks: `useUiState` for navbar/editorMode state logic, `useSectionsState` for most of the logic here, and something like `useScreenReaderAnnouncement` for screen-reader logic.
 
 // TODO: either pass it to `INITIAL_ACTIVE_SECTION_IDS` or merge them for now. What's the purpose of having two identical arrays that won't change?
 //! Order matters.
@@ -37,6 +37,24 @@ const INITIAL_ACTIVE_SECTION_IDS: SectionId[] = [
   // 'certifications',
 ];
 
+interface SectionsState {
+  activeSectionIds: SectionId[];
+  openedSectionId: SectionId;
+}
+
+function getSectionTitlesString(sectionIds: Set<SectionId>) {
+  let sectionTitles = '';
+
+  sectionIds.forEach((sectionId) => {
+    sectionTitles += `${SECTION_TITLES[sectionId]}, `;
+  });
+
+  // Delete the redundant ", ".
+  sectionTitles.slice(0, -2);
+
+  return sectionTitles;
+}
+
 /**
  * A hook intended for generating and passing all necessary application state,
  * data and functions, such as what section is currently opened, is the navbar
@@ -46,76 +64,76 @@ export default function useAppState() {
   // TODO: rename `editorMode` to `isEditorModeOn` or something similar.
   const [editorMode, setEditorMode] = useState(false);
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
-  const [openedSectionId, setOpenedSectionId] = useState<SectionId>('personal');
   const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
-  const [activeSectionIds, setActiveSectionIds] = useState<SectionId[]>(
-    INITIAL_ACTIVE_SECTION_IDS,
-  );
+  const [sectionsState, setSectionsState] = useState<SectionsState>({
+    activeSectionIds: INITIAL_ACTIVE_SECTION_IDS,
+    openedSectionId: 'personal',
+  });
 
-  const previousActiveSectionIdsRef = useRef(new Set(activeSectionIds));
-  const previousOpenedSectionIdRef = useRef(openedSectionId);
   const previousEditorModeRef = useRef(editorMode);
 
-  // Announce section addition/deletion to screen readers.
+  const previousSectionsStateRef = useRef({
+    previousActiveSectionIds: new Set(sectionsState.activeSectionIds),
+    previousOpenedSectionId: sectionsState.openedSectionId,
+  });
+
+  // Announce manipulations with sections to screen readers.
   useEffect(() => {
-    // In case new sections are added.
-    const newSectionIds = activeSectionIds.filter(
-      (sectionId) => !previousActiveSectionIdsRef.current.has(sectionId),
+    const { activeSectionIds, openedSectionId } = sectionsState;
+    const { previousActiveSectionIds, previousOpenedSectionId } =
+      previousSectionsStateRef.current;
+
+    const setOfActiveSectionIds = new Set(activeSectionIds);
+
+    const addedSectionIds = setOfActiveSectionIds.difference(
+      previousActiveSectionIds,
     );
 
-    if (newSectionIds.length > 0) {
-      if (newSectionIds.length === 1) {
-        setScreenReaderAnnouncement(
-          `Section ${SECTION_TITLES[newSectionIds[0]]} was added.`,
-        );
-      } else if (newSectionIds.length > 1) {
-        const addedSectionTitles = newSectionIds
-          .map((sectionId) => SECTION_TITLES[sectionId])
-          .join(', ');
-
-        setScreenReaderAnnouncement(
-          `Sections ${addedSectionTitles} were added.`,
-        );
-      }
-
-      previousActiveSectionIdsRef.current = new Set(activeSectionIds);
-    }
-
-    // In case sections are deleted.
-    const deletedSectionIds = [...previousActiveSectionIdsRef.current].filter(
-      (sectionId) => !activeSectionIds.includes(sectionId),
+    const deletedSectionIds = previousActiveSectionIds.difference(
+      previousActiveSectionIds,
     );
 
-    if (deletedSectionIds.length > 0) {
-      if (deletedSectionIds.length === 1) {
-        setScreenReaderAnnouncement(
-          `Section ${SECTION_TITLES[deletedSectionIds[0]]} was deleted.`,
-        );
-      } else if (deletedSectionIds.length > 1) {
-        const deletedSectionTitles = deletedSectionIds
-          .map((sectionId) => SECTION_TITLES[sectionId])
-          .join(', ');
+    let screenReaderAnnouncement = '';
 
-        setScreenReaderAnnouncement(
-          `Sections ${deletedSectionTitles} were deleted.`,
-        );
+    // If sections are added.
+    if (addedSectionIds.size > 0) {
+      if (addedSectionIds.size === 1) {
+        screenReaderAnnouncement = `Section ${getSectionTitlesString(addedSectionIds)} was added.`;
+      } else if (addedSectionIds.size > 1) {
+        screenReaderAnnouncement = `Sections ${getSectionTitlesString(addedSectionIds)} were added.`;
       }
 
-      previousActiveSectionIdsRef.current = new Set(activeSectionIds);
-    }
-  }, [activeSectionIds]);
-
-  // Announce opening a new section to screen readers.
-  useEffect(() => {
-    if (previousOpenedSectionIdRef.current !== openedSectionId) {
-      setScreenReaderAnnouncement(
-        `Previous opened section was closed. New opened section is ${SECTION_TITLES[openedSectionId]}`,
+      previousSectionsStateRef.current.previousActiveSectionIds = new Set(
+        activeSectionIds,
       );
-
-      previousOpenedSectionIdRef.current = openedSectionId;
     }
-  }, [openedSectionId]);
+
+    // If sections are deleted.
+    if (deletedSectionIds.size > 0) {
+      if (deletedSectionIds.size === 1) {
+        screenReaderAnnouncement += ` Section ${getSectionTitlesString(deletedSectionIds)} was deleted.`;
+      } else if (deletedSectionIds.size > 1) {
+        screenReaderAnnouncement = ` Sections ${getSectionTitlesString(deletedSectionIds)} were deleted.`;
+      }
+
+      previousSectionsStateRef.current.previousActiveSectionIds = new Set(
+        activeSectionIds,
+      );
+    }
+
+    // If a new section is opened.
+    if (previousOpenedSectionId !== openedSectionId) {
+      screenReaderAnnouncement += ` Section ${SECTION_TITLES[openedSectionId]} was opened.`;
+
+      previousSectionsStateRef.current.previousOpenedSectionId =
+        openedSectionId;
+    }
+
+    if (screenReaderAnnouncement !== '') {
+      setScreenReaderAnnouncement(screenReaderAnnouncement.trimStart());
+    }
+  }, [sectionsState]);
 
   // Announce toggling the editor mode to screen readers.
   useEffect(() => {
@@ -159,17 +177,21 @@ export default function useAppState() {
    * Activates sections. In other words, adds them to the navbar and makes it
    * possible to enter the corresponding resume data.
    */
-  const addSections = useCallback(
-    (sectionIds: SectionId[]) => {
-      const sectionIdsToAdd = getArrayWithoutDuplicates(sectionIds).filter(
-        (sectionId) => !activeSectionIds.includes(sectionId),
+  const addSections = useCallback((sectionIds: SectionId[]) => {
+    setSectionsState((currentState) => {
+      const { activeSectionIds } = currentState;
+      const setOfActiveSectionIds = new Set(activeSectionIds);
+      const uniqueSectionIds = [...new Set(sectionIds)];
+
+      const sectionIdsToAdd = uniqueSectionIds.filter(
+        (sectionId) => !setOfActiveSectionIds.has(sectionId),
       );
 
       const newActiveSectionIds = [...activeSectionIds, ...sectionIdsToAdd];
-      setActiveSectionIds(newActiveSectionIds);
-    },
-    [activeSectionIds],
-  );
+
+      return { ...currentState, activeSectionIds: newActiveSectionIds };
+    });
+  }, []);
 
   // TODO: make it possible to delete just one section by passing its ID as a single string.
   /**
@@ -182,51 +204,58 @@ export default function useAppState() {
    * before it is opened automatically.
    * - Otherwise, the next section is opened.
    */
-  const deleteSections = useCallback(
-    (sectionIds: SectionId[]) => {
-      const newActiveSectionIds = new Set(activeSectionIds);
-      let wasOpenedSectionDeleted = false;
+  const deleteSections = useCallback((sectionIds: SectionId[]) => {
+    setSectionsState((currentState) => {
+      const { activeSectionIds, openedSectionId } = currentState;
+      const oldActiveSectionIds = new Set(activeSectionIds);
 
-      sectionIds.forEach((sectionId) => {
-        // TODO (application-wide): add an array/set of the IDs of sections that are undraggable and undeletable and in every such place like this check if the collection contains the ID instead of checking like `sectionId !== 'personal'`.
-        /**
-         * If the section ID isn't "personal" and is currently active, it's
-         * corresponding section is eligible for deletion. Otherwise, no need
-         * to do anything.
-         */
-        if (activeSectionIds.includes(sectionId) && sectionId !== 'personal') {
-          newActiveSectionIds.delete(sectionId);
+      const sectionIdsToDelete = new Set(sectionIds).intersection(
+        oldActiveSectionIds,
+      );
 
-          // TODO: change it to be a more sophisticated logic. It should work similarly to how focus works when you delete an open section.
-          // If an opened section is deleted, open Personal.
-          if (openedSectionId === sectionId) {
-            wasOpenedSectionDeleted = true;
-          }
-        }
-      });
+      // TODO (application-wide): add an array/set of the IDs of sections that are undraggable and undeletable and in every such place like this check if the collection contains the ID instead of checking like `sectionId !== 'personal'`.
+      // The "Personal" section is undeletable.
+      sectionIdsToDelete.delete('personal');
 
-      if (wasOpenedSectionDeleted) {
+      const newActiveSectionIds =
+        oldActiveSectionIds.difference(sectionIdsToDelete);
+
+      // In case the opened section is deleted.
+      let newOpenedSectionId: SectionId | undefined;
+
+      if (sectionIdsToDelete.has(openedSectionId)) {
+        const arrayOfSectionIdsToDelete = [...sectionIdsToDelete];
+
         const firstDeleletedSectionIndex = activeSectionIds.indexOf(
-          sectionIds[0],
+          arrayOfSectionIdsToDelete[0],
         );
 
-        const lastDeleletedSectionIndex =
-          sectionIds.length === 1
+        const lastDeletedSectionIndex =
+          arrayOfSectionIdsToDelete.length === 1
             ? firstDeleletedSectionIndex
-            : activeSectionIds.indexOf(sectionIds.at(-1)!);
+            : activeSectionIds.indexOf(arrayOfSectionIdsToDelete.at(-1)!);
 
-        // If the last deleted section wasn't the last active section.
-        if (lastDeleletedSectionIndex < activeSectionIds.length - 1) {
-          setOpenedSectionId(activeSectionIds[lastDeleletedSectionIndex + 1]);
+        // If the last deleted section isn't the last active section.
+        if (lastDeletedSectionIndex < activeSectionIds.length - 1) {
+          newOpenedSectionId = activeSectionIds[lastDeletedSectionIndex + 1];
+          // TODO: as soon as you add more undeletable arrays, change this condition.
+          // If the first deleted section isn't "Personal"
         } else if (firstDeleletedSectionIndex !== 0) {
-          setOpenedSectionId(activeSectionIds[firstDeleletedSectionIndex - 1]);
+          newOpenedSectionId = activeSectionIds[firstDeleletedSectionIndex - 1];
         }
       }
 
-      setActiveSectionIds([...newActiveSectionIds]);
-    },
-    [activeSectionIds, openedSectionId],
-  );
+      const newState = {
+        activeSectionIds: [...newActiveSectionIds],
+        openedSectionId:
+          newOpenedSectionId === undefined
+            ? openedSectionId
+            : newOpenedSectionId,
+      };
+
+      return newState;
+    });
+  }, []);
 
   /**
    * Deletes all sections except undeletable ones. Opens the Personal section
@@ -240,7 +269,10 @@ export default function useAppState() {
    * Opens the specified section.
    */
   const openSection = useCallback((sectionId: SectionId) => {
-    setOpenedSectionId(sectionId);
+    setSectionsState((currentState) => ({
+      ...currentState,
+      openedSectionId: sectionId,
+    }));
   }, []);
 
   /**
@@ -248,28 +280,28 @@ export default function useAppState() {
    */
   const reorderSections = useCallback(
     (newActiveSectionIds: SectionId[]) =>
-      setActiveSectionIds(newActiveSectionIds),
+      setSectionsState((currentState) => ({
+        ...currentState,
+        activeSectionIds: newActiveSectionIds,
+      })),
     [],
   );
 
   // Navbar functions
 
-  /**
-   * Toggles the navbar's editor mode.
-   */
+  // Toggles the navbar's editor mode.
   const toggleEditorMode = useCallback(() => {
-    setEditorMode(!editorMode);
-  }, [editorMode]);
+    setEditorMode((currentMode) => !currentMode);
+  }, []);
 
   // TODO: check if there is a need in another screen reader announcement.
-  /**
-   * Toggles the navbar's visibility.
-   */
+  // Toggles the navbar's visibility.
   const toggleNavbar = useCallback(() => {
-    setIsNavbarExpanded(!isNavbarExpanded);
+    setIsNavbarExpanded((currentState) => !currentState);
+    setEditorMode((isEditorModeOn) => isEditorModeOn && false);
+  }, []);
 
-    if (editorMode) setEditorMode(false);
-  }, [editorMode, isNavbarExpanded]);
+  const { activeSectionIds, openedSectionId } = sectionsState;
 
   return {
     activeSectionIds,
