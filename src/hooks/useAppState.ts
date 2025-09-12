@@ -42,15 +42,10 @@ interface SectionsState {
   openedSectionId: SectionId;
 }
 
-function getSectionTitlesString(sectionIds: Set<SectionId>) {
-  let sectionTitles = '';
+function getSectionTitlesString(sectionIds: SectionId[] | Set<SectionId>) {
+  const input = sectionIds instanceof Set ? [...sectionIds] : sectionIds;
 
-  sectionIds.forEach((sectionId) => {
-    sectionTitles += `${SECTION_TITLES[sectionId]}, `;
-  });
-
-  // Delete the redundant ", " and return the resulting string.
-  return sectionTitles.slice(0, -2);
+  return input.map((sectionId) => SECTION_TITLES[sectionId]).join(', ');
 }
 
 /**
