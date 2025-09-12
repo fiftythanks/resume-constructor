@@ -49,10 +49,8 @@ function getSectionTitlesString(sectionIds: Set<SectionId>) {
     sectionTitles += `${SECTION_TITLES[sectionId]}, `;
   });
 
-  // Delete the redundant ", ".
-  sectionTitles.slice(0, -2);
-
-  return sectionTitles;
+  // Delete the redundant ", " and return the resulting string.
+  return sectionTitles.slice(0, -2);
 }
 
 /**
@@ -91,7 +89,7 @@ export default function useAppState() {
     );
 
     const deletedSectionIds = previousActiveSectionIds.difference(
-      previousActiveSectionIds,
+      setOfActiveSectionIds,
     );
 
     let screenReaderAnnouncement = '';
