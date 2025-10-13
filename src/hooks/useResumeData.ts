@@ -1,8 +1,107 @@
-/* eslint-disable no-param-reassign */
+/**
+ * The rule didn't allow me to use `crypto`, but it's baseline available in
+ * browsers so I don't have to worry about it.
+ */
+/* eslint-disable n/no-unsupported-features/node-builtins */
 import { useImmer } from 'use-immer';
 
+import { SectionId } from '@/types/resumeData';
+
 // ? Put it to a separate file?
-const INITIAL_RESUME_DATA = {
+interface Personal {
+  address: string;
+  email: string;
+  fullName: string;
+  jobTitle: string;
+  phone: string;
+  summary: string;
+}
+
+interface Link {
+  link: string;
+  text: string;
+}
+
+interface Links {
+  github: Link;
+  linkedin: Link;
+  telegram: Link;
+  website: Link;
+}
+
+interface ItemWithId {
+  id: ReturnType<Crypto['randomUUID']>;
+  value: string;
+}
+
+interface Skills {
+  frameworks: ItemWithId[];
+  languages: ItemWithId[];
+  tools: ItemWithId[];
+}
+
+interface Job {
+  address: string;
+  bulletPoints: ItemWithId[];
+  companyName: string;
+  duration: string;
+  id: ReturnType<Crypto['randomUUID']>;
+  jobTitle: string;
+}
+
+interface Experience {
+  jobs: Job[];
+  // TODO: make it of type `number` as soon as you make it impossible to delete the only job.
+  shownJobIndex: null | number;
+}
+
+interface Project {
+  bulletPoints: ItemWithId[];
+  code: Link;
+  demo: Link;
+  id: ReturnType<Crypto['randomUUID']>;
+  projectName: string;
+  stack: string;
+}
+
+interface Projects {
+  projects: Project[];
+  // TODO: make it of type `number` as soon as you make it impossible to delete the only job.
+  shownProjectIndex: null | number;
+}
+
+interface Degree {
+  address: string;
+  bulletPoints: ItemWithId[];
+  degree: string;
+  graduation: string;
+  id: ReturnType<Crypto['randomUUID']>;
+  uni: string;
+}
+
+interface Education {
+  degrees: Degree[];
+  // TODO: make it of type `number` as soon as you make it impossible to delete the only job.
+  shownDegreeIndex: null | number;
+}
+
+interface Certifications {
+  certificates: string;
+  interests: string;
+  skills: string;
+}
+
+interface ResumeData {
+  certifications: Certifications;
+  education: Education;
+  experience: Experience;
+  links: Links;
+  personal: Personal;
+  projects: Projects;
+  skills: Skills;
+}
+
+const INITIAL_RESUME_DATA: ResumeData = {
   personal: {
     fullName: '',
     jobTitle: '',
@@ -169,7 +268,8 @@ const INITIAL_RESUME_DATA = {
 export default function useResumeData() {
   const [data, setData] = useImmer(INITIAL_RESUME_DATA);
 
-  function clear(sectionIDs) {
+  // TODO: make it shorter by using `structuredClone()`.
+  function clear(sectionIDs: SectionId | SectionId[]) {
     // If it's a string, then it's just one ID.
     if (typeof sectionIDs === 'string') {
       switch (sectionIDs) {
@@ -900,7 +1000,10 @@ export default function useResumeData() {
   // ? (Application-wide): is putting `clear` and other functions inside objects and then passing them down as simply `skillsFunctions` etc. not very good? Should I instead export functions on their own from this hook and then pass them down on their own, for better readability?
 
   const certificationsFunctions = {
-    updateCertifications(field, value) {
+    updateCertifications(
+      field: 'certificates' | 'interests' | 'skills',
+      value: string,
+    ) {
       setData((draft) => {
         draft.certifications[field] = value;
       });
@@ -912,12 +1015,17 @@ export default function useResumeData() {
   };
 
   const educationFunctions = {
-    editDegree(index, field, value) {
+    editDegree(
+      index: number,
+      field: 'address' | 'degree' | 'graduation' | 'uni',
+      value: string,
+    ) {
       setData((draft) => {
         draft.education.degrees[index][field] = value;
       });
     },
 
+    // TODO: make it shorter by using `structuredClone()`.
     addDegree() {
       setData((draft) => {
         draft.education.degrees.push({
@@ -945,8 +1053,9 @@ export default function useResumeData() {
       });
     },
 
-    deleteDegree(index) {
+    deleteDegree(index: number) {
       setData((draft) => {
+        // TODO: the last cloze is redundant if it's impossible to delete a degree when there aren't any more degrees. It should be like that. If it's like that, delete the last cloze. If it isn't, make it like that and delete the last cloze.
         if (draft.education.shownDegreeIndex === index) {
           if (
             index === draft.education.degrees.length - 1 &&
@@ -962,25 +1071,33 @@ export default function useResumeData() {
 
         draft.education.degrees.splice(index, 1);
 
-        if (draft.education.shownDegreeIndex > index) {
+        if (
+          // TODO: delete this condition when you make it impossible to delete the only degree.
+          draft.education.shownDegreeIndex !== null &&
+          draft.education.shownDegreeIndex > index
+        ) {
           draft.education.shownDegreeIndex -= 1;
         }
       });
     },
 
-    showDegree(index) {
+    // TODO: add a check for the validity of the passed index.
+    showDegree(index: number) {
       setData((draft) => {
         draft.education.shownDegreeIndex = index;
       });
     },
 
-    updateBulletPoints(index, value) {
+    // TODO: add a check for the validity of the passed index.
+    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    updateBulletPoints(index: number, value: ItemWithId[]) {
       setData((draft) => {
         draft.education.degrees[index].bulletPoints = value;
       });
     },
 
-    addBulletPoint(index) {
+    // TODO: add a check for the validity of the passed index.
+    addBulletPoint(index: number) {
       setData((draft) => {
         draft.education.degrees[index].bulletPoints.push({
           id: crypto.randomUUID(),
@@ -989,13 +1106,16 @@ export default function useResumeData() {
       });
     },
 
-    deleteBulletPoint(degreeIndex, itemIndex) {
+    // TODO: add a check for the validity of the passed indices.
+    deleteBulletPoint(degreeIndex: number, itemIndex: number) {
       setData((draft) => {
         draft.education.degrees[degreeIndex].bulletPoints.splice(itemIndex, 1);
       });
     },
 
-    editBulletPoint(degreeIndex, itemIndex, value) {
+    // TODO: add a check for the validity of the passed index.
+    // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
+    editBulletPoint(degreeIndex: number, itemIndex: number, value: ItemWithId) {
       setData((draft) => {
         draft.education.degrees[degreeIndex].bulletPoints[itemIndex] = value;
       });
@@ -1007,12 +1127,17 @@ export default function useResumeData() {
   };
 
   const experienceFunctions = {
-    editJob(index, field, value) {
+    editJob(
+      index: number,
+      field: 'address' | 'companyName' | 'jobTitle',
+      value: string,
+    ) {
       setData((draft) => {
         draft.experience.jobs[index][field] = value;
       });
     },
 
+    // TODO: make it shorter by using `structuredClone()`.
     addJob() {
       setData((draft) => {
         draft.experience.jobs.push({
@@ -1042,8 +1167,9 @@ export default function useResumeData() {
       });
     },
 
-    deleteJob(index) {
+    deleteJob(index: number) {
       setData((draft) => {
+        // TODO: the last cloze is redundant if it's impossible to delete a degree when there aren't any more degrees. It should be like that. If it's like that, delete the last cloze. If it isn't, make it like that and delete the last cloze.
         /**
          * If a job that was shown is deleted and there are other jobs,
          * the next job should be shown unless the deleted job was the
@@ -1066,25 +1192,33 @@ export default function useResumeData() {
 
         draft.experience.jobs.splice(index, 1);
 
-        if (draft.experience.shownJobIndex > index) {
+        if (
+          // TODO: delete this condition when you make it impossible to delete the only job.
+          draft.experience.shownJobIndex !== null &&
+          draft.experience.shownJobIndex > index
+        ) {
           draft.experience.shownJobIndex -= 1;
         }
       });
     },
 
-    showJob(index) {
+    // TODO: add a check for the validity of the passed index.
+    showJob(index: number) {
       setData((draft) => {
         draft.experience.shownJobIndex = index;
       });
     },
 
-    updateBulletPoints(index, value) {
+    // TODO: add a check for the validity of the passed index.
+    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    updateBulletPoints(index: number, value: ItemWithId[]) {
       setData((draft) => {
         draft.experience.jobs[index].bulletPoints = value;
       });
     },
 
-    addBulletPoint(index) {
+    // TODO: add a check for the validity of the passed index.
+    addBulletPoint(index: number) {
       setData((draft) => {
         draft.experience.jobs[index].bulletPoints.push({
           id: crypto.randomUUID(),
@@ -1093,13 +1227,16 @@ export default function useResumeData() {
       });
     },
 
-    deleteBulletPoint(jobIndex, itemIndex) {
+    // TODO: add a check for the validity of the passed indices.
+    deleteBulletPoint(jobIndex: number, itemIndex: number) {
       setData((draft) => {
         draft.experience.jobs[jobIndex].bulletPoints.splice(itemIndex, 1);
       });
     },
 
-    editBulletPoint(jobIndex, itemIndex, value) {
+    // TODO: add a check for the validity of the passed index.
+    // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
+    editBulletPoint(jobIndex: number, itemIndex: number, value: ItemWithId) {
       setData((draft) => {
         draft.experience.jobs[jobIndex].bulletPoints[itemIndex] = value;
       });
@@ -1111,7 +1248,11 @@ export default function useResumeData() {
   };
 
   const linksFunctions = {
-    updateLinks(field, type, value) {
+    updateLinks(
+      field: 'github' | 'linkedin' | 'telegram' | 'website',
+      type: 'link' | 'text',
+      value: string,
+    ) {
       setData((draft) => {
         draft.links[field][type] = value;
       });
@@ -1123,7 +1264,16 @@ export default function useResumeData() {
   };
 
   const personalFunctions = {
-    updatePersonal(field, value) {
+    updatePersonal(
+      field:
+        | 'address'
+        | 'email'
+        | 'fullName'
+        | 'jobTitle'
+        | 'phone'
+        | 'summary',
+      value: string,
+    ) {
       setData((draft) => {
         draft.personal[field] = value;
       });
@@ -1135,7 +1285,12 @@ export default function useResumeData() {
   };
 
   const projectFunctions = {
-    editProject(index, field, value) {
+    // TODO: add a check for the validity of the passed index.
+    editProject<K extends Exclude<keyof Project, 'bulletPoints' | 'id'>>(
+      index: number,
+      field: K,
+      value: Project[K],
+    ) {
       setData((draft) => {
         draft.projects.projects[index][field] = value;
       });
@@ -1174,7 +1329,8 @@ export default function useResumeData() {
       });
     },
 
-    deleteProject(index) {
+    // TODO: add a check for the validity of the passed index.
+    deleteProject(index: number) {
       setData((draft) => {
         /**
          * If a project that was shown is deleted and there are other projects,
@@ -1198,25 +1354,33 @@ export default function useResumeData() {
 
         draft.projects.projects.splice(index, 1);
 
-        if (draft.projects.shownProjectIndex > index) {
+        if (
+          // TODO: delete this condition when you make it impossible to delete the only project.
+          draft.projects.shownProjectIndex !== null &&
+          draft.projects.shownProjectIndex > index
+        ) {
           draft.projects.shownProjectIndex -= 1;
         }
       });
     },
 
-    showProject(index) {
+    // TODO: add a check for the validity of the passed index.
+    showProject(index: number) {
       setData((draft) => {
         draft.projects.shownProjectIndex = index;
       });
     },
 
-    updateBulletPoints(index, value) {
+    // TODO: add a check for the validity of the passed index.
+    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    updateBulletPoints(index: number, value: ItemWithId[]) {
       setData((draft) => {
         draft.projects.projects[index].bulletPoints = value;
       });
     },
 
-    addBulletPoint(index) {
+    // TODO: add a check for the validity of the passed index.
+    addBulletPoint(index: number) {
       setData((draft) => {
         draft.projects.projects[index].bulletPoints.push({
           id: crypto.randomUUID(),
@@ -1225,13 +1389,20 @@ export default function useResumeData() {
       });
     },
 
-    deleteBulletPoint(projectIndex, itemIndex) {
+    // TODO: add a check for the validity of the passed indices.
+    deleteBulletPoint(projectIndex: number, itemIndex: number) {
       setData((draft) => {
         draft.projects.projects[projectIndex].bulletPoints.splice(itemIndex, 1);
       });
     },
 
-    editBulletPoint(projectIndex, itemIndex, value) {
+    // TODO: add a check for the validity of the passed indices.
+    // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
+    editBulletPoint(
+      projectIndex: number,
+      itemIndex: number,
+      value: ItemWithId,
+    ) {
       setData((draft) => {
         draft.projects.projects[projectIndex].bulletPoints[itemIndex] = value;
       });
@@ -1243,7 +1414,10 @@ export default function useResumeData() {
   };
 
   const skillsFunctions = {
-    updateSkills(field, value) {
+    updateSkills(
+      field: 'frameworks' | 'languages' | 'tools',
+      value: ItemWithId[],
+    ) {
       setData((draft) => {
         draft.skills[field] = value;
       });
@@ -1262,14 +1436,16 @@ export default function useResumeData() {
       });
     },
 
-    deleteLanguage(index) {
+    // TODO: add a check for the validity of the passed index.
+    deleteLanguage(index: number) {
       setData((draft) => {
         draft.skills.languages.splice(index, 1);
       });
     },
 
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editLanguage(index, value) {
+    // TODO: add a check for the validity of the passed index.
+    editLanguage(index: number, value: ItemWithId) {
       setData((draft) => {
         draft.skills.languages[index] = value;
       });
@@ -1284,14 +1460,16 @@ export default function useResumeData() {
       });
     },
 
-    deleteFramework(index) {
+    // TODO: add a check for the validity of the passed index.
+    deleteFramework(index: number) {
       setData((draft) => {
         draft.skills.frameworks.splice(index, 1);
       });
     },
 
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editFramework(index, value) {
+    // TODO: add a check for the validity of the passed index.
+    editFramework(index: number, value: ItemWithId) {
       setData((draft) => {
         draft.skills.frameworks[index] = value;
       });
@@ -1306,14 +1484,16 @@ export default function useResumeData() {
       });
     },
 
-    deleteTool(index) {
+    // TODO: add a check for the validity of the passed index.
+    deleteTool(index: number) {
       setData((draft) => {
         draft.skills.tools.splice(index, 1);
       });
     },
 
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editTool(index, value) {
+    // TODO: add a check for the validity of the passed index.
+    editTool(index: number, value: ItemWithId) {
       setData((draft) => {
         draft.skills.tools[index] = value;
       });
