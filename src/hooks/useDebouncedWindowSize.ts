@@ -11,21 +11,20 @@ export default function useDebouncedWindowSize() {
   });
 
   useEffect(() => {
-    let timer = null;
+    let timer: ReturnType<typeof setTimeout>;
 
     function handleResize() {
       clearTimeout(timer);
 
-      timer = setTimeout(() =>
-        setWindowSize(
-          {
+      timer = setTimeout(
+        () =>
+          setWindowSize({
             innerHeight: window.innerHeight,
             innerWidth: window.innerWidth,
             outerHeight: window.outerHeight,
             outerWidth: window.outerWidth,
-          },
-          DEBOUNCE_DELAY_MS,
-        ),
+          }),
+        DEBOUNCE_DELAY_MS,
       );
     }
 
@@ -35,7 +34,7 @@ export default function useDebouncedWindowSize() {
       clearTimeout(timer);
       window.removeEventListener('resize', handleResize);
     };
-  });
+  }, []);
 
   return windowSize;
 }
