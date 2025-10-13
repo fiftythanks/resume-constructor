@@ -1,3 +1,5 @@
+// TODO: move to Preview's folder or delete this hook altogether if it isn't needed.
+
 import { useEffect, useState } from 'react';
 
 const DEBOUNCE_DELAY_MS = 1000;
