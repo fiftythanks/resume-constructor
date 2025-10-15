@@ -327,16 +327,9 @@ export default function useResumeData() {
     }
   }
 
+  // ? It may be better to merge `clear` and `clearAll` together.
   function clearAll() {
-    clear([
-      'personal',
-      'links',
-      'skills',
-      'experience',
-      'projects',
-      'education',
-      'certifications',
-    ]);
+    setData(getDefaultData());
   }
 
   // Functions for modifying resume data.
