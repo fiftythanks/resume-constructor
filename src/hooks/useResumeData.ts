@@ -316,13 +316,13 @@ export default function useResumeData() {
     });
   }
 
-  function clear(sectionIDs: SectionId | SectionId[]) {
+  function clear(sectionIds: SectionId | SectionId[]) {
     // If it's a string, then it's just one ID.
-    if (typeof sectionIDs === 'string') {
-      clearSection(sectionIDs);
-    } else if (Array.isArray(sectionIDs)) {
-      sectionIDs.forEach((sectionID) => {
-        clearSection(sectionID);
+    if (typeof sectionIds === 'string') {
+      clearSection(sectionIds);
+    } else if (Array.isArray(sectionIds)) {
+      sectionIds.forEach((sectionId) => {
+        clearSection(sectionId);
       });
     }
   }
