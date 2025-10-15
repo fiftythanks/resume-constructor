@@ -8,7 +8,7 @@ import { useImmer } from 'use-immer';
 
 import { SectionId } from '@/types/resumeData';
 
-// ? Put it to a separate file?
+// ? Put it into a separate file?
 interface Personal {
   address: string;
   email: string;
@@ -294,7 +294,7 @@ function createNewIds<T extends object | unknown[]>(target: T): T {
 }
 
 function getDefaultData(): ResumeData;
-function getDefaultData(sectionId: SectionId): ResumeData[SectionId];
+function getDefaultData<K extends SectionId>(sectionId: K): ResumeData[K];
 function getDefaultData(
   sectionId?: SectionId,
 ): ResumeData | ResumeData[SectionId] {
@@ -363,30 +363,13 @@ export default function useResumeData() {
       });
     },
 
-    // TODO: make it shorter by using `structuredClone()`.
     addDegree() {
+      function getDegree() {
+        return getDefaultData('education').degrees[0];
+      }
+
       setData((draft) => {
-        draft.education.degrees.push({
-          address: '',
-          degree: '',
-          graduation: '',
-          id: crypto.randomUUID(),
-          uni: '',
-          bulletPoints: [
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-          ],
-        });
+        draft.education.degrees.push(getDegree());
         draft.education.shownDegreeIndex = draft.education.degrees.length - 1;
       });
     },
@@ -475,30 +458,13 @@ export default function useResumeData() {
       });
     },
 
-    // TODO: make it shorter by using `structuredClone()`.
     addJob() {
+      function getJob() {
+        return getDefaultData('experience').jobs[0];
+      }
+
       setData((draft) => {
-        draft.experience.jobs.push({
-          address: '',
-          companyName: '',
-          duration: '',
-          id: crypto.randomUUID(),
-          jobTitle: '',
-          bulletPoints: [
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-          ],
-        });
+        draft.experience.jobs.push(getJob());
 
         // Show the job that has just been added.
         draft.experience.shownJobIndex = draft.experience.jobs.length - 1;
@@ -635,34 +601,12 @@ export default function useResumeData() {
     },
 
     addProject() {
+      function getProject() {
+        return getDefaultData('projects').projects[0];
+      }
+
       setData((draft) => {
-        draft.projects.projects.push({
-          id: crypto.randomUUID(),
-          projectName: '',
-          stack: '',
-          bulletPoints: [
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-            {
-              id: crypto.randomUUID(),
-              value: '',
-            },
-          ],
-          code: {
-            text: '',
-            link: '',
-          },
-          demo: {
-            text: '',
-            link: '',
-          },
-        });
+        draft.projects.projects.push(getProject());
         draft.projects.shownProjectIndex = draft.projects.projects.length - 1;
       });
     },
