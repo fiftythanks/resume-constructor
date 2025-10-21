@@ -402,44 +402,66 @@ export default function useResumeData() {
       }
     },
 
-    // TODO: add a check for the validity of the passed index.
     showDegree(index: number) {
-      setData((draft) => {
-        draft.education.shownDegreeIndex = index;
-      });
-    },
-
-    // TODO: add a check for the validity of the passed index.
-    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
-    updateBulletPoints(index: number, value: ItemWithId[]) {
-      setData((draft) => {
-        draft.education.degrees[index].bulletPoints = value;
-      });
-    },
-
-    // TODO: add a check for the validity of the passed index.
-    addBulletPoint(index: number) {
-      setData((draft) => {
-        draft.education.degrees[index].bulletPoints.push({
-          id: crypto.randomUUID(),
-          value: '',
+      if (
+        index >= 0 &&
+        index < data.education.degrees.length &&
+        data.education.shownDegreeIndex !== index
+      ) {
+        setData((draft) => {
+          draft.education.shownDegreeIndex = index;
         });
-      });
+      }
     },
 
-    // TODO: add a check for the validity of the passed indices.
+    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    updateBulletPoints(degreeIndex: number, value: ItemWithId[]) {
+      if (degreeIndex >= 0 && degreeIndex < data.education.degrees.length) {
+        setData((draft) => {
+          draft.education.degrees[degreeIndex].bulletPoints = value;
+        });
+      }
+    },
+
+    addBulletPoint(degreeIndex: number) {
+      if (degreeIndex >= 0 && degreeIndex < data.education.degrees.length) {
+        setData((draft) => {
+          draft.education.degrees[degreeIndex].bulletPoints.push({
+            id: crypto.randomUUID(),
+            value: '',
+          });
+        });
+      }
+    },
+
     deleteBulletPoint(degreeIndex: number, itemIndex: number) {
-      setData((draft) => {
-        draft.education.degrees[degreeIndex].bulletPoints.splice(itemIndex, 1);
-      });
+      if (
+        degreeIndex >= 0 &&
+        degreeIndex < data.education.degrees.length &&
+        itemIndex >= 0 &&
+        itemIndex < data.education.degrees[degreeIndex].bulletPoints.length
+      ) {
+        setData((draft) => {
+          draft.education.degrees[degreeIndex].bulletPoints.splice(
+            itemIndex,
+            1,
+          );
+        });
+      }
     },
 
-    // TODO: add a check for the validity of the passed index.
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
     editBulletPoint(degreeIndex: number, itemIndex: number, value: ItemWithId) {
-      setData((draft) => {
-        draft.education.degrees[degreeIndex].bulletPoints[itemIndex] = value;
-      });
+      if (
+        degreeIndex >= 0 &&
+        degreeIndex < data.education.degrees.length &&
+        itemIndex >= 0 &&
+        itemIndex < data.education.degrees[degreeIndex].bulletPoints.length
+      ) {
+        setData((draft) => {
+          draft.education.degrees[degreeIndex].bulletPoints[itemIndex] = value;
+        });
+      }
     },
 
     clear() {
@@ -453,9 +475,11 @@ export default function useResumeData() {
       field: 'address' | 'companyName' | 'jobTitle',
       value: string,
     ) {
-      setData((draft) => {
-        draft.experience.jobs[index][field] = value;
-      });
+      if (index >= 0 && index < data.experience.jobs.length) {
+        setData((draft) => {
+          draft.experience.jobs[index][field] = value;
+        });
+      }
     },
 
     addJob() {
@@ -502,44 +526,60 @@ export default function useResumeData() {
       }
     },
 
-    // TODO: add a check for the validity of the passed index.
     showJob(index: number) {
-      setData((draft) => {
-        draft.experience.shownJobIndex = index;
-      });
-    },
-
-    // TODO: add a check for the validity of the passed index.
-    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
-    updateBulletPoints(index: number, value: ItemWithId[]) {
-      setData((draft) => {
-        draft.experience.jobs[index].bulletPoints = value;
-      });
-    },
-
-    // TODO: add a check for the validity of the passed index.
-    addBulletPoint(index: number) {
-      setData((draft) => {
-        draft.experience.jobs[index].bulletPoints.push({
-          id: crypto.randomUUID(),
-          value: '',
+      if (index >= 0 && index < data.experience.jobs.length) {
+        setData((draft) => {
+          draft.experience.shownJobIndex = index;
         });
-      });
+      }
     },
 
-    // TODO: add a check for the validity of the passed indices.
+    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    updateBulletPoints(jobIndex: number, value: ItemWithId[]) {
+      if (jobIndex >= 0 && jobIndex < data.experience.jobs.length) {
+        setData((draft) => {
+          draft.experience.jobs[jobIndex].bulletPoints = value;
+        });
+      }
+    },
+
+    addBulletPoint(jobIndex: number) {
+      // TODO: make all these boilerplate validations a utility function to prettify the code.
+      if (jobIndex >= 0 && jobIndex < data.experience.jobs.length) {
+        setData((draft) => {
+          draft.experience.jobs[jobIndex].bulletPoints.push({
+            id: crypto.randomUUID(),
+            value: '',
+          });
+        });
+      }
+    },
+
     deleteBulletPoint(jobIndex: number, itemIndex: number) {
-      setData((draft) => {
-        draft.experience.jobs[jobIndex].bulletPoints.splice(itemIndex, 1);
-      });
+      if (
+        jobIndex >= 0 &&
+        jobIndex < data.experience.jobs.length &&
+        itemIndex >= 0 &&
+        itemIndex < data.experience.jobs[jobIndex].bulletPoints.length
+      ) {
+        setData((draft) => {
+          draft.experience.jobs[jobIndex].bulletPoints.splice(itemIndex, 1);
+        });
+      }
     },
 
-    // TODO: add a check for the validity of the passed index.
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
     editBulletPoint(jobIndex: number, itemIndex: number, value: ItemWithId) {
-      setData((draft) => {
-        draft.experience.jobs[jobIndex].bulletPoints[itemIndex] = value;
-      });
+      if (
+        jobIndex >= 0 &&
+        jobIndex < data.experience.jobs.length &&
+        itemIndex >= 0 &&
+        itemIndex < data.experience.jobs[jobIndex].bulletPoints.length
+      ) {
+        setData((draft) => {
+          draft.experience.jobs[jobIndex].bulletPoints[itemIndex] = value;
+        });
+      }
     },
 
     clear() {
@@ -585,15 +625,16 @@ export default function useResumeData() {
   };
 
   const projectFunctions = {
-    // TODO: add a check for the validity of the passed index.
     editProject<K extends Exclude<keyof Project, 'bulletPoints' | 'id'>>(
       index: number,
       field: K,
       value: Project[K],
     ) {
-      setData((draft) => {
-        draft.projects.projects[index][field] = value;
-      });
+      if (index >= 0 && index < data.projects.projects.length) {
+        setData((draft) => {
+          draft.projects.projects[index][field] = value;
+        });
+      }
     },
 
     addProject() {
@@ -639,48 +680,66 @@ export default function useResumeData() {
       }
     },
 
-    // TODO: add a check for the validity of the passed index.
     showProject(index: number) {
-      setData((draft) => {
-        draft.projects.shownProjectIndex = index;
-      });
-    },
-
-    // TODO: add a check for the validity of the passed index.
-    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
-    updateBulletPoints(index: number, value: ItemWithId[]) {
-      setData((draft) => {
-        draft.projects.projects[index].bulletPoints = value;
-      });
-    },
-
-    // TODO: add a check for the validity of the passed index.
-    addBulletPoint(index: number) {
-      setData((draft) => {
-        draft.projects.projects[index].bulletPoints.push({
-          id: crypto.randomUUID(),
-          value: '',
+      if (index >= 0 && index < data.projects.projects.length) {
+        setData((draft) => {
+          draft.projects.shownProjectIndex = index;
         });
-      });
+      }
     },
 
-    // TODO: add a check for the validity of the passed indices.
+    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    updateBulletPoints(projectIndex: number, value: ItemWithId[]) {
+      if (projectIndex >= 0 && projectIndex < data.projects.projects.length) {
+        setData((draft) => {
+          draft.projects.projects[projectIndex].bulletPoints = value;
+        });
+      }
+    },
+
+    addBulletPoint(projectIndex: number) {
+      if (projectIndex >= 0 && projectIndex < data.projects.projects.length) {
+        setData((draft) => {
+          draft.projects.projects[projectIndex].bulletPoints.push({
+            id: crypto.randomUUID(),
+            value: '',
+          });
+        });
+      }
+    },
+
     deleteBulletPoint(projectIndex: number, itemIndex: number) {
-      setData((draft) => {
-        draft.projects.projects[projectIndex].bulletPoints.splice(itemIndex, 1);
-      });
+      if (
+        projectIndex >= 0 &&
+        projectIndex < data.projects.projects.length &&
+        itemIndex >= 0 &&
+        itemIndex < data.projects.projects[projectIndex].bulletPoints.length
+      ) {
+        setData((draft) => {
+          draft.projects.projects[projectIndex].bulletPoints.splice(
+            itemIndex,
+            1,
+          );
+        });
+      }
     },
 
-    // TODO: add a check for the validity of the passed indices.
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
     editBulletPoint(
       projectIndex: number,
       itemIndex: number,
       value: ItemWithId,
     ) {
-      setData((draft) => {
-        draft.projects.projects[projectIndex].bulletPoints[itemIndex] = value;
-      });
+      if (
+        projectIndex >= 0 &&
+        projectIndex < data.projects.projects.length &&
+        itemIndex >= 0 &&
+        itemIndex < data.projects.projects[projectIndex].bulletPoints.length
+      ) {
+        setData((draft) => {
+          draft.projects.projects[projectIndex].bulletPoints[itemIndex] = value;
+        });
+      }
     },
 
     clear() {
@@ -711,19 +770,21 @@ export default function useResumeData() {
       });
     },
 
-    // TODO: add a check for the validity of the passed index.
-    deleteLanguage(index: number) {
-      setData((draft) => {
-        draft.skills.languages.splice(index, 1);
-      });
+    deleteLanguage(langIndex: number) {
+      if (langIndex >= 0 && langIndex < data.skills.languages.length) {
+        setData((draft) => {
+          draft.skills.languages.splice(langIndex, 1);
+        });
+      }
     },
 
-    // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    // TODO: add a check for the validity of the passed index.
-    editLanguage(index: number, value: ItemWithId) {
-      setData((draft) => {
-        draft.skills.languages[index] = value;
-      });
+    // TODO: refactor to update the value directly instead of updating the object that has both the value and the ID.
+    editLanguage(langIndex: number, value: ItemWithId) {
+      if (langIndex >= 0 && langIndex < data.skills.languages.length) {
+        setData((draft) => {
+          draft.skills.languages[langIndex] = value;
+        });
+      }
     },
 
     addFramework() {
@@ -735,19 +796,21 @@ export default function useResumeData() {
       });
     },
 
-    // TODO: add a check for the validity of the passed index.
-    deleteFramework(index: number) {
-      setData((draft) => {
-        draft.skills.frameworks.splice(index, 1);
-      });
+    deleteFramework(fmwkIndex: number) {
+      if (fmwkIndex >= 0 && fmwkIndex < data.skills.frameworks.length) {
+        setData((draft) => {
+          draft.skills.frameworks.splice(fmwkIndex, 1);
+        });
+      }
     },
 
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    // TODO: add a check for the validity of the passed index.
-    editFramework(index: number, value: ItemWithId) {
-      setData((draft) => {
-        draft.skills.frameworks[index] = value;
-      });
+    editFramework(fmwkIndex: number, value: ItemWithId) {
+      if (fmwkIndex >= 0 && fmwkIndex < data.skills.frameworks.length) {
+        setData((draft) => {
+          draft.skills.frameworks[fmwkIndex] = value;
+        });
+      }
     },
 
     addTool() {
@@ -759,19 +822,21 @@ export default function useResumeData() {
       });
     },
 
-    // TODO: add a check for the validity of the passed index.
-    deleteTool(index: number) {
-      setData((draft) => {
-        draft.skills.tools.splice(index, 1);
-      });
+    deleteTool(toolIndex: number) {
+      if (toolIndex >= 0 && toolIndex < data.skills.tools.length) {
+        setData((draft) => {
+          draft.skills.tools.splice(toolIndex, 1);
+        });
+      }
     },
 
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    // TODO: add a check for the validity of the passed index.
-    editTool(index: number, value: ItemWithId) {
-      setData((draft) => {
-        draft.skills.tools[index] = value;
-      });
+    editTool(toolIndex: number, value: ItemWithId) {
+      if (toolIndex >= 0 && toolIndex < data.skills.tools.length) {
+        setData((draft) => {
+          draft.skills.tools[toolIndex] = value;
+        });
+      }
     },
   };
 
