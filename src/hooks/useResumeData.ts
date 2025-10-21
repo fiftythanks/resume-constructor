@@ -52,8 +52,7 @@ interface Job {
 
 interface Experience {
   jobs: Job[];
-  // TODO: make it of type `number` as soon as you make it impossible to delete the only job.
-  shownJobIndex: null | number;
+  shownJobIndex: number;
 }
 
 interface Project {
@@ -67,8 +66,7 @@ interface Project {
 
 interface Projects {
   projects: Project[];
-  // TODO: make it of type `number` as soon as you make it impossible to delete the only job.
-  shownProjectIndex: null | number;
+  shownProjectIndex: number;
 }
 
 interface Degree {
@@ -82,8 +80,7 @@ interface Degree {
 
 interface Education {
   degrees: Degree[];
-  // TODO: make it of type `number` as soon as you make it impossible to delete the only job.
-  shownDegreeIndex: null | number;
+  shownDegreeIndex: number;
 }
 
 interface Certifications {
@@ -375,31 +372,34 @@ export default function useResumeData() {
     },
 
     deleteDegree(index: number) {
-      setData((draft) => {
-        // TODO: the last cloze is redundant if it's impossible to delete a degree when there aren't any more degrees. It should be like that. If it's like that, delete the last cloze. If it isn't, make it like that and delete the last cloze.
-        if (draft.education.shownDegreeIndex === index) {
-          if (
-            index === draft.education.degrees.length - 1 &&
-            draft.education.degrees.length > 1
-          ) {
-            draft.education.shownDegreeIndex = index - 1;
-          } else if (draft.education.degrees.length > 1) {
-            draft.education.shownDegreeIndex = index + 1;
-          } else if (draft.education.degrees.length === 1) {
-            draft.education.shownDegreeIndex = null;
+      const degreeNumber = data.education.degrees.length;
+
+      if (degreeNumber > 1 && index >= 0 && index < degreeNumber) {
+        setData((draft) => {
+          draft.education.degrees.splice(index, 1);
+
+          /**
+           * If the shown degree has an index higher than the deleted degree's
+           * index, its index must be decremented.
+           */
+          if (draft.education.shownDegreeIndex > index) {
+            draft.education.shownDegreeIndex -= 1;
+
+            /**
+             * If a degree that was shown is deleted, the next degree should be
+             * shown unless the deleted degree was the last degree, in which
+             * case the previous degree should be shown.
+             */
+          } else if (draft.education.shownDegreeIndex === index) {
+            // If the last degree is deleted.
+            if (index === degreeNumber - 1) {
+              draft.education.shownDegreeIndex = index - 1;
+            } else {
+              draft.education.shownDegreeIndex = index + 1;
+            }
           }
-        }
-
-        draft.education.degrees.splice(index, 1);
-
-        if (
-          // TODO: delete this condition when you make it impossible to delete the only degree.
-          draft.education.shownDegreeIndex !== null &&
-          draft.education.shownDegreeIndex > index
-        ) {
-          draft.education.shownDegreeIndex -= 1;
-        }
-      });
+        });
+      }
     },
 
     // TODO: add a check for the validity of the passed index.
@@ -472,38 +472,34 @@ export default function useResumeData() {
     },
 
     deleteJob(index: number) {
-      setData((draft) => {
-        // TODO: the last cloze is redundant if it's impossible to delete a degree when there aren't any more degrees. It should be like that. If it's like that, delete the last cloze. If it isn't, make it like that and delete the last cloze.
-        /**
-         * If a job that was shown is deleted and there are other jobs,
-         * the next job should be shown unless the deleted job was the
-         * last job, in which case the previous job should be shown. If
-         * there are no jobs left, then the `shownJobIndex` should become
-         * `null`.
-         */
-        if (draft.experience.shownJobIndex === index) {
-          if (
-            index === draft.experience.jobs.length - 1 &&
-            draft.experience.jobs.length > 1
-          ) {
-            draft.experience.shownJobIndex = index - 1;
-          } else if (draft.experience.jobs.length > 1) {
-            draft.experience.shownJobIndex = index + 1;
-          } else if (draft.experience.jobs.length === 1) {
-            draft.experience.shownJobIndex = null;
+      const jobNumber = data.experience.jobs.length;
+
+      if (jobNumber > 1 && index >= 0 && index < jobNumber) {
+        setData((draft) => {
+          draft.experience.jobs.splice(index, 1);
+
+          /**
+           * If the shown job has an index higher than the deleted job's
+           * index, its index must be decremented.
+           */
+          if (draft.experience.shownJobIndex > index) {
+            draft.experience.shownJobIndex -= 1;
+
+            /**
+             * If a job that was shown is deleted, the next job should be
+             * shown unless the deleted job was the last job, in which
+             * case the previous job should be shown.
+             */
+          } else if (draft.experience.shownJobIndex === index) {
+            // If the last job is deleted.
+            if (index === jobNumber - 1) {
+              draft.experience.shownJobIndex = index - 1;
+            } else {
+              draft.experience.shownJobIndex = index + 1;
+            }
           }
-        }
-
-        draft.experience.jobs.splice(index, 1);
-
-        if (
-          // TODO: delete this condition when you make it impossible to delete the only job.
-          draft.experience.shownJobIndex !== null &&
-          draft.experience.shownJobIndex > index
-        ) {
-          draft.experience.shownJobIndex -= 1;
-        }
-      });
+        });
+      }
     },
 
     // TODO: add a check for the validity of the passed index.
@@ -611,39 +607,36 @@ export default function useResumeData() {
       });
     },
 
-    // TODO: add a check for the validity of the passed index.
+    // TODO: make one abstract `delete` function for projects, jobs and degrees to reduce boilerplate.
     deleteProject(index: number) {
-      setData((draft) => {
-        /**
-         * If a project that was shown is deleted and there are other projects,
-         * the next project should be shown unless the deleted project was the
-         * last project, in which case the previous project should be shown. If
-         * there are no projects left, then the `shownProjectIndex` should become
-         * `null`.
-         */
-        if (draft.projects.shownProjectIndex === index) {
-          if (
-            index === draft.projects.projects.length - 1 &&
-            draft.projects.projects.length > 1
-          ) {
-            draft.projects.shownProjectIndex = index - 1;
-          } else if (draft.projects.projects.length > 1) {
-            draft.projects.shownProjectIndex = index + 1;
-          } else if (draft.projects.projects.length === 1) {
-            draft.projects.shownProjectIndex = null;
+      const projectNumber = data.projects.projects.length;
+
+      if (projectNumber > 1 && index >= 0 && index < projectNumber) {
+        setData((draft) => {
+          draft.projects.projects.splice(index, 1);
+
+          /**
+           * If the shown project has an index higher than the deleted project's
+           * index, its index must be decremented.
+           */
+          if (draft.projects.shownProjectIndex > index) {
+            draft.projects.shownProjectIndex -= 1;
+
+            /**
+             * If a project that was shown is deleted, the next project should
+             * be shown unless the deleted project was the last project, in
+             * which case the previous project should be shown.
+             */
+          } else if (draft.projects.shownProjectIndex === index) {
+            // If the last project is deleted.
+            if (index === projectNumber - 1) {
+              draft.projects.shownProjectIndex = index - 1;
+            } else {
+              draft.projects.shownProjectIndex = index + 1;
+            }
           }
-        }
-
-        draft.projects.projects.splice(index, 1);
-
-        if (
-          // TODO: delete this condition when you make it impossible to delete the only project.
-          draft.projects.shownProjectIndex !== null &&
-          draft.projects.shownProjectIndex > index
-        ) {
-          draft.projects.shownProjectIndex -= 1;
-        }
-      });
+        });
+      }
     },
 
     // TODO: add a check for the validity of the passed index.
