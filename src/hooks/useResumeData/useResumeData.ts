@@ -3,308 +3,18 @@
  * browsers so I don't have to worry about it.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
+
 import { WritableDraft } from 'immer';
 import { useImmer } from 'use-immer';
 
-import { SectionId } from '@/types/resumeData';
+import getDefaultData from './getDefaultData';
 
-// ? Put it into a separate file?
-interface Personal {
-  address: string;
-  email: string;
-  fullName: string;
-  jobTitle: string;
-  phone: string;
-  summary: string;
-}
-
-interface Link {
-  link: string;
-  text: string;
-}
-
-interface Links {
-  github: Link;
-  linkedin: Link;
-  telegram: Link;
-  website: Link;
-}
-
-interface ItemWithId {
-  id: ReturnType<Crypto['randomUUID']>;
-  value: string;
-}
-
-interface Skills {
-  frameworks: ItemWithId[];
-  languages: ItemWithId[];
-  tools: ItemWithId[];
-}
-
-interface Job {
-  address: string;
-  bulletPoints: ItemWithId[];
-  companyName: string;
-  duration: string;
-  id: ReturnType<Crypto['randomUUID']>;
-  jobTitle: string;
-}
-
-interface Experience {
-  jobs: Job[];
-  shownJobIndex: number;
-}
-
-interface Project {
-  bulletPoints: ItemWithId[];
-  code: Link;
-  demo: Link;
-  id: ReturnType<Crypto['randomUUID']>;
-  projectName: string;
-  stack: string;
-}
-
-interface Projects {
-  projects: Project[];
-  shownProjectIndex: number;
-}
-
-interface Degree {
-  address: string;
-  bulletPoints: ItemWithId[];
-  degree: string;
-  graduation: string;
-  id: ReturnType<Crypto['randomUUID']>;
-  uni: string;
-}
-
-interface Education {
-  degrees: Degree[];
-  shownDegreeIndex: number;
-}
-
-interface Certifications {
-  certificates: string;
-  interests: string;
-  skills: string;
-}
-
-interface ResumeData {
-  certifications: Certifications;
-  education: Education;
-  experience: Experience;
-  links: Links;
-  personal: Personal;
-  projects: Projects;
-  skills: Skills;
-}
-
-const INITIAL_RESUME_DATA: ResumeData = {
-  personal: {
-    fullName: '',
-    jobTitle: '',
-    email: '',
-    phone: '',
-    address: '',
-    summary: '',
-  },
-  links: {
-    website: {
-      text: '',
-      link: '',
-    },
-    github: {
-      text: '',
-      link: '',
-    },
-    linkedin: {
-      text: '',
-      link: '',
-    },
-    telegram: {
-      text: '',
-      link: '',
-    },
-  },
-  skills: {
-    languages: [
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-    ],
-    frameworks: [
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-    ],
-    tools: [
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-      {
-        id: crypto.randomUUID(),
-        value: '',
-      },
-    ],
-  },
-  experience: {
-    jobs: [
-      {
-        address: '',
-        companyName: '',
-        duration: '',
-        id: crypto.randomUUID(),
-        jobTitle: '',
-        bulletPoints: [
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-        ],
-      },
-    ],
-    shownJobIndex: 0,
-  },
-  projects: {
-    projects: [
-      {
-        id: crypto.randomUUID(),
-        projectName: '',
-        stack: '',
-        bulletPoints: [
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-        ],
-        code: {
-          text: '',
-          link: '',
-        },
-        demo: {
-          text: '',
-          link: '',
-        },
-      },
-    ],
-    shownProjectIndex: 0,
-  },
-  education: {
-    degrees: [
-      {
-        address: '',
-        degree: '',
-        graduation: '',
-        id: crypto.randomUUID(),
-        uni: '',
-        bulletPoints: [
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-          {
-            id: crypto.randomUUID(),
-            value: '',
-          },
-        ],
-      },
-    ],
-    shownDegreeIndex: 0,
-  },
-  // It should be certifications, skills and interests.
-  // TODO (application-wide): refactor `Certifications` and this state.
-  certifications: {
-    certificates: '',
-    skills: '',
-    interests: '',
-  },
-};
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-// This function is needed to make sure new IDs are created when we clear data.
-function createNewIds<T extends object | unknown[]>(target: T): T {
-  if (Array.isArray(target)) {
-    for (const elem of target) {
-      if (Array.isArray(elem) || isObject(elem)) {
-        createNewIds(elem);
-      }
-    }
-  } else {
-    if (isObject(target)) {
-      for (const [key, value] of Object.entries(target)) {
-        if (key === 'id') {
-          target[key] = crypto.randomUUID();
-        } else if (Array.isArray(value) || isObject(value)) {
-          createNewIds(value);
-        }
-      }
-    }
-  }
-
-  return target;
-}
-
-function getDefaultData(): ResumeData;
-function getDefaultData<K extends SectionId>(sectionId: K): ResumeData[K];
-function getDefaultData(
-  sectionId?: SectionId,
-): ResumeData | ResumeData[SectionId] {
-  if (sectionId !== undefined) {
-    return createNewIds(structuredClone(INITIAL_RESUME_DATA[sectionId]));
-  }
-
-  return createNewIds(structuredClone(INITIAL_RESUME_DATA));
-}
+import { ItemWithId, Project, ResumeData, SectionId } from '@/types/resumeData';
 
 export default function useResumeData() {
-  const [data, setData] = useImmer(INITIAL_RESUME_DATA);
+  const [data, setData] = useImmer(getDefaultData());
 
+  // Its purpose is just to make `clear` shorter.
   function clearSection<K extends SectionId>(sectionId: K) {
     setData((draft) => {
       draft[sectionId] = getDefaultData(
@@ -313,6 +23,7 @@ export default function useResumeData() {
     });
   }
 
+  // Clears sections.
   function clear(sectionIds: SectionId | SectionId[]) {
     // If it's a string, then it's just one ID.
     if (typeof sectionIds === 'string') {
@@ -414,7 +125,7 @@ export default function useResumeData() {
       }
     },
 
-    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(degreeIndex: number, value: ItemWithId[]) {
       if (degreeIndex >= 0 && degreeIndex < data.education.degrees.length) {
         setData((draft) => {
@@ -450,6 +161,10 @@ export default function useResumeData() {
       }
     },
 
+    /**
+     * To change it, you need to refactor `BulletPoints`, its `editItem`
+     * function.
+     */
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
     editBulletPoint(degreeIndex: number, itemIndex: number, value: ItemWithId) {
       if (
@@ -534,7 +249,7 @@ export default function useResumeData() {
       }
     },
 
-    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(jobIndex: number, value: ItemWithId[]) {
       if (jobIndex >= 0 && jobIndex < data.experience.jobs.length) {
         setData((draft) => {
@@ -568,6 +283,10 @@ export default function useResumeData() {
       }
     },
 
+    /**
+     * To change it, you need to refactor `BulletPoints`, i.e. its `editItem`
+     * function.
+     */
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
     editBulletPoint(jobIndex: number, itemIndex: number, value: ItemWithId) {
       if (
@@ -688,7 +407,7 @@ export default function useResumeData() {
       }
     },
 
-    // TODO: check if this function is used, refactor the places where it's used so they don't use it anymore, and delete the function. There shouldn't be such a function.
+    // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(projectIndex: number, value: ItemWithId[]) {
       if (projectIndex >= 0 && projectIndex < data.projects.projects.length) {
         setData((draft) => {
@@ -724,6 +443,10 @@ export default function useResumeData() {
       }
     },
 
+    /**
+     * To change it, you need to refactor `BulletPoints`, its `editItem`
+     * function.
+     */
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
     editBulletPoint(
       projectIndex: number,
@@ -778,6 +501,10 @@ export default function useResumeData() {
       }
     },
 
+    /**
+     * To change it, you need to refactor `BulletPoints`, its `editItem`
+     * function.
+     */
     // TODO: refactor to update the value directly instead of updating the object that has both the value and the ID.
     editLanguage(langIndex: number, value: ItemWithId) {
       if (langIndex >= 0 && langIndex < data.skills.languages.length) {
@@ -804,6 +531,10 @@ export default function useResumeData() {
       }
     },
 
+    /**
+     * To change it, you need to refactor `BulletPoints`, its `editItem`
+     * function.
+     */
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
     editFramework(fmwkIndex: number, value: ItemWithId) {
       if (fmwkIndex >= 0 && fmwkIndex < data.skills.frameworks.length) {
@@ -830,6 +561,10 @@ export default function useResumeData() {
       }
     },
 
+    /**
+     * To change it, you need to refactor `BulletPoints`, its `editItem`
+     * function.
+     */
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
     editTool(toolIndex: number, value: ItemWithId) {
       if (toolIndex >= 0 && toolIndex < data.skills.tools.length) {

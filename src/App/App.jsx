@@ -1,11 +1,6 @@
 import React from 'react';
 
-// It's a strange ESLint error. Otherwise, everything works perfectly.
-// eslint-disable-next-line import/no-unresolved
 import { SpeedInsights } from '@vercel/speed-insights/react';
-
-import useAppState from '@/hooks/useAppState';
-import useResumeData from '@/hooks/useResumeData';
 
 import Certifications from '@/pages/Certifications';
 import Education from '@/pages/Education';
@@ -17,7 +12,11 @@ import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
+// @ts-expect-error REMOVE LATER
 import fillAll from './fillAll';
+
+import useAppState from '@/hooks/useAppState';
+import useResumeData from '@/hooks/useResumeData/useResumeData';
 
 // ===========================================
 // Application-wide TODOs, FIXMEs and dilemmas
@@ -85,16 +84,17 @@ export default function App() {
     skillsFunctions,
   } = useResumeData();
 
+  // FIXME (application-wide): because they aren't properly imported, the functions' JSDoc comments aren't shared. Either there's some workaround or I should export all functions from the hook or somewhere else to see JSDoc.
   const {
-    activeSectionIDs,
+    activeSectionIds,
     addSections,
     deleteAll,
     deleteSections,
     editorMode,
     isNavbarExpanded,
     openSection,
-    openedSectionID,
-    possibleSectionIDs,
+    openedSectionId,
+    possibleSectionIds,
     reorderSections,
     resetScreenReaderAnnouncement,
     screenReaderAnnouncement,
@@ -159,17 +159,17 @@ export default function App() {
         {screenReaderAnnouncement}
       </span>
       <AppLayout
-        activeSectionIDs={activeSectionIDs}
+        activeSectionIds={activeSectionIds}
         addSections={addSections}
         data={data}
-        // TODO (application-wide): do something with `deleteAll` and `deleteSections`. Functions from `useResumeData` and `useAppState` shouldn't be coupled. Should they?
+        // TODO: Pass delete functions with clear functions, and maybe rename to not confuse clearing, deleting and doing both.
         deleteAll={() => deleteAll(clear)}
         deleteSections={(sectionIDs) => deleteSections(sectionIDs, clear)}
         editorMode={editorMode}
         isNavbarExpanded={isNavbarExpanded}
-        openedSectionID={openedSectionID}
+        openedSectionId={openedSectionId}
         openSection={openSection}
-        possibleSectionIDs={possibleSectionIDs}
+        possibleSectionIds={possibleSectionIds}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         selectSection={openSection}
@@ -178,16 +178,16 @@ export default function App() {
         // TODO: Looks dirty. Improve it.
         fillAll={() =>
           fillAll(
-            activeSectionIDs,
+            activeSectionIds,
             addSections,
             clear,
             clearAll,
-            possibleSectionIDs,
+            possibleSectionIds,
             sectionFunctions,
           )
         }
       >
-        {sections[openedSectionID]}
+        {sections[openedSectionId]}
       </AppLayout>
       <SpeedInsights />
     </>
