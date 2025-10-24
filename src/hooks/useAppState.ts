@@ -311,6 +311,6 @@ export default function useAppState() {
     toggleEditorMode,
     toggleNavbar,
     updateScreenReaderAnnouncement,
-    possibleSectionIDs: SECTION_IDS,
+    possibleSectionIds: SECTION_IDS,
   };
 }
