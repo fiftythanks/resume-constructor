@@ -183,12 +183,10 @@ export default function useResumeData() {
     },
 
     addDegree() {
-      function getDegree() {
-        return getDefaultData('education').degrees[0];
-      }
+      const newDegree = getDefaultData('education').degrees[0];
 
       setData((draft) => {
-        draft.education.degrees.push(getDegree());
+        draft.education.degrees.push(newDegree);
         draft.education.shownDegreeIndex = draft.education.degrees.length - 1;
       });
     },
@@ -280,12 +278,10 @@ export default function useResumeData() {
     },
 
     addJob() {
-      function getJob() {
-        return getDefaultData('experience').jobs[0];
-      }
+      const newJob = getDefaultData('experience').jobs[0];
 
       setData((draft) => {
-        draft.experience.jobs.push(getJob());
+        draft.experience.jobs.push(newJob);
 
         // Show the job that has just been added.
         draft.experience.shownJobIndex = draft.experience.jobs.length - 1;
@@ -410,12 +406,10 @@ export default function useResumeData() {
     },
 
     addProject() {
-      function getProject() {
-        return getDefaultData('projects').projects[0];
-      }
+      const newProject = getDefaultData('projects').projects[0];
 
       setData((draft) => {
-        draft.projects.projects.push(getProject());
+        draft.projects.projects.push(newProject);
         draft.projects.shownProjectIndex = draft.projects.projects.length - 1;
       });
     },
