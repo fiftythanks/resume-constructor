@@ -7,6 +7,6 @@
  * called, it means a new case was added to the union type without being
  * handled, causing an immediate runtime error.
  */
-export default function neverReached(never: never) {
+export default function neverReached(never: never): never {
   throw new Error(`Unhandled case: ${never}`);
 }
