@@ -7,6 +7,8 @@
 import { WritableDraft } from 'immer';
 import { useImmer } from 'use-immer';
 
+import neverReached from '@/utils/neverReached';
+
 import getDefaultData from './getDefaultData';
 
 import { ItemWithId, Project, ResumeData, SectionId } from '@/types/resumeData';
@@ -41,6 +43,115 @@ export default function useResumeData() {
   }
 
   // Functions for modifying resume data.
+
+  type ItemType = 'degree' | 'job' | 'project';
+
+  function getNumberOfItems(itemType: ItemType) {
+    let numberOfItems: number;
+
+    switch (itemType) {
+      case 'degree': {
+        numberOfItems = data.education.degrees.length;
+        break;
+      }
+      case 'job': {
+        numberOfItems = data.experience.jobs.length;
+        break;
+      }
+      case 'project': {
+        numberOfItems = data.projects.projects.length;
+        break;
+      }
+      default: {
+        neverReached(itemType);
+      }
+    }
+
+    return numberOfItems;
+  }
+
+  function getNextShownIndex(
+    currentIndex: number,
+    deletedIndex: number,
+    numberOfItems: number,
+  ) {
+    /**
+     * If the shown item was after the one we deleted, its index just needs to
+     * be decremented.
+     */
+    if (currentIndex > deletedIndex) {
+      return currentIndex - 1;
+    }
+
+    // If the shown item was the one we deleted...
+    if (currentIndex === deletedIndex) {
+      // ...and it's the last index in the array, show the one before it.
+      if (deletedIndex === numberOfItems - 1) {
+        return deletedIndex - 1;
+      }
+
+      /**
+       * ...otherwise, the "next" item has now shuffled into the current index.
+       * So the next index is just the one we deleted.
+       */
+      return deletedIndex;
+    }
+
+    // Otherwise, the index doesn't need change.
+    return currentIndex;
+  }
+
+  /**
+   * This function deletes degrees, jobs and projects in sections
+   * "Education", "Experience" and "Projects".
+   */
+  function deleteItem(itemType: ItemType, index: number) {
+    const numberOfItems = getNumberOfItems(itemType);
+
+    if (numberOfItems > 1 && index >= 0 && index < numberOfItems) {
+      setData((draft) => {
+        switch (itemType) {
+          case 'degree': {
+            draft.education.shownDegreeIndex = getNextShownIndex(
+              draft.education.shownDegreeIndex,
+              index,
+              numberOfItems,
+            );
+
+            draft.education.degrees.splice(index, 1);
+
+            break;
+          }
+          case 'job': {
+            draft.experience.shownJobIndex = getNextShownIndex(
+              draft.experience.shownJobIndex,
+              index,
+              numberOfItems,
+            );
+
+            draft.experience.jobs.splice(index, 1);
+
+            break;
+          }
+          case 'project': {
+            draft.projects.shownProjectIndex = getNextShownIndex(
+              draft.projects.shownProjectIndex,
+              index,
+              numberOfItems,
+            );
+
+            draft.projects.projects.splice(index, 1);
+
+            break;
+          }
+          default: {
+            neverReached(itemType);
+          }
+        }
+      });
+    }
+  }
+
   // ? Should I put them inside one big object, e.g. `resumeDataHandlers`, where their names will be not `personalFunctions` etc. but just `personal`? Or should I even create a separate file for all these functions maybe?
 
   // ? (Application-wide): is putting `clear` and other functions inside objects and then passing them down as simply `skillsFunctions` etc. not very good? Should I instead export functions on their own from this hook and then pass them down on their own, for better readability?
@@ -82,36 +193,7 @@ export default function useResumeData() {
       });
     },
 
-    deleteDegree(index: number) {
-      const degreeNumber = data.education.degrees.length;
-
-      if (degreeNumber > 1 && index >= 0 && index < degreeNumber) {
-        setData((draft) => {
-          draft.education.degrees.splice(index, 1);
-
-          /**
-           * If the shown degree has an index higher than the deleted degree's
-           * index, its index must be decremented.
-           */
-          if (draft.education.shownDegreeIndex > index) {
-            draft.education.shownDegreeIndex -= 1;
-
-            /**
-             * If a degree that was shown is deleted, the next degree should be
-             * shown unless the deleted degree was the last degree, in which
-             * case the previous degree should be shown.
-             */
-          } else if (draft.education.shownDegreeIndex === index) {
-            // If the last degree is deleted.
-            if (index === degreeNumber - 1) {
-              draft.education.shownDegreeIndex = index - 1;
-            } else {
-              draft.education.shownDegreeIndex = index + 1;
-            }
-          }
-        });
-      }
-    },
+    deleteDegree: (index: number) => deleteItem('degree', index),
 
     showDegree(index: number) {
       if (
@@ -210,36 +292,7 @@ export default function useResumeData() {
       });
     },
 
-    deleteJob(index: number) {
-      const jobNumber = data.experience.jobs.length;
-
-      if (jobNumber > 1 && index >= 0 && index < jobNumber) {
-        setData((draft) => {
-          draft.experience.jobs.splice(index, 1);
-
-          /**
-           * If the shown job has an index higher than the deleted job's
-           * index, its index must be decremented.
-           */
-          if (draft.experience.shownJobIndex > index) {
-            draft.experience.shownJobIndex -= 1;
-
-            /**
-             * If a job that was shown is deleted, the next job should be
-             * shown unless the deleted job was the last job, in which
-             * case the previous job should be shown.
-             */
-          } else if (draft.experience.shownJobIndex === index) {
-            // If the last job is deleted.
-            if (index === jobNumber - 1) {
-              draft.experience.shownJobIndex = index - 1;
-            } else {
-              draft.experience.shownJobIndex = index + 1;
-            }
-          }
-        });
-      }
-    },
+    deleteJob: (index: number) => deleteItem('job', index),
 
     showJob(index: number) {
       if (index >= 0 && index < data.experience.jobs.length) {
@@ -367,37 +420,7 @@ export default function useResumeData() {
       });
     },
 
-    // TODO: make one abstract `delete` function for projects, jobs and degrees to reduce boilerplate.
-    deleteProject(index: number) {
-      const projectNumber = data.projects.projects.length;
-
-      if (projectNumber > 1 && index >= 0 && index < projectNumber) {
-        setData((draft) => {
-          draft.projects.projects.splice(index, 1);
-
-          /**
-           * If the shown project has an index higher than the deleted project's
-           * index, its index must be decremented.
-           */
-          if (draft.projects.shownProjectIndex > index) {
-            draft.projects.shownProjectIndex -= 1;
-
-            /**
-             * If a project that was shown is deleted, the next project should
-             * be shown unless the deleted project was the last project, in
-             * which case the previous project should be shown.
-             */
-          } else if (draft.projects.shownProjectIndex === index) {
-            // If the last project is deleted.
-            if (index === projectNumber - 1) {
-              draft.projects.shownProjectIndex = index - 1;
-            } else {
-              draft.projects.shownProjectIndex = index + 1;
-            }
-          }
-        });
-      }
-    },
+    deleteProject: (index: number) => deleteItem('project', index),
 
     showProject(index: number) {
       if (index >= 0 && index < data.projects.projects.length) {
