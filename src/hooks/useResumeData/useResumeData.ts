@@ -46,6 +46,7 @@ export default function useResumeData() {
 
   type ItemType = 'degree' | 'job' | 'project';
 
+  // Utility function for `deleteItem`.
   function getNumberOfItems(itemType: ItemType) {
     let numberOfItems: number;
 
@@ -54,14 +55,17 @@ export default function useResumeData() {
         numberOfItems = data.education.degrees.length;
         break;
       }
+
       case 'job': {
         numberOfItems = data.experience.jobs.length;
         break;
       }
+
       case 'project': {
         numberOfItems = data.projects.projects.length;
         break;
       }
+
       default: {
         neverReached(itemType);
       }
@@ -70,6 +74,7 @@ export default function useResumeData() {
     return numberOfItems;
   }
 
+  // Utility function for `deleteItem`.
   function getNextShownIndex(
     currentIndex: number,
     deletedIndex: number,
@@ -102,7 +107,7 @@ export default function useResumeData() {
   }
 
   /**
-   * This function deletes degrees, jobs and projects in sections
+   * Deletes degrees, jobs and projects in sections
    * "Education", "Experience" and "Projects".
    */
   function deleteItem(itemType: ItemType, index: number) {
@@ -122,6 +127,7 @@ export default function useResumeData() {
 
             break;
           }
+
           case 'job': {
             draft.experience.shownJobIndex = getNextShownIndex(
               draft.experience.shownJobIndex,
@@ -133,6 +139,7 @@ export default function useResumeData() {
 
             break;
           }
+
           case 'project': {
             draft.projects.shownProjectIndex = getNextShownIndex(
               draft.projects.shownProjectIndex,
@@ -144,11 +151,239 @@ export default function useResumeData() {
 
             break;
           }
+
           default: {
             neverReached(itemType);
           }
         }
       });
+    }
+  }
+
+  /**
+   * Adds degrees, jobs and projects in sections "Education",
+   * "Experience" and "Projects".
+   */
+  function addItem(itemType: ItemType) {
+    switch (itemType) {
+      case 'degree': {
+        const newDegree = getDefaultData('education').degrees[0];
+
+        setData((draft) => {
+          draft.education.degrees.push(newDegree);
+
+          // Show the degree that has just been added.
+          draft.education.shownDegreeIndex = draft.education.degrees.length - 1;
+        });
+
+        break;
+      }
+
+      case 'job': {
+        const newJob = getDefaultData('experience').jobs[0];
+
+        setData((draft) => {
+          draft.experience.jobs.push(newJob);
+
+          // Show the job that has just been added.
+          draft.experience.shownJobIndex = draft.experience.jobs.length - 1;
+        });
+
+        break;
+      }
+
+      case 'project': {
+        const newProject = getDefaultData('projects').projects[0];
+
+        setData((draft) => {
+          draft.projects.projects.push(newProject);
+
+          // Show the project that has just been added.
+          draft.projects.shownProjectIndex = draft.projects.projects.length - 1;
+        });
+
+        break;
+      }
+
+      default: {
+        neverReached(itemType);
+      }
+    }
+  }
+
+  /**
+   * Changes the ID of the shown degree, job or project of sections "Education",
+   * "Experience", "Projects".
+   */
+  function showItem(itemType: ItemType, newShownItemIndex: number) {
+    if (newShownItemIndex >= 0) {
+      switch (itemType) {
+        case 'degree': {
+          if (
+            newShownItemIndex < data.education.degrees.length &&
+            data.education.shownDegreeIndex !== newShownItemIndex
+          ) {
+            setData((draft) => {
+              draft.education.shownDegreeIndex = newShownItemIndex;
+            });
+          }
+
+          break;
+        }
+
+        case 'job': {
+          if (
+            newShownItemIndex < data.experience.jobs.length &&
+            data.experience.shownJobIndex !== newShownItemIndex
+          ) {
+            setData((draft) => {
+              draft.experience.shownJobIndex = newShownItemIndex;
+            });
+          }
+
+          break;
+        }
+
+        case 'project': {
+          if (
+            newShownItemIndex < data.projects.projects.length &&
+            data.projects.shownProjectIndex !== newShownItemIndex
+          ) {
+            setData((draft) => {
+              draft.projects.shownProjectIndex = newShownItemIndex;
+            });
+          }
+
+          break;
+        }
+
+        default: {
+          neverReached(itemType);
+        }
+      }
+    }
+  }
+
+  /**
+   * Deletes bullet points from degrees, jobs and projects in sections
+   * "Education", "Experience" and "Projects".
+   */
+  function deleteBulletPoint(
+    itemType: ItemType,
+    itemIndex: number,
+    bulletIndex: number,
+  ) {
+    if (itemIndex >= 0 && bulletIndex >= 0) {
+      switch (itemType) {
+        case 'degree': {
+          if (
+            itemIndex < data.education.degrees.length &&
+            bulletIndex < data.education.degrees[itemIndex].bulletPoints.length
+          ) {
+            setData((draft) => {
+              draft.education.degrees[itemIndex].bulletPoints.splice(
+                bulletIndex,
+                1,
+              );
+            });
+          }
+
+          break;
+        }
+
+        case 'job': {
+          if (
+            itemIndex < data.experience.jobs.length &&
+            bulletIndex < data.experience.jobs[itemIndex].bulletPoints.length
+          ) {
+            setData((draft) => {
+              draft.experience.jobs[itemIndex].bulletPoints.splice(
+                bulletIndex,
+                1,
+              );
+            });
+          }
+
+          break;
+        }
+
+        case 'project': {
+          if (
+            itemIndex < data.projects.projects.length &&
+            bulletIndex < data.projects.projects[itemIndex].bulletPoints.length
+          ) {
+            setData((draft) => {
+              draft.projects.projects[itemIndex].bulletPoints.splice(
+                bulletIndex,
+                1,
+              );
+            });
+          }
+
+          break;
+        }
+
+        default: {
+          neverReached(itemType);
+        }
+      }
+    }
+  }
+
+  function getCleanBullet(): ItemWithId {
+    return {
+      id: crypto.randomUUID(),
+      value: '',
+    };
+  }
+
+  /**
+   * Adds bullet points to degrees, jobs and projects in sections
+   * "Education", "Experience" and "Projects".
+   */
+  function addBulletPoint(itemType: ItemType, itemIndex: number) {
+    if (itemIndex > 0) {
+      switch (itemType) {
+        case 'degree': {
+          if (itemIndex < data.education.degrees.length) {
+            setData((draft) => {
+              draft.education.degrees[itemIndex].bulletPoints.push(
+                getCleanBullet(),
+              );
+            });
+          }
+
+          break;
+        }
+
+        case 'job': {
+          if (itemIndex < data.experience.jobs.length) {
+            setData((draft) => {
+              draft.experience.jobs[itemIndex].bulletPoints.push(
+                getCleanBullet(),
+              );
+            });
+          }
+
+          break;
+        }
+
+        case 'project': {
+          if (itemIndex < data.projects.projects.length) {
+            setData((draft) => {
+              draft.projects.projects[itemIndex].bulletPoints.push(
+                getCleanBullet(),
+              );
+            });
+          }
+
+          break;
+        }
+
+        default: {
+          neverReached(itemType);
+        }
+      }
     }
   }
 
@@ -172,6 +407,9 @@ export default function useResumeData() {
   };
 
   const educationFunctions = {
+    addDegree: () => addItem('degree'),
+    deleteDegree: (index: number) => deleteItem('degree', index),
+
     editDegree(
       index: number,
       field: 'address' | 'degree' | 'graduation' | 'uni',
@@ -182,28 +420,8 @@ export default function useResumeData() {
       });
     },
 
-    addDegree() {
-      const newDegree = getDefaultData('education').degrees[0];
-
-      setData((draft) => {
-        draft.education.degrees.push(newDegree);
-        draft.education.shownDegreeIndex = draft.education.degrees.length - 1;
-      });
-    },
-
-    deleteDegree: (index: number) => deleteItem('degree', index),
-
-    showDegree(index: number) {
-      if (
-        index >= 0 &&
-        index < data.education.degrees.length &&
-        data.education.shownDegreeIndex !== index
-      ) {
-        setData((draft) => {
-          draft.education.shownDegreeIndex = index;
-        });
-      }
-    },
+    showDegree: (newShownDegreeIndex: number) =>
+      showItem('degree', newShownDegreeIndex),
 
     // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(degreeIndex: number, value: ItemWithId[]) {
@@ -214,32 +432,11 @@ export default function useResumeData() {
       }
     },
 
-    addBulletPoint(degreeIndex: number) {
-      if (degreeIndex >= 0 && degreeIndex < data.education.degrees.length) {
-        setData((draft) => {
-          draft.education.degrees[degreeIndex].bulletPoints.push({
-            id: crypto.randomUUID(),
-            value: '',
-          });
-        });
-      }
-    },
+    addBulletPoint: (degreeIndex: number) =>
+      addBulletPoint('degree', degreeIndex),
 
-    deleteBulletPoint(degreeIndex: number, itemIndex: number) {
-      if (
-        degreeIndex >= 0 &&
-        degreeIndex < data.education.degrees.length &&
-        itemIndex >= 0 &&
-        itemIndex < data.education.degrees[degreeIndex].bulletPoints.length
-      ) {
-        setData((draft) => {
-          draft.education.degrees[degreeIndex].bulletPoints.splice(
-            itemIndex,
-            1,
-          );
-        });
-      }
-    },
+    deleteBulletPoint: (degreeIndex: number, bulletIndex: number) =>
+      deleteBulletPoint('degree', degreeIndex, bulletIndex),
 
     /**
      * To change it, you need to refactor `BulletPoints`, its `editItem`
@@ -265,6 +462,11 @@ export default function useResumeData() {
   };
 
   const experienceFunctions = {
+    deleteJob: (index: number) => deleteItem('job', index),
+    addJob: () => addItem('job'),
+    showJob: (newShownJobIndex: number) => showItem('job', newShownJobIndex),
+    addBulletPoint: (jobIndex: number) => addBulletPoint('job', jobIndex),
+
     editJob(
       index: number,
       field: 'address' | 'companyName' | 'jobTitle',
@@ -273,27 +475,6 @@ export default function useResumeData() {
       if (index >= 0 && index < data.experience.jobs.length) {
         setData((draft) => {
           draft.experience.jobs[index][field] = value;
-        });
-      }
-    },
-
-    addJob() {
-      const newJob = getDefaultData('experience').jobs[0];
-
-      setData((draft) => {
-        draft.experience.jobs.push(newJob);
-
-        // Show the job that has just been added.
-        draft.experience.shownJobIndex = draft.experience.jobs.length - 1;
-      });
-    },
-
-    deleteJob: (index: number) => deleteItem('job', index),
-
-    showJob(index: number) {
-      if (index >= 0 && index < data.experience.jobs.length) {
-        setData((draft) => {
-          draft.experience.shownJobIndex = index;
         });
       }
     },
@@ -307,30 +488,8 @@ export default function useResumeData() {
       }
     },
 
-    addBulletPoint(jobIndex: number) {
-      // TODO: make all these boilerplate validations a utility function to prettify the code.
-      if (jobIndex >= 0 && jobIndex < data.experience.jobs.length) {
-        setData((draft) => {
-          draft.experience.jobs[jobIndex].bulletPoints.push({
-            id: crypto.randomUUID(),
-            value: '',
-          });
-        });
-      }
-    },
-
-    deleteBulletPoint(jobIndex: number, itemIndex: number) {
-      if (
-        jobIndex >= 0 &&
-        jobIndex < data.experience.jobs.length &&
-        itemIndex >= 0 &&
-        itemIndex < data.experience.jobs[jobIndex].bulletPoints.length
-      ) {
-        setData((draft) => {
-          draft.experience.jobs[jobIndex].bulletPoints.splice(itemIndex, 1);
-        });
-      }
-    },
+    deleteBulletPoint: (jobIndex: number, bulletIndex: number) =>
+      deleteBulletPoint('job', jobIndex, bulletIndex),
 
     /**
      * To change it, you need to refactor `BulletPoints`, i.e. its `editItem`
@@ -393,6 +552,9 @@ export default function useResumeData() {
   };
 
   const projectFunctions = {
+    addProject: () => addItem('project'),
+    deleteProject: (index: number) => deleteItem('project', index),
+
     editProject<K extends Exclude<keyof Project, 'bulletPoints' | 'id'>>(
       index: number,
       field: K,
@@ -405,24 +567,8 @@ export default function useResumeData() {
       }
     },
 
-    addProject() {
-      const newProject = getDefaultData('projects').projects[0];
-
-      setData((draft) => {
-        draft.projects.projects.push(newProject);
-        draft.projects.shownProjectIndex = draft.projects.projects.length - 1;
-      });
-    },
-
-    deleteProject: (index: number) => deleteItem('project', index),
-
-    showProject(index: number) {
-      if (index >= 0 && index < data.projects.projects.length) {
-        setData((draft) => {
-          draft.projects.shownProjectIndex = index;
-        });
-      }
-    },
+    showProject: (newShownProjectIndex: number) =>
+      showItem('project', newShownProjectIndex),
 
     // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(projectIndex: number, value: ItemWithId[]) {
@@ -433,32 +579,11 @@ export default function useResumeData() {
       }
     },
 
-    addBulletPoint(projectIndex: number) {
-      if (projectIndex >= 0 && projectIndex < data.projects.projects.length) {
-        setData((draft) => {
-          draft.projects.projects[projectIndex].bulletPoints.push({
-            id: crypto.randomUUID(),
-            value: '',
-          });
-        });
-      }
-    },
+    addBulletPoint: (projectIndex: number) =>
+      addBulletPoint('project', projectIndex),
 
-    deleteBulletPoint(projectIndex: number, itemIndex: number) {
-      if (
-        projectIndex >= 0 &&
-        projectIndex < data.projects.projects.length &&
-        itemIndex >= 0 &&
-        itemIndex < data.projects.projects[projectIndex].bulletPoints.length
-      ) {
-        setData((draft) => {
-          draft.projects.projects[projectIndex].bulletPoints.splice(
-            itemIndex,
-            1,
-          );
-        });
-      }
-    },
+    deleteBulletPoint: (projectIndex: number, bulletIndex: number) =>
+      deleteBulletPoint('project', projectIndex, bulletIndex),
 
     /**
      * To change it, you need to refactor `BulletPoints`, its `editItem`
