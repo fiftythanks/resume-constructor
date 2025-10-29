@@ -14,11 +14,11 @@ const undeletableSectionIds = ['personal'];
 
 function getFirstInactiveSectionId(
   activeSectionIds: SectionId[],
-  possibleSectionIDs: SectionIds,
+  possibleSectionIds: SectionIds,
 ) {
   let firstInactiveSectionId: SectionId | undefined;
 
-  for (const sectionId of possibleSectionIDs) {
+  for (const sectionId of possibleSectionIds) {
     if (!activeSectionIds.includes(sectionId)) {
       firstInactiveSectionId = sectionId;
 
@@ -53,7 +53,7 @@ function init() {
   const getInactiveSectionId = () =>
     getFirstInactiveSectionId(
       result.current.activeSectionIds,
-      result.current.possibleSectionIDs,
+      result.current.possibleSectionIds,
     );
 
   return {
@@ -280,7 +280,7 @@ describe('useAppState', () => {
         if (!areAllSectionsActive) {
           const activeSectionIds = new Set(result.current.activeSectionIds);
 
-          const sectionIdsToAdd = result.current.possibleSectionIDs.filter(
+          const sectionIdsToAdd = result.current.possibleSectionIds.filter(
             (sectionId) => !activeSectionIds.has(sectionId),
           );
 
