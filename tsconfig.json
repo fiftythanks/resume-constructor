@@ -25,6 +25,7 @@
     "babel.config.cjs",
     "eslint.config.ts",
     "jest.config.ts",
+    "jest.setup.ts",
     "postcss.config.ts",
     "prettier.config.js",
     "stylelint.config.js",
