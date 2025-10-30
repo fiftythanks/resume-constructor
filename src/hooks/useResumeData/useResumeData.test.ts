@@ -69,28 +69,67 @@ describe('useResumeData', () => {
         getDefaultData('certifications'),
       );
     });
-    describe('clearAll', () => {
-      it('should clear all sections', async () => {
+  });
+
+  describe('clearAll', () => {
+    it('should clear all sections', async () => {
+      const { result } = renderHook(() => useResumeData());
+
+      await act(async () => {
+        // Fills a section with random data.
+        result.current.personalFunctions.updatePersonal(
+          'address',
+          'some string',
+        );
+
+        // Fills a section with random data.
+        result.current.certificationsFunctions.updateCertifications(
+          'skills',
+          'some string',
+        );
+
+        result.current.clearAll();
+      });
+
+      expect(stripOfIds(result.current.data)).toEqual(
+        stripOfIds(getDefaultData()),
+      );
+    });
+  });
+
+  describe('certificationsFunctions', () => {
+    describe('updateCertifications', () => {
+      it('should update Certifications data', async () => {
         const { result } = renderHook(() => useResumeData());
 
         await act(async () => {
-          // Fills a section with random data.
-          result.current.personalFunctions.updatePersonal(
-            'address',
-            'some string',
-          );
-
-          // Fills a section with random data.
           result.current.certificationsFunctions.updateCertifications(
-            'skills',
-            'some string',
+            'certificates',
+            'some value',
           );
-
-          result.current.clearAll();
         });
 
-        expect(stripOfIds(result.current.data)).toEqual(
-          stripOfIds(getDefaultData()),
+        expect(result.current.data.certifications.certificates).toBe(
+          'some value',
+        );
+      });
+    });
+
+    describe('clear', () => {
+      it('should clear Certifications data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.certificationsFunctions.updateCertifications(
+            'certificates',
+            'some value',
+          );
+
+          result.current.certificationsFunctions.clear();
+        });
+
+        expect(result.current.data.certifications).toEqual(
+          getDefaultData('certifications'),
         );
       });
     });
