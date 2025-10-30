@@ -452,8 +452,11 @@ export default function useResumeData() {
         itemIndex >= 0 &&
         itemIndex < data.education.degrees[degreeIndex].bulletPoints.length
       ) {
+        const newBulletPointObject = structuredClone(value);
+
         setData((draft) => {
-          draft.education.degrees[degreeIndex].bulletPoints[itemIndex] = value;
+          draft.education.degrees[degreeIndex].bulletPoints[itemIndex] =
+            newBulletPointObject;
         });
       }
     },
