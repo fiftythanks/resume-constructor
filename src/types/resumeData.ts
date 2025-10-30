@@ -68,10 +68,28 @@ export interface ItemWithId {
   value: string;
 }
 
+export interface ItemWithOptionalId extends Omit<ItemWithId, 'id'> {
+  id?: ReturnType<Crypto['randomUUID']>;
+}
+
+export type ItemWithoutId = Omit<ItemWithId, 'id'>;
+
 export interface Skills {
   frameworks: ItemWithId[];
   languages: ItemWithId[];
   tools: ItemWithId[];
+}
+
+export interface SkillsWithOptionalIds {
+  frameworks: ItemWithOptionalId[];
+  languages: ItemWithOptionalId[];
+  tools: ItemWithOptionalId[];
+}
+
+export interface SkillsWithoutIds {
+  frameworks: ItemWithoutId[];
+  languages: ItemWithoutId[];
+  tools: ItemWithoutId[];
 }
 
 export interface Job {
@@ -83,9 +101,26 @@ export interface Job {
   jobTitle: string;
 }
 
+export interface JobWithOptionalIds extends Omit<Job, 'bulletPoints' | 'id'> {
+  bulletPoints: ItemWithOptionalId[];
+  id?: ReturnType<Crypto['randomUUID']>;
+}
+
+export interface JobWithoutIds extends Omit<Job, 'bulletPoints' | 'id'> {
+  bulletPoints: ItemWithoutId[];
+}
+
 export interface Experience {
   jobs: Job[];
   shownJobIndex: number;
+}
+
+export interface ExperienceWithOptionalIds extends Omit<Experience, 'jobs'> {
+  jobs: JobWithOptionalIds[];
+}
+
+export interface ExperienceWithoutIds extends Omit<Experience, 'jobs'> {
+  jobs: JobWithoutIds[];
 }
 
 export interface Project {
@@ -97,9 +132,28 @@ export interface Project {
   stack: string;
 }
 
+export interface ProjectWithOptionalIds
+  extends Omit<Project, 'bulletPoints' | 'id'> {
+  bulletPoints: ItemWithOptionalId[];
+  id?: ReturnType<Crypto['randomUUID']>;
+}
+
+export interface ProjectWithoutIds
+  extends Omit<Project, 'bulletPoints' | 'id'> {
+  bulletPoints: ItemWithoutId[];
+}
+
 export interface Projects {
   projects: Project[];
   shownProjectIndex: number;
+}
+
+export interface ProjectsWithOptionalIds extends Omit<Projects, 'projects'> {
+  projects: ProjectWithOptionalIds[];
+}
+
+export interface ProjectsWithoutIds extends Omit<Projects, 'projects'> {
+  projects: ProjectWithoutIds[];
 }
 
 export interface Degree {
@@ -111,9 +165,27 @@ export interface Degree {
   uni: string;
 }
 
+export interface DegreeWithOptionalIds
+  extends Omit<Degree, 'bulletPoints' | 'id'> {
+  bulletPoints: ItemWithOptionalId[];
+  id?: ReturnType<Crypto['randomUUID']>;
+}
+
+export interface DegreeWithoutIds extends Omit<Degree, 'bulletPoints' | 'id'> {
+  bulletPoints: ItemWithoutId[];
+}
+
 export interface Education {
   degrees: Degree[];
   shownDegreeIndex: number;
+}
+
+export interface EducationWithOptionalIds extends Omit<Education, 'degrees'> {
+  degrees: DegreeWithOptionalIds[];
+}
+
+export interface EducationWithoutIds extends Omit<Education, 'degrees'> {
+  degrees: DegreeWithoutIds[];
 }
 
 export interface Certifications {
@@ -130,4 +202,20 @@ export interface ResumeData {
   personal: Personal;
   projects: Projects;
   skills: Skills;
+}
+
+export interface ResumeDataWithOptionalIds
+  extends Omit<ResumeData, 'education' | 'experience' | 'projects' | 'skills'> {
+  education: EducationWithOptionalIds;
+  experience: ExperienceWithOptionalIds;
+  projects: ProjectsWithOptionalIds;
+  skills: SkillsWithOptionalIds;
+}
+
+export interface ResumeDataWithoutIds
+  extends Omit<ResumeData, 'education' | 'experience' | 'projects' | 'skills'> {
+  education: EducationWithoutIds;
+  experience: ExperienceWithoutIds;
+  projects: ProjectsWithoutIds;
+  skills: SkillsWithoutIds;
 }
