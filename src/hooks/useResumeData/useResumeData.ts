@@ -113,7 +113,7 @@ export default function useResumeData() {
   function deleteItem(itemType: ItemType, index: number) {
     const numberOfItems = getNumberOfItems(itemType);
 
-    if (numberOfItems > 1 && index >= 0 && index < numberOfItems) {
+    if (numberOfItems >= 1 && index >= 0 && index < numberOfItems) {
       setData((draft) => {
         switch (itemType) {
           case 'degree': {
