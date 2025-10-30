@@ -342,7 +342,7 @@ export default function useResumeData() {
    * "Education", "Experience" and "Projects".
    */
   function addBulletPoint(itemType: ItemType, itemIndex: number) {
-    if (itemIndex > 0) {
+    if (itemIndex >= 0) {
       switch (itemType) {
         case 'degree': {
           if (itemIndex < data.education.degrees.length) {
