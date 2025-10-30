@@ -426,8 +426,10 @@ export default function useResumeData() {
     // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(degreeIndex: number, value: ItemWithId[]) {
       if (degreeIndex >= 0 && degreeIndex < data.education.degrees.length) {
+        const newBulletPoints = structuredClone(value);
+
         setData((draft) => {
-          draft.education.degrees[degreeIndex].bulletPoints = value;
+          draft.education.degrees[degreeIndex].bulletPoints = newBulletPoints;
         });
       }
     },
