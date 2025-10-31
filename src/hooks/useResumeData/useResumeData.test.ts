@@ -171,7 +171,8 @@ describe('useResumeData', () => {
           result.current.educationFunctions.addDegree();
         });
 
-        const lastDegreeId = result.current.data.education.degrees.at(-1)!.id;
+        const { id: lastDegreeId } =
+          result.current.data.education.degrees.at(-1)!;
 
         expect(degreeIds.has(lastDegreeId)).toBe(false);
       });
@@ -216,6 +217,57 @@ describe('useResumeData', () => {
           initialLength - result.current.data.education.degrees.length,
         ).toBe(1);
       });
+
+      it('should delete correct degrees', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.education.degrees.length <= 1) {
+          while (result.current.data.education.degrees.length <= 1) {
+            await act(async () => {
+              result.current.educationFunctions.addDegree();
+            });
+          }
+        }
+
+        const { id: deletedDegreeId } =
+          result.current.data.education.degrees[0];
+
+        await act(async () => {
+          result.current.educationFunctions.deleteDegree(0);
+        });
+
+        const currentDegreesIds = new Set();
+
+        result.current.data.education.degrees.forEach((degree) => {
+          currentDegreesIds.add(degree.id);
+        });
+
+        expect(currentDegreesIds.has(deletedDegreeId)).toBe(false);
+      });
+    });
+
+    describe('editDegree', () => {
+      it('should edit degree data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.education.degrees.length === 0) {
+          await act(async () => {
+            result.current.educationFunctions.addDegree();
+          });
+        }
+
+        await act(async () => {
+          result.current.educationFunctions.editDegree(
+            0,
+            'address',
+            'some value',
+          );
+        });
+
+        expect(result.current.data.education.degrees[0].address).toBe(
+          'some value',
+        );
+      });
     });
 
     describe('showDegree', () => {
@@ -230,15 +282,15 @@ describe('useResumeData', () => {
           }
         }
 
-        const initialShownDegreeIndex =
-          result.current.data.education.shownDegreeIndex;
+        const { shownDegreeIndex: initialShownDegreeIndex } =
+          result.current.data.education;
 
         if (initialShownDegreeIndex === 0) {
           await act(async () => {
             result.current.educationFunctions.showDegree(1);
           });
 
-          // It's too convenient harmless here to not use it like that.
+          // It's too convenient and harmless here to not use it like that.
           // eslint-disable-next-line jest/no-conditional-expect
           expect(result.current.data.education.shownDegreeIndex).toBe(1);
         } else {
@@ -335,8 +387,8 @@ describe('useResumeData', () => {
           result.current.educationFunctions.addBulletPoint(0);
         });
 
-        const lastBulletId =
-          result.current.data.education.degrees[0].bulletPoints.at(-1)!.id;
+        const { id: lastBulletId } =
+          result.current.data.education.degrees[0].bulletPoints.at(-1)!;
 
         expect(bulletIds.has(lastBulletId)).toBe(false);
       });
@@ -389,6 +441,43 @@ describe('useResumeData', () => {
           initialLength -
             result.current.data.education.degrees[0].bulletPoints.length,
         ).toBe(1);
+      });
+
+      it('should delete correct bullet points', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.education.degrees.length === 0) {
+          await act(async () => {
+            result.current.educationFunctions.addDegree();
+          });
+        }
+
+        if (result.current.data.education.degrees[0].bulletPoints.length <= 1) {
+          while (
+            result.current.data.education.degrees[0].bulletPoints.length <= 1
+          ) {
+            await act(async () => {
+              result.current.educationFunctions.addBulletPoint(0);
+            });
+          }
+        }
+
+        const { id: deletedBulletId } =
+          result.current.data.education.degrees[0].bulletPoints[0];
+
+        await act(async () => {
+          result.current.educationFunctions.deleteBulletPoint(0, 0);
+        });
+
+        const currentBulletsIds = new Set();
+
+        result.current.data.education.degrees[0].bulletPoints.forEach(
+          (bullet) => {
+            currentBulletsIds.add(bullet.id);
+          },
+        );
+
+        expect(currentBulletsIds.has(deletedBulletId)).toBe(false);
       });
     });
 
@@ -451,6 +540,414 @@ describe('useResumeData', () => {
 
         await act(async () => {
           result.current.educationFunctions.clear();
+        });
+
+        expect(stripOfIds(result.current.data)).toEqual(
+          stripOfIds(getDefaultData()),
+        );
+      });
+    });
+  });
+
+  describe('experienceFunctions', () => {
+    describe('addJob', () => {
+      it('should add jobs', async () => {
+        const { result } = renderHook(() => useResumeData());
+        const { length: initialLength } = result.current.data.experience.jobs;
+
+        await act(async () => {
+          result.current.experienceFunctions.addJob();
+        });
+
+        expect(result.current.data.experience.jobs.length - initialLength).toBe(
+          1,
+        );
+      });
+
+      it('should add a new job to the end of the list', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length <= 1) {
+          while (result.current.data.experience.jobs.length <= 1) {
+            await act(async () => {
+              result.current.experienceFunctions.addJob();
+            });
+          }
+        }
+
+        const jobIds = new Set();
+
+        result.current.data.experience.jobs.forEach((job) => {
+          jobIds.add(job.id);
+        });
+
+        await act(async () => {
+          result.current.experienceFunctions.addJob();
+        });
+
+        const lastJobId = result.current.data.experience.jobs.at(-1);
+
+        expect(jobIds.has(lastJobId)).toBe(false);
+      });
+
+      it('should add an empty job', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.experienceFunctions.addJob();
+        });
+
+        const job = result.current.data.experience.jobs.at(-1)!;
+
+        expect(job.address).toBe('');
+        expect(job.companyName).toBe('');
+        expect(job.duration).toBe('');
+        expect(job.jobTitle).toBe('');
+
+        job.bulletPoints.forEach((bullet) => {
+          expect(bullet.value).toBe('');
+        });
+      });
+    });
+
+    describe('deleteJob', () => {
+      it('should delete jobs', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        const { length: initialLength } = result.current.data.experience.jobs;
+
+        await act(async () => {
+          result.current.experienceFunctions.deleteJob(0);
+        });
+
+        expect(initialLength - result.current.data.experience.jobs.length).toBe(
+          1,
+        );
+      });
+
+      it('should delete correct jobs', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length <= 1) {
+          while (result.current.data.experience.jobs.length <= 1) {
+            await act(async () => {
+              result.current.experienceFunctions.addJob();
+            });
+          }
+        }
+
+        const { id: deletedJobId } = result.current.data.experience.jobs[0];
+
+        await act(async () => {
+          result.current.experienceFunctions.deleteJob(0);
+        });
+
+        const currentJobsIds = new Set();
+
+        result.current.data.experience.jobs.forEach((job) => {
+          currentJobsIds.add(job.id);
+        });
+
+        expect(currentJobsIds.has(deletedJobId)).toBe(false);
+      });
+    });
+
+    describe('showJob', () => {
+      it('should change shown job index', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length <= 1) {
+          while (result.current.data.experience.jobs.length <= 1) {
+            await act(async () => {
+              result.current.experienceFunctions.addJob();
+            });
+          }
+        }
+
+        const { shownJobIndex: initialShownJobIndex } =
+          result.current.data.experience;
+
+        if (initialShownJobIndex === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.showJob(1);
+          });
+
+          // It's too convenient and harmless here to not use it like that.
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(result.current.data.experience.shownJobIndex).toBe(1);
+        } else {
+          await act(async () => {
+            result.current.experienceFunctions.showJob(0);
+          });
+
+          // It's too convenient and harmless here to not use it like that.
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(result.current.data.experience.shownJobIndex).toBe(0);
+        }
+      });
+    });
+
+    describe('addBulletPoint', () => {
+      it('should add bullet points', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        const { length: initialLength } =
+          result.current.data.experience.jobs[0].bulletPoints;
+
+        await act(async () => {
+          result.current.experienceFunctions.addBulletPoint(0);
+        });
+
+        expect(
+          result.current.data.experience.jobs[0].bulletPoints.length -
+            initialLength,
+        ).toBe(1);
+      });
+
+      it('should add a new bullet point to the end of the list', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        if (result.current.data.experience.jobs[0].bulletPoints.length <= 1) {
+          while (
+            result.current.data.experience.jobs[0].bulletPoints.length <= 1
+          ) {
+            await act(async () => {
+              result.current.experienceFunctions.addBulletPoint(0);
+            });
+          }
+        }
+
+        const bulletIds = new Set();
+
+        result.current.data.experience.jobs[0].bulletPoints.forEach(
+          (bullet) => {
+            bulletIds.add(bullet.id);
+          },
+        );
+
+        await act(async () => {
+          result.current.experienceFunctions.addBulletPoint(0);
+        });
+
+        const { id: lastBulletId } =
+          result.current.data.experience.jobs[0].bulletPoints.at(-1)!;
+
+        expect(bulletIds.has(lastBulletId)).toBe(false);
+      });
+
+      it('should add a bullet point with an empty value', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        await act(async () => {
+          result.current.experienceFunctions.addBulletPoint(0);
+        });
+
+        expect(
+          result.current.data.experience.jobs[0].bulletPoints.at(-1)!.value,
+        ).toBe('');
+      });
+    });
+
+    describe('editJob', () => {
+      it('should edit job data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        await act(async () => {
+          result.current.experienceFunctions.editJob(
+            0,
+            'address',
+            'some value',
+          );
+        });
+
+        expect(result.current.data.experience.jobs[0].address).toBe(
+          'some value',
+        );
+      });
+    });
+
+    describe('updateBulletPoints', () => {
+      it('should create new bullet points from passed argument', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        const newBulletPoints: ItemWithId[] = [
+          {
+            id: '1-2-3-4-5',
+            value: 'random value',
+          },
+        ];
+
+        if (result.current.data.experience.jobs.length === 0) {
+          result.current.experienceFunctions.addJob();
+        }
+
+        await act(async () => {
+          result.current.experienceFunctions.updateBulletPoints(
+            0,
+            newBulletPoints,
+          );
+        });
+
+        expect(result.current.data.experience.jobs[0].bulletPoints).toEqual(
+          newBulletPoints,
+        );
+      });
+    });
+
+    describe('deleteBulletPoint', () => {
+      it('should delete bullet points', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        if (result.current.data.experience.jobs[0].bulletPoints.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addBulletPoint(0);
+          });
+        }
+
+        const { length: initialLength } =
+          result.current.data.experience.jobs[0].bulletPoints;
+
+        await act(async () => {
+          result.current.experienceFunctions.deleteBulletPoint(0, 0);
+        });
+
+        expect(
+          initialLength -
+            result.current.data.experience.jobs[0].bulletPoints.length,
+        ).toBe(1);
+      });
+
+      it('should delete correct bullet points', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        if (result.current.data.experience.jobs[0].bulletPoints.length <= 1) {
+          while (
+            result.current.data.experience.jobs[0].bulletPoints.length <= 1
+          ) {
+            await act(async () => {
+              result.current.experienceFunctions.addBulletPoint(0);
+            });
+          }
+        }
+
+        const { id: deletedBulletId } =
+          result.current.data.experience.jobs[0].bulletPoints[0];
+
+        await act(async () => {
+          result.current.experienceFunctions.deleteBulletPoint(0, 0);
+        });
+
+        const currentBulletsIds = new Set();
+
+        result.current.data.experience.jobs[0].bulletPoints.forEach(
+          (bullet) => {
+            currentBulletsIds.add(bullet.id);
+          },
+        );
+
+        expect(currentBulletsIds.has(deletedBulletId)).toBe(false);
+      });
+    });
+
+    describe('editBulletPoint', () => {
+      it('should edit bullet points, including their IDs', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.experience.jobs.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addJob();
+          });
+        }
+
+        if (result.current.data.experience.jobs[0].bulletPoints.length === 0) {
+          await act(async () => {
+            result.current.experienceFunctions.addBulletPoint(0);
+          });
+        }
+
+        const newBulletPointObject: ItemWithId = {
+          id: '1-2-3-4-5',
+          value: 'some value',
+        };
+
+        await act(async () => {
+          result.current.experienceFunctions.editBulletPoint(
+            0,
+            0,
+            newBulletPointObject,
+          );
+        });
+
+        expect(result.current.data.experience.jobs[0].bulletPoints[0]).toEqual(
+          newBulletPointObject,
+        );
+      });
+    });
+
+    describe('clear', () => {
+      it('should clear Experience data, resetting it to defaults', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.experienceFunctions.addJob();
+          result.current.experienceFunctions.addJob();
+          result.current.experienceFunctions.addJob();
+          result.current.experienceFunctions.addJob();
+          result.current.experienceFunctions.addJob();
+        });
+
+        await act(async () => {
+          result.current.experienceFunctions.addBulletPoint(4);
+          result.current.experienceFunctions.addBulletPoint(4);
+          result.current.experienceFunctions.addBulletPoint(4);
+          result.current.experienceFunctions.addBulletPoint(1);
+          result.current.experienceFunctions.addBulletPoint(2);
+        });
+
+        await act(async () => {
+          result.current.experienceFunctions.clear();
         });
 
         expect(stripOfIds(result.current.data)).toEqual(
