@@ -649,10 +649,10 @@ export default function useResumeData() {
       });
     },
 
-    deleteLanguage(langIndex: number) {
-      if (langIndex >= 0 && langIndex < data.skills.languages.length) {
+    deleteLanguage(languageIndex: number) {
+      if (languageIndex >= 0 && languageIndex < data.skills.languages.length) {
         setData((draft) => {
-          draft.skills.languages.splice(langIndex, 1);
+          draft.skills.languages.splice(languageIndex, 1);
         });
       }
     },
@@ -662,12 +662,12 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update the value directly instead of updating the object that has both the value and the ID.
-    editLanguage(langIndex: number, value: ItemWithId) {
-      if (langIndex >= 0 && langIndex < data.skills.languages.length) {
+    editLanguage(languageIndex: number, value: ItemWithId) {
+      if (languageIndex >= 0 && languageIndex < data.skills.languages.length) {
         const newLanguageObject = structuredClone(value);
 
         setData((draft) => {
-          draft.skills.languages[langIndex] = newLanguageObject;
+          draft.skills.languages[languageIndex] = newLanguageObject;
         });
       }
     },
@@ -681,10 +681,13 @@ export default function useResumeData() {
       });
     },
 
-    deleteFramework(fmwkIndex: number) {
-      if (fmwkIndex >= 0 && fmwkIndex < data.skills.frameworks.length) {
+    deleteFramework(frameworkIndex: number) {
+      if (
+        frameworkIndex >= 0 &&
+        frameworkIndex < data.skills.frameworks.length
+      ) {
         setData((draft) => {
-          draft.skills.frameworks.splice(fmwkIndex, 1);
+          draft.skills.frameworks.splice(frameworkIndex, 1);
         });
       }
     },
@@ -694,12 +697,15 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editFramework(fmwkIndex: number, value: ItemWithId) {
-      if (fmwkIndex >= 0 && fmwkIndex < data.skills.frameworks.length) {
+    editFramework(frameworkIndex: number, value: ItemWithId) {
+      if (
+        frameworkIndex >= 0 &&
+        frameworkIndex < data.skills.frameworks.length
+      ) {
         const newFrameworkObject = structuredClone(value);
 
         setData((draft) => {
-          draft.skills.frameworks[fmwkIndex] = newFrameworkObject;
+          draft.skills.frameworks[frameworkIndex] = newFrameworkObject;
         });
       }
     },
