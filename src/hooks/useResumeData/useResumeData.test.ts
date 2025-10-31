@@ -1000,4 +1000,47 @@ describe('useResumeData', () => {
       });
     });
   });
+
+  describe('personalFunctions', () => {
+    describe('updatePersonal', () => {
+      it('should change Personal data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.personalFunctions.updatePersonal(
+            'address',
+            'some value',
+          );
+        });
+
+        expect(result.current.data.personal.address).toBe('some value');
+      });
+    });
+
+    describe('clear', () => {
+      it('should clear Personal data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.personalFunctions.updatePersonal(
+            'address',
+            'some value',
+          );
+
+          result.current.personalFunctions.updatePersonal(
+            'fullName',
+            'some name',
+          );
+        });
+
+        await act(async () => {
+          result.current.personalFunctions.clear();
+        });
+
+        expect(result.current.data.personal).toEqual(
+          getDefaultData('personal'),
+        );
+      });
+    });
+  });
 });
