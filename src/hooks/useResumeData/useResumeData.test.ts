@@ -5,6 +5,7 @@ import useResumeData from './useResumeData';
 
 import {
   ItemWithId,
+  Project,
   ResumeData,
   ResumeDataWithOptionalIds,
   ResumeDataWithoutIds,
@@ -1039,6 +1040,426 @@ describe('useResumeData', () => {
 
         expect(result.current.data.personal).toEqual(
           getDefaultData('personal'),
+        );
+      });
+    });
+  });
+
+  describe('projectsFunctions', () => {
+    describe('addProject', () => {
+      it('should add projects', async () => {
+        const { result } = renderHook(() => useResumeData());
+        const { length: initialLength } = result.current.data.projects.projects;
+
+        await act(async () => {
+          result.current.projectsFunctions.addProject();
+        });
+
+        expect(
+          result.current.data.projects.projects.length - initialLength,
+        ).toBe(1);
+      });
+
+      it('should add a new project to the end of the list', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length <= 1) {
+          while (result.current.data.projects.projects.length <= 1) {
+            await act(async () => {
+              result.current.projectsFunctions.addProject();
+            });
+          }
+        }
+
+        const projectIds = new Set();
+
+        result.current.data.projects.projects.forEach((project) => {
+          projectIds.add(project.id);
+        });
+
+        await act(async () => {
+          result.current.projectsFunctions.addProject();
+        });
+
+        const lastProjectId = result.current.data.projects.projects.at(-1);
+
+        expect(projectIds.has(lastProjectId)).toBe(false);
+      });
+
+      it('should add an empty project', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.projectsFunctions.addProject();
+        });
+
+        const project = result.current.data.projects.projects.at(-1)!;
+
+        expect(project.code.link).toBe('');
+        expect(project.code.text).toBe('');
+        expect(project.demo.link).toBe('');
+        expect(project.demo.text).toBe('');
+        expect(project.projectName).toBe('');
+        expect(project.stack).toBe('');
+
+        project.bulletPoints.forEach((bullet) => {
+          expect(bullet.value).toBe('');
+        });
+      });
+    });
+
+    describe('deleteProject', () => {
+      it('should delete projects', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        const { length: initialLength } = result.current.data.projects.projects;
+
+        await act(async () => {
+          result.current.projectsFunctions.deleteProject(0);
+        });
+
+        expect(
+          initialLength - result.current.data.projects.projects.length,
+        ).toBe(1);
+      });
+
+      it('should delete correct projects', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length <= 1) {
+          while (result.current.data.projects.projects.length <= 1) {
+            await act(async () => {
+              result.current.projectsFunctions.addProject();
+            });
+          }
+        }
+
+        const { id: deletedProjectId } =
+          result.current.data.projects.projects[0];
+
+        await act(async () => {
+          result.current.projectsFunctions.deleteProject(0);
+        });
+
+        const currentProjectsIds = new Set();
+
+        result.current.data.projects.projects.forEach((project) => {
+          currentProjectsIds.add(project.id);
+        });
+
+        expect(currentProjectsIds.has(deletedProjectId)).toBe(false);
+      });
+    });
+
+    describe('showProject', () => {
+      it('should change shown project index', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length <= 1) {
+          while (result.current.data.projects.projects.length <= 1) {
+            await act(async () => {
+              result.current.projectsFunctions.addProject();
+            });
+          }
+        }
+
+        const { shownProjectIndex: initialShownProjectIndex } =
+          result.current.data.projects;
+
+        if (initialShownProjectIndex === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.showProject(1);
+          });
+
+          // It's too convenient and harmless here to not use it like that.
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(result.current.data.projects.shownProjectIndex).toBe(1);
+        } else {
+          await act(async () => {
+            result.current.projectsFunctions.showProject(0);
+          });
+
+          // It's too convenient and harmless here to not use it like that.
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(result.current.data.projects.shownProjectIndex).toBe(0);
+        }
+      });
+    });
+
+    describe('addBulletPoint', () => {
+      it('should add bullet points', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        const { length: initialLength } =
+          result.current.data.projects.projects[0].bulletPoints;
+
+        await act(async () => {
+          result.current.projectsFunctions.addBulletPoint(0);
+        });
+
+        expect(
+          result.current.data.projects.projects[0].bulletPoints.length -
+            initialLength,
+        ).toBe(1);
+      });
+
+      it('should add a new bullet point to the end of the list', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        if (result.current.data.projects.projects[0].bulletPoints.length <= 1) {
+          while (
+            result.current.data.projects.projects[0].bulletPoints.length <= 1
+          ) {
+            await act(async () => {
+              result.current.projectsFunctions.addBulletPoint(0);
+            });
+          }
+        }
+
+        const bulletIds = new Set();
+
+        result.current.data.projects.projects[0].bulletPoints.forEach(
+          (bullet) => {
+            bulletIds.add(bullet.id);
+          },
+        );
+
+        await act(async () => {
+          result.current.projectsFunctions.addBulletPoint(0);
+        });
+
+        const { id: lastBulletId } =
+          result.current.data.projects.projects[0].bulletPoints.at(-1)!;
+
+        expect(bulletIds.has(lastBulletId)).toBe(false);
+      });
+
+      it('should add a bullet point with an empty value', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        await act(async () => {
+          result.current.projectsFunctions.addBulletPoint(0);
+        });
+
+        expect(
+          result.current.data.projects.projects[0].bulletPoints.at(-1)!.value,
+        ).toBe('');
+      });
+    });
+
+    describe('editProject', () => {
+      it('should edit project data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        const newCodeObject: Project['code'] = {
+          link: 'some link',
+          text: 'some text',
+        };
+
+        await act(async () => {
+          result.current.projectsFunctions.editProject(
+            0,
+            'code',
+            newCodeObject,
+          );
+        });
+
+        expect(result.current.data.projects.projects[0].code).toEqual(
+          newCodeObject,
+        );
+      });
+    });
+
+    describe('updateBulletPoints', () => {
+      it('should create new bullet points from passed argument', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        const newBulletPoints: ItemWithId[] = [
+          {
+            id: '1-2-3-4-5',
+            value: 'random value',
+          },
+        ];
+
+        if (result.current.data.projects.projects.length === 0) {
+          result.current.projectsFunctions.addProject();
+        }
+
+        await act(async () => {
+          result.current.projectsFunctions.updateBulletPoints(
+            0,
+            newBulletPoints,
+          );
+        });
+
+        expect(result.current.data.projects.projects[0].bulletPoints).toEqual(
+          newBulletPoints,
+        );
+      });
+    });
+
+    describe('deleteBulletPoint', () => {
+      it('should delete bullet points', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        if (
+          result.current.data.projects.projects[0].bulletPoints.length === 0
+        ) {
+          await act(async () => {
+            result.current.projectsFunctions.addBulletPoint(0);
+          });
+        }
+
+        const { length: initialLength } =
+          result.current.data.projects.projects[0].bulletPoints;
+
+        await act(async () => {
+          result.current.projectsFunctions.deleteBulletPoint(0, 0);
+        });
+
+        expect(
+          initialLength -
+            result.current.data.projects.projects[0].bulletPoints.length,
+        ).toBe(1);
+      });
+
+      it('should delete correct bullet points', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        if (result.current.data.projects.projects[0].bulletPoints.length <= 1) {
+          while (
+            result.current.data.projects.projects[0].bulletPoints.length <= 1
+          ) {
+            await act(async () => {
+              result.current.projectsFunctions.addBulletPoint(0);
+            });
+          }
+        }
+
+        const { id: deletedBulletId } =
+          result.current.data.projects.projects[0].bulletPoints[0];
+
+        await act(async () => {
+          result.current.projectsFunctions.deleteBulletPoint(0, 0);
+        });
+
+        const currentBulletsIds = new Set();
+
+        result.current.data.projects.projects[0].bulletPoints.forEach(
+          (bullet) => {
+            currentBulletsIds.add(bullet.id);
+          },
+        );
+
+        expect(currentBulletsIds.has(deletedBulletId)).toBe(false);
+      });
+    });
+
+    describe('editBulletPoint', () => {
+      it('should edit bullet points, including their IDs', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        if (
+          result.current.data.projects.projects[0].bulletPoints.length === 0
+        ) {
+          await act(async () => {
+            result.current.projectsFunctions.addBulletPoint(0);
+          });
+        }
+
+        const newBulletPointObject: ItemWithId = {
+          id: '1-2-3-4-5',
+          value: 'some value',
+        };
+
+        await act(async () => {
+          result.current.projectsFunctions.editBulletPoint(
+            0,
+            0,
+            newBulletPointObject,
+          );
+        });
+
+        expect(
+          result.current.data.projects.projects[0].bulletPoints[0],
+        ).toEqual(newBulletPointObject);
+      });
+    });
+
+    describe('clear', () => {
+      it('should clear Projects data, resetting it to defaults', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.projectsFunctions.addProject();
+          result.current.projectsFunctions.addProject();
+          result.current.projectsFunctions.addProject();
+          result.current.projectsFunctions.addProject();
+          result.current.projectsFunctions.addProject();
+        });
+
+        await act(async () => {
+          result.current.projectsFunctions.addBulletPoint(4);
+          result.current.projectsFunctions.addBulletPoint(4);
+          result.current.projectsFunctions.addBulletPoint(4);
+          result.current.projectsFunctions.addBulletPoint(1);
+          result.current.projectsFunctions.addBulletPoint(2);
+        });
+
+        await act(async () => {
+          result.current.projectsFunctions.clear();
+        });
+
+        expect(stripOfIds(result.current.data)).toEqual(
+          stripOfIds(getDefaultData()),
         );
       });
     });
