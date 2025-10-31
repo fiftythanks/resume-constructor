@@ -558,7 +558,7 @@ export default function useResumeData() {
     },
   };
 
-  const projectFunctions = {
+  const projectsFunctions = {
     addProject: () => addItem('project'),
     deleteProject: (index: number) => deleteItem('project', index),
 
@@ -735,7 +735,7 @@ export default function useResumeData() {
     experienceFunctions,
     linksFunctions,
     personalFunctions,
-    projectFunctions,
+    projectsFunctions,
     skillsFunctions,
   };
 }
