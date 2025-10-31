@@ -467,8 +467,8 @@ export default function useResumeData() {
   };
 
   const experienceFunctions = {
-    deleteJob: (index: number) => deleteItem('job', index),
     addJob: () => addItem('job'),
+    deleteJob: (index: number) => deleteItem('job', index),
     showJob: (newShownJobIndex: number) => showItem('job', newShownJobIndex),
     addBulletPoint: (jobIndex: number) => addBulletPoint('job', jobIndex),
 
@@ -487,8 +487,10 @@ export default function useResumeData() {
     // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(jobIndex: number, value: ItemWithId[]) {
       if (jobIndex >= 0 && jobIndex < data.experience.jobs.length) {
+        const newBulletPoints = structuredClone(value);
+
         setData((draft) => {
-          draft.experience.jobs[jobIndex].bulletPoints = value;
+          draft.experience.jobs[jobIndex].bulletPoints = newBulletPoints;
         });
       }
     },
@@ -579,7 +581,9 @@ export default function useResumeData() {
     updateBulletPoints(projectIndex: number, value: ItemWithId[]) {
       if (projectIndex >= 0 && projectIndex < data.projects.projects.length) {
         setData((draft) => {
-          draft.projects.projects[projectIndex].bulletPoints = value;
+          const newBulletPoints = structuredClone(value);
+
+          draft.projects.projects[projectIndex].bulletPoints = newBulletPoints;
         });
       }
     },
