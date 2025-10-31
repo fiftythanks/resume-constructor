@@ -664,8 +664,10 @@ export default function useResumeData() {
     // TODO: refactor to update the value directly instead of updating the object that has both the value and the ID.
     editLanguage(langIndex: number, value: ItemWithId) {
       if (langIndex >= 0 && langIndex < data.skills.languages.length) {
+        const newLanguageObject = structuredClone(value);
+
         setData((draft) => {
-          draft.skills.languages[langIndex] = value;
+          draft.skills.languages[langIndex] = newLanguageObject;
         });
       }
     },
@@ -694,8 +696,10 @@ export default function useResumeData() {
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
     editFramework(fmwkIndex: number, value: ItemWithId) {
       if (fmwkIndex >= 0 && fmwkIndex < data.skills.frameworks.length) {
+        const newFrameworkObject = structuredClone(value);
+
         setData((draft) => {
-          draft.skills.frameworks[fmwkIndex] = value;
+          draft.skills.frameworks[fmwkIndex] = newFrameworkObject;
         });
       }
     },
@@ -724,8 +728,10 @@ export default function useResumeData() {
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
     editTool(toolIndex: number, value: ItemWithId) {
       if (toolIndex >= 0 && toolIndex < data.skills.tools.length) {
+        const newToolObject = structuredClone(value);
+
         setData((draft) => {
-          draft.skills.tools[toolIndex] = value;
+          draft.skills.tools[toolIndex] = newToolObject;
         });
       }
     },
