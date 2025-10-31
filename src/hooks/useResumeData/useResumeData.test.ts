@@ -1464,4 +1464,416 @@ describe('useResumeData', () => {
       });
     });
   });
+
+  describe('skillsFunctions', () => {
+    describe('updateSkills', () => {
+      it('should replace Skills fields with passed objects', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        const newFrameworksObject: ItemWithId[] = [
+          {
+            id: '5-5-5-5-5',
+            value: 'some framework',
+          },
+        ];
+
+        await act(async () => {
+          result.current.skillsFunctions.updateSkills(
+            'frameworks',
+            newFrameworksObject,
+          );
+        });
+
+        expect(result.current.data.skills.frameworks).toEqual(
+          newFrameworksObject,
+        );
+      });
+    });
+
+    describe('clear', () => {
+      it('should clear Skills data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        const newFrameworksObject: ItemWithId[] = [
+          {
+            id: '5-5-5-5-5',
+            value: 'some framework',
+          },
+        ];
+
+        await act(async () => {
+          result.current.skillsFunctions.updateSkills(
+            'frameworks',
+            newFrameworksObject,
+          );
+        });
+
+        await act(async () => {
+          result.current.skillsFunctions.clear();
+        });
+
+        expect(stripOfIds(result.current.data)).toEqual(
+          stripOfIds(getDefaultData()),
+        );
+      });
+    });
+
+    describe('addLanguage', () => {
+      it('should add languages', async () => {
+        const { result } = renderHook(() => useResumeData());
+        const { length: initialLength } = result.current.data.skills.languages;
+
+        await act(async () => {
+          result.current.skillsFunctions.addLanguage();
+        });
+
+        expect(
+          result.current.data.skills.languages.length - initialLength,
+        ).toBe(1);
+      });
+
+      it('should add new languages to the end of the list', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.languages.length <= 1) {
+          while (result.current.data.skills.languages.length <= 1) {
+            await act(async () => {
+              result.current.skillsFunctions.addLanguage();
+            });
+          }
+        }
+
+        const initialLanguagesIds = new Set();
+
+        result.current.data.skills.languages.forEach((language) => {
+          initialLanguagesIds.add(language.id);
+        });
+
+        await act(async () => {
+          result.current.skillsFunctions.addLanguage();
+        });
+
+        const { id: lastLanguageId } =
+          result.current.data.skills.languages.at(-1)!;
+
+        expect(initialLanguagesIds.has(lastLanguageId)).toBe(false);
+      });
+
+      it('should add empty languages', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.skillsFunctions.addLanguage();
+        });
+
+        expect(result.current.data.skills.languages.at(-1)!.value).toBe('');
+      });
+    });
+
+    describe('deleteLanguage', () => {
+      it('should delete languages', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.languages.length === 0) {
+          await act(async () => {
+            result.current.skillsFunctions.addLanguage();
+          });
+        }
+
+        const { length: initialLength } = result.current.data.skills.languages;
+
+        await act(async () => {
+          result.current.skillsFunctions.deleteLanguage(0);
+        });
+
+        expect(
+          initialLength - result.current.data.skills.languages.length,
+        ).toBe(1);
+      });
+
+      it('should delete correct languages', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.languages.length <= 1) {
+          while (result.current.data.skills.languages.length <= 1) {
+            await act(async () => {
+              result.current.skillsFunctions.addLanguage();
+            });
+          }
+        }
+
+        const initialLanguagesIds = new Set();
+
+        const { id: deletedLanguageId } =
+          result.current.data.skills.languages[0];
+
+        await act(async () => {
+          result.current.skillsFunctions.deleteLanguage(0);
+        });
+
+        expect(initialLanguagesIds.has(deletedLanguageId)).toBe(false);
+      });
+    });
+
+    describe('editLanguage', () => {
+      it('should replace language object with passed object', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.languages.length === 0) {
+          await act(async () => {
+            result.current.skillsFunctions.addLanguage();
+          });
+        }
+
+        const newLanguageObject: ItemWithId = {
+          id: '5-5-5-5-5',
+          value: 'some language',
+        };
+
+        await act(async () => {
+          result.current.skillsFunctions.editLanguage(0, newLanguageObject);
+        });
+
+        expect(result.current.data.skills.languages[0]).toEqual(
+          newLanguageObject,
+        );
+      });
+    });
+
+    describe('addFramework', () => {
+      it('should add frameworks', async () => {
+        const { result } = renderHook(() => useResumeData());
+        const { length: initialLength } = result.current.data.skills.frameworks;
+
+        await act(async () => {
+          result.current.skillsFunctions.addFramework();
+        });
+
+        expect(
+          result.current.data.skills.frameworks.length - initialLength,
+        ).toBe(1);
+      });
+
+      it('should add new frameworks to the end of the list', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.frameworks.length <= 1) {
+          while (result.current.data.skills.frameworks.length <= 1) {
+            await act(async () => {
+              result.current.skillsFunctions.addFramework();
+            });
+          }
+        }
+
+        const initialFrameworksIds = new Set();
+
+        result.current.data.skills.frameworks.forEach((framework) => {
+          initialFrameworksIds.add(framework.id);
+        });
+
+        await act(async () => {
+          result.current.skillsFunctions.addFramework();
+        });
+
+        const { id: lastFrameworkId } =
+          result.current.data.skills.frameworks.at(-1)!;
+
+        expect(initialFrameworksIds.has(lastFrameworkId)).toBe(false);
+      });
+
+      it('should add empty frameworks', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.skillsFunctions.addFramework();
+        });
+
+        expect(result.current.data.skills.frameworks.at(-1)!.value).toBe('');
+      });
+    });
+
+    describe('deleteFramework', () => {
+      it('should delete frameworks', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.frameworks.length === 0) {
+          await act(async () => {
+            result.current.skillsFunctions.addFramework();
+          });
+        }
+
+        const { length: initialLength } = result.current.data.skills.frameworks;
+
+        await act(async () => {
+          result.current.skillsFunctions.deleteFramework(0);
+        });
+
+        expect(
+          initialLength - result.current.data.skills.frameworks.length,
+        ).toBe(1);
+      });
+
+      it('should delete correct frameworks', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.frameworks.length <= 1) {
+          while (result.current.data.skills.frameworks.length <= 1) {
+            await act(async () => {
+              result.current.skillsFunctions.addFramework();
+            });
+          }
+        }
+
+        const initialFrameworksIds = new Set();
+
+        const { id: deletedFrameworkId } =
+          result.current.data.skills.frameworks[0];
+
+        await act(async () => {
+          result.current.skillsFunctions.deleteFramework(0);
+        });
+
+        expect(initialFrameworksIds.has(deletedFrameworkId)).toBe(false);
+      });
+    });
+
+    describe('editFramework', () => {
+      it('should replace framework object with passed object', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.frameworks.length === 0) {
+          await act(async () => {
+            result.current.skillsFunctions.addFramework();
+          });
+        }
+
+        const newFrameworkObject: ItemWithId = {
+          id: '5-5-5-5-5',
+          value: 'some framework',
+        };
+
+        await act(async () => {
+          result.current.skillsFunctions.editFramework(0, newFrameworkObject);
+        });
+
+        expect(result.current.data.skills.frameworks[0]).toEqual(
+          newFrameworkObject,
+        );
+      });
+    });
+
+    describe('addTool', () => {
+      it('should add tools', async () => {
+        const { result } = renderHook(() => useResumeData());
+        const { length: initialLength } = result.current.data.skills.tools;
+
+        await act(async () => {
+          result.current.skillsFunctions.addTool();
+        });
+
+        expect(result.current.data.skills.tools.length - initialLength).toBe(1);
+      });
+
+      it('should add new tools to the end of the list', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.tools.length <= 1) {
+          while (result.current.data.skills.tools.length <= 1) {
+            await act(async () => {
+              result.current.skillsFunctions.addTool();
+            });
+          }
+        }
+
+        const initialToolsIds = new Set();
+
+        result.current.data.skills.tools.forEach((tool) => {
+          initialToolsIds.add(tool.id);
+        });
+
+        await act(async () => {
+          result.current.skillsFunctions.addTool();
+        });
+
+        const { id: lastToolId } = result.current.data.skills.tools.at(-1)!;
+
+        expect(initialToolsIds.has(lastToolId)).toBe(false);
+      });
+
+      it('should add empty tools', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.skillsFunctions.addTool();
+        });
+
+        expect(result.current.data.skills.tools.at(-1)!.value).toBe('');
+      });
+    });
+
+    describe('deleteTool', () => {
+      it('should delete tools', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.tools.length === 0) {
+          await act(async () => {
+            result.current.skillsFunctions.addTool();
+          });
+        }
+
+        const { length: initialLength } = result.current.data.skills.tools;
+
+        await act(async () => {
+          result.current.skillsFunctions.deleteTool(0);
+        });
+
+        expect(initialLength - result.current.data.skills.tools.length).toBe(1);
+      });
+
+      it('should delete correct tools', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.tools.length <= 1) {
+          while (result.current.data.skills.tools.length <= 1) {
+            await act(async () => {
+              result.current.skillsFunctions.addTool();
+            });
+          }
+        }
+
+        const initialToolsIds = new Set();
+
+        const { id: deletedToolId } = result.current.data.skills.tools[0];
+
+        await act(async () => {
+          result.current.skillsFunctions.deleteTool(0);
+        });
+
+        expect(initialToolsIds.has(deletedToolId)).toBe(false);
+      });
+    });
+
+    describe('editTool', () => {
+      it('should replace tool object with passed object', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.skills.tools.length === 0) {
+          await act(async () => {
+            result.current.skillsFunctions.addTool();
+          });
+        }
+
+        const newToolObject: ItemWithId = {
+          id: '5-5-5-5-5',
+          value: 'some tool',
+        };
+
+        await act(async () => {
+          result.current.skillsFunctions.editTool(0, newToolObject);
+        });
+
+        expect(result.current.data.skills.tools[0]).toEqual(newToolObject);
+      });
+    });
+  });
 });
