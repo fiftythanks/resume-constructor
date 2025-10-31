@@ -568,8 +568,10 @@ export default function useResumeData() {
       value: Project[K],
     ) {
       if (index >= 0 && index < data.projects.projects.length) {
+        const newFieldObject = structuredClone(value);
+
         setData((draft) => {
-          draft.projects.projects[index][field] = value;
+          draft.projects.projects[index][field] = newFieldObject;
         });
       }
     },
