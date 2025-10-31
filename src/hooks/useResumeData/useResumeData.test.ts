@@ -956,4 +956,48 @@ describe('useResumeData', () => {
       });
     });
   });
+
+  describe('linksFunctions', () => {
+    describe('updateLinks', () => {
+      it('should change Links data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.linksFunctions.updateLinks(
+            'github',
+            'text',
+            'some value',
+          );
+        });
+
+        expect(result.current.data.links.github.text).toBe('some value');
+      });
+    });
+
+    describe('clear', () => {
+      it('should clear Links data', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        await act(async () => {
+          result.current.linksFunctions.updateLinks(
+            'github',
+            'text',
+            'some value',
+          );
+
+          result.current.linksFunctions.updateLinks(
+            'linkedin',
+            'link',
+            'some link value',
+          );
+        });
+
+        await act(async () => {
+          result.current.linksFunctions.clear();
+        });
+
+        expect(result.current.data.links).toEqual(getDefaultData('links'));
+      });
+    });
+  });
 });
