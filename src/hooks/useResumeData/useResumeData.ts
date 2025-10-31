@@ -624,12 +624,15 @@ export default function useResumeData() {
   };
 
   const skillsFunctions = {
+    // TODO: The user shouldn't be concerned with adding IDs. They must be added automatically.
     updateSkills(
       field: 'frameworks' | 'languages' | 'tools',
       value: ItemWithId[],
     ) {
+      const newFieldObject = structuredClone(value);
+
       setData((draft) => {
-        draft.skills[field] = value;
+        draft.skills[field] = newFieldObject;
       });
     },
 
