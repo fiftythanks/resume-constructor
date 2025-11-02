@@ -10,6 +10,7 @@ import nodePlugin from 'eslint-plugin-n';
 import perfectionist from 'eslint-plugin-perfectionist';
 import react from 'eslint-plugin-react';
 import * as reactHooks from 'eslint-plugin-react-hooks';
+import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need-an-effect';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -37,6 +38,7 @@ export default tseslint.config([
       nodePlugin.configs['flat/recommended'],
       perfectionist.configs['recommended-natural'],
       reactHooks.configs['recommended-latest'],
+      reactYouMightNotNeedAnEffect.configs.recommended,
     ],
     languageOptions: {
       globals: {
