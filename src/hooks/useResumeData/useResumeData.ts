@@ -13,6 +13,10 @@ import getDefaultData from './getDefaultData';
 
 import { ItemWithId, Project, ResumeData, SectionId } from '@/types/resumeData';
 
+/**
+ * Initialises and keeps all resume data in the form of a huge state object
+ * `data`.
+ */
 export default function useResumeData() {
   const [data, setData] = useImmer(getDefaultData());
 
