@@ -6,8 +6,6 @@ import '@testing-library/jest-dom';
 
 import NavbarItem, { NavbarItemProps } from './NavbarItem';
 
-// TODO: now, ask AI if the test is good.
-
 describe('NavbarItem', () => {
   function getProps(overrides: Partial<NavbarItemProps> = {}): NavbarItemProps {
     return {
