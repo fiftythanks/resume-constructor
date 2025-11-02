@@ -1,6 +1,6 @@
 import React, { LiHTMLAttributes, MouseEventHandler } from 'react';
 
-import { clsx } from 'clsx/lite';
+import { clsx } from 'clsx';
 
 import AppbarIconButton from '@/components/AppbarIconButton';
 

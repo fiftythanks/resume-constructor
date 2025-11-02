@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
-import { clsx } from 'clsx/lite';
+import { clsx } from 'clsx';
 
 import './AppbarIconButton.scss';
 
