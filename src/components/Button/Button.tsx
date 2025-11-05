@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 
 import { clsx } from 'clsx';
+import { ReadonlyDeep } from 'type-fest';
 
 import './Button.scss';
 
@@ -39,7 +40,7 @@ export default function Button({
   modifiers,
   type = 'button',
   ...rest
-}: ButtonProps) {
+}: ReadonlyDeep<ButtonProps>) {
   const btnClassName = clsx('Button', className, elements, modifiers);
 
   return (

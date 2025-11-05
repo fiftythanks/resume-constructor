@@ -1,6 +1,7 @@
 import React, { LiHTMLAttributes, MouseEventHandler } from 'react';
 
 import { clsx } from 'clsx';
+import { ReadonlyDeep } from 'type-fest';
 
 import AppbarIconButton from '@/components/AppbarIconButton';
 
@@ -8,9 +9,9 @@ import useNavbarItemSortable from './useNavbarItemSortable';
 
 import deleteBtnIconSrc from '@/assets/icons/delete-cross.svg';
 
-import type { SectionId, SectionTitle } from '@/types/resumeData';
-
 import './NavbarItem.scss';
+
+import type { SectionId, SectionTitle } from '@/types/resumeData';
 
 export interface NavbarItemProps extends LiHTMLAttributes<HTMLLIElement> {
   alt: string;
@@ -45,7 +46,7 @@ export default function NavbarItem({
   onDeleteSection,
   onSelectSection,
   ...rest
-}: NavbarItemProps) {
+}: ReadonlyDeep<NavbarItemProps>) {
   const { dndAttributes, isDragging, setNodeRef, style } =
     useNavbarItemSortable({
       isEditorMode,

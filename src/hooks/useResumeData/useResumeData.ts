@@ -5,6 +5,7 @@
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
 import { WritableDraft } from 'immer';
+import { ReadonlyDeep } from 'type-fest';
 import { useImmer } from 'use-immer';
 
 import neverReached from '@/utils/neverReached';
@@ -30,7 +31,7 @@ export default function useResumeData() {
   }
 
   // Clears sections.
-  function clear(sectionIds: SectionId | SectionId[]) {
+  function clear(sectionIds: ReadonlyDeep<SectionId | SectionId[]>) {
     // If it's a string, then it's just one ID.
     if (typeof sectionIds === 'string') {
       clearSection(sectionIds);
@@ -428,9 +429,11 @@ export default function useResumeData() {
       showItem('degree', newShownDegreeIndex),
 
     // This function doesn't look good, but it is needed for dnd-kit's API.
-    updateBulletPoints(degreeIndex: number, value: ItemWithId[]) {
+    updateBulletPoints(degreeIndex: number, value: ReadonlyDeep<ItemWithId[]>) {
       if (degreeIndex >= 0 && degreeIndex < data.education.degrees.length) {
-        const newBulletPoints = structuredClone(value);
+        const newBulletPoints = structuredClone(value) as WritableDraft<
+          ItemWithId[]
+        >;
 
         setData((draft) => {
           draft.education.degrees[degreeIndex].bulletPoints = newBulletPoints;
@@ -449,7 +452,11 @@ export default function useResumeData() {
      * function.
      */
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
-    editBulletPoint(degreeIndex: number, itemIndex: number, value: ItemWithId) {
+    editBulletPoint(
+      degreeIndex: number,
+      itemIndex: number,
+      value: ReadonlyDeep<ItemWithId>,
+    ) {
       if (
         degreeIndex >= 0 &&
         degreeIndex < data.education.degrees.length &&
@@ -489,9 +496,11 @@ export default function useResumeData() {
     },
 
     // This function doesn't look good, but it is needed for dnd-kit's API.
-    updateBulletPoints(jobIndex: number, value: ItemWithId[]) {
+    updateBulletPoints(jobIndex: number, value: ReadonlyDeep<ItemWithId[]>) {
       if (jobIndex >= 0 && jobIndex < data.experience.jobs.length) {
-        const newBulletPoints = structuredClone(value);
+        const newBulletPoints = structuredClone(value) as WritableDraft<
+          ItemWithId[]
+        >;
 
         setData((draft) => {
           draft.experience.jobs[jobIndex].bulletPoints = newBulletPoints;
@@ -507,7 +516,11 @@ export default function useResumeData() {
      * function.
      */
     // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
-    editBulletPoint(jobIndex: number, itemIndex: number, value: ItemWithId) {
+    editBulletPoint(
+      jobIndex: number,
+      itemIndex: number,
+      value: ReadonlyDeep<ItemWithId>,
+    ) {
       if (
         jobIndex >= 0 &&
         jobIndex < data.experience.jobs.length &&
@@ -569,10 +582,12 @@ export default function useResumeData() {
     editProject<K extends Exclude<keyof Project, 'bulletPoints' | 'id'>>(
       index: number,
       field: K,
-      value: Project[K],
+      value: ReadonlyDeep<Project[K]>,
     ) {
       if (index >= 0 && index < data.projects.projects.length) {
-        const newFieldObject = structuredClone(value);
+        const newFieldObject = structuredClone(
+          value,
+        ) as WritableDraft<Project>[K];
 
         setData((draft) => {
           draft.projects.projects[index][field] = newFieldObject;
@@ -584,10 +599,15 @@ export default function useResumeData() {
       showItem('project', newShownProjectIndex),
 
     // This function doesn't look good, but it is needed for dnd-kit's API.
-    updateBulletPoints(projectIndex: number, value: ItemWithId[]) {
+    updateBulletPoints(
+      projectIndex: number,
+      value: ReadonlyDeep<ItemWithId[]>,
+    ) {
       if (projectIndex >= 0 && projectIndex < data.projects.projects.length) {
         setData((draft) => {
-          const newBulletPoints = structuredClone(value);
+          const newBulletPoints = structuredClone(value) as WritableDraft<
+            ItemWithId[]
+          >;
 
           draft.projects.projects[projectIndex].bulletPoints = newBulletPoints;
         });
@@ -608,7 +628,7 @@ export default function useResumeData() {
     editBulletPoint(
       projectIndex: number,
       itemIndex: number,
-      value: ItemWithId,
+      value: ReadonlyDeep<ItemWithId>,
     ) {
       if (
         projectIndex >= 0 &&
@@ -631,9 +651,11 @@ export default function useResumeData() {
     // TODO: The user shouldn't be concerned with adding IDs. They must be added automatically.
     updateSkills(
       field: 'frameworks' | 'languages' | 'tools',
-      value: ItemWithId[],
+      value: ReadonlyDeep<ItemWithId[]>,
     ) {
-      const newFieldObject = structuredClone(value);
+      const newFieldObject = structuredClone(value) as WritableDraft<
+        ItemWithId[]
+      >;
 
       setData((draft) => {
         draft.skills[field] = newFieldObject;
@@ -666,7 +688,7 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update the value directly instead of updating the object that has both the value and the ID.
-    editLanguage(languageIndex: number, value: ItemWithId) {
+    editLanguage(languageIndex: number, value: ReadonlyDeep<ItemWithId>) {
       if (languageIndex >= 0 && languageIndex < data.skills.languages.length) {
         const newLanguageObject = structuredClone(value);
 
@@ -701,7 +723,7 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editFramework(frameworkIndex: number, value: ItemWithId) {
+    editFramework(frameworkIndex: number, value: ReadonlyDeep<ItemWithId>) {
       if (
         frameworkIndex >= 0 &&
         frameworkIndex < data.skills.frameworks.length
@@ -736,7 +758,7 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editTool(toolIndex: number, value: ItemWithId) {
+    editTool(toolIndex: number, value: ReadonlyDeep<ItemWithId>) {
       if (toolIndex >= 0 && toolIndex < data.skills.tools.length) {
         const newToolObject = structuredClone(value);
 

@@ -3,6 +3,7 @@ import React, { ButtonHTMLAttributes } from 'react';
 import { clsx } from 'clsx';
 
 import './AppbarIconButton.scss';
+import { ReadonlyDeep } from 'type-fest';
 
 export interface AppbarIconButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -32,7 +33,7 @@ export default function AppbarIconButton({
   className,
   iconSrc,
   ...rest
-}: AppbarIconButtonProps) {
+}: ReadonlyDeep<AppbarIconButtonProps>) {
   const btnClassName = clsx('AppbarIconButton', className);
 
   return (

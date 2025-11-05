@@ -1,4 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
+import { WritableDraft } from 'immer';
+import { ReadonlyDeep } from 'type-fest';
 
 import getDefaultData from './getDefaultData';
 import useResumeData from './useResumeData';
@@ -11,8 +13,10 @@ import {
   ResumeDataWithoutIds,
 } from '@/types/resumeData';
 
-function stripOfIds(data: ResumeData): ResumeDataWithoutIds {
-  const newData: ResumeDataWithOptionalIds = structuredClone(data);
+function stripOfIds(data: ReadonlyDeep<ResumeData>): ResumeDataWithoutIds {
+  const newData: ResumeDataWithOptionalIds = structuredClone(
+    data,
+  ) as WritableDraft<ResumeData>;
 
   newData.skills.frameworks.forEach((framework) => {
     delete framework.id;
