@@ -23,7 +23,7 @@ import {
 
 import AddSections from '@/components/AddSections';
 import AppbarIconButton from '@/components/AppbarIconButton';
-import NavItem from '@/components/NavItem';
+import NavbarItem from '@/components/NavbarItem';
 
 import capitalize from '@/utils/capitalize';
 
@@ -161,10 +161,10 @@ export default function Navbar({
     const tabIndex = isSelected || editorMode ? 0 : -1;
 
     return (
-      <NavItem
+      <NavbarItem
         activeSectionIDs={activeSectionIDs}
         alt={capitalize(sectionID)}
-        className="Navbar-NavItem Navbar-NavItem_draggable"
+        className="Navbar-NavbarItem Navbar-NavbarItem_draggable"
         editorMode={editorMode}
         iconSrc={icons[sectionID]}
         id={sectionID}
@@ -321,7 +321,7 @@ export default function Navbar({
   }
 
   // If there's no selected section, "Personal" is focusable.
-  const personalNavItemTabIndex =
+  const personalNavbarItemTabIndex =
     selectedSectionID === 'personal' ||
     editorMode ||
     // FIXME: `null`? `selectedSectionID` shouldn't ever be null. It's always an ID. Or an empty string at least.
@@ -346,16 +346,16 @@ export default function Navbar({
           id="resume-sections"
           role="tablist"
         >
-          <NavItem
+          <NavbarItem
             activeSectionIDs={activeSectionIDs}
             alt="Personal"
-            className="Navbar-NavItem Navbar-NavItem_personal"
+            className="Navbar-NavbarItem Navbar-NavbarItem_personal"
             editorMode={editorMode}
             iconSrc={icons.personal}
             id="personal"
             isSelected={selectedSectionID === 'personal'}
             selectSection={() => selectSection('personal')}
-            tabIndex={personalNavItemTabIndex}
+            tabIndex={personalNavbarItemTabIndex}
             title={titles[sectionID]}
           />
           {/**
