@@ -2,6 +2,7 @@ import React, { ReactNode, RefObject, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { clsx } from 'clsx';
+import { ReadonlyDeep } from 'type-fest';
 
 import './Popup.scss';
 
@@ -25,7 +26,8 @@ export default function Popup({
   modifiers,
   title,
   onClose,
-}: PopupProps) {
+}: Pick<PopupProps, 'externalRef'> &
+  ReadonlyDeep<Omit<PopupProps, 'externalRef'>>) {
   const ref = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function Popup({
       onClose={onClose}
       ref={(node) => {
         ref.current = node;
+        // TODO: find a better way that doesn't include modifying a prop and assign a proper type to the component, i.e. `ReadonlyDeep<PopupProps>`.
         if (externalRef !== undefined) externalRef.current = node;
       }}
     >
