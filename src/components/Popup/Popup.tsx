@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 
 import './Popup.scss';
 
-interface Popup {
+export interface PopupProps {
   block?: string;
   children: ReactNode;
   externalRef?: RefObject<HTMLDialogElement | null>;
@@ -25,7 +25,7 @@ export default function Popup({
   modifiers,
   title,
   onClose,
-}: Popup) {
+}: PopupProps) {
   const ref = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
