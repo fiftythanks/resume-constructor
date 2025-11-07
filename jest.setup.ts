@@ -9,3 +9,16 @@ if (typeof structuredClone !== 'function') {
     return deserialize(serialize(value));
   };
 }
+
+/**
+ * There's no implementation for `HTMLDialogElement.prototype.close`
+ * and `HTMLDialogElement.prototype.showModal` in JSDOM yet.
+ */
+
+HTMLDialogElement.prototype.close = jest.fn(function () {
+  this.open = false;
+});
+
+HTMLDialogElement.prototype.showModal = jest.fn(function () {
+  this.open = true;
+});
