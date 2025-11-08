@@ -1,9 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
-import { WritableDraft } from 'immer';
-import { ReadonlyDeep } from 'type-fest';
 
 import getDefaultData from './getDefaultData';
 import useResumeData from './useResumeData';
+
+import type { WritableDraft } from 'immer';
+import type { ReadonlyDeep } from 'type-fest';
 
 import {
   ItemWithId,

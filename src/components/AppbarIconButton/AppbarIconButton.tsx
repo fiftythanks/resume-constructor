@@ -1,7 +1,9 @@
-import React, { ButtonHTMLAttributes } from 'react';
+import React from 'react';
+import type { ButtonHTMLAttributes } from 'react';
 
 import { clsx } from 'clsx';
-import { ReadonlyDeep } from 'type-fest';
+
+import type { ReadonlyDeep } from 'type-fest';
 
 import './AppbarIconButton.scss';
 

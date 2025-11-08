@@ -4,15 +4,20 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { WritableDraft } from 'immer';
-import { ReadonlyDeep } from 'type-fest';
 import { useImmer } from 'use-immer';
 
 import neverReached from '@/utils/neverReached';
 
 import getDefaultData from './getDefaultData';
 
-import { ItemWithId, Project, ResumeData, SectionId } from '@/types/resumeData';
+import type {
+  ItemWithId,
+  Project,
+  ResumeData,
+  SectionId,
+} from '@/types/resumeData';
+import type { WritableDraft } from 'immer';
+import type { ReadonlyDeep } from 'type-fest';
 
 /**
  * Initialises and keeps all resume data in the form of a huge state object

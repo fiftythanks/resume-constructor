@@ -1,7 +1,7 @@
-import React, { LiHTMLAttributes, MouseEventHandler } from 'react';
+import React from 'react';
+import type { LiHTMLAttributes, MouseEventHandler } from 'react';
 
 import { clsx } from 'clsx';
-import { ReadonlyDeep } from 'type-fest';
 
 import AppbarIconButton from '@/components/AppbarIconButton';
 
@@ -10,6 +10,7 @@ import useNavbarItemSortable from './useNavbarItemSortable';
 import deleteBtnIconSrc from '@/assets/icons/delete-cross.svg';
 
 import type { SectionId, SectionTitle } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 import './NavbarItem.scss';
 

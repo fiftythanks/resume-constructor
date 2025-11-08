@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ReadonlyDeep } from 'type-fest';
-
 import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: split this hook in three separate hooks: `useUiState` for navbar/editorMode state logic, `useSectionsState` for most of the logic here, and something like `useScreenReaderAnnouncement` for screen-reader logic.
 

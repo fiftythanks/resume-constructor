@@ -3,7 +3,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import NavbarItem, { NavbarItemProps } from './NavbarItem';
+import NavbarItem from './NavbarItem';
+
+import type { NavbarItemProps } from './NavbarItem';
 
 import '@testing-library/jest-dom';
 

@@ -1,4 +1,5 @@
-import React, { MouseEvent } from 'react';
+import React from 'react';
+import type { MouseEvent } from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

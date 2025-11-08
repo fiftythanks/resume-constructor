@@ -1,6 +1,6 @@
 import joinSkills from './joinSkills';
 
-import { ItemWithId } from '@/types/resumeData';
+import type { ItemWithId } from '@/types/resumeData';
 
 describe('joinSkills()', () => {
   it('should transform an array of skill objects into a single, comma-separated string', () => {

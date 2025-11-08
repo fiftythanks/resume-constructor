@@ -1,8 +1,10 @@
-import React, { ReactNode, RefObject, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { createPortal } from 'react-dom';
 
 import { clsx } from 'clsx';
-import { ReadonlyDeep } from 'type-fest';
+
+import type { ReadonlyDeep } from 'type-fest';
 
 import './Popup.scss';
 

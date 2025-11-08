@@ -1,11 +1,9 @@
-import React, {
-  ButtonHTMLAttributes,
-  MouseEventHandler,
-  ReactNode,
-} from 'react';
+import React from 'react';
+import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from 'react';
 
 import { clsx } from 'clsx';
-import { ReadonlyDeep } from 'type-fest';
+
+import type { ReadonlyDeep } from 'type-fest';
 
 import './Button.scss';
 

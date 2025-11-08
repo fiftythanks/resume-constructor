@@ -2,7 +2,9 @@ import React from 'react';
 
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import Popup, { type PopupProps } from './Popup';
+import Popup from './Popup';
+
+import type { PopupProps } from './Popup';
 
 import '@testing-library/jest-dom';
 

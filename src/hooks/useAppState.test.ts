@@ -5,7 +5,7 @@ import neverReached from '@/utils/neverReached';
 
 import useAppState from './useAppState';
 
-import { SectionId, SectionIds } from '@/types/resumeData';
+import type { SectionId, SectionIds } from '@/types/resumeData';
 
 // TODO: refactor it entirely. It's too hard to read.
 
