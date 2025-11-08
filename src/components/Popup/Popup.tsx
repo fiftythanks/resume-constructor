@@ -17,6 +17,16 @@ export interface PopupProps {
   title: string;
 }
 
+/**
+ * A popup component that renders child components with an H2-title. On the
+ * `isShown` state change, either `HTMLDialogElement.prototype.showModal` or
+ * `HTMLDialogElement.prototype.close` is called.
+ *
+ * Accepts an external ref prop that can be useful to get styles, currently
+ * applied to the popup, in its parent component. (Used in `Preview`, at least.)
+ *
+ * `block` and `modifiers` props correspond to BEM blocks and modifiers.
+ */
 export default function Popup({
   block,
   children,
