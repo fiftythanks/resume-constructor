@@ -320,5 +320,6 @@ export default function useAppState() {
     toggleNavbar,
     updateScreenReaderAnnouncement,
     possibleSectionIds: SECTION_IDS,
+    sectionTitles: SECTION_TITLES,
   };
 }
