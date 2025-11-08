@@ -7,7 +7,7 @@ import capitalize from '@/utils/capitalize';
 
 import closeSrc from '@/assets/icons/cross.svg';
 
-import type { SectionId, SectionIds } from '@/types/resumeData';
+import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 import './AddSections.scss';
@@ -20,6 +20,7 @@ export interface AddSectionsProps {
   isShown: boolean;
   onClose: () => void;
   possibleSectionIds: SectionIds;
+  sectionTitles: SectionTitles;
 }
 
 export default function AddSections({
@@ -28,6 +29,7 @@ export default function AddSections({
   isShown,
   onClose,
   possibleSectionIds,
+  sectionTitles,
 }: ReadonlyDeep<AddSectionsProps>) {
   /**
    * The `onClose` function changes a state, and this change
@@ -76,7 +78,7 @@ export default function AddSections({
 
       return (
         <Button
-          aria-label={`Add ${sectionId}`}
+          aria-label={`Add ${sectionTitles[sectionId]}`}
           elements={['AddSections-Button']}
           id={`add-${sectionId}`}
           key={`add-${sectionId}`}
