@@ -3,8 +3,6 @@ import React from 'react';
 import Button from '@/components/Button';
 import Popup from '@/components/Popup';
 
-import capitalize from '@/utils/capitalize';
-
 import closeSrc from '@/assets/icons/cross.svg';
 
 import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
@@ -85,7 +83,7 @@ export default function AddSections({
           modifiers={['AddSections-Button_add']}
           onClick={handleClick}
         >
-          {capitalize(sectionId)}
+          {sectionTitles[sectionId]}
         </Button>
       );
     });
