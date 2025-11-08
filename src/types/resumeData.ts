@@ -1,8 +1,4 @@
-/**
- * The rule didn't allow me to use `crypto`, but it's baseline available in
- * browsers so I don't have to worry about it.
- */
-/* eslint-disable n/no-unsupported-features/node-builtins */
+import type { UUID } from 'crypto';
 
 export type SectionId =
   | 'certifications'
@@ -64,12 +60,12 @@ export interface Links {
 }
 
 export interface ItemWithId {
-  id: ReturnType<Crypto['randomUUID']>;
+  id: UUID;
   value: string;
 }
 
 export interface ItemWithOptionalId extends Omit<ItemWithId, 'id'> {
-  id?: ReturnType<Crypto['randomUUID']>;
+  id?: UUID;
 }
 
 export type ItemWithoutId = Omit<ItemWithId, 'id'>;
@@ -97,13 +93,13 @@ export interface Job {
   bulletPoints: ItemWithId[];
   companyName: string;
   duration: string;
-  id: ReturnType<Crypto['randomUUID']>;
+  id: UUID;
   jobTitle: string;
 }
 
 export interface JobWithOptionalIds extends Omit<Job, 'bulletPoints' | 'id'> {
   bulletPoints: ItemWithOptionalId[];
-  id?: ReturnType<Crypto['randomUUID']>;
+  id?: UUID;
 }
 
 export interface JobWithoutIds extends Omit<Job, 'bulletPoints' | 'id'> {
@@ -127,7 +123,7 @@ export interface Project {
   bulletPoints: ItemWithId[];
   code: Link;
   demo: Link;
-  id: ReturnType<Crypto['randomUUID']>;
+  id: UUID;
   projectName: string;
   stack: string;
 }
@@ -135,7 +131,7 @@ export interface Project {
 export interface ProjectWithOptionalIds
   extends Omit<Project, 'bulletPoints' | 'id'> {
   bulletPoints: ItemWithOptionalId[];
-  id?: ReturnType<Crypto['randomUUID']>;
+  id?: UUID;
 }
 
 export interface ProjectWithoutIds
@@ -161,14 +157,14 @@ export interface Degree {
   bulletPoints: ItemWithId[];
   degree: string;
   graduation: string;
-  id: ReturnType<Crypto['randomUUID']>;
+  id: UUID;
   uni: string;
 }
 
 export interface DegreeWithOptionalIds
   extends Omit<Degree, 'bulletPoints' | 'id'> {
   bulletPoints: ItemWithOptionalId[];
-  id?: ReturnType<Crypto['randomUUID']>;
+  id?: UUID;
 }
 
 export interface DegreeWithoutIds extends Omit<Degree, 'bulletPoints' | 'id'> {
