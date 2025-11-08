@@ -1,24 +1,36 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { clsx } from 'clsx';
 
 import deleteSrc from '@/assets/icons/delete.svg';
 import dragSrc from '@/assets/icons/drag.svg';
 
+import type { ReadonlyDeep } from 'type-fest';
+
 import './BulletPoints.scss';
 
+export interface ListItemProps {
+  deleteItem: () => void;
+  edit: () => void;
+  id: string;
+  index: number;
+  name: string;
+  placeholder?: string;
+  value: string;
+}
+
 export default function ListItem({
-  del,
+  deleteItem,
   edit,
   id,
   index,
   name,
-  placeholder = null,
+  placeholder,
   value,
-}) {
+}: ReadonlyDeep<ListItemProps>) {
   const {
     attributes,
     isDragging,
@@ -34,12 +46,13 @@ export default function ListItem({
     transition,
   };
 
+  const listItemClassName = clsx([
+    'BulletPoints-ListItem',
+    isDragging && 'BulletPoints-ListItem_dragged',
+  ]);
+
   return (
-    <li
-      className={`BulletPoints-ListItem${isDragging ? ' BulletPoints-ListItem_dragged' : ''}`}
-      ref={setNodeRef}
-      style={style}
-    >
+    <li className={listItemClassName} ref={setNodeRef} style={style}>
       <button
         className="BulletPoints-Button BulletPoints-Button_dragHandle"
         ref={setActivatorNodeRef}
@@ -63,7 +76,7 @@ export default function ListItem({
         className="BulletPoints-Button BulletPoints-Button_delete"
         id={`delete-${name}`}
         type="button"
-        onClick={del}
+        onClick={deleteItem}
       >
         <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
       </button>
