@@ -21,6 +21,14 @@ export interface AddSectionsProps {
   sectionTitles: SectionTitles;
 }
 
+/**
+ * A dialog component with a close button that lets users to add
+ * sections to the resume. The component has an "add-button" for each
+ * section that can be added and an "Add All Sections" button to add
+ * all addable sections at once. As soon as the last addable section is
+ * added or "Add All Sections" is clicked, the component calls `onClose`
+ * which should close the dialog.
+ */
 export default function AddSections({
   activeSectionIds,
   addSections,
