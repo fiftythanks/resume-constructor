@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Button from '@/components/Button';
 import Popup from '@/components/Popup';
@@ -7,17 +7,28 @@ import capitalize from '@/utils/capitalize';
 
 import closeSrc from '@/assets/icons/cross.svg';
 
+import type { SectionId, SectionIds } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
 import './AddSections.scss';
 
+//? (1) Should it be in the bottom? It's visually in an upper corner of the modal. Shouldn't it be on top of `AddSections-List` in the DOM?
+
+export interface AddSectionsProps {
+  activeSectionIds: SectionId[];
+  addSections: (sectionIds: SectionId[]) => void;
+  isShown: boolean;
+  onClose: () => void;
+  possibleSectionIds: SectionIds;
+}
+
 export default function AddSections({
-  activeSectionIDs,
+  activeSectionIds,
   addSections,
   isShown,
   onClose,
-  possibleSectionIDs,
-}) {
-  const [screenReaderAnouncement, setScreenReaderAnnouncement] = useState(null);
-
+  possibleSectionIds,
+}: ReadonlyDeep<AddSectionsProps>) {
   /**
    * The `onClose` function changes a state, and this change
    * results in the closing of the popup. So in some contexts, for
@@ -27,31 +38,35 @@ export default function AddSections({
    */
   const closePopup = onClose;
 
+  /**
+   * Creates an array of "add-buttons" for adding sections.
+   */
   const createAddBtns = () => {
-    const addableSectionIDs = possibleSectionIDs.filter(
-      (sectionID) => !activeSectionIDs.includes(sectionID),
+    const addableSectionIds = possibleSectionIds.filter(
+      (sectionId) => !activeSectionIds.includes(sectionId),
     );
 
-    return addableSectionIDs.map((sectionID, i) => {
+    return addableSectionIds.map((sectionId, i) => {
       const handleClick = () => {
-        addSections([sectionID]);
+        addSections([sectionId]);
+        const nextAddableSectionIds = addableSectionIds.toSpliced(i, 1);
 
-        const nextAddableSectionIDs = addableSectionIDs.toSpliced(i, 1);
-
-        if (nextAddableSectionIDs.length > 0) {
+        /**
+         * If there are still sections that are possible to be added (i.e.
+         * there are add-buttons corresponding to them), focus on either the
+         * next or previous button. Otherwise, close the popup.
+         */
+        if (nextAddableSectionIds.length > 0) {
           /**
-           * If the added section was the last section that the user could add,
-           * the modal will close, and the screen reader won't announce the
-           * addition. In this case, `addSections` from the App component
-           * handles the announcement.
+           * If the added section wasn't the last (i.e. there's a next
+           * add-button), focus on the next add-button; otherwise, focus on the
+           * previous one.
            */
-          setScreenReaderAnnouncement(`${capitalize(sectionID)} added.`);
-
-          if (nextAddableSectionIDs[i] !== undefined) {
-            document.getElementById(`add-${nextAddableSectionIDs[i]}`).focus();
+          if (nextAddableSectionIds[i] !== undefined) {
+            document.getElementById(`add-${nextAddableSectionIds[i]}`)!.focus();
           } else {
             document
-              .getElementById(`add-${nextAddableSectionIDs[i - 1]}`)
+              .getElementById(`add-${nextAddableSectionIds[i - 1]}`)!
               .focus();
           }
         } else {
@@ -61,14 +76,14 @@ export default function AddSections({
 
       return (
         <Button
+          aria-label={`Add ${sectionId}`}
           elements={['AddSections-Button']}
-          id={`add-${sectionID}`}
-          key={`add-${sectionID}`}
-          label={`Add ${sectionID}`}
+          id={`add-${sectionId}`}
+          key={`add-${sectionId}`}
           modifiers={['AddSections-Button_add']}
           onClick={handleClick}
         >
-          {capitalize(sectionID)}
+          {capitalize(sectionId)}
         </Button>
       );
     });
@@ -82,28 +97,22 @@ export default function AddSections({
       title="Add Sections"
       onClose={onClose}
     >
-      <span aria-live="polite" className="visually-hidden">
-        {screenReaderAnouncement}
-      </span>
       <ul className="AddSections-List">
         {createAddBtns()}
         <Button
+          aria-label="Add All Sections"
           elements={['AddSections-Button']}
           id="add-all-sections"
-          label="Add All Sections"
           modifiers={['AddSections-Button_add AddSections-Button_all']}
           onClick={() => {
-            addSections(possibleSectionIDs);
+            addSections([...possibleSectionIds]);
             closePopup();
           }}
         >
           All
         </Button>
       </ul>
-      {/**
-       * Should it be in the bottom? It's visually in an upper corner of the
-       * modal. Shouldn't it be on top of `AddSections-List` in the DOM?
-       */}
+      {/* (1) */}
       <button
         className="AddSections-CloseBtn"
         type="button"
