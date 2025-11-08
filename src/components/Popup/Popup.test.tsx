@@ -41,6 +41,15 @@ describe('Popup', () => {
     expect(popup).toBeInTheDocument();
   });
 
+  it("shouldn't render if `isShown === false`", () => {
+    render(<Container />);
+    render(<Popup {...getProps({ isShown: false })} />);
+
+    const popup = screen.queryByRole('dialog', { name: 'Some Title' });
+
+    expect(popup).not.toBeInTheDocument();
+  });
+
   it('should call `onClose` on close', () => {
     const onCloseMock = jest.fn();
     render(<Container />);
