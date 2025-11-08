@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 
 import Popup, { type PopupProps } from './Popup';
+
+import '@testing-library/jest-dom';
 
 /**
  * Since `Popup` is portalled to `popup-root`, there must exist an

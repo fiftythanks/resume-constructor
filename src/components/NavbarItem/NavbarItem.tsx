@@ -9,9 +9,9 @@ import useNavbarItemSortable from './useNavbarItemSortable';
 
 import deleteBtnIconSrc from '@/assets/icons/delete-cross.svg';
 
-import './NavbarItem.scss';
-
 import type { SectionId, SectionTitle } from '@/types/resumeData';
+
+import './NavbarItem.scss';
 
 export interface NavbarItemProps extends LiHTMLAttributes<HTMLLIElement> {
   alt: string;
