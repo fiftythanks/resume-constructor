@@ -2,11 +2,15 @@ import React from 'react';
 
 import { Path, Svg } from '@react-pdf/renderer';
 
+import type { SVGProps } from '@react-pdf/renderer';
+import type { ReadonlyDeep } from 'type-fest';
+
+//? Why do you need paths in this form? Why not just use SVG files?
 /**
  * Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License -
  * https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.
  */
-const paths = {
+const PATHS = {
   email:
     'M125.4 128C91.5 128 64 155.5 64 189.4C64 190.3 64 191.1 64.1 192L64 192L64 448C64 483.3 92.7 512 128 512L512 512C547.3 512 576 483.3 576 448L576 192L575.9 192C575.9 191.1 576 190.3 576 189.4C576 155.5 548.5 128 514.6 128L125.4 128zM528 256.3L528 448C528 456.8 520.8 464 512 464L128 464C119.2 464 112 456.8 112 448L112 256.3L266.8 373.7C298.2 397.6 341.7 397.6 373.2 373.7L528 256.3zM112 189.4C112 182 118 176 125.4 176L514.6 176C522 176 528 182 528 189.4C528 193.6 526 197.6 522.7 200.1L344.2 335.5C329.9 346.3 310.1 346.3 295.8 335.5L117.3 200.1C114 197.6 112 193.6 112 189.4z',
   github:
@@ -19,10 +23,31 @@ const paths = {
     'M128 96C92.7 96 64 124.7 64 160L64 400L128 400L128 160L512 160L512 400L576 400L576 160C576 124.7 547.3 96 512 96L128 96zM19.2 448C8.6 448 0 456.6 0 467.2C0 509.6 34.4 544 76.8 544L563.2 544C605.6 544 640 509.6 640 467.2C640 456.6 631.4 448 620.8 448L19.2 448z',
 };
 
-export default function Icon({ type, size = 12, color = 'black', style = {} }) {
+interface IconProps {
+  color?: string;
+  size?: number;
+  style?: SVGProps['style'];
+  type: keyof typeof PATHS;
+}
+
+export default function Icon({
+  type,
+  size = 12,
+  color = 'black',
+  style,
+}: ReadonlyDeep<IconProps>) {
   return (
-    <Svg style={[{ height: size, width: size }, style]} viewBox="0 0 640 640">
-      <Path d={paths[type]} fill={color} />
+    <Svg
+      viewBox="0 0 640 640"
+      style={
+        style !== undefined
+          ? Array.isArray(style)
+            ? [...style, { height: size, width: size }]
+            : [style, { height: size, width: size }]
+          : { height: size, width: size }
+      }
+    >
+      <Path d={PATHS[type]} fill={color} />
     </Svg>
   );
 }
