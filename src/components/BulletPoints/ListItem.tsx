@@ -54,6 +54,7 @@ export default function ListItem({
   return (
     <li className={listItemClassName} ref={setNodeRef} style={style}>
       <button
+        aria-label={`Drag bullet point ${index + 1}`}
         className="BulletPoints-Button BulletPoints-Button_dragHandle"
         ref={setActivatorNodeRef}
         type="button"
@@ -72,7 +73,7 @@ export default function ListItem({
         onChange={edit}
       />
       <button
-        aria-label={`Delete Bullet Point ${index + 1}`}
+        aria-label={`Delete bullet point ${index + 1}`}
         className="BulletPoints-Button BulletPoints-Button_delete"
         id={`delete-${name}`}
         type="button"
