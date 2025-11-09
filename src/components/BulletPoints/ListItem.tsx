@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ChangeEvent } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import { useSortable } from '@dnd-kit/sortable';
@@ -14,7 +15,7 @@ import './BulletPoints.scss';
 
 export interface ListItemProps {
   deleteItem: () => void;
-  edit: () => void;
+  edit: (e: ChangeEvent<HTMLInputElement>) => void;
   id: string;
   index: number;
   name: string;
