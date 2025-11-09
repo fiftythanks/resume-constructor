@@ -13,32 +13,35 @@ import {
 import Icon from './Icon';
 import ResumeSection from './ResumeSection';
 
+// TODO: don't forget to implement some logic that will import a particular font subset depending on the language of the resume. Or maybe just add Russian letters to the subset by default.
 /**
  * They're of the TTF format by design. It brings much better performance
  * because WOFF is a compressed format, and the decompression takes a lot
  * of time for the `react-pdf`'s engine.
- *
- * Also, don't forget to implement some logic that will import a particular
- * font subset depending on the language of the resume. Or maybe just add
- * Russian letters to the subset by default. Anyway,
  */
 import garamondBold from '@/assets/fonts/EBGaramond-Bold.ttf';
 import garamondItalic from '@/assets/fonts/EBGaramond-Italic.ttf';
 import garamondRegular from '@/assets/fonts/EBGaramond-Regular.ttf';
 
+import type { Links, ResumeData, SectionId } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
 Font.register({
   family: 'EBGaramond',
+
   fonts: [
     {
       src: garamondRegular,
       fontStyle: 'normal',
       fontWeight: 'normal',
     },
+
     {
       src: garamondItalic,
       fontStyle: 'italic',
       fontWeight: 'normal',
     },
+
     // Bold normal.
     {
       src: garamondBold,
@@ -56,30 +59,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: '1.25cm',
     paddingVertical: '1cm',
   },
+
   fullName: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
   },
+
   headerInfo: {
     lineHeight: 1.05,
   },
+
   jobTitle: {
     marginTop: '-4pt',
   },
+
   links: {
     display: 'flex',
     flexDirection: 'row',
     gap: 15,
   },
+
   linksIcon: {
     alignSelf: 'center',
   },
+
   linksItem: {
     display: 'flex',
     flexDirection: 'row',
     gap: 3,
   },
+
   section: {
     borderTopWidth: 0.8,
     borderTopColor: 'black',
@@ -87,10 +97,18 @@ const styles = StyleSheet.create({
   },
 });
 
+interface ResumeDocumentProps {
+  activeSectionIds: SectionId[];
+  data: ResumeData;
+}
+
 // Using it by default for all sections and fields adds redundancy.
 // TODO: examine where you need conditional rendering and where you don't. Refactor accordingly.
-// FIXME: if there are more than one page, components get squashed and the second page doesn't appear.
-export default function ResumeDocument({ activeSectionIDs, data }) {
+// FIXME: if there is more than one page, components get squizzed and the second page doesn't appear.
+export default function ResumeDocument({
+  activeSectionIds,
+  data,
+}: ReadonlyDeep<ResumeDocumentProps>) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -99,6 +117,7 @@ export default function ResumeDocument({ activeSectionIDs, data }) {
             <>
               <Text
                 style={styles.fullName}
+                // TODO: why are all `render` props passed `false` if the corresponding string value is empty? Does it work correctly? Should I pass `undefined` instead? Figure this out and refactor, if necessary.
                 render={() =>
                   data.personal.fullName !== '' && `${data.personal.fullName}`
                 }
@@ -119,8 +138,8 @@ export default function ResumeDocument({ activeSectionIDs, data }) {
                         (data.personal.phone !== '' ||
                           data.personal.address !== '') && (
                           <>
-                            {/* FIXME: it shouldn't be the `activeSectionIDs` check, since you can add a section and leave it empty. It should be a check of whether there are links present. */}
-                            {!activeSectionIDs.includes('links') &&
+                            {/* FIXME: it shouldn't be the `activeSectionIds` check, since you can add a section and leave it empty. It should be a check of whether there are links present. */}
+                            {!activeSectionIds.includes('links') &&
                               data.personal.email !== '' && (
                                 <>
                                   <Link
@@ -150,9 +169,9 @@ export default function ResumeDocument({ activeSectionIDs, data }) {
                     <View
                       style={styles.links}
                       render={() =>
-                        // FIXME: it shouldn't be the `activeSectionIDs` check, since you can add a section and leave it empty. It should be a check of whether there are links present.
+                        // FIXME: it shouldn't be the `activeSectionIds` check, since you can add a section and leave it empty. It should be a check of whether there are links present.
                         // TODO: change the Telegram link to a generic link in case something else needs to be added.
-                        activeSectionIDs.includes('links') && (
+                        activeSectionIds.includes('links') && (
                           <>
                             <View
                               style={styles.linksItem}
@@ -187,7 +206,7 @@ export default function ResumeDocument({ activeSectionIDs, data }) {
                                     <>
                                       <Icon
                                         style={styles.linksIcon}
-                                        type={type}
+                                        type={type as keyof Links}
                                       />
                                       <Text
                                         render={() => (
@@ -224,7 +243,7 @@ export default function ResumeDocument({ activeSectionIDs, data }) {
         <View
           render={() => (
             <>
-              {activeSectionIDs.map(
+              {activeSectionIds.map(
                 (sectionID) =>
                   sectionID !== 'personal' &&
                   sectionID !== 'links' && (
