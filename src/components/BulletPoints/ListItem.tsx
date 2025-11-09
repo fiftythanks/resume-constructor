@@ -22,6 +22,10 @@ export interface ListItemProps {
   value: string;
 }
 
+/**
+ * An list item (`<li>`) used in `BulletPoints`. Consists of a drag handle, an
+ * input field and a delete button.
+ */
 export default function ListItem({
   deleteItem,
   edit,
