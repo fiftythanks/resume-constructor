@@ -166,7 +166,7 @@ export default tseslint.config([
             },
 
             {
-              elementNamePattern: '^@/assets/.*',
+              elementNamePattern: '^@/hooks/.*',
               groupName: 'hooks',
             },
           ],
