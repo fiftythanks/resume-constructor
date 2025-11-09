@@ -71,6 +71,7 @@ export default function ListItem({
       <input
         aria-label={`Bullet point ${index + 1}`}
         className="BulletPoints-Field"
+        id={id}
         name={name}
         placeholder={placeholder || `Bullet point ${index + 1}`}
         type="text"
