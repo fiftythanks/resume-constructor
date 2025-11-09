@@ -52,6 +52,11 @@ export interface BulletPointsProps {
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
 
+// TODO: explain the purpose of `legend` and `legendCentralized`. Why is it called a legend, anyway?
+/**
+ * Renders draggable-and-droppable bullet points for sections where bullet
+ * points are used, e.g. "Education" or "Experience".
+ */
 export default function BulletPoints({
   addItem,
   className,
