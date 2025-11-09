@@ -154,7 +154,7 @@ export default function BulletPoints({
           items={data.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
-          <ul className="BulletPoints-List">
+          <ul className="BulletPoints-List" data-testid="bullet-points">
             {data.map((item, index) => {
               const { id, value } = item;
               const del = () => {
