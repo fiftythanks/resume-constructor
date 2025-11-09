@@ -1,5 +1,5 @@
-/* eslint-disable perfectionist/sort-imports */
 import React, { useState } from 'react';
+import type { ChangeEvent } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import {
@@ -20,31 +20,54 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { clsx } from 'clsx';
 
 import Button from '@/components/Button';
-import ListItem from './ListItem';
 
 import capitalize from '@/utils/capitalize';
 
+import ListItem from './ListItem';
+
+import type { ItemWithId } from '@/types/resumeData';
+import type { Active, DragEndEvent, Over } from '@dnd-kit/core';
+import type { ReadonlyDeep } from 'type-fest';
+
 import './BulletPoints.scss';
+
+// FIXME: the `name` prop is used in several incompatible ways: it's used as a kind of ID and it's also used as an ARIA label. I'm struggling to understand the purpose of using `name` here at all. This issue needs a serious reconsideration and refactor.
+
+export interface BulletPointsProps {
+  addItem: () => void;
+  className?: string;
+  data: ItemWithId[];
+  deleteItem: (itemIndex: number) => void;
+  editItem: (itemIndex: number, value: ItemWithId) => void;
+  legend: string;
+  legendCentralized?: boolean;
+  name: string;
+  placeholder1?: string;
+  placeholder2?: string;
+  placeholder3?: string;
+  updateData: (newData: ItemWithId[]) => void;
+  updateScreenReaderAnnouncement: (announcement: string) => void;
+}
 
 export default function BulletPoints({
   addItem,
-  className = '',
+  className,
   data,
   deleteItem,
   editItem,
-  name,
   legend,
   legendCentralized = false,
-  placeholder1 = null,
-  placeholder2 = null,
-  placeholder3 = null,
+  name,
+  placeholder1,
+  placeholder2,
+  placeholder3,
   updateData,
   updateScreenReaderAnnouncement,
-}) {
-  // eslint-disable-next-line no-unused-vars
-  const [isDragging, setIsDragging] = useState(false);
+}: ReadonlyDeep<BulletPointsProps>) {
+  const setIsDragging = useState(false)[1];
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -57,13 +80,13 @@ export default function BulletPoints({
     setIsDragging(true);
   }
 
-  function handleDragEnd(e) {
+  function handleDragEnd(e: ReadonlyDeep<DragEndEvent>) {
     const { active, over } = e;
 
-    if (active.id !== over.id) {
+    if (over !== null && active.id !== over.id) {
       const oldIndex = data.findIndex((item) => item.id === active.id);
       const newIndex = data.findIndex((item) => item.id === over.id);
-      const newData = arrayMove(data, oldIndex, newIndex);
+      const newData = arrayMove([...data], oldIndex, newIndex);
       updateData(newData);
     }
 
@@ -71,40 +94,54 @@ export default function BulletPoints({
   }
 
   // Screen reader announcements.
+  interface Arguments {
+    active: Active;
+    over: null | Over;
+  }
+
   const announcements = {
-    onDragStart({ active }) {
+    onDragStart({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
       return `Picked up draggable item ${data.findIndex((item) => item.id === active.id) + 1}.`;
     },
-    onDragOver({ active, over }) {
-      if (over) {
+
+    onDragOver({ active, over }: ReadonlyDeep<Arguments>) {
+      if (over !== null) {
         return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
       }
 
       return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} is no longer over a droppable area.`;
     },
-    onDragEnd({ active, over }) {
-      if (over) {
+
+    onDragEnd({ active, over }: ReadonlyDeep<Arguments>) {
+      if (over !== null) {
         return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped over droppable area ${data.findIndex((item) => item.id === over.id) + 1}`;
       }
 
       return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
     },
-    onDragCancel({ active }) {
+
+    onDragCancel({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
       return `Dragging was cancelled. Draggable item $${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
     },
   };
+
+  const bulletPointsClassName = clsx([
+    className,
+    'BulletPoints',
+    data.length === 0 && 'BulletPoints_empty',
+  ]);
+
+  const legendClassName = clsx([
+    'BulletPoints-Legend',
+    legendCentralized && 'BulletPoints-Legend_centralized',
+  ]);
+
   // TODO: add the possibility of creating sub-bullet points.
   // TODO: add the possibility of making text bold (italic? underlined?).
   // ? Should I add text styling features to all fields in the app? Would be great to let users decide where they need bold text, where italic and where underlined. Also, interesting experience with adding text styling features in form fields.
   return (
-    <fieldset
-      className={`${className} BulletPoints ${data.length === 0 ? 'BulletPoints_empty' : ''}`.trim()}
-    >
-      <legend
-        className={`BulletPoints-Legend${legendCentralized ? ' BulletPoints-Legend_centralized' : ''}`}
-      >
-        {legend}
-      </legend>
+    <fieldset className={bulletPointsClassName}>
+      <legend className={legendClassName}>{legend}</legend>
       <DndContext
         accessibility={{ announcements }}
         collisionDetection={closestCenter}
@@ -122,26 +159,28 @@ export default function BulletPoints({
               const { id, value } = item;
               const del = () => {
                 deleteItem(index);
+
                 updateScreenReaderAnnouncement(
                   `Bullet Point ${index + 1} was deleted.`,
                 );
 
                 if (index < data.length - 1) {
                   document
-                    .getElementById(`delete-${name}-${index + 1}`)
+                    .getElementById(`delete-${name}-${index + 1}`)!
                     .focus();
                 } else if (index === 0) {
-                  document.getElementById(`add-${name}`).focus();
+                  document.getElementById(`add-${name}`)!.focus();
                 } else {
                   document
-                    .getElementById(`delete-${name}-${index - 1}`)
+                    .getElementById(`delete-${name}-${index - 1}`)!
                     .focus();
                 }
               };
-              const edit = (e) =>
+
+              const edit = (e: ChangeEvent<HTMLInputElement>) =>
                 editItem(index, { ...data[index], value: e.target.value });
 
-              let placeholder = null;
+              let placeholder: string | undefined;
 
               if (index >= 0 && index <= 2) {
                 switch (index) {
@@ -161,10 +200,10 @@ export default function BulletPoints({
               return (
                 /**
                  * It's separated into its own component because this
-                 * way works better with `dnd-kit`.
+                 * way it works better with `dnd-kit`.
                  */
                 <ListItem
-                  del={del}
+                  deleteItem={del}
                   edit={edit}
                   id={id}
                   index={index}
