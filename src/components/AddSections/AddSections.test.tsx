@@ -2,13 +2,12 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 
 import AddSections from './AddSections';
 
 import type { AddSectionsProps } from './AddSections';
 import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
-
-import '@testing-library/jest-dom';
 
 // TODO: "should close after the last addable section is added".
 

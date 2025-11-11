@@ -9,9 +9,9 @@ import { clsx } from 'clsx';
 import deleteSrc from '@/assets/icons/delete.svg';
 import dragSrc from '@/assets/icons/drag.svg';
 
-import type { ReadonlyDeep } from 'type-fest';
-
 import './BulletPoints.scss';
+
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface ListItemProps {
   deleteItem: () => void;

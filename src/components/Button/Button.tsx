@@ -3,9 +3,9 @@ import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from 'react';
 
 import { clsx } from 'clsx';
 
-import type { ReadonlyDeep } from 'type-fest';
-
 import './Button.scss';
+
+import type { ReadonlyDeep } from 'type-fest';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;

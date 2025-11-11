@@ -19,17 +19,17 @@ import ResumeDocument from './ResumeDocument';
 
 import closeSrc from '@/assets/icons/cross.svg';
 
+import './Preview.scss';
+
 import type { ResumeData, SectionId } from '@/types/resumeData';
 import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import type { ReadonlyDeep } from 'type-fest';
 
-import './Preview.scss';
+// TODO: clean up in the component.
+// FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
 
 // Setting worker path to worker bundle.
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
-
-// TODO: clean up in the component.
-// FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
 
 // It's how the aspect ratio is defined in the `react-pdf` library.
 // https://github.com/diegomura/react-pdf/blob/ee5c96b80326ba4441b71be4c7a85ba9f61d4174/packages/layout/src/page/getSize.ts

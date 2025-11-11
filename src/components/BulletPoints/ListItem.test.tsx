@@ -2,12 +2,11 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 
 import ListItem from './ListItem';
 
 import type { ListItemProps } from './ListItem';
-
-import '@testing-library/jest-dom';
 
 function getProps(overrides?: Partial<ListItemProps>): ListItemProps {
   return {

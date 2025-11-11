@@ -4,9 +4,9 @@ import { createPortal } from 'react-dom';
 
 import { clsx } from 'clsx';
 
-import type { ReadonlyDeep } from 'type-fest';
-
 import './Popup.scss';
+
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface PopupProps {
   block?: string;

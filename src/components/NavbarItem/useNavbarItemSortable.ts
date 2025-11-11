@@ -3,6 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import type { SectionId } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 interface DndAttributes {
   'aria-describedby': string;
@@ -37,7 +38,7 @@ export default function useNavbarItemSortable({
   isDraggable,
   isEditorMode,
   sectionId,
-}: UseNavbarItemSortableParams): UseNavbarItemSortableReturn {
+}: ReadonlyDeep<UseNavbarItemSortableParams>): UseNavbarItemSortableReturn {
   const {
     attributes,
     listeners,

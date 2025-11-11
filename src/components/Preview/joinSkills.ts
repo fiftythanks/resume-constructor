@@ -1,6 +1,5 @@
-import { ReadonlyDeep } from 'type-fest';
-
 import type { Skills } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 /**
  * Transforms an array of skill objects into a single, comma-separated string.

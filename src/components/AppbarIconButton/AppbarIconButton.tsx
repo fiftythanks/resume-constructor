@@ -3,9 +3,9 @@ import type { ButtonHTMLAttributes } from 'react';
 
 import { clsx } from 'clsx';
 
-import type { ReadonlyDeep } from 'type-fest';
-
 import './AppbarIconButton.scss';
+
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface AppbarIconButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {

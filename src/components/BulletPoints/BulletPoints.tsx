@@ -28,11 +28,11 @@ import capitalize from '@/utils/capitalize';
 
 import ListItem from './ListItem';
 
+import './BulletPoints.scss';
+
 import type { ItemWithId } from '@/types/resumeData';
 import type { Active, DragEndEvent, Over } from '@dnd-kit/core';
 import type { ReadonlyDeep } from 'type-fest';
-
-import './BulletPoints.scss';
 
 // FIXME: the `name` prop is used in several incompatible ways: it's used as a kind of ID and it's also used as an ARIA label. I'm struggling to understand the purpose of using `name` here at all. This issue needs a serious reconsideration and refactor.
 

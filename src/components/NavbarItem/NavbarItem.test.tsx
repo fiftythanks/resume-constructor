@@ -2,12 +2,11 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 
 import NavbarItem from './NavbarItem';
 
 import type { NavbarItemProps } from './NavbarItem';
-
-import '@testing-library/jest-dom';
 
 describe('NavbarItem', () => {
   function getProps(overrides: Partial<NavbarItemProps> = {}): NavbarItemProps {

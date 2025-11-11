@@ -3,13 +3,12 @@
 import React from 'react';
 
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
 import BulletPoints from './BulletPoints';
 
 import type { BulletPointsProps } from './BulletPoints';
 import type { ItemWithId } from '@/types/resumeData';
-
-import '@testing-library/jest-dom';
 
 const ITEMS: ItemWithId[] = [
   {
