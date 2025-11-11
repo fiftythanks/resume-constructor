@@ -452,27 +452,16 @@ export default function useResumeData() {
     deleteBulletPoint: (degreeIndex: number, bulletIndex: number) =>
       deleteBulletPoint('degree', degreeIndex, bulletIndex),
 
-    /**
-     * To change it, you need to refactor `BulletPoints`, its `editItem`
-     * function.
-     */
-    // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
-    editBulletPoint(
-      degreeIndex: number,
-      itemIndex: number,
-      value: ReadonlyDeep<ItemWithId>,
-    ) {
+    editBulletPoint(degreeIndex: number, itemIndex: number, value: string) {
       if (
         degreeIndex >= 0 &&
         degreeIndex < data.education.degrees.length &&
         itemIndex >= 0 &&
         itemIndex < data.education.degrees[degreeIndex].bulletPoints.length
       ) {
-        const newBulletPointObject = structuredClone(value);
-
         setData((draft) => {
-          draft.education.degrees[degreeIndex].bulletPoints[itemIndex] =
-            newBulletPointObject;
+          draft.education.degrees[degreeIndex].bulletPoints[itemIndex].value =
+            value;
         });
       }
     },
@@ -516,16 +505,7 @@ export default function useResumeData() {
     deleteBulletPoint: (jobIndex: number, bulletIndex: number) =>
       deleteBulletPoint('job', jobIndex, bulletIndex),
 
-    /**
-     * To change it, you need to refactor `BulletPoints`, i.e. its `editItem`
-     * function.
-     */
-    // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
-    editBulletPoint(
-      jobIndex: number,
-      itemIndex: number,
-      value: ReadonlyDeep<ItemWithId>,
-    ) {
+    editBulletPoint(jobIndex: number, itemIndex: number, value: string) {
       if (
         jobIndex >= 0 &&
         jobIndex < data.experience.jobs.length &&
@@ -533,7 +513,7 @@ export default function useResumeData() {
         itemIndex < data.experience.jobs[jobIndex].bulletPoints.length
       ) {
         setData((draft) => {
-          draft.experience.jobs[jobIndex].bulletPoints[itemIndex] = value;
+          draft.experience.jobs[jobIndex].bulletPoints[itemIndex].value = value;
         });
       }
     },
@@ -625,16 +605,7 @@ export default function useResumeData() {
     deleteBulletPoint: (projectIndex: number, bulletIndex: number) =>
       deleteBulletPoint('project', projectIndex, bulletIndex),
 
-    /**
-     * To change it, you need to refactor `BulletPoints`, its `editItem`
-     * function.
-     */
-    // TODO: the ID should not be possible to update with this function. The only thing being changed with it should be the value of the bullet point. Refactor.
-    editBulletPoint(
-      projectIndex: number,
-      itemIndex: number,
-      value: ReadonlyDeep<ItemWithId>,
-    ) {
+    editBulletPoint(projectIndex: number, itemIndex: number, value: string) {
       if (
         projectIndex >= 0 &&
         projectIndex < data.projects.projects.length &&
@@ -642,7 +613,8 @@ export default function useResumeData() {
         itemIndex < data.projects.projects[projectIndex].bulletPoints.length
       ) {
         setData((draft) => {
-          draft.projects.projects[projectIndex].bulletPoints[itemIndex] = value;
+          draft.projects.projects[projectIndex].bulletPoints[itemIndex].value =
+            value;
         });
       }
     },

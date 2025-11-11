@@ -505,22 +505,13 @@ describe('useResumeData', () => {
           });
         }
 
-        const newBulletPointObject: ItemWithId = {
-          id: '1-2-3-4-5',
-          value: 'some value',
-        };
-
         await act(async () => {
-          result.current.educationFunctions.editBulletPoint(
-            0,
-            0,
-            newBulletPointObject,
-          );
+          result.current.educationFunctions.editBulletPoint(0, 0, 'some value');
         });
 
         expect(
-          result.current.data.education.degrees[0].bulletPoints[0],
-        ).toEqual(newBulletPointObject);
+          result.current.data.education.degrees[0].bulletPoints[0].value,
+        ).toBe('some value');
       });
     });
 
@@ -913,22 +904,17 @@ describe('useResumeData', () => {
           });
         }
 
-        const newBulletPointObject: ItemWithId = {
-          id: '1-2-3-4-5',
-          value: 'some value',
-        };
-
         await act(async () => {
           result.current.experienceFunctions.editBulletPoint(
             0,
             0,
-            newBulletPointObject,
+            'some value',
           );
         });
 
-        expect(result.current.data.experience.jobs[0].bulletPoints[0]).toEqual(
-          newBulletPointObject,
-        );
+        expect(
+          result.current.data.experience.jobs[0].bulletPoints[0].value,
+        ).toBe('some value');
       });
     });
 
@@ -1420,22 +1406,13 @@ describe('useResumeData', () => {
           });
         }
 
-        const newBulletPointObject: ItemWithId = {
-          id: '1-2-3-4-5',
-          value: 'some value',
-        };
-
         await act(async () => {
-          result.current.projectsFunctions.editBulletPoint(
-            0,
-            0,
-            newBulletPointObject,
-          );
+          result.current.projectsFunctions.editBulletPoint(0, 0, 'some value');
         });
 
         expect(
-          result.current.data.projects.projects[0].bulletPoints[0],
-        ).toEqual(newBulletPointObject);
+          result.current.data.projects.projects[0].bulletPoints[0].value,
+        ).toBe('some value');
       });
     });
 

@@ -39,7 +39,7 @@ function getProps(overrides?: Partial<BulletPointsProps>): BulletPointsProps {
     deleteItem(itemIndex: number) {},
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    editItem(itemIndex: number, value: ItemWithId) {},
+    editItem(itemIndex: number, value: string) {},
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateData(newData: ItemWithId[]) {},

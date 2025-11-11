@@ -41,7 +41,7 @@ export interface BulletPointsProps {
   className?: string;
   data: ItemWithId[];
   deleteItem: (itemIndex: number) => void;
-  editItem: (itemIndex: number, value: ItemWithId) => void;
+  editItem: (itemIndex: number, value: string) => void;
   legend: string;
   legendCentralized?: boolean;
   name: string;
@@ -183,7 +183,7 @@ export default function BulletPoints({
               };
 
               const edit = (e: ChangeEvent<HTMLInputElement>) =>
-                editItem(index, { ...data[index], value: e.target.value });
+                editItem(index, e.target.value);
 
               let placeholder: string | undefined;
 
