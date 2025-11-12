@@ -479,7 +479,7 @@ export default function useResumeData() {
 
     editJob(
       index: number,
-      field: 'address' | 'companyName' | 'jobTitle',
+      field: 'address' | 'companyName' | 'duration' | 'jobTitle',
       value: string,
     ) {
       if (index >= 0 && index < data.experience.jobs.length) {
