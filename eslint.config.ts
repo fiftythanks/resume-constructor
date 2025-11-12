@@ -228,6 +228,15 @@ export default tseslint.config([
       ],
 
       'react/prop-types': [0],
+
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
     },
     settings: {
       'import-x/resolver-next': [
