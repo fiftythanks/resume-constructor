@@ -30,8 +30,6 @@ function getProps(overrides?: Partial<PersonalProps>): PersonalProps {
           | 'summary',
         _value: string,
       ) {},
-
-      clear() {},
     },
 
     ...overrides,
@@ -75,7 +73,7 @@ describe('Personal', () => {
       render(
         <Personal
           {...getProps({
-            functions: { updatePersonal: updatePersonalMock, clear() {} },
+            functions: { updatePersonal: updatePersonalMock },
           })}
         />,
       );
@@ -115,7 +113,7 @@ describe('Personal', () => {
       render(
         <Personal
           {...getProps({
-            functions: { updatePersonal: updatePersonalMock, clear() {} },
+            functions: { updatePersonal: updatePersonalMock },
           })}
         />,
       );
@@ -155,7 +153,7 @@ describe('Personal', () => {
       render(
         <Personal
           {...getProps({
-            functions: { updatePersonal: updatePersonalMock, clear() {} },
+            functions: { updatePersonal: updatePersonalMock },
           })}
         />,
       );
@@ -195,7 +193,7 @@ describe('Personal', () => {
       render(
         <Personal
           {...getProps({
-            functions: { updatePersonal: updatePersonalMock, clear() {} },
+            functions: { updatePersonal: updatePersonalMock },
           })}
         />,
       );
@@ -235,7 +233,7 @@ describe('Personal', () => {
       render(
         <Personal
           {...getProps({
-            functions: { updatePersonal: updatePersonalMock, clear() {} },
+            functions: { updatePersonal: updatePersonalMock },
           })}
         />,
       );
@@ -275,7 +273,7 @@ describe('Personal', () => {
       render(
         <Personal
           {...getProps({
-            functions: { updatePersonal: updatePersonalMock, clear() {} },
+            functions: { updatePersonal: updatePersonalMock },
           })}
         />,
       );

@@ -410,10 +410,6 @@ export default function useResumeData() {
         draft.certifications[field] = value;
       });
     },
-
-    clear() {
-      clear('certifications');
-    },
   };
 
   const educationFunctions = {
@@ -465,10 +461,6 @@ export default function useResumeData() {
         });
       }
     },
-
-    clear() {
-      clear('education');
-    },
   };
 
   const experienceFunctions = {
@@ -517,10 +509,6 @@ export default function useResumeData() {
         });
       }
     },
-
-    clear() {
-      clear('experience');
-    },
   };
 
   const linksFunctions = {
@@ -532,10 +520,6 @@ export default function useResumeData() {
       setData((draft) => {
         draft.links[field][type] = value;
       });
-    },
-
-    clear() {
-      clear('links');
     },
   };
 
@@ -553,10 +537,6 @@ export default function useResumeData() {
       setData((draft) => {
         draft.personal[field] = value;
       });
-    },
-
-    clear() {
-      clear('personal');
     },
   };
 
@@ -618,10 +598,6 @@ export default function useResumeData() {
         });
       }
     },
-
-    clear() {
-      clear('projects');
-    },
   };
 
   const skillsFunctions = {
@@ -637,10 +613,6 @@ export default function useResumeData() {
       setData((draft) => {
         draft.skills[field] = newFieldObject;
       });
-    },
-
-    clear() {
-      clear('skills');
     },
 
     addLanguage() {
