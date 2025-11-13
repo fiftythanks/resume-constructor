@@ -1,8 +1,28 @@
 import React from 'react';
+import type { ChangeEvent } from 'react';
 
-export default function Personal({ data, functions }) {
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+import useResumeData from '@/hooks/useResumeData';
+
+import type { ResumeData } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
+export interface PersonalProps {
+  data: ResumeData['personal'];
+  functions: ReturnType<typeof useResumeData>['personalFunctions'];
+}
+
+export default function Personal({
+  data,
+  functions,
+}: ReadonlyDeep<PersonalProps>) {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target as {
+      name: 'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary';
+      value: string;
+    };
+
     functions.updatePersonal(name, value);
   };
 
