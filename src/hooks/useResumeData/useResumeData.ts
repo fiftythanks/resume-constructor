@@ -637,12 +637,10 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update the value directly instead of updating the object that has both the value and the ID.
-    editLanguage(languageIndex: number, value: ReadonlyDeep<ItemWithId>) {
+    editLanguage(languageIndex: number, value: string) {
       if (languageIndex >= 0 && languageIndex < data.skills.languages.length) {
-        const newLanguageObject = structuredClone(value);
-
         setData((draft) => {
-          draft.skills.languages[languageIndex] = newLanguageObject;
+          draft.skills.languages[languageIndex].value = value;
         });
       }
     },
@@ -672,15 +670,13 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editFramework(frameworkIndex: number, value: ReadonlyDeep<ItemWithId>) {
+    editFramework(frameworkIndex: number, value: string) {
       if (
         frameworkIndex >= 0 &&
         frameworkIndex < data.skills.frameworks.length
       ) {
-        const newFrameworkObject = structuredClone(value);
-
         setData((draft) => {
-          draft.skills.frameworks[frameworkIndex] = newFrameworkObject;
+          draft.skills.frameworks[frameworkIndex].value = value;
         });
       }
     },
@@ -707,12 +703,10 @@ export default function useResumeData() {
      * function.
      */
     // TODO: refactor to update value directly instead of the object that has both the value and the ID.
-    editTool(toolIndex: number, value: ReadonlyDeep<ItemWithId>) {
+    editTool(toolIndex: number, value: string) {
       if (toolIndex >= 0 && toolIndex < data.skills.tools.length) {
-        const newToolObject = structuredClone(value);
-
         setData((draft) => {
-          draft.skills.tools[toolIndex] = newToolObject;
+          draft.skills.tools[toolIndex].value = value;
         });
       }
     },
