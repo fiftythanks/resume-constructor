@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
+
+import type { ProjectFunctions } from './Projects';
+import type { Project } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
+export interface ProjectProps {
+  data: Project;
+  functions: ProjectFunctions;
+  updateScreenReaderAnnouncement: (announcement: string) => void;
+}
 
 export default function Project({
   data,
   functions,
   updateScreenReaderAnnouncement,
-}) {
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+}: ReadonlyDeep<ProjectProps>) {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target as {
+      name: 'code' | 'demo' | 'projectName' | 'stack';
+      value: string;
+    };
+
     functions.edit(name, value);
   };
 
@@ -71,7 +85,7 @@ export default function Project({
             name="codeText"
             placeholder="GitHub Repo"
             type="text"
-            value={data.codeText}
+            value={data.code.text}
             onChange={handleInputChange}
           />
         </li>
@@ -85,7 +99,7 @@ export default function Project({
             name="codeLink"
             placeholder="https://www.github.com/johndoe/TravelPlanner"
             type="text"
-            value={data.codeLink}
+            value={data.code.link}
             onChange={handleInputChange}
           />
         </li>
@@ -99,7 +113,7 @@ export default function Project({
             name="demoText"
             placeholder="Live Preview"
             type="text"
-            value={data.demoText}
+            value={data.demo.text}
             onChange={handleInputChange}
           />
         </li>
@@ -113,7 +127,7 @@ export default function Project({
             name="demoLink"
             placeholder="https://john-doe-travel-planner.herokuapp.com"
             type="text"
-            value={data.demoLink}
+            value={data.demo.link}
             onChange={handleInputChange}
           />
         </li>
