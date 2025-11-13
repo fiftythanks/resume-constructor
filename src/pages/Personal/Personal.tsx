@@ -3,11 +3,11 @@ import type { ChangeEvent } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
-import type { ResumeData } from '@/types/resumeData';
+import type { Personal } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 export interface PersonalProps {
-  data: ResumeData['personal'];
+  data: Personal;
   functions: ReturnType<typeof useResumeData>['personalFunctions'];
 }
 

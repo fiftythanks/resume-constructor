@@ -5,11 +5,11 @@ import useResumeData from '@/hooks/useResumeData';
 
 import BulletPoints from '@/components/BulletPoints';
 
-import type { ResumeData } from '@/types/resumeData';
+import type { Skills } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 export interface SkillsProps {
-  data: ResumeData['skills'];
+  data: Skills;
   functions: ReturnType<typeof useResumeData>['skillsFunctions'];
 
   updateScreenReaderAnnouncement: ReturnType<

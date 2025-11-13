@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
-import type { ResumeData } from '@/types/resumeData';
+import type { Links } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: make it possible to reorder links.
@@ -12,7 +12,7 @@ import type { ReadonlyDeep } from 'type-fest';
 // ? Since the email is on the same line as the links, and since it's all the contents of one section, it's kind of strange to keep two different components for all of this info, `Personal` and `Links`. It's probably more reasonable to merge the components. As a bonus, the navbar will become lower and it will be easier to adapt the app for small screen sizes, like iPhone 5's.
 
 export interface LinksProps {
-  data: ResumeData['links'];
+  data: Links;
   functions: ReturnType<typeof useResumeData>['linksFunctions'];
 }
 

@@ -3,11 +3,11 @@ import type { ChangeEvent } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
-import type { ResumeData } from '@/types/resumeData';
+import type { Certifications } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 export interface CertificationsProps {
-  data: ResumeData['certifications'];
+  data: Certifications;
   functions: ReturnType<typeof useResumeData>['certificationsFunctions'];
 }
 
