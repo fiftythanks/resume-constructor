@@ -1,8 +1,26 @@
 import React from 'react';
+import type { ChangeEvent } from 'react';
 
-export default function Certifications({ data, functions }) {
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+import useResumeData from '@/hooks/useResumeData';
+
+import type { ResumeData } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
+export interface CertificationsProps {
+  data: ResumeData['certifications'];
+  functions: ReturnType<typeof useResumeData>['certificationsFunctions'];
+}
+
+export default function Certifications({
+  data,
+  functions,
+}: ReadonlyDeep<CertificationsProps>) {
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target as {
+      name: 'certificates' | 'interests' | 'skills';
+      value: string;
+    };
+
     functions.updateCertifications(name, value);
   };
 
