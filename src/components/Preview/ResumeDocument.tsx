@@ -243,18 +243,59 @@ export default function ResumeDocument({
         <View
           render={() => (
             <>
-              {activeSectionIds.map(
-                (sectionID) =>
-                  sectionID !== 'personal' &&
-                  sectionID !== 'links' && (
-                    <ResumeSection
-                      data={data[sectionID]}
-                      key={sectionID}
-                      sectionName={sectionID}
-                      style={styles.section}
-                    />
-                  ),
-              )}
+              {activeSectionIds.map((sectionId) => {
+                /**
+                 * A simpler version didn't work because TypeScript couldn't
+                 * infer types properly.
+                 */
+                switch (sectionId) {
+                  case 'certifications':
+                    return (
+                      <ResumeSection
+                        data={data.certifications}
+                        key="certifications"
+                        sectionName="certifications"
+                        style={styles.section}
+                      />
+                    );
+                  case 'education':
+                    return (
+                      <ResumeSection
+                        data={data.education}
+                        key="education"
+                        sectionName="education"
+                        style={styles.section}
+                      />
+                    );
+                  case 'experience':
+                    return (
+                      <ResumeSection
+                        data={data.experience}
+                        key="experience"
+                        sectionName="experience"
+                        style={styles.section}
+                      />
+                    );
+                  case 'projects':
+                    return (
+                      <ResumeSection
+                        data={data.projects}
+                        key="projects"
+                        sectionName="projects"
+                        style={styles.section}
+                      />
+                    );
+                  case 'skills':
+                    return (
+                      <ResumeSection
+                        data={data.skills}
+                        key="skills"
+                        sectionName="skills"
+                        style={styles.section}
+                      />
+                    );
+                }
+              })}
             </>
           )}
         />
