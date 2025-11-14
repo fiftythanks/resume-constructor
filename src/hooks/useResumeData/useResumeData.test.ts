@@ -8,7 +8,6 @@ import type { ReadonlyDeep } from 'type-fest';
 
 import {
   ItemWithId,
-  Project,
   ResumeData,
   ResumeDataWithOptionalIds,
   ResumeDataWithoutIds,
@@ -118,25 +117,6 @@ describe('useResumeData', () => {
 
         expect(result.current.data.certifications.certificates).toBe(
           'some value',
-        );
-      });
-    });
-
-    describe('clear', () => {
-      it('should clear Certifications data', async () => {
-        const { result } = renderHook(() => useResumeData());
-
-        await act(async () => {
-          result.current.certificationsFunctions.updateCertifications(
-            'certificates',
-            'some value',
-          );
-
-          result.current.certificationsFunctions.clear();
-        });
-
-        expect(result.current.data.certifications).toEqual(
-          getDefaultData('certifications'),
         );
       });
     });
@@ -514,36 +494,6 @@ describe('useResumeData', () => {
         ).toBe('some value');
       });
     });
-
-    describe('clear', () => {
-      it('should clear Education data, resetting it to defaults', async () => {
-        const { result } = renderHook(() => useResumeData());
-
-        await act(async () => {
-          result.current.educationFunctions.addDegree();
-          result.current.educationFunctions.addDegree();
-          result.current.educationFunctions.addDegree();
-          result.current.educationFunctions.addDegree();
-          result.current.educationFunctions.addDegree();
-        });
-
-        await act(async () => {
-          result.current.educationFunctions.addBulletPoint(4);
-          result.current.educationFunctions.addBulletPoint(4);
-          result.current.educationFunctions.addBulletPoint(4);
-          result.current.educationFunctions.addBulletPoint(1);
-          result.current.educationFunctions.addBulletPoint(2);
-        });
-
-        await act(async () => {
-          result.current.educationFunctions.clear();
-        });
-
-        expect(stripOfIds(result.current.data)).toEqual(
-          stripOfIds(getDefaultData()),
-        );
-      });
-    });
   });
 
   describe('experienceFunctions', () => {
@@ -917,36 +867,6 @@ describe('useResumeData', () => {
         ).toBe('some value');
       });
     });
-
-    describe('clear', () => {
-      it('should clear Experience data, resetting it to defaults', async () => {
-        const { result } = renderHook(() => useResumeData());
-
-        await act(async () => {
-          result.current.experienceFunctions.addJob();
-          result.current.experienceFunctions.addJob();
-          result.current.experienceFunctions.addJob();
-          result.current.experienceFunctions.addJob();
-          result.current.experienceFunctions.addJob();
-        });
-
-        await act(async () => {
-          result.current.experienceFunctions.addBulletPoint(4);
-          result.current.experienceFunctions.addBulletPoint(4);
-          result.current.experienceFunctions.addBulletPoint(4);
-          result.current.experienceFunctions.addBulletPoint(1);
-          result.current.experienceFunctions.addBulletPoint(2);
-        });
-
-        await act(async () => {
-          result.current.experienceFunctions.clear();
-        });
-
-        expect(stripOfIds(result.current.data)).toEqual(
-          stripOfIds(getDefaultData()),
-        );
-      });
-    });
   });
 
   describe('linksFunctions', () => {
@@ -963,32 +883,6 @@ describe('useResumeData', () => {
         });
 
         expect(result.current.data.links.github.text).toBe('some value');
-      });
-    });
-
-    describe('clear', () => {
-      it('should clear Links data', async () => {
-        const { result } = renderHook(() => useResumeData());
-
-        await act(async () => {
-          result.current.linksFunctions.updateLinks(
-            'github',
-            'text',
-            'some value',
-          );
-
-          result.current.linksFunctions.updateLinks(
-            'linkedin',
-            'link',
-            'some link value',
-          );
-        });
-
-        await act(async () => {
-          result.current.linksFunctions.clear();
-        });
-
-        expect(result.current.data.links).toEqual(getDefaultData('links'));
       });
     });
   });
@@ -1236,8 +1130,8 @@ describe('useResumeData', () => {
       });
     });
 
-    describe('editProject', () => {
-      it('should edit project data', async () => {
+    describe('editProjectLink', () => {
+      it('should edit project links', async () => {
         const { result } = renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
@@ -1246,21 +1140,49 @@ describe('useResumeData', () => {
           });
         }
 
-        const newCodeObject: Project['code'] = {
-          link: 'some link',
-          text: 'some text',
-        };
-
         await act(async () => {
-          result.current.projectsFunctions.editProject(
+          result.current.projectsFunctions.editProjectLink(
             0,
             'code',
-            newCodeObject,
+            'link',
+            'some link',
+          );
+
+          result.current.projectsFunctions.editProjectLink(
+            0,
+            'code',
+            'text',
+            'some text',
           );
         });
 
-        expect(result.current.data.projects.projects[0].code).toEqual(
-          newCodeObject,
+        expect(result.current.data.projects.projects[0].code).toEqual({
+          link: 'some link',
+          text: 'some text',
+        });
+      });
+    });
+
+    describe('editProjectText', () => {
+      it('should edit `projectName` and `stack`', async () => {
+        const { result } = renderHook(() => useResumeData());
+
+        if (result.current.data.projects.projects.length === 0) {
+          await act(async () => {
+            result.current.projectsFunctions.addProject();
+          });
+        }
+
+        await act(async () => {
+          result.current.projectsFunctions.editProjectText(
+            0,
+            'projectName',
+            'some name',
+          );
+        });
+
+        expect(result.current.data.projects.projects[0].projectName).toBe(
+          'some name',
         );
       });
     });
@@ -1389,36 +1311,6 @@ describe('useResumeData', () => {
         ).toBe('some value');
       });
     });
-
-    describe('clear', () => {
-      it('should clear Projects data, resetting it to defaults', async () => {
-        const { result } = renderHook(() => useResumeData());
-
-        await act(async () => {
-          result.current.projectsFunctions.addProject();
-          result.current.projectsFunctions.addProject();
-          result.current.projectsFunctions.addProject();
-          result.current.projectsFunctions.addProject();
-          result.current.projectsFunctions.addProject();
-        });
-
-        await act(async () => {
-          result.current.projectsFunctions.addBulletPoint(4);
-          result.current.projectsFunctions.addBulletPoint(4);
-          result.current.projectsFunctions.addBulletPoint(4);
-          result.current.projectsFunctions.addBulletPoint(1);
-          result.current.projectsFunctions.addBulletPoint(2);
-        });
-
-        await act(async () => {
-          result.current.projectsFunctions.clear();
-        });
-
-        expect(stripOfIds(result.current.data)).toEqual(
-          stripOfIds(getDefaultData()),
-        );
-      });
-    });
   });
 
   describe('skillsFunctions', () => {
@@ -1442,34 +1334,6 @@ describe('useResumeData', () => {
 
         expect(result.current.data.skills.frameworks).toEqual(
           newFrameworksObject,
-        );
-      });
-    });
-
-    describe('clear', () => {
-      it('should clear Skills data', async () => {
-        const { result } = renderHook(() => useResumeData());
-
-        const newFrameworksObject: ItemWithId[] = [
-          {
-            id: '5-5-5-5-5',
-            value: 'some framework',
-          },
-        ];
-
-        await act(async () => {
-          result.current.skillsFunctions.updateSkills(
-            'frameworks',
-            newFrameworksObject,
-          );
-        });
-
-        await act(async () => {
-          result.current.skillsFunctions.clear();
-        });
-
-        expect(stripOfIds(result.current.data)).toEqual(
-          stripOfIds(getDefaultData()),
         );
       });
     });
@@ -1572,7 +1436,7 @@ describe('useResumeData', () => {
     });
 
     describe('editLanguage', () => {
-      it('should replace language object with passed object', async () => {
+      it('should edit language value', async () => {
         const { result } = renderHook(() => useResumeData());
 
         if (result.current.data.skills.languages.length === 0) {
@@ -1581,17 +1445,12 @@ describe('useResumeData', () => {
           });
         }
 
-        const newLanguageObject: ItemWithId = {
-          id: '5-5-5-5-5',
-          value: 'some language',
-        };
-
         await act(async () => {
-          result.current.skillsFunctions.editLanguage(0, newLanguageObject);
+          result.current.skillsFunctions.editLanguage(0, 'some language');
         });
 
-        expect(result.current.data.skills.languages[0]).toEqual(
-          newLanguageObject,
+        expect(result.current.data.skills.languages[0].value).toBe(
+          'some language',
         );
       });
     });
@@ -1694,7 +1553,7 @@ describe('useResumeData', () => {
     });
 
     describe('editFramework', () => {
-      it('should replace framework object with passed object', async () => {
+      it('should edit framework value', async () => {
         const { result } = renderHook(() => useResumeData());
 
         if (result.current.data.skills.frameworks.length === 0) {
@@ -1703,17 +1562,12 @@ describe('useResumeData', () => {
           });
         }
 
-        const newFrameworkObject: ItemWithId = {
-          id: '5-5-5-5-5',
-          value: 'some framework',
-        };
-
         await act(async () => {
-          result.current.skillsFunctions.editFramework(0, newFrameworkObject);
+          result.current.skillsFunctions.editFramework(0, 'some framework');
         });
 
-        expect(result.current.data.skills.frameworks[0]).toEqual(
-          newFrameworkObject,
+        expect(result.current.data.skills.frameworks[0].value).toBe(
+          'some framework',
         );
       });
     });
@@ -1810,7 +1664,7 @@ describe('useResumeData', () => {
     });
 
     describe('editTool', () => {
-      it('should replace tool object with passed object', async () => {
+      it('should edit tool value', async () => {
         const { result } = renderHook(() => useResumeData());
 
         if (result.current.data.skills.tools.length === 0) {
@@ -1819,16 +1673,11 @@ describe('useResumeData', () => {
           });
         }
 
-        const newToolObject: ItemWithId = {
-          id: '5-5-5-5-5',
-          value: 'some tool',
-        };
-
         await act(async () => {
-          result.current.skillsFunctions.editTool(0, newToolObject);
+          result.current.skillsFunctions.editTool(0, 'some tool');
         });
 
-        expect(result.current.data.skills.tools[0]).toEqual(newToolObject);
+        expect(result.current.data.skills.tools[0].value).toBe('some tool');
       });
     });
   });
