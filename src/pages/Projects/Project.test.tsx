@@ -12,11 +12,7 @@ import '@testing-library/jest-dom';
 import Project from './Project';
 
 import type { ProjectProps } from './Project';
-import type { ProjectKeysNoBulletPointsAndId } from './Projects';
-import type {
-  ItemWithId,
-  Project as ProjectInterface,
-} from '@/types/resumeData';
+import type { ItemWithId } from '@/types/resumeData';
 
 function getProps(overrides?: Partial<ProjectProps>): ProjectProps {
   return {
@@ -46,13 +42,15 @@ function getProps(overrides?: Partial<ProjectProps>): ProjectProps {
     functions: {
       addBulletPoint() {},
       deleteBulletPoint(_itemIndex: number) {},
+      editBulletPoint(_itemIndex: number, _value: string) {},
 
-      edit<K extends ProjectKeysNoBulletPointsAndId>(
-        _field: K,
-        _value: ProjectInterface[K],
+      editLink(
+        _field: 'code' | 'demo',
+        _type: 'link' | 'text',
+        _value: string,
       ) {},
 
-      editBulletPoint(_itemIndex: number, _value: string) {},
+      editText(_field: 'projectName' | 'stack', _value: string) {},
       updateBulletPoints(_value: ItemWithId[]) {},
     },
 
@@ -71,18 +69,15 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `edit` on Project Name change', async () => {
-      const editMock = jest.fn(
-        <K extends ProjectKeysNoBulletPointsAndId>(
-          _name: K,
-          _value: ProjectInterface[K],
-        ) => {},
+    it('should call `editText` on Project Name change', async () => {
+      const editTextMock = jest.fn(
+        (_field: 'projectName' | 'stack', _value: string) => {},
       );
 
       render(
         <Project
           {...getProps({
-            functions: { ...getProps().functions, edit: editMock },
+            functions: { ...getProps().functions, editText: editTextMock },
           })}
         />,
       );
@@ -92,7 +87,7 @@ describe('Project', () => {
 
       await user.type(input, 's');
 
-      expect(editMock).toHaveBeenCalledTimes(1);
+      expect(editTextMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -105,18 +100,15 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `edit` on Tech Stack change', async () => {
-      const editMock = jest.fn(
-        <K extends ProjectKeysNoBulletPointsAndId>(
-          _name: K,
-          _value: ProjectInterface[K],
-        ) => {},
+    it('should call `editText` on Tech Stack change', async () => {
+      const editTextMock = jest.fn(
+        (_field: 'projectName' | 'stack', _value: string) => {},
       );
 
       render(
         <Project
           {...getProps({
-            functions: { ...getProps().functions, edit: editMock },
+            functions: { ...getProps().functions, editText: editTextMock },
           })}
         />,
       );
@@ -126,7 +118,7 @@ describe('Project', () => {
 
       await user.type(input, 's');
 
-      expect(editMock).toHaveBeenCalledTimes(1);
+      expect(editTextMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -139,18 +131,15 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `edit` on Code (text) change', async () => {
-      const editMock = jest.fn(
-        <K extends ProjectKeysNoBulletPointsAndId>(
-          _name: K,
-          _value: ProjectInterface[K],
-        ) => {},
+    it('should call `editLink` on Code (text) change', async () => {
+      const editLinkMock = jest.fn(
+        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
       );
 
       render(
         <Project
           {...getProps({
-            functions: { ...getProps().functions, edit: editMock },
+            functions: { ...getProps().functions, editLink: editLinkMock },
           })}
         />,
       );
@@ -160,7 +149,7 @@ describe('Project', () => {
 
       await user.type(input, 's');
 
-      expect(editMock).toHaveBeenCalledTimes(1);
+      expect(editLinkMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -173,18 +162,15 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `edit` on Code (link) change', async () => {
-      const editMock = jest.fn(
-        <K extends ProjectKeysNoBulletPointsAndId>(
-          _name: K,
-          _value: ProjectInterface[K],
-        ) => {},
+    it('should call `editLink` on Code (link) change', async () => {
+      const editLinkMock = jest.fn(
+        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
       );
 
       render(
         <Project
           {...getProps({
-            functions: { ...getProps().functions, edit: editMock },
+            functions: { ...getProps().functions, editLink: editLinkMock },
           })}
         />,
       );
@@ -194,7 +180,7 @@ describe('Project', () => {
 
       await user.type(input, 's');
 
-      expect(editMock).toHaveBeenCalledTimes(1);
+      expect(editLinkMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -207,18 +193,15 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `edit` on Demo (text) change', async () => {
-      const editMock = jest.fn(
-        <K extends ProjectKeysNoBulletPointsAndId>(
-          _name: K,
-          _value: ProjectInterface[K],
-        ) => {},
+    it('should call `editLink` on Demo (text) change', async () => {
+      const editLinkMock = jest.fn(
+        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
       );
 
       render(
         <Project
           {...getProps({
-            functions: { ...getProps().functions, edit: editMock },
+            functions: { ...getProps().functions, editLink: editLinkMock },
           })}
         />,
       );
@@ -228,7 +211,7 @@ describe('Project', () => {
 
       await user.type(input, 's');
 
-      expect(editMock).toHaveBeenCalledTimes(1);
+      expect(editLinkMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -241,18 +224,15 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `edit` on Demo (link) change', async () => {
-      const editMock = jest.fn(
-        <K extends ProjectKeysNoBulletPointsAndId>(
-          _name: K,
-          _value: ProjectInterface[K],
-        ) => {},
+    it('should call `editLink` on Demo (link) change', async () => {
+      const editLinkMock = jest.fn(
+        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
       );
 
       render(
         <Project
           {...getProps({
-            functions: { ...getProps().functions, edit: editMock },
+            functions: { ...getProps().functions, editLink: editLinkMock },
           })}
         />,
       );
@@ -262,7 +242,7 @@ describe('Project', () => {
 
       await user.type(input, 's');
 
-      expect(editMock).toHaveBeenCalledTimes(1);
+      expect(editLinkMock).toHaveBeenCalledTimes(1);
     });
   });
 });

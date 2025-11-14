@@ -10,12 +10,7 @@ import neverReached from '@/utils/neverReached';
 
 import getDefaultData from './getDefaultData';
 
-import type {
-  ItemWithId,
-  Project,
-  ResumeData,
-  SectionId,
-} from '@/types/resumeData';
+import type { ItemWithId, ResumeData, SectionId } from '@/types/resumeData';
 import type { WritableDraft } from 'immer';
 import type { ReadonlyDeep } from 'type-fest';
 
@@ -544,18 +539,27 @@ export default function useResumeData() {
     addProject: () => addItem('project'),
     deleteProject: (index: number) => deleteItem('project', index),
 
-    editProject<K extends Exclude<keyof Project, 'bulletPoints' | 'id'>>(
+    editProjectLink(
       index: number,
-      field: K,
-      value: ReadonlyDeep<Project[K]>,
+      field: 'code' | 'demo',
+      type: 'link' | 'text',
+      value: string,
     ) {
       if (index >= 0 && index < data.projects.projects.length) {
-        const newFieldObject = structuredClone(
-          value,
-        ) as WritableDraft<Project>[K];
-
         setData((draft) => {
-          draft.projects.projects[index][field] = newFieldObject;
+          draft.projects.projects[index][field][type] = value;
+        });
+      }
+    },
+
+    editProjectText(
+      index: number,
+      field: 'projectName' | 'stack',
+      value: string,
+    ) {
+      if (index >= 0 && index < data.projects.projects.length) {
+        setData((draft) => {
+          draft.projects.projects[index][field] = value;
         });
       }
     },

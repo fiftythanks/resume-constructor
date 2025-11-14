@@ -17,13 +17,25 @@ export default function Project({
   functions,
   updateScreenReaderAnnouncement,
 }: ReadonlyDeep<ProjectProps>) {
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target as {
-      name: 'code' | 'demo' | 'projectName' | 'stack';
+  function handleLinkChange(
+    e: ChangeEvent<HTMLInputElement>,
+    type: 'link' | 'text',
+  ) {
+    const { name: field, value } = e.target as {
+      name: 'code' | 'demo';
       value: string;
     };
 
-    functions.edit(name, value);
+    functions.editLink(field, type, value);
+  }
+
+  const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name: field, value } = e.target as {
+      name: 'projectName' | 'stack';
+      value: string;
+    };
+
+    functions.editText(field, value);
   };
 
   return (
@@ -40,7 +52,7 @@ export default function Project({
             placeholder="TravelPlanner"
             type="text"
             value={data.projectName}
-            onChange={handleInputChange}
+            onChange={handleTextChange}
           />
         </li>
         <li className="section--list-item">
@@ -54,7 +66,7 @@ export default function Project({
             placeholder="HTML, CSS, React, TypeScript, Redux, Bootstrap, Express.js, PostgreSQL"
             type="text"
             value={data.stack}
-            onChange={handleInputChange}
+            onChange={handleTextChange}
           />
         </li>
       </ul>
@@ -86,7 +98,7 @@ export default function Project({
             placeholder="GitHub Repo"
             type="text"
             value={data.code.text}
-            onChange={handleInputChange}
+            onChange={(e) => handleLinkChange(e, 'text')}
           />
         </li>
         <li className="section--list-item">
@@ -100,7 +112,7 @@ export default function Project({
             placeholder="https://www.github.com/johndoe/TravelPlanner"
             type="text"
             value={data.code.link}
-            onChange={handleInputChange}
+            onChange={(e) => handleLinkChange(e, 'link')}
           />
         </li>
         <li className="section--list-item">
@@ -114,7 +126,7 @@ export default function Project({
             placeholder="Live Preview"
             type="text"
             value={data.demo.text}
-            onChange={handleInputChange}
+            onChange={(e) => handleLinkChange(e, 'text')}
           />
         </li>
         <li className="section--list-item">
@@ -128,7 +140,7 @@ export default function Project({
             placeholder="https://john-doe-travel-planner.herokuapp.com"
             type="text"
             value={data.demo.link}
-            onChange={handleInputChange}
+            onChange={(e) => handleLinkChange(e, 'link')}
           />
         </li>
       </ul>
