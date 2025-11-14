@@ -1,5 +1,7 @@
 import React from 'react';
 
+import useResumeData from '@/hooks/useResumeData';
+
 import Button from '@/components/Button';
 
 import Project from './Project';
@@ -9,38 +11,66 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
+import type { ItemWithId, Projects } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
+export interface ProjectFunctions {
+  addBulletPoint: () => void;
+  deleteBulletPoint: (itemIndex: number) => void;
+  editBulletPoint: (itemIndex: number, value: string) => void;
+
+  editLink: (
+    field: 'code' | 'demo',
+    type: 'link' | 'text',
+    value: string,
+  ) => void;
+
+  editText: (field: 'projectName' | 'stack', value: string) => void;
+  updateBulletPoints: (value: ItemWithId[]) => void;
+}
+
+export interface ProjectsProps {
+  data: Projects;
+  functions: ReturnType<typeof useResumeData>['projectsFunctions'];
+  updateScreenReaderAnnouncement: (announcement: string) => void;
+}
+
 export default function Projects({
   data,
   functions,
   updateScreenReaderAnnouncement,
-}) {
+}: ReadonlyDeep<ProjectsProps>) {
   const { shownProjectIndex } = data;
 
   function addProject() {
     functions.addProject();
-    document.getElementById('project-name').focus();
+    document.getElementById('project-name')!.focus();
   }
 
-  function getProjectFunctions(index) {
+  function getProjectFunctions(projectIndex: number): ProjectFunctions {
     return {
       addBulletPoint() {
-        functions.addBulletPoint(index);
+        functions.addBulletPoint(projectIndex);
       },
 
       deleteBulletPoint(itemIndex) {
-        functions.deleteBulletPoint(index, itemIndex);
-      },
-
-      edit(field, value) {
-        functions.editProject(index, field, value);
+        functions.deleteBulletPoint(projectIndex, itemIndex);
       },
 
       editBulletPoint(itemIndex, value) {
-        functions.editBulletPoint(index, itemIndex, value);
+        functions.editBulletPoint(projectIndex, itemIndex, value);
+      },
+
+      editLink(field, type, value) {
+        functions.editProjectLink(projectIndex, field, type, value);
+      },
+
+      editText(field, value) {
+        functions.editProjectText(projectIndex, field, value);
       },
 
       updateBulletPoints(value) {
-        functions.updateBulletPoints(index, value);
+        functions.updateBulletPoints(projectIndex, value);
       },
     };
   }
