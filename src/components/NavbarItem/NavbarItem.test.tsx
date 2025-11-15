@@ -8,23 +8,23 @@ import NavbarItem from './NavbarItem';
 
 import type { NavbarItemProps } from './NavbarItem';
 
-describe('NavbarItem', () => {
-  function getProps(overrides: Partial<NavbarItemProps> = {}): NavbarItemProps {
-    return {
-      alt: 'Alternative text',
-      iconSrc: 'path/to/icon.svg',
-      isDraggable: true,
-      isEditorMode: false,
-      isSelected: false,
-      sectionId: 'certifications',
-      sectionTitle: 'Certifications',
-      tabIndex: 0,
-      onDeleteSection: jest.fn(),
-      onSelectSection: jest.fn(),
-      ...overrides,
-    };
-  }
+function getProps(overrides?: Partial<NavbarItemProps>): NavbarItemProps {
+  return {
+    alt: 'Alternative text',
+    iconSrc: 'path/to/icon.svg',
+    isDraggable: true,
+    isEditorMode: false,
+    isSelected: false,
+    sectionId: 'certifications',
+    sectionTitle: 'Certifications',
+    tabIndex: 0,
+    onDeleteSection: jest.fn(),
+    onSelectSection: jest.fn(),
+    ...overrides,
+  };
+}
 
+describe('NavbarItem', () => {
   describe('tab', () => {
     it('should render with an accessible name from the `sectionTitle` prop', () => {
       const props = getProps();
@@ -56,6 +56,42 @@ describe('NavbarItem', () => {
 
       expect(props.onSelectSection).not.toHaveBeenCalled();
     });
+
+    it('should be enabled when `isEditorMode === false`', () => {
+      const props = getProps({ isEditorMode: false });
+      render(<NavbarItem {...props} />);
+
+      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+
+      expect(tab.ariaDisabled).toBe('false');
+    });
+
+    it('should be disabled when `isEditorMode === true`', () => {
+      const props = getProps({ isEditorMode: true });
+      render(<NavbarItem {...props} />);
+
+      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+
+      expect(tab.ariaDisabled).toBe('true');
+    });
+
+    it('should be selected when `isSelected === true`', () => {
+      const props = getProps({ isSelected: true });
+      render(<NavbarItem {...props} />);
+
+      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+
+      expect(tab.ariaSelected).toBe('true');
+    });
+
+    it('should not be selected when `isSelected === false`', () => {
+      const props = getProps({ isSelected: false });
+      render(<NavbarItem {...props} />);
+
+      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+
+      expect(tab.ariaSelected).toBe('false');
+    });
   });
 
   describe('icon', () => {
@@ -66,6 +102,18 @@ describe('NavbarItem', () => {
       const icon = screen.getByRole('img', { name: props.alt });
 
       expect(icon).toBeInTheDocument();
+    });
+
+    it('should render the correct icon', () => {
+      const props = getProps();
+      render(<NavbarItem {...props} />);
+
+      const icon: HTMLImageElement = screen.getByRole('img', {
+        name: props.alt,
+      });
+
+      const endsWithIconSrc = new RegExp(`${props.iconSrc}$`);
+      expect(icon.src).toMatch(endsWithIconSrc);
     });
 
     it('should be a correct icon specified with the `iconSrc` prop', () => {
