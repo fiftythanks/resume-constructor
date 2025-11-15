@@ -126,7 +126,7 @@ export default function BulletPoints({
     },
 
     onDragCancel({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
-      return `Dragging was cancelled. Draggable item $${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
+      return `Dragging was cancelled. Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
     },
   };
 
@@ -162,11 +162,12 @@ export default function BulletPoints({
           <ul className="BulletPoints-List" data-testid="bullet-points">
             {data.map((item, index) => {
               const { id, value } = item;
+
               const del = () => {
                 deleteItem(index);
 
                 updateScreenReaderAnnouncement(
-                  `Bullet Point ${index + 1} was deleted.`,
+                  `Bullet point ${index + 1} was deleted.`,
                 );
 
                 if (index < data.length - 1) {
@@ -183,6 +184,7 @@ export default function BulletPoints({
               };
 
               const edit = (e: ChangeEvent<HTMLInputElement>) =>
+                // FIXME: index, itemIndex or i? Decide already!
                 editItem(index, e.target.value);
 
               let placeholder: string | undefined;
@@ -227,6 +229,7 @@ export default function BulletPoints({
         className="BulletPoints-Add"
         id={`add-${name}`}
         modifiers={['Button_paddingInline_large']}
+        // TODO: add a screen reader announcement "A new bullet point was added".
         onClick={addItem}
       >
         Add
