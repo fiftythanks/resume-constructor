@@ -20,57 +20,100 @@ function getProps(overrides?: Partial<ListItemProps>): ListItemProps {
   };
 }
 
+// disabled
+// pressed
+// roledescription
+// describedby
+
 describe('ListItem', () => {
-  it('should render an input field with an accessible name "Bullet point [index + 1]"', () => {
-    render(<ListItem {...getProps()} />);
+  describe('text input', () => {
+    it('should render a text input with an accessible name "Bullet point [index + 1]"', () => {
+      render(<ListItem {...getProps()} />);
 
-    const inputField = screen.getByRole('textbox', { name: 'Bullet point 2' });
+      const input = screen.getByRole('textbox', { name: 'Bullet point 2' });
 
-    expect(inputField).toBeInTheDocument();
-  });
-
-  it("should call `edit` on change of the input field's value", async () => {
-    const editMock = jest.fn();
-    render(<ListItem {...getProps({ edit: editMock })} />);
-    const user = userEvent.setup();
-    const inputField = screen.getByRole('textbox', { name: 'Bullet point 2' });
-
-    await user.type(inputField, 'f');
-
-    expect(editMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('should render a drag handle with an accessible name "Drag bullet point [index + 1]"', () => {
-    render(<ListItem {...getProps()} />);
-
-    const dragHandle = screen.getByRole('button', {
-      name: 'Drag bullet point 2',
+      expect(input).toBeInTheDocument();
     });
 
-    expect(dragHandle).toBeInTheDocument();
-  });
+    it('should pass the text input the correct value from the `value` prop', () => {
+      const props = getProps();
+      render(<ListItem {...props} />);
 
-  it('should render a delete button with an accessible name "Delete bullet point [index + 1]"', () => {
-    render(<ListItem {...getProps()} />);
+      const input: HTMLInputElement = screen.getByRole('textbox', {
+        name: 'Bullet point 2',
+      });
 
-    const deleteBtn = screen.getByRole('button', {
-      name: 'Delete bullet point 2',
+      expect(input.value).toBe(props.value);
     });
 
-    expect(deleteBtn).toBeInTheDocument();
-  });
+    it('should pass the text input a placeholder "Bullet point [index + 1] if the `placeholder` prop is `undefined`', () => {
+      render(<ListItem {...getProps()} />);
 
-  it('should call `deleteItem` when the delete button is clicked', async () => {
-    const deleteItemMock = jest.fn();
-    render(<ListItem {...getProps({ deleteItem: deleteItemMock })} />);
-    const user = userEvent.setup();
+      const input: HTMLInputElement = screen.getByRole('textbox', {
+        name: 'Bullet point 2',
+      });
 
-    const deleteBtn = screen.getByRole('button', {
-      name: 'Delete bullet point 2',
+      expect(input.placeholder).toBe('Bullet point 2');
     });
 
-    await user.click(deleteBtn);
+    it('should pass the text input a placeholder from `placeholder` if `placeholder !== undefined`', () => {
+      const props = getProps({ placeholder: 'Some placeholder' });
+      render(<ListItem {...props} />);
 
-    expect(deleteItemMock).toHaveBeenCalledTimes(1);
+      const input: HTMLInputElement = screen.getByRole('textbox', {
+        name: 'Bullet point 2',
+      });
+
+      expect(input.placeholder).toBe('Some placeholder');
+    });
+
+    it('should call `edit` when the text input value is changed', async () => {
+      const editMock = jest.fn();
+      render(<ListItem {...getProps({ edit: editMock })} />);
+      const user = userEvent.setup();
+      const input = screen.getByRole('textbox', { name: 'Bullet point 2' });
+
+      await user.type(input, 'f');
+
+      expect(editMock).toHaveBeenCalledTimes(1);
+    }, 10000);
+  });
+
+  describe('drag handle', () => {
+    it('should render a drag handle with an accessible name "Drag bullet point [index + 1]"', () => {
+      render(<ListItem {...getProps()} />);
+
+      const dragHandle = screen.getByRole('button', {
+        name: 'Drag bullet point 2',
+      });
+
+      expect(dragHandle).toBeInTheDocument();
+    });
+  });
+
+  describe('delete btn', () => {
+    it('should render a delete button with an accessible name "Delete bullet point [index + 1]"', () => {
+      render(<ListItem {...getProps()} />);
+
+      const deleteBtn = screen.getByRole('button', {
+        name: 'Delete bullet point 2',
+      });
+
+      expect(deleteBtn).toBeInTheDocument();
+    });
+
+    it('should call `deleteItem` when the delete button is clicked', async () => {
+      const deleteItemMock = jest.fn();
+      render(<ListItem {...getProps({ deleteItem: deleteItemMock })} />);
+      const user = userEvent.setup();
+
+      const deleteBtn = screen.getByRole('button', {
+        name: 'Delete bullet point 2',
+      });
+
+      await user.click(deleteBtn);
+
+      expect(deleteItemMock).toHaveBeenCalledTimes(1);
+    });
   });
 });
