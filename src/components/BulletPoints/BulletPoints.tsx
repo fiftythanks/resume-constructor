@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
@@ -72,7 +72,8 @@ export default function BulletPoints({
   updateData,
   updateScreenReaderAnnouncement,
 }: ReadonlyDeep<BulletPointsProps>) {
-  const setIsDragging = useState(false)[1];
+  const [_, setIsDragging] = useState(false);
+  const wasDraggedAwayFromItsInitialPositionRef = useRef(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -106,15 +107,33 @@ export default function BulletPoints({
 
   const announcements = {
     onDragStart({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
+      wasDraggedAwayFromItsInitialPositionRef.current = false;
+
       return `Picked up draggable item ${data.findIndex((item) => item.id === active.id) + 1}.`;
     },
 
     onDragOver({ active, over }: ReadonlyDeep<Arguments>) {
       if (over !== null) {
-        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
-      }
+        /**
+         * In case the draggable item is dragged over the area where it came
+         * from, announce it only if the draggable item was dragged over some
+         * other draggable area.
+         *
+         * This is necessary to make sure `onDragOver` doesn't lead to
+         * announcing something like "Draggable item 1 was dragged over
+         * area 1" right after the draggable item has just been picked up.
+         */
+        if (
+          active.id !== over.id ||
+          wasDraggedAwayFromItsInitialPositionRef.current
+        ) {
+          wasDraggedAwayFromItsInitialPositionRef.current = true;
 
-      return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} is no longer over a droppable area.`;
+          return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
+        }
+      } else {
+        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} is no longer over a droppable area.`;
+      }
     },
 
     onDragEnd({ active, over }: ReadonlyDeep<Arguments>) {
