@@ -586,6 +586,7 @@ export default function useResumeData() {
     addBulletPoint: (projectIndex: number) =>
       addBulletPoint('project', projectIndex),
 
+    // FIXME: `bulletIndex` or `itemIndex`? Fix inconsistency.
     deleteBulletPoint: (projectIndex: number, bulletIndex: number) =>
       deleteBulletPoint('project', projectIndex, bulletIndex),
 
