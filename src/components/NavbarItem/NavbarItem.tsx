@@ -1,5 +1,5 @@
 import React from 'react';
-import type { LiHTMLAttributes, MouseEventHandler } from 'react';
+import type { LiHTMLAttributes } from 'react';
 
 import { clsx } from 'clsx';
 
@@ -20,8 +20,8 @@ export interface NavbarItemProps extends LiHTMLAttributes<HTMLLIElement> {
   isDraggable: boolean;
   isEditorMode: boolean;
   isSelected: boolean;
-  onDeleteSection: MouseEventHandler<HTMLButtonElement>;
-  onSelectSection: MouseEventHandler<HTMLButtonElement>;
+  onDeleteSection: () => void;
+  onSelectSection: () => void;
   sectionId: SectionId;
   sectionTitle: SectionTitle;
   tabIndex: -1 | 0;
