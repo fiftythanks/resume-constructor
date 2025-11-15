@@ -15,13 +15,9 @@ function Container() {
   return <div id="popup-root" />;
 }
 
-function children() {
-  return <div />;
-}
-
 function getProps(overrides?: Partial<PopupProps>): PopupProps {
   return {
-    children: children(),
+    children: <div />,
     id: 'some-id',
     isShown: true,
     onClose: () => {},
@@ -30,8 +26,19 @@ function getProps(overrides?: Partial<PopupProps>): PopupProps {
   };
 }
 
+// should render a heading with text `title`
+
 describe('Popup', () => {
-  it('should render with an accessible name from its `title` prop', () => {
+  it('should render a heading with text from its `title` prop', () => {
+    render(<Container />);
+    render(<Popup {...getProps()} />);
+
+    const heading = screen.getByRole('heading', { name: 'Some Title' });
+
+    expect(heading).toBeInTheDocument();
+  });
+
+  it('should render with an accessible name from its heading', () => {
     render(<Container />);
     render(<Popup {...getProps()} />);
 
@@ -64,5 +71,16 @@ describe('Popup', () => {
     fireEvent(popup, new Event('close'));
 
     expect(onCloseMock).toHaveBeenCalledTimes(1);
+  });
+
+  // TODO: add a test for closing the popup by pressing Escape.
+
+  it('should render a heading with text from the prop `title`', () => {
+    render(<Container />);
+    render(<Popup {...getProps()} />);
+
+    const heading = screen.getByRole('heading', { name: 'Some Title' });
+
+    expect(heading).toBeInTheDocument();
   });
 });
