@@ -145,7 +145,7 @@ export default function BulletPoints({
     },
 
     onDragCancel({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
-      return `Dragging was cancelled. Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
+      return `Dragging was cancelled. Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was put to its initial position.`;
     },
   };
 
