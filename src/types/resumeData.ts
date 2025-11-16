@@ -47,6 +47,7 @@ export interface Personal {
   summary: string;
 }
 
+// TODO: the object represents a link. The `link` property represents its URL. The `text` property represents the anchor text. Name `link` for the URL property isn't completely appropriate. It should be `url`. Refactor.
 export interface Link {
   link: string;
   text: string;
