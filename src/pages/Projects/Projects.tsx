@@ -122,7 +122,7 @@ export default function Projects({
         )}
         {/* TODO: redesign it or at least put it in some other place. It looks terrible. (Talking about the UI, not the code.) */}
         <Button
-          aria-label={`Add Project ${data.projects.length}`}
+          aria-label={`Add Project ${data.projects.length + 1}`}
           id="add-project"
           modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
           onClick={addProject}
