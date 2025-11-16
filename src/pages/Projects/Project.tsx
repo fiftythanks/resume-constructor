@@ -109,7 +109,7 @@ export default function Project({
             className="section--field"
             id="code-link"
             name="codeLink"
-            placeholder="https://www.github.com/johndoe/TravelPlanner"
+            placeholder="https://www.github.com/johndoe/TravelPlanner/"
             type="text"
             value={data.code.link}
             onChange={(e) => handleLinkChange(e, 'link')}
@@ -137,7 +137,7 @@ export default function Project({
             className="section--field"
             id="demo-link"
             name="demoLink"
-            placeholder="https://john-doe-travel-planner.herokuapp.com"
+            placeholder="https://john-doe-travel-planner.herokuapp.com/"
             type="text"
             value={data.demo.link}
             onChange={(e) => handleLinkChange(e, 'link')}
