@@ -37,6 +37,7 @@ export default function Skills({
         data={data.languages}
         deleteItem={functions.deleteLanguage}
         editItem={functions.editLanguage}
+        itemName="language"
         legend="Languages"
         name="language"
         updateData={(value) => functions.updateSkills('languages', value)}
@@ -47,6 +48,7 @@ export default function Skills({
         data={data.frameworks}
         deleteItem={functions.deleteFramework}
         editItem={functions.editFramework}
+        itemName="framework"
         legend="Frameworks, Libraries & Databases"
         name="framework"
         updateData={(value) => functions.updateSkills('frameworks', value)}
@@ -57,6 +59,7 @@ export default function Skills({
         data={data.tools}
         deleteItem={functions.deleteTool}
         editItem={functions.editTool}
+        itemName="tool"
         legend="Tools & Other Technologies"
         name="tool"
         updateData={(value) => functions.updateSkills('tools', value)}

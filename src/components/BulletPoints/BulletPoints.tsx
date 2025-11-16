@@ -24,8 +24,6 @@ import { clsx } from 'clsx';
 
 import Button from '@/components/Button';
 
-import capitalize from '@/utils/capitalize';
-
 import ListItem from './ListItem';
 
 import './BulletPoints.scss';
@@ -34,14 +32,13 @@ import type { ItemWithId } from '@/types/resumeData';
 import type { Active, DragEndEvent, Over } from '@dnd-kit/core';
 import type { ReadonlyDeep } from 'type-fest';
 
-// FIXME: the `name` prop is used in several incompatible ways: it's used as a kind of ID and it's also used as an ARIA label. I'm struggling to understand the purpose of using `name` here at all. This issue needs a serious reconsideration and refactor.
-
 export interface BulletPointsProps {
   addItem: () => void;
   className?: string;
   data: ItemWithId[];
   deleteItem: (itemIndex: number) => void;
   editItem: (itemIndex: number, value: string) => void;
+  itemName?: string;
   legend: string;
   legendCentralized?: boolean;
   name: string;
@@ -57,6 +54,8 @@ export interface BulletPointsProps {
  * Renders draggable-and-droppable bullet points for sections where bullet
  * points are used, e.g. "Education" or "Experience".
  *
+ * @param itemName It's used for accessibility. The user will hear or read it.
+ * @param name It's used like a form field name and is a part of some IDs.
  * @param updateData It's necessary for DnD functionality.
  */
 export default function BulletPoints({
@@ -65,6 +64,7 @@ export default function BulletPoints({
   data,
   deleteItem,
   editItem,
+  itemName = 'bullet point',
   legend,
   legendCentralized = false,
   name,
@@ -246,7 +246,7 @@ export default function BulletPoints({
         </SortableContext>
       </DndContext>
       <Button
-        aria-label={`Add ${capitalize(name)}`}
+        aria-label={`Add ${itemName}`}
         className="BulletPoints-Add"
         id={`add-${name}`}
         modifiers={['Button_paddingInline_large']}

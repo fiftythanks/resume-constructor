@@ -123,7 +123,7 @@ describe('Skills', () => {
       const user = userEvent.setup();
 
       const addBtn = screen.getByRole('button', {
-        name: 'Add Language',
+        name: 'Add language',
       });
 
       await user.click(addBtn);
@@ -262,7 +262,7 @@ describe('Skills', () => {
       const user = userEvent.setup();
 
       const addBtn = screen.getByRole('button', {
-        name: 'Add Framework',
+        name: 'Add framework',
       });
 
       await user.click(addBtn);
@@ -411,7 +411,7 @@ describe('Skills', () => {
       const user = userEvent.setup();
 
       const addBtn = screen.getByRole('button', {
-        name: 'Add Tool',
+        name: 'Add tool',
       });
 
       await user.click(addBtn);

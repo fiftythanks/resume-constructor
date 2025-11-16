@@ -26,9 +26,6 @@ const ITEMS: ItemWithId[] = [
   },
 ];
 
-const NAME = 'some-name';
-const CAPITALIZED_NAME = 'Some-name';
-
 function getProps(overrides?: Partial<BulletPointsProps>): BulletPointsProps {
   return {
     addItem: () => {},
@@ -36,7 +33,7 @@ function getProps(overrides?: Partial<BulletPointsProps>): BulletPointsProps {
     deleteItem(_itemIndex: number) {},
     editItem(_itemIndex: number, _value: string) {},
     legend: 'Some Legend',
-    name: NAME,
+    name: 'some-name',
     placeholder1: 'Placeholder 1',
     placeholder2: 'Placeholder 2',
     placeholder3: 'Placeholder 3',
@@ -262,23 +259,33 @@ describe('BulletPoints', () => {
     );
   });
 
-  it('should render an add button with an accessible name "Add [capitalized `name`]"', () => {
+  it("should render an add-button with an accessible name 'Add bullet point' if `itemName` isn't provided", () => {
     render(<BulletPoints {...getProps()} />);
 
     const addBtn = screen.getByRole('button', {
-      name: `Add ${CAPITALIZED_NAME}`,
+      name: 'Add bullet point',
     });
 
     expect(addBtn).toBeInTheDocument();
   });
 
-  it('should call `addItem` when the add button is clicked', async () => {
+  it('should render an add-button with an accessible name "Add [itemName]" if `itemName` is provided', () => {
+    render(<BulletPoints {...getProps({ itemName: 'something' })} />);
+
+    const addBtn = screen.getByRole('button', {
+      name: 'Add something',
+    });
+
+    expect(addBtn).toBeInTheDocument();
+  });
+
+  it('should call `addItem` when the add-button is clicked', async () => {
     const addItemMock = jest.fn();
     render(<BulletPoints {...getProps({ addItem: addItemMock })} />);
     const user = userEvent.setup();
 
     const addBtn = screen.getByRole('button', {
-      name: `Add ${CAPITALIZED_NAME}`,
+      name: 'Add bullet point',
     });
 
     await user.click(addBtn);
@@ -305,7 +312,7 @@ describe('BulletPoints', () => {
     expect(secondBulletPointDeleteBtn).toHaveFocus();
   });
 
-  it('should focus the add button if the only bullet point is deleted', async () => {
+  it('should focus the add-button if the only bullet point is deleted', async () => {
     render(
       <BulletPoints
         {...getProps({ data: [{ id: crypto.randomUUID(), value: '' }] })}
@@ -319,7 +326,7 @@ describe('BulletPoints', () => {
     });
 
     const addBtn = screen.getByRole('button', {
-      name: `Add ${CAPITALIZED_NAME}`,
+      name: `Add bullet point`,
     });
 
     deleteBtn.focus();
