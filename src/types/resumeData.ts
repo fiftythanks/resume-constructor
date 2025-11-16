@@ -94,7 +94,10 @@ export interface Job {
   bulletPoints: ItemWithId[];
   companyName: string;
   duration: string;
+
+  // TODO: if I'm not wrong, the ID isn't used anywhere. Check this and if it's true, delete IDs from projects.
   id: UUID;
+
   jobTitle: string;
 }
 
@@ -124,8 +127,10 @@ export interface Project {
   bulletPoints: ItemWithId[];
   code: Link;
   demo: Link;
+
   // TODO: if I'm not wrong, the ID isn't used anywhere. Check this and if it's true, delete IDs from projects.
   id: UUID;
+
   projectName: string;
   stack: string;
 }
