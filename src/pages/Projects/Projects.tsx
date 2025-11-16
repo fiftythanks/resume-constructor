@@ -129,6 +129,7 @@ export default function Projects({
         >
           <img alt="Add" height="25px" src={addSrc} width="25px" />
         </Button>
+        {/* You can't delete the only project. There's always at least one project. */}
         {data.projects.length > 1 && (
           <button
             aria-label={`Delete Project ${shownProjectIndex + 1}`}
