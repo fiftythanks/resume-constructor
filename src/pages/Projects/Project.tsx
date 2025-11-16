@@ -26,14 +26,14 @@ export default function Project({
     functions.editLink(field, type, value);
   }
 
-  const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
+  function handleTextChange(e: ChangeEvent<HTMLInputElement>) {
     const { name: field, value } = e.target as {
       name: 'projectName' | 'stack';
       value: string;
     };
 
     functions.editText(field, value);
-  };
+  }
 
   return (
     <>
