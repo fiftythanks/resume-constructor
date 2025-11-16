@@ -85,6 +85,7 @@ export default function Projects({
     >
       {/* On smaller mobile screens, if you believe Chrome devtools, the header doesn't fit in one line and the design breaks. It needs to be tested on real devices because they probably display content differently from the devtools. But it will be possible only after I deploy the project. */}
       {/* TODO: test on real devices and check the problem after deploy. */}
+      {/* TODO: refactor it somehow. It's such a shit semantically. A project should be a fieldset with a legend "Project [number]". In the current form, it's like the form itself should be labelled as "Project [number]", because it doesn't have anything but one project that isn't even grouped in any way. */}
       <header className="section--header">
         <h2>Project {shownProjectIndex + 1}</h2>
         {/* Conditional rendering to get rid of redundant flex gap. */}
