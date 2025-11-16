@@ -120,7 +120,7 @@ export default function Projects({
             </Button>
           </div>
         )}
-        {/* TODO: redesign it or at least put it in some other place. It looks terrible. */}
+        {/* TODO: redesign it or at least put it in some other place. It looks terrible. (Talking about the UI, not the code.) */}
         <Button
           aria-label={`Add Project ${data.projects.length}`}
           id="add-project"
