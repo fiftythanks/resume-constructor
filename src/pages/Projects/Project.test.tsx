@@ -69,7 +69,7 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `editText` on Project Name change', async () => {
+    it('should call `editText` on Project Name change via the corresponding text input', async () => {
       const editTextMock = jest.fn(
         (_field: 'projectName' | 'stack', _value: string) => {},
       );
@@ -100,7 +100,7 @@ describe('Project', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should call `editText` on Tech Stack change', async () => {
+    it('should call `editText` on Tech Stack change via the corresponding text input', async () => {
       const editTextMock = jest.fn(
         (_field: 'projectName' | 'stack', _value: string) => {},
       );
@@ -122,127 +122,147 @@ describe('Project', () => {
     });
   });
 
-  describe('Code (text)', () => {
-    it('should render a text input for Code (text)', () => {
-      render(<Project {...getProps()} />);
+  describe('Code', () => {
+    describe('Text', () => {
+      it("should render a text input for Code link's text", () => {
+        render(<Project {...getProps()} />);
 
-      const input = screen.getByRole('textbox', { name: 'Code (text)' });
+        const input = screen.getByRole('textbox', { name: 'Code (text)' });
 
-      expect(input).toBeInTheDocument();
+        expect(input).toBeInTheDocument();
+      });
+
+      it("should call `editLink` on Code link's text change via the corresponding text input", async () => {
+        const editLinkMock = jest.fn(
+          (
+            _field: 'code' | 'demo',
+            _type: 'link' | 'text',
+            _value: string,
+          ) => {},
+        );
+
+        render(
+          <Project
+            {...getProps({
+              functions: { ...getProps().functions, editLink: editLinkMock },
+            })}
+          />,
+        );
+
+        const user = userEvent.setup();
+        const input = screen.getByRole('textbox', { name: 'Code (text)' });
+
+        await user.type(input, 's');
+
+        expect(editLinkMock).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it('should call `editLink` on Code (text) change', async () => {
-      const editLinkMock = jest.fn(
-        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
-      );
+    describe('URL', () => {
+      it("should render a text input for Code link's URL", () => {
+        render(<Project {...getProps()} />);
 
-      render(
-        <Project
-          {...getProps({
-            functions: { ...getProps().functions, editLink: editLinkMock },
-          })}
-        />,
-      );
+        const input = screen.getByRole('textbox', { name: 'Code (link)' });
 
-      const user = userEvent.setup();
-      const input = screen.getByRole('textbox', { name: 'Code (text)' });
+        expect(input).toBeInTheDocument();
+      });
 
-      await user.type(input, 's');
+      it("should call `editLink` on Code link's URL change via the corresponding text input", async () => {
+        const editLinkMock = jest.fn(
+          (
+            _field: 'code' | 'demo',
+            _type: 'link' | 'text',
+            _value: string,
+          ) => {},
+        );
 
-      expect(editLinkMock).toHaveBeenCalledTimes(1);
-    });
-  });
+        render(
+          <Project
+            {...getProps({
+              functions: { ...getProps().functions, editLink: editLinkMock },
+            })}
+          />,
+        );
 
-  describe('Code (link)', () => {
-    it('should render a text input for Code (link)', () => {
-      render(<Project {...getProps()} />);
+        const user = userEvent.setup();
+        const input = screen.getByRole('textbox', { name: 'Code (link)' });
 
-      const input = screen.getByRole('textbox', { name: 'Code (link)' });
+        await user.type(input, 's');
 
-      expect(input).toBeInTheDocument();
-    });
-
-    it('should call `editLink` on Code (link) change', async () => {
-      const editLinkMock = jest.fn(
-        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
-      );
-
-      render(
-        <Project
-          {...getProps({
-            functions: { ...getProps().functions, editLink: editLinkMock },
-          })}
-        />,
-      );
-
-      const user = userEvent.setup();
-      const input = screen.getByRole('textbox', { name: 'Code (link)' });
-
-      await user.type(input, 's');
-
-      expect(editLinkMock).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('Demo (text)', () => {
-    it('should render a text input for Demo (text)', () => {
-      render(<Project {...getProps()} />);
-
-      const input = screen.getByRole('textbox', { name: 'Demo (text)' });
-
-      expect(input).toBeInTheDocument();
-    });
-
-    it('should call `editLink` on Demo (text) change', async () => {
-      const editLinkMock = jest.fn(
-        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
-      );
-
-      render(
-        <Project
-          {...getProps({
-            functions: { ...getProps().functions, editLink: editLinkMock },
-          })}
-        />,
-      );
-
-      const user = userEvent.setup();
-      const input = screen.getByRole('textbox', { name: 'Demo (text)' });
-
-      await user.type(input, 's');
-
-      expect(editLinkMock).toHaveBeenCalledTimes(1);
+        expect(editLinkMock).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
-  describe('Demo (link)', () => {
-    it('should render a text input for Demo (link)', () => {
-      render(<Project {...getProps()} />);
+  describe('Demo', () => {
+    describe('Text', () => {
+      it("should render a text input for Demo link's text", () => {
+        render(<Project {...getProps()} />);
 
-      const input = screen.getByRole('textbox', { name: 'Demo (link)' });
+        const input = screen.getByRole('textbox', { name: 'Demo (text)' });
 
-      expect(input).toBeInTheDocument();
+        expect(input).toBeInTheDocument();
+      });
+
+      it("should call `editLink` on Demo link's text change via the corresponding text input", async () => {
+        const editLinkMock = jest.fn(
+          (
+            _field: 'code' | 'demo',
+            _type: 'link' | 'text',
+            _value: string,
+          ) => {},
+        );
+
+        render(
+          <Project
+            {...getProps({
+              functions: { ...getProps().functions, editLink: editLinkMock },
+            })}
+          />,
+        );
+
+        const user = userEvent.setup();
+        const input = screen.getByRole('textbox', { name: 'Demo (text)' });
+
+        await user.type(input, 's');
+
+        expect(editLinkMock).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it('should call `editLink` on Demo (link) change', async () => {
-      const editLinkMock = jest.fn(
-        (_field: 'code' | 'demo', _type: 'link' | 'text', _value: string) => {},
-      );
+    describe('URL', () => {
+      it("should render a text input for Demo link's URL", () => {
+        render(<Project {...getProps()} />);
 
-      render(
-        <Project
-          {...getProps({
-            functions: { ...getProps().functions, editLink: editLinkMock },
-          })}
-        />,
-      );
+        const input = screen.getByRole('textbox', { name: 'Demo (link)' });
 
-      const user = userEvent.setup();
-      const input = screen.getByRole('textbox', { name: 'Demo (link)' });
+        expect(input).toBeInTheDocument();
+      });
 
-      await user.type(input, 's');
+      it("should call `editLink` on Demo link's URL change via the corresponding text input", async () => {
+        const editLinkMock = jest.fn(
+          (
+            _field: 'code' | 'demo',
+            _type: 'link' | 'text',
+            _value: string,
+          ) => {},
+        );
 
-      expect(editLinkMock).toHaveBeenCalledTimes(1);
+        render(
+          <Project
+            {...getProps({
+              functions: { ...getProps().functions, editLink: editLinkMock },
+            })}
+          />,
+        );
+
+        const user = userEvent.setup();
+        const input = screen.getByRole('textbox', { name: 'Demo (link)' });
+
+        await user.type(input, 's');
+
+        expect(editLinkMock).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });
