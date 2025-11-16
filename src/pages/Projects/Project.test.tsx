@@ -185,7 +185,7 @@ describe('Project', () => {
       expect(bulletPoints).toBeInTheDocument();
     });
 
-    it('should pass the correct data from `data` to the bullet points', async () => {
+    it('should pass the correct data from `data` to the bullet points', () => {
       const props = getProps();
       render(<Project {...props} />);
       const bulletPoints = screen.getByRole('group', { name: 'Bullet Points' });
