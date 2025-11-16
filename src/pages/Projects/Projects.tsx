@@ -88,36 +88,36 @@ export default function Projects({
       <header className="section--header">
         <h2>Project {shownProjectIndex + 1}</h2>
         {/* Conditional rendering to get rid of redundant flex gap. */}
-        {(shownProjectIndex > 0 ||
-          shownProjectIndex !== data.projects.length - 1) && (
+        {shownProjectIndex > 0 && (
           <div className="section--item-navigation">
-            {shownProjectIndex > 0 && (
-              <Button
-                aria-label="Show Previous Project"
-                className="section--item-navigation-button"
-                id="show-previous-project"
-                onClick={() => functions.showProject(shownProjectIndex - 1)}
-                modifiers={[
-                  'Button_paddingBlock_none',
-                  'Button_paddingInline_small',
-                ]}
-              >
-                <img alt="Previous" height="25px" src={prevSrc} width="25px" />
-              </Button>
-            )}
-            {shownProjectIndex !== data.projects.length - 1 && (
-              <Button
-                aria-label="Show Next Project"
-                id="show-next-project"
-                onClick={() => functions.showProject(shownProjectIndex + 1)}
-                modifiers={[
-                  'Button_paddingBlock_none',
-                  'Button_paddingInline_small',
-                ]}
-              >
-                <img alt="Previous" height="25px" src={nextSrc} width="25px" />
-              </Button>
-            )}
+            <Button
+              aria-label="Show Previous Project"
+              className="section--item-navigation-button"
+              id="show-previous-project"
+              onClick={() => functions.showProject(shownProjectIndex - 1)}
+              modifiers={[
+                'Button_paddingBlock_none',
+                'Button_paddingInline_small',
+              ]}
+            >
+              <img alt="Previous" height="25px" src={prevSrc} width="25px" />
+            </Button>
+          </div>
+        )}
+        {/* Conditional rendering to get rid of redundant flex gap. */}
+        {shownProjectIndex !== data.projects.length - 1 && (
+          <div className="section--item-navigation">
+            <Button
+              aria-label="Show Next Project"
+              id="show-next-project"
+              onClick={() => functions.showProject(shownProjectIndex + 1)}
+              modifiers={[
+                'Button_paddingBlock_none',
+                'Button_paddingInline_small',
+              ]}
+            >
+              <img alt="Previous" height="25px" src={nextSrc} width="25px" />
+            </Button>
           </div>
         )}
         {/* TODO: redesign it or at least put it in some other place. It looks terrible. */}
