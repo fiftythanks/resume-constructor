@@ -56,6 +56,8 @@ export interface BulletPointsProps {
 /**
  * Renders draggable-and-droppable bullet points for sections where bullet
  * points are used, e.g. "Education" or "Experience".
+ *
+ * @param updateData It's necessary for DnD functionality.
  */
 export default function BulletPoints({
   addItem,
