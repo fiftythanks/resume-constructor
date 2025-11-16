@@ -210,7 +210,7 @@ describe('Projects', () => {
 
         const btn = screen.getByRole('button', {
           name: 'Show Previous Project',
-        })!;
+        });
 
         await user.click(btn);
 
@@ -267,7 +267,7 @@ describe('Projects', () => {
 
         const btn = screen.getByRole('button', {
           name: 'Show Next Project',
-        })!;
+        });
 
         await user.click(btn);
 
