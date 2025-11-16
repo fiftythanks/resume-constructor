@@ -20,23 +20,23 @@ function getProps(overrides?: Partial<ProjectProps>): ProjectProps {
       bulletPoints: [
         {
           id: crypto.randomUUID(),
-          value: '',
+          value: 'Bullet point 1',
         },
       ],
 
       code: {
-        link: '',
-        text: '',
+        link: 'Code link URL',
+        text: 'Code link text',
       },
 
       demo: {
-        link: '',
-        text: '',
+        link: 'Demo link URL',
+        text: 'Demo link text',
       },
 
       id: crypto.randomUUID(),
-      projectName: '',
-      stack: '',
+      projectName: 'Project Name',
+      stack: 'The best stack',
     },
 
     functions: {
