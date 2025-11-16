@@ -1,16 +1,31 @@
 import React from 'react';
+import type { ChangeEvent } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
+
+import type { JobFunctions } from './Experience';
+import type { Job } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
+export interface JobProps {
+  data: Job;
+  functions: JobFunctions;
+  updateScreenReaderAnnouncement: (announcement: string) => void;
+}
 
 export default function Job({
   data,
   functions,
   updateScreenReaderAnnouncement,
-}) {
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    functions.edit(name, value);
-  };
+}: ReadonlyDeep<JobProps>) {
+  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const { name: field, value } = e.target as {
+      name: 'address' | 'companyName' | 'duration' | 'jobTitle';
+      value: string;
+    };
+
+    functions.edit(field, value);
+  }
 
   return (
     <>
