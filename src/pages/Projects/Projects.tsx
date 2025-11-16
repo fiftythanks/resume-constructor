@@ -111,6 +111,7 @@ export default function Projects({
             <Button
               aria-label="Show Next Project"
               id="show-next-project"
+              // TODO: add screen reader announcement?
               onClick={() => functions.showProject(shownProjectIndex + 1)}
               modifiers={[
                 'Button_paddingBlock_none',
@@ -126,6 +127,7 @@ export default function Projects({
           aria-label={`Add Project ${data.projects.length + 1}`}
           id="add-project"
           modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
+          // TODO: add screen reader announcement.
           onClick={addProject}
         >
           <img alt="Add" height="25px" src={addSrc} width="25px" />
@@ -137,6 +139,7 @@ export default function Projects({
             className="section--delete-item"
             id="delete-project"
             type="button"
+            // TODO: add screen reader announcement.
             onClick={() => functions.deleteProject(shownProjectIndex)}
           >
             <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
