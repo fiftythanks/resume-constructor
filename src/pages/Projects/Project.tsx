@@ -19,13 +19,10 @@ export default function Project({
 }: ReadonlyDeep<ProjectProps>) {
   function handleLinkChange(
     e: ChangeEvent<HTMLInputElement>,
+    field: 'code' | 'demo',
     type: 'link' | 'text',
   ) {
-    const { name: field, value } = e.target as {
-      name: 'code' | 'demo';
-      value: string;
-    };
-
+    const { value } = e.target;
     functions.editLink(field, type, value);
   }
 
@@ -98,7 +95,7 @@ export default function Project({
             placeholder="GitHub Repo"
             type="text"
             value={data.code.text}
-            onChange={(e) => handleLinkChange(e, 'text')}
+            onChange={(e) => handleLinkChange(e, 'code', 'text')}
           />
         </li>
         <li className="section--list-item">
@@ -112,7 +109,7 @@ export default function Project({
             placeholder="https://www.github.com/johndoe/TravelPlanner/"
             type="text"
             value={data.code.link}
-            onChange={(e) => handleLinkChange(e, 'link')}
+            onChange={(e) => handleLinkChange(e, 'code', 'link')}
           />
         </li>
         <li className="section--list-item">
@@ -126,7 +123,7 @@ export default function Project({
             placeholder="Live Preview"
             type="text"
             value={data.demo.text}
-            onChange={(e) => handleLinkChange(e, 'text')}
+            onChange={(e) => handleLinkChange(e, 'demo', 'text')}
           />
         </li>
         <li className="section--list-item">
@@ -140,7 +137,7 @@ export default function Project({
             placeholder="https://john-doe-travel-planner.herokuapp.com/"
             type="text"
             value={data.demo.link}
-            onChange={(e) => handleLinkChange(e, 'link')}
+            onChange={(e) => handleLinkChange(e, 'demo', 'link')}
           />
         </li>
       </ul>
