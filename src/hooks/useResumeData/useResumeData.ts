@@ -489,6 +489,7 @@ export default function useResumeData() {
       }
     },
 
+    // TODO: so, itemIndex or bulletIndex?
     deleteBulletPoint: (jobIndex: number, bulletIndex: number) =>
       deleteBulletPoint('job', jobIndex, bulletIndex),
 
