@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
+
+import type { DegreeFunctions } from './Education';
+import type { Degree } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
+export interface DegreeProps {
+  data: Degree;
+  functions: DegreeFunctions;
+  updateScreenReaderAnnouncement: (announcement: string) => void;
+}
 
 export default function Degree({
   data,
   functions,
   updateScreenReaderAnnouncement,
-}) {
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    functions.edit(name, value);
+}: ReadonlyDeep<DegreeProps>) {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name: field, value } = e.target as {
+      name: 'address' | 'degree' | 'graduation' | 'uni';
+      value: string;
+    };
+
+    functions.edit(field, value);
   };
 
   return (
