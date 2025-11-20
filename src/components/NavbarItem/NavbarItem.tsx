@@ -20,7 +20,7 @@ export interface NavbarItemProps extends LiHTMLAttributes<HTMLLIElement> {
   isDraggable: boolean;
   isEditorMode: boolean;
   isSelected: boolean;
-  onDeleteSection: () => void;
+  onDeleteSection?: () => void;
   onSelectSection: () => void;
   sectionId: SectionId;
   sectionTitle: SectionTitle;
