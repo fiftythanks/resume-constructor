@@ -1,5 +1,7 @@
 import React from 'react';
 
+import useResumeData from '@/hooks/useResumeData';
+
 import Button from '@/components/Button';
 
 import Degree from './Degree';
@@ -9,38 +11,58 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
+import type { Education, ItemWithId } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
+
+export interface DegreeFunctions {
+  addBulletPoint: () => void;
+  deleteBulletPoint: (itemIndex: number) => void;
+  edit: (
+    field: 'address' | 'degree' | 'graduation' | 'uni',
+    value: string,
+  ) => void;
+  editBulletPoint: (itemIndex: number, value: string) => void;
+  updateBulletPoints: (value: ItemWithId[]) => void;
+}
+
+export interface EducationProps {
+  data: Education;
+  functions: ReturnType<typeof useResumeData>['educationFunctions'];
+  updateScreenReaderAnnouncement: (announcement: string) => void;
+}
+
 export default function Education({
   data,
   functions,
   updateScreenReaderAnnouncement,
-}) {
+}: ReadonlyDeep<EducationProps>) {
   const { shownDegreeIndex } = data;
 
   function addDegree() {
     functions.addDegree();
-    document.getElementById('university-name').focus();
+    document.getElementById('university-name')!.focus();
   }
 
-  function getDegreeFunctions(index) {
+  function getDegreeFunctions(degreeIndex: number): DegreeFunctions {
     return {
       addBulletPoint() {
-        functions.addBulletPoint(index);
+        functions.addBulletPoint(degreeIndex);
       },
 
       deleteBulletPoint(itemIndex) {
-        functions.deleteBulletPoint(index, itemIndex);
+        functions.deleteBulletPoint(degreeIndex, itemIndex);
       },
 
       edit(field, value) {
-        functions.editDegree(index, field, value);
+        functions.editDegree(degreeIndex, field, value);
       },
 
       editBulletPoint(itemIndex, value) {
-        functions.editBulletPoint(index, itemIndex, value);
+        functions.editBulletPoint(degreeIndex, itemIndex, value);
       },
 
       updateBulletPoints(value) {
-        functions.updateBulletPoints(index, value);
+        functions.updateBulletPoints(degreeIndex, value);
       },
     };
   }
@@ -55,6 +77,13 @@ export default function Education({
     >
       <header className="section--header">
         <h2>Degree {shownDegreeIndex + 1}</h2>
+        {/**
+         * In `Experience` and `Projects`, this logic is different. I
+         * simplified it thinking it doesn't make sense. But then I
+         * realised I may have forgotten something. I'm leaving this
+         * conditional rendering logic for the `<div>` here to see
+         * later if it actually has a purpose.
+         */}
         {/* Conditional rendering to get rid of redundant flex gap. */}
         {(shownDegreeIndex > 0 ||
           shownDegreeIndex !== data.degrees.length - 1) && (
@@ -89,7 +118,7 @@ export default function Education({
           </div>
         )}
         <Button
-          aria-label={`Add Degree ${data.degrees.length}`}
+          aria-label={`Add Degree ${data.degrees.length + 1}`}
           id="add-degree"
           modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
           onClick={addDegree}
