@@ -95,6 +95,13 @@ export default tseslint.config([
         },
       ],
 
+      'n/no-unsupported-features/es-builtins': [
+        'error',
+        {
+          version: '>=22.16.0',
+        },
+      ],
+
       eqeqeq: 'error',
       quotes: ['warn', 'single', { avoidEscape: true }],
 
