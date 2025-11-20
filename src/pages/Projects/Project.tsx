@@ -91,6 +91,7 @@ export default function Project({
           <input
             className="section--field"
             id="code-text"
+            // TODO: as far as I understand, these names in code and demo inputs aren't used. Check if it's true and if so, delete them.
             name="codeText"
             placeholder="GitHub Repo"
             type="text"

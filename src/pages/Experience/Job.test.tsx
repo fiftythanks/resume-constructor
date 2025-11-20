@@ -56,6 +56,7 @@ const FUNCTIONS: JobFunctions = {
 
 function getProps(overrides?: Partial<JobProps>): JobProps {
   return {
+    // TODO: data and functions should be clones of DATA and FUNCITONS, not literally them... I guess `Project.test` has the same problem. Refactor.
     data: DATA,
     functions: FUNCTIONS,
     updateScreenReaderAnnouncement(_announcement: string) {},
