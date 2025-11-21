@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, RefObject } from 'react';
 
 import { clsx } from 'clsx';
 
@@ -11,6 +11,7 @@ export interface AppbarIconButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   alt: string;
   iconSrc: string;
+  ref?: RefObject<HTMLButtonElement | null>;
 }
 
 /**
@@ -34,12 +35,14 @@ export default function AppbarIconButton({
   alt,
   className,
   iconSrc,
+  ref,
   ...rest
-}: ReadonlyDeep<AppbarIconButtonProps>) {
+}: Pick<AppbarIconButtonProps, 'ref'> &
+  ReadonlyDeep<Omit<AppbarIconButtonProps, 'ref'>>) {
   const btnClassName = clsx('AppbarIconButton', className);
 
   return (
-    <button className={btnClassName} type="button" {...rest}>
+    <button className={btnClassName} ref={ref} type="button" {...rest}>
       <img
         alt={alt}
         className="AppbarIconButton-Icon"
