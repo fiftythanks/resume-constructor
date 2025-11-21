@@ -86,6 +86,7 @@ export interface NavbarProps {
 export default function Navbar({
   activeSectionIds,
   addSections,
+  //? What is the purpose of passing such a prop? It's useless. You can figure this out inside `Navbar`, can't you? Or is it for the separation of concerns?
   canAddSections,
   deleteSections,
   editorMode,
