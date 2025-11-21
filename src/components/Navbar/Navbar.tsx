@@ -169,13 +169,14 @@ export default function Navbar({
 
       const i = activeSectionIds.indexOf(sectionId);
 
-      // If we delete the last deletable section.
+      // If the deleted section is the only deletable section, focus the "Toggle Editor Mode" button.
       if (activeSectionIds.length === 2) {
         document.getElementById('edit-sections')!.focus();
 
-        // If the deleted section isn't going to be the last deletable section.
+        // If the deleted section isn't the last deletable section, focus the next deletable section's tab.
       } else if (i < activeSectionIds.length - 1) {
         document.getElementById(`delete-${activeSectionIds[i + 1]}`)!.focus();
+        // Otherwise, focus the previous deletable section's tab.
       } else {
         document.getElementById(`delete-${activeSectionIds[i - 1]}`)!.focus();
       }
