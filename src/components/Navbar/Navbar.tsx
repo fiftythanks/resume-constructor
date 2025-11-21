@@ -131,6 +131,7 @@ export default function Navbar({
   }
 
   // Drag and drop logic
+  // TODO: add accessible announcements for dragstart, dragover and dragend, like in `BulletPoints`.
   function handleDragStart() {
     setIsDragging(true);
   }
@@ -378,7 +379,7 @@ export default function Navbar({
     <>
       <nav
         aria-labelledby="toggle-navbar"
-        className={clsx(['Navbar', isExpanded && 'Navbar_hidden'])}
+        className={clsx(['Navbar', !isExpanded && 'Navbar_hidden'])}
         id="navbar"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
