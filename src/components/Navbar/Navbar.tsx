@@ -280,7 +280,13 @@ export default function Navbar({
           }
         }
       } else if (
+        /**
+         * If a delete button is focused, it's already `editorMode` and
+         * `activeSectionIds.length > 1`. These two conditions are redundant.
+         */
+        // TODO: delete useless conditions.
         editorMode &&
+        // FIXME: probably wanted to check the length of the array of deletable sections.
         activeSectionIds.length > 1 &&
         isDeleteSectionBtnId(id)
       ) {
@@ -290,6 +296,12 @@ export default function Navbar({
           const sectionId = id.replace('delete-', '') as SectionId;
           const i = activeSectionIds.indexOf(sectionId);
 
+          /**
+           * Strange logic. If there's just one deletable section and its
+           * delete button is focused, then... the first deletable section's
+           * delete button will be focused? The same goes for Arrow Up.
+           */
+          // FIXME: fix this strange logic.
           if (i < activeSectionIds.length - 1) {
             document
               .getElementById(`delete-${activeSectionIds[i + 1]}`)!
@@ -303,6 +315,7 @@ export default function Navbar({
           const sectionId = id.replace('delete-', '') as SectionId;
           const i = activeSectionIds.indexOf(sectionId);
 
+          // FIXME: fix this strange logic.
           if (i > 1) {
             document
               .getElementById(`delete-${activeSectionIds[i - 1]}`)!
@@ -328,6 +341,7 @@ export default function Navbar({
           } else {
             document.getElementById(activeSectionIds.at(-1)!)!.focus();
           }
+          // FIXME: doesn't work. Fix.
         } else if (
           e.key === 'Tab' &&
           e.shiftKey === true &&
