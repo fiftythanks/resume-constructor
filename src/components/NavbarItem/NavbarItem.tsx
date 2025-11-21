@@ -71,7 +71,7 @@ export default function NavbarItem({
   const btnAttributes = {
     // TODO: add screen reader announcements (when all sections are implemented).
 
-    sectionId,
+    id: sectionId,
     tabIndex,
     'aria-controls': `${sectionId}-tabpanel`,
     'aria-label': sectionTitle,
