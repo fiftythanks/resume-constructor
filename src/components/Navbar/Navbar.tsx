@@ -230,10 +230,10 @@ export default function Navbar({
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (Object.hasOwn(e, 'id')) {
-      const target = e.target as HTMLButtonElement;
-      const id = target.id;
+    const target = e.target as HTMLButtonElement;
+    const id = target.getAttribute('id');
 
+    if (id !== null) {
       type DeleteSectionBtnId = `delete-${SectionId}`;
 
       function isDeleteSectionBtnId(
