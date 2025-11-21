@@ -200,6 +200,7 @@ export default function Navbar({
         tabIndex={tabIndex}
         title={sectionTitles[sectionId]}
         onDeleteSection={getDeleteSectionFn(sectionId)}
+        //? `selectSection` is called even when a section is already selected. Won't it cause an unneccessary rerender?
         onSelectSection={() => selectSection(sectionId)}
       />
     );
@@ -445,7 +446,7 @@ export default function Navbar({
           />
         )}
         <AppbarIconButton
-          alt="Edit Sections"
+          alt="Toggle Editor Mode"
           aria-controls="resume-sections"
           aria-label="Toggle Editor Mode"
           aria-pressed={editorMode}
