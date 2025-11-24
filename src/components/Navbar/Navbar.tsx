@@ -233,129 +233,121 @@ export default function Navbar({
     return false;
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
     const target = e.target as HTMLButtonElement;
-    const id = target.getAttribute('id');
+    const id = target.id;
 
-    if (id !== null) {
-      type DeleteSectionBtnId = `delete-${SectionId}`;
+    type DeleteSectionBtnId = `delete-${SectionId}`;
 
-      function isDeleteSectionBtnId(
-        string: string,
-      ): string is DeleteSectionBtnId {
-        for (const sectionId of activeSectionIds) {
-          if (`delete-${sectionId}` === string) return true;
-        }
-
-        return false;
+    function isDeleteSectionBtnId(
+      string: string,
+    ): string is DeleteSectionBtnId {
+      for (const sectionId of activeSectionIds) {
+        if (`delete-${sectionId}` === string) return true;
       }
 
-      // TODO: comment all this logic properly.
-      if (isSectionId(id) && !isDragging) {
-        if (activeSectionIds.length === 1) {
-          //? Why is there no `e.preventDefault()` like in the next branch?
-          if (e.key === 'ArrowDown') {
+      return false;
+    }
+
+    // TODO: comment all this logic properly.
+    if (isSectionId(id) && !isDragging) {
+      if (activeSectionIds.length === 1) {
+        //? Why is there no `e.preventDefault()` like in the next branch?
+        if (e.key === 'ArrowDown') {
+          document.getElementById('add-sections')!.focus();
+        } else if (e.key === 'ArrowUp') {
+          document.getElementById('edit-sections')!.focus();
+        }
+      } else if (activeSectionIds.length > 1) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+
+          const i = activeSectionIds.indexOf(id);
+
+          if (i < activeSectionIds.length - 1) {
+            document.getElementById(activeSectionIds[i + 1])!.focus();
+          } else if (canAddSections) {
             document.getElementById('add-sections')!.focus();
-          } else if (e.key === 'ArrowUp') {
+          } else {
             document.getElementById('edit-sections')!.focus();
           }
-        } else if (activeSectionIds.length > 1) {
-          if (e.key === 'ArrowDown') {
-            e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
 
-            const i = activeSectionIds.indexOf(id);
-
-            if (i < activeSectionIds.length - 1) {
-              document.getElementById(activeSectionIds[i + 1])!.focus();
-            } else if (canAddSections) {
-              document.getElementById('add-sections')!.focus();
-            } else {
-              document.getElementById('edit-sections')!.focus();
-            }
-          } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-
-            const i = activeSectionIds.indexOf(id);
-            if (i > 0) {
-              document.getElementById(activeSectionIds[i - 1])!.focus();
-            } else {
-              document.getElementById('edit-sections')!.focus();
-            }
+          const i = activeSectionIds.indexOf(id);
+          if (i > 0) {
+            document.getElementById(activeSectionIds[i - 1])!.focus();
+          } else {
+            document.getElementById('edit-sections')!.focus();
           }
         }
-      } else if (
+      }
+    } else if (
+      /**
+       * If a delete button is focused, it's already `editorMode` and
+       * `activeSectionIds.length > 1`. These two conditions are redundant.
+       */
+      // TODO: delete useless conditions.
+      editorMode &&
+      // FIXME: probably wanted to check the length of the array of deletable sections.
+      activeSectionIds.length > 1 &&
+      isDeleteSectionBtnId(id)
+    ) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+
+        const sectionId = id.replace('delete-', '') as SectionId;
+        const i = activeSectionIds.indexOf(sectionId);
+
         /**
-         * If a delete button is focused, it's already `editorMode` and
-         * `activeSectionIds.length > 1`. These two conditions are redundant.
+         * Strange logic. If there's just one deletable section and its
+         * delete button is focused, then... the first deletable section's
+         * delete button will be focused? The same goes for Arrow Up.
          */
-        // TODO: delete useless conditions.
-        editorMode &&
-        // FIXME: probably wanted to check the length of the array of deletable sections.
-        activeSectionIds.length > 1 &&
-        isDeleteSectionBtnId(id)
-      ) {
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-
-          const sectionId = id.replace('delete-', '') as SectionId;
-          const i = activeSectionIds.indexOf(sectionId);
-
-          /**
-           * Strange logic. If there's just one deletable section and its
-           * delete button is focused, then... the first deletable section's
-           * delete button will be focused? The same goes for Arrow Up.
-           */
-          // FIXME: fix this strange logic.
-          if (i < activeSectionIds.length - 1) {
-            document
-              .getElementById(`delete-${activeSectionIds[i + 1]}`)!
-              .focus();
-          } else {
-            document.getElementById(`delete-${activeSectionIds[1]}`)!.focus();
-          }
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-
-          const sectionId = id.replace('delete-', '') as SectionId;
-          const i = activeSectionIds.indexOf(sectionId);
-
-          // FIXME: fix this strange logic.
-          if (i > 1) {
-            document
-              .getElementById(`delete-${activeSectionIds[i - 1]}`)!
-              .focus();
-          } else {
-            document
-              .getElementById(`delete-${activeSectionIds.at(-1)}`)!
-              .focus();
-          }
+        // FIXME: fix this strange logic.
+        if (i < activeSectionIds.length - 1) {
+          document.getElementById(`delete-${activeSectionIds[i + 1]}`)!.focus();
+        } else {
+          document.getElementById(`delete-${activeSectionIds[1]}`)!.focus();
         }
-      } else if (id === 'add-sections') {
-        if (e.key === 'ArrowDown') {
-          document.getElementById('edit-sections')!.focus();
-        } else if (e.key === 'ArrowUp') {
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+
+        const sectionId = id.replace('delete-', '') as SectionId;
+        const i = activeSectionIds.indexOf(sectionId);
+
+        // FIXME: fix this strange logic.
+        if (i > 1) {
+          document.getElementById(`delete-${activeSectionIds[i - 1]}`)!.focus();
+        } else {
+          document.getElementById(`delete-${activeSectionIds.at(-1)}`)!.focus();
+        }
+      }
+    } else if (id === 'add-sections') {
+      if (e.key === 'ArrowDown') {
+        document.getElementById('edit-sections')!.focus();
+      } else if (e.key === 'ArrowUp') {
+        document.getElementById(activeSectionIds.at(-1)!)!.focus();
+      }
+    } else if (id === 'edit-sections') {
+      if (e.key === 'ArrowDown') {
+        document.getElementById(activeSectionIds[0])!.focus();
+      } else if (e.key === 'ArrowUp') {
+        if (canAddSections) {
+          document.getElementById('add-sections')!.focus();
+        } else {
           document.getElementById(activeSectionIds.at(-1)!)!.focus();
         }
-      } else if (id === 'edit-sections') {
-        if (e.key === 'ArrowDown') {
-          document.getElementById(activeSectionIds[0])!.focus();
-        } else if (e.key === 'ArrowUp') {
-          if (canAddSections) {
-            document.getElementById('add-sections')!.focus();
-          } else {
-            document.getElementById(activeSectionIds.at(-1)!)!.focus();
-          }
-          // FIXME: doesn't work. Fix.
-        } else if (
-          e.key === 'Tab' &&
-          e.shiftKey === true &&
-          editorMode &&
-          activeSectionIds.length > 1
-        ) {
-          e.preventDefault();
+        // FIXME: doesn't work. Fix.
+      } else if (
+        e.key === 'Tab' &&
+        e.shiftKey === true &&
+        editorMode &&
+        activeSectionIds.length > 1
+      ) {
+        e.preventDefault();
 
-          document.getElementById(activeSectionIds[1])!.focus();
-        }
+        document.getElementById(activeSectionIds[1])!.focus();
       }
     }
   }
