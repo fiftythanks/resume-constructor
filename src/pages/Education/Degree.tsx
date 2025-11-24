@@ -12,6 +12,10 @@ export interface DegreeProps {
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
 
+// TODO: it should be a fieldset, without quotation marks.
+/**
+ * A degree "fieldset" that is used in the Education section form.
+ */
 export default function Degree({
   data,
   functions,

@@ -35,6 +35,9 @@ export interface ProjectsProps {
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
 
+/**
+ * The Projects section form.
+ */
 export default function Projects({
   data,
   functions,

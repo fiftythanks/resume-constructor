@@ -31,6 +31,9 @@ export interface EducationProps {
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
 
+/**
+ * The Education section form.
+ */
 export default function Education({
   data,
   functions,

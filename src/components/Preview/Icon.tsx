@@ -30,6 +30,9 @@ interface IconProps {
   type: keyof typeof PATHS;
 }
 
+/**
+ * An SVG icon of a predetermined type that is used in the resume.
+ */
 export default function Icon({
   type,
   size = 12,

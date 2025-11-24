@@ -12,6 +12,10 @@ export interface ProjectProps {
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
 
+// TODO: it should be a fieldset, without quotation marks.
+/**
+ * A project "fieldset" that is used in the Projects section form.
+ */
 export default function Project({
   data,
   functions,

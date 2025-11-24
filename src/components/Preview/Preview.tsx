@@ -42,6 +42,9 @@ export interface PreviewProps {
   onClose: () => void;
 }
 
+/**
+ * A resume preview dialog that renders the PDF document on a canvas.
+ */
 export default function Preview({
   activeSectionIds,
   data,

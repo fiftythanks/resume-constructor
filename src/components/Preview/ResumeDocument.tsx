@@ -105,6 +105,9 @@ interface ResumeDocumentProps {
 // Using it by default for all sections and fields adds redundancy.
 // TODO: examine where you need conditional rendering and where you don't. Refactor accordingly.
 // FIXME: if there is more than one page, components get squizzed and the second page doesn't appear.
+/**
+ * The entire document that is to be rendered.
+ */
 export default function ResumeDocument({
   activeSectionIds,
   data,

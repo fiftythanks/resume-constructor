@@ -34,6 +34,9 @@ export interface ExperienceProps {
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
 
+/**
+ * The Work Experience section form.
+ */
 export default function Experience({
   data,
   functions,

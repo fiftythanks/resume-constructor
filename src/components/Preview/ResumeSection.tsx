@@ -113,6 +113,10 @@ type ResumeSectionProps = BaseProps &
   );
 
 //? Why is it named `sectionName` here, whereas it's `sectionId` absolutely everywhere else? It shouldn't be like that, should it?
+/**
+ * A resume Section (Personal Details, Education etc.) for insertion
+ * directly into the rendered document.
+ */
 export default function ResumeSection({
   data,
   sectionName,

@@ -17,6 +17,9 @@ export interface SkillsProps {
   >['updateScreenReaderAnnouncement'];
 }
 
+/**
+ * The Technical Skills section form.
+ */
 export default function Skills({
   data,
   functions,

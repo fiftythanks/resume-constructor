@@ -11,6 +11,7 @@ export interface CertificationsProps {
   functions: ReturnType<typeof useResumeData>['certificationsFunctions'];
 }
 
+// The Certifications section form.
 export default function Certifications({
   data,
   functions,

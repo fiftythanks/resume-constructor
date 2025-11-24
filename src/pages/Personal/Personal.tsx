@@ -11,6 +11,9 @@ export interface PersonalProps {
   functions: ReturnType<typeof useResumeData>['personalFunctions'];
 }
 
+/**
+ * The Personal Details section form.
+ */
 export default function Personal({
   data,
   functions,

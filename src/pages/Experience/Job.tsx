@@ -13,6 +13,10 @@ export interface JobProps {
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
 
+// TODO: it should be a fieldset, without quotation marks.
+/**
+ * A job "fieldset" that is used in the Work Experience section form.
+ */
 export default function Job({
   data,
   functions,

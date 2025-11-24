@@ -83,6 +83,10 @@ export interface NavbarProps {
   toggleEditorMode: () => void;
 }
 
+/**
+ * The main navbar in the application that is used to navigate between, add,
+ * delete and rearrange sections.
+ */
 export default function Navbar({
   activeSectionIds,
   addSections,
