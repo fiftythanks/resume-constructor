@@ -28,6 +28,19 @@ export interface ToolbarProps {
   toggleNavbar: () => void;
 }
 
+/**
+ * The main toolbar in the application that provides users with such features as
+ * deleting all resume sections, filling all possible sections with placeholder
+ * data, as well as toggling the navbar.
+ *
+ * It consists of two parts: a menu with the controls mentioned
+ * earlier and a "Toggle Navbar" button. Also, it renders the resume preview
+ * dialog when the preview is toggled on.
+ *
+ * @param className Applies to the toolbar itself, i.e. the top-level component
+ * that includes both the menu with the control buttons and the "Toggle Navbar"
+ * button.
+ */
 export default function Toolbar({
   activeSectionIds,
   className,
@@ -196,9 +209,11 @@ export default function Toolbar({
             <li>
               {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
               <AppbarIconButton
+                //! WTF? WHY ARE THEY DIFFERENT?
                 alt="Clear All"
                 // All sections but the undeletable "Personal Details" section
                 aria-controls={clsx(possibleSectionIds.toSpliced(1, 1))}
+                //! WTF? WHY ARE THEY DIFFERENT?
                 aria-label="Delete All"
                 className="Toolbar-Item Toolbar-Item_deleteAll"
                 iconSrc={clearSrc}
@@ -225,6 +240,7 @@ export default function Toolbar({
             </li>
             <li>
               <AppbarIconButton
+                //? Should `alt` and `aria-label` differ here?
                 alt="Preview"
                 aria-label="Open Preview"
                 className="Toolbar-Item Toolbar-Item_preview"
