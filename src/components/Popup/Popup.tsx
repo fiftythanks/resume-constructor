@@ -41,9 +41,10 @@ export default function Popup({
 }: Pick<PopupProps, 'externalRef'> &
   ReadonlyDeep<Omit<PopupProps, 'externalRef'>>) {
   const ref = useRef<HTMLDialogElement | null>(null);
+  const rootRef = useRef(document.getElementById('popup-root')!);
 
   useEffect(() => {
-    const { current: node } = ref;
+    const node = ref.current;
 
     if (node === null) return;
 
@@ -54,7 +55,6 @@ export default function Popup({
     }
   }, [isShown]);
 
-  const root = document.getElementById('popup-root')!;
   const popupClassName = clsx('Popup', block, modifiers);
   const titleClassName = clsx('Popup-Title', block && `${block}-Title`);
 
@@ -75,6 +75,6 @@ export default function Popup({
       </h2>
       {children}
     </dialog>,
-    root,
+    rootRef.current,
   );
 }
