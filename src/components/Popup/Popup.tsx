@@ -45,12 +45,12 @@ export default function Popup({
   useEffect(() => {
     const { current: node } = ref;
 
-    if (node !== null) {
-      if (isShown) {
-        node.showModal();
-      } else {
-        node.close();
-      }
+    if (node === null) return;
+
+    if (isShown) {
+      node.showModal();
+    } else {
+      node.close();
     }
   }, [isShown]);
 
