@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ButtonHTMLAttributes, RefObject } from 'react';
+import type { ButtonHTMLAttributes, Ref } from 'react';
 
 import { clsx } from 'clsx';
 
@@ -11,7 +11,7 @@ export interface AppbarIconButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   alt: string;
   iconSrc: string;
-  ref?: RefObject<HTMLButtonElement | null>;
+  ref?: Ref<HTMLButtonElement>;
 }
 
 /**
