@@ -90,7 +90,7 @@ export default function NavbarItem({
         alt={alt}
         className={btnClassName}
         iconSrc={iconSrc}
-        onClick={!isEditorMode ? onSelectSection : undefined}
+        onClick={isEditorMode ? undefined : onSelectSection}
         {...btnAttributes}
       />
 

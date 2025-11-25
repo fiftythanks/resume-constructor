@@ -115,7 +115,14 @@ export default function BulletPoints({
     },
 
     onDragOver({ active, over }: ReadonlyDeep<Arguments>) {
-      if (over !== null) {
+      if (over === null) {
+        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} is no longer over a droppable area.`;
+      }
+
+      if (
+        active.id !== over.id ||
+        wasDraggedAwayFromItsInitialPositionRef.current
+      ) {
         /**
          * In case the draggable item is dragged over the area where it came
          * from, announce it only if the draggable item was dragged over some
@@ -125,25 +132,18 @@ export default function BulletPoints({
          * announcing something like "Draggable item 1 was dragged over
          * area 1" right after the draggable item has just been picked up.
          */
-        if (
-          active.id !== over.id ||
-          wasDraggedAwayFromItsInitialPositionRef.current
-        ) {
-          wasDraggedAwayFromItsInitialPositionRef.current = true;
+        wasDraggedAwayFromItsInitialPositionRef.current = true;
 
-          return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
-        }
-      } else {
-        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} is no longer over a droppable area.`;
+        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
       }
     },
 
     onDragEnd({ active, over }: ReadonlyDeep<Arguments>) {
-      if (over !== null) {
-        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped over droppable area ${data.findIndex((item) => item.id === over.id) + 1}`;
+      if (over === null) {
+        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
       }
 
-      return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
+      return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped over droppable area ${data.findIndex((item) => item.id === over.id) + 1}`;
     },
 
     onDragCancel({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {

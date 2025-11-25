@@ -143,19 +143,17 @@ export default function Navbar({
   function handleDragEnd(e: DragEndEvent) {
     const { active, over } = e;
 
-    if (over !== null) {
-      if (active.id !== over.id) {
-        const oldIndex = activeSectionIds.indexOf(active.id as SectionId);
-        const newIndex = activeSectionIds.indexOf(over.id as SectionId);
+    if (over !== null && active.id !== over.id) {
+      const oldIndex = activeSectionIds.indexOf(active.id as SectionId);
+      const newIndex = activeSectionIds.indexOf(over.id as SectionId);
 
-        const newActiveSectionIds = arrayMove(
-          [...activeSectionIds],
-          oldIndex,
-          newIndex,
-        );
+      const newActiveSectionIds = arrayMove(
+        [...activeSectionIds],
+        oldIndex,
+        newIndex,
+      );
 
-        reorderSections(newActiveSectionIds);
-      }
+      reorderSections(newActiveSectionIds);
     }
 
     setIsDragging(false);

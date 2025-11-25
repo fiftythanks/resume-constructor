@@ -83,84 +83,88 @@ export default function Preview({
    * the browser window is resized.
    */
   useLayoutEffect(() => {
-    if (isShown && popupRef.current !== null) {
-      // Inline padding of the modal. Defined in `Preview.scss`.
-      const paddingInline = parseFloat(
-        getComputedStyle(popupRef.current).paddingInline,
-      );
-
-      const width = viewportWidth - 2 * paddingInline;
-
-      // ? Why is it a state? Does it need to be a state?
-      /**
-       * Width is calculated automatically. It simply takes up as much space as
-       * it can. This is desired. This line calculates what height the canvas
-       * should be to preserve the A4 paper aspect ratio in portrait mode.
-       */
-      setCanvasSize({ width, height: width / A4_ASPECT_RATIO });
+    if (!isShown || popupRef.current === null) {
+      return;
     }
+
+    // Inline padding of the modal. Defined in `Preview.scss`.
+    const paddingInline = parseFloat(
+      getComputedStyle(popupRef.current).paddingInline,
+    );
+
+    const width = viewportWidth - 2 * paddingInline;
+
+    // ? Why is it a state? Does it need to be a state?
+    /**
+     * Width is calculated automatically. It simply takes up as much space as
+     * it can. This is desired. This line calculates what height the canvas
+     * should be to preserve the A4 paper aspect ratio in portrait mode.
+     */
+    setCanvasSize({ width, height: width / A4_ASPECT_RATIO });
   }, [isShown, viewportWidth]);
 
   // And this one is for rendering the document with `pdf.js`.
   useEffect(() => {
-    if (instance.url !== null && canvasNode !== null) {
-      let isCancelled = false;
-      let renderTask: null | RenderTask = null;
-
-      async function loadAndRender() {
-        try {
-          const pdf: PDFDocumentProxy = await pdfjsLib.getDocument(instance.url)
-            .promise;
-
-          // As far as I understand from a glance, the line's purpose is to prevent the following logic from executing if `isCancelled` had been set to `true` before the `PDFDocumentLoadingTask` was resolved with `PDFDocumentProxy` (in other words, before the `pdf` got its value).
-          // TODO: explain.
-          if (isCancelled) return undefined;
-
-          setNumPages(pdf.numPages);
-
-          const page = await pdf.getPage(openedPageIndex);
-
-          if (isCancelled) return undefined;
-
-          const viewport = page.getViewport({ scale: 2.0 });
-          const canvas = canvasNode!;
-          const canvasContext = canvas.getContext('2d')!;
-
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-          canvas.style.width = '100%';
-          canvas.style.height = '100%';
-
-          /**
-           * Before I refactored the component to TypeScript, `page.render` had
-           * only `canvasContext` and `viewport` passed. But then, TypeScript
-           * didn't allow me not to use neither of them, and yet,
-           * `canvasContext`'s JSDoc says that if you pass it, the `canvas`
-           * property must be `null`.
-           *
-           * I haven't tested it, so it has to be checked. It very likely
-           * doesn't work properly now.
-           */
-          // TODO: check if it works.
-          renderTask = page.render({
-            canvasContext,
-            canvas: null,
-            viewport,
-          });
-
-          return await renderTask.promise;
-        } catch {
-          return undefined;
-        }
-      }
-
-      void loadAndRender();
-
-      return () => {
-        isCancelled = true;
-        renderTask?.cancel();
-      };
+    if (instance.url === null || canvasNode === null) {
+      return;
     }
+
+    let isCancelled = false;
+    let renderTask: null | RenderTask = null;
+
+    async function loadAndRender() {
+      try {
+        const pdf: PDFDocumentProxy = await pdfjsLib.getDocument(instance.url)
+          .promise;
+
+        // As far as I understand from a glance, the line's purpose is to prevent the following logic from executing if `isCancelled` had been set to `true` before the `PDFDocumentLoadingTask` was resolved with `PDFDocumentProxy` (in other words, before the `pdf` got its value).
+        // TODO: explain.
+        if (isCancelled) return undefined;
+
+        setNumPages(pdf.numPages);
+
+        const page = await pdf.getPage(openedPageIndex);
+
+        if (isCancelled) return undefined;
+
+        const viewport = page.getViewport({ scale: 2.0 });
+        const canvas = canvasNode!;
+        const canvasContext = canvas.getContext('2d')!;
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+
+        /**
+         * Before I refactored the component to TypeScript, `page.render` had
+         * only `canvasContext` and `viewport` passed. But then, TypeScript
+         * didn't allow me not to use neither of them, and yet,
+         * `canvasContext`'s JSDoc says that if you pass it, the `canvas`
+         * property must be `null`.
+         *
+         * I haven't tested it, so it has to be checked. It very likely
+         * doesn't work properly now.
+         */
+        // TODO: check if it works.
+        renderTask = page.render({
+          canvasContext,
+          canvas: null,
+          viewport,
+        });
+
+        return await renderTask.promise;
+      } catch {
+        return undefined;
+      }
+    }
+
+    void loadAndRender();
+
+    return () => {
+      isCancelled = true;
+      renderTask?.cancel();
+    };
   }, [canvasNode, instance, openedPageIndex]);
 
   return (
