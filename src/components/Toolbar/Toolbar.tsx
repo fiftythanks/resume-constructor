@@ -54,7 +54,7 @@ export default function Toolbar({
   const [areControlsExpanded, setAreControlsExpanded] = useState(false);
   const [isPreviewModalShown, setIsPreviewModalShown] = useState(false);
   const firstControlRef = useRef<HTMLButtonElement | null>(null);
-  const toggleControlsRef = useRef(null);
+  const toggleControlsRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (areControlsExpanded && firstControlRef.current !== null) {
