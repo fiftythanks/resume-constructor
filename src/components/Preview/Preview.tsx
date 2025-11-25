@@ -54,7 +54,7 @@ export default function Preview({
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [canvasNode, setCanvasNode] = useState<HTMLCanvasElement | null>(null);
   const [numPages, setNumPages] = useState(0);
-  const popupRef = useRef(null);
+  const popupRef = useRef<HTMLDialogElement | null>(null);
   const { innerWidth: viewportWidth } = useDebouncedWindowSize();
 
   // TODO: and why are they 1-based? It's useless. Make them traditional, 0-based.
