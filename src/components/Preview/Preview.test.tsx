@@ -208,8 +208,7 @@ describe('Preview', () => {
         });
 
         // Act
-        await user.click(btns[0]);
-        await user.click(btns[0]);
+        await user.dblClick(btns[0]);
 
         // Assert
         /**
