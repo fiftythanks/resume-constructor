@@ -62,7 +62,7 @@ export default function Toolbar({
     }
   });
 
-  const toggleControlsBtnClassName = clsx([
+  const ControlsClassName = clsx([
     'Toolbar-ControlsWrapper',
     !areControlsExpanded && 'Toolbar-ControlsWrapper_hidden',
   ]);
@@ -184,6 +184,7 @@ export default function Toolbar({
          * will make much more sense. For now, I'll leave it as it is.
          */
         className={clsx(['Toolbar', className])}
+        data-testid="toolbar"
         role="toolbar"
         onKeyDown={handleKeyDown}
       >
@@ -191,6 +192,7 @@ export default function Toolbar({
           alt="Toggle Navigation"
           aria-controls="navbar"
           aria-expanded={isNavbarExpanded}
+          //? Why is it "Navigation" instead of "Toggle Navigation"?
           aria-label="Navigation"
           className="Toolbar-Item Toolbar-Item_toggleNavbar"
           iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
@@ -207,7 +209,7 @@ export default function Toolbar({
         <div
           aria-labelledby="toggle-controls"
           aria-orientation="horizontal"
-          className={toggleControlsBtnClassName}
+          className={ControlsClassName}
           id="control-btns"
           role="menu"
         >
