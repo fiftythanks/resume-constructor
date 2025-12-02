@@ -177,6 +177,12 @@ export default function Toolbar({
   return (
     <>
       <div
+        /**
+         * FYI: There's no point in adding a label on small screens because
+         * there's just two items. On larger screens, I'm planning to put the
+         * toolbar vertical and remove the toggle buttons. Then labelling it
+         * will make much more sense. For now, I'll leave it as it is.
+         */
         className={clsx(['Toolbar', className])}
         role="toolbar"
         onKeyDown={handleKeyDown}
