@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = {
   plugins: [
+    'dynamic-import-node',
     [
       'module-resolver',
       {
