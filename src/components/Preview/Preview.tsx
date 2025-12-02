@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 
 import { PDFDownloadLink, usePDF } from '@react-pdf/renderer';
+// FIXME: fix the types issue. `pdfjs-dist` comes with proper types. You should figure out how to use them.
 import * as pdfjsLib from 'pdfjs-dist/webpack';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
@@ -26,6 +27,7 @@ import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: clean up in the component.
+// TODO: announce the document (or error/loading) to screen readers.
 // FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
 
 // Setting worker path to worker bundle.
@@ -57,8 +59,7 @@ export default function Preview({
   const popupRef = useRef<HTMLDialogElement | null>(null);
   const { innerWidth: viewportWidth } = useDebouncedWindowSize();
 
-  // TODO: and why are they 1-based? It's useless. Make them traditional, 0-based.
-  // 1-based indices.
+  // 1-based indices. (Not my choice, it's how the API works.)
   const [openedPageIndex, setOpenedPageIndex] = useState(1);
 
   const canvasCallbackRef = useCallback((node: HTMLCanvasElement) => {
@@ -104,6 +105,7 @@ export default function Preview({
   }, [isShown, viewportWidth]);
 
   // And this one is for rendering the document with `pdf.js`.
+  //! USE_EFFECT IS TRIGGERED WHEN IT SHOULDN'T. YOU SHOULD FIND OUT WHICH STATES CAUSE THIS AND FIX THE ISSUE.
   useEffect(() => {
     if (instance.url === null || canvasNode === null) {
       return;
@@ -119,16 +121,17 @@ export default function Preview({
 
         // As far as I understand from a glance, the line's purpose is to prevent the following logic from executing if `isCancelled` had been set to `true` before the `PDFDocumentLoadingTask` was resolved with `PDFDocumentProxy` (in other words, before the `pdf` got its value).
         // TODO: explain.
-        if (isCancelled) return undefined;
+        if (isCancelled) return;
 
         setNumPages(pdf.numPages);
 
         const page = await pdf.getPage(openedPageIndex);
 
-        if (isCancelled) return undefined;
+        if (isCancelled) return;
 
         const viewport = page.getViewport({ scale: 2.0 });
         const canvas = canvasNode!;
+
         const canvasContext = canvas.getContext('2d')!;
 
         canvas.width = viewport.width;
@@ -153,17 +156,19 @@ export default function Preview({
           viewport,
         });
 
-        return await renderTask.promise;
+        await renderTask.promise;
       } catch {
-        return undefined;
+        return;
       }
     }
 
     void loadAndRender();
 
     return () => {
+      if (renderTask === null) return;
+
       isCancelled = true;
-      renderTask?.cancel();
+      renderTask.cancel();
     };
   }, [canvasNode, instance, openedPageIndex]);
 
@@ -222,6 +227,7 @@ export default function Preview({
         )}
       </div>
       <div className="Preview-CanvasContainer">
+        {/* FIXME: What if both `loading` and `error` are `true`? What if they are true, yet the document has loaded? */}
         {instance.loading && <p className="Preview-PdfTextAlt">Loading...</p>}
 
         {instance.error && (
@@ -251,6 +257,7 @@ export default function Preview({
           style={{ paddingInline: '1rem' }}
         >
           {({ loading, error }) => {
+            //? Does it render nothing in this case, or does it render an anchor tag anyway?
             if (loading) return null;
             if (error) throw error;
 
