@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 import AppbarIconButton from '@/components/AppbarIconButton';
 import Preview from '@/components/Preview';
 
-import clearSrc from '@/assets/icons/clear.svg';
+import deleteSrc from '@/assets/icons/clear.svg';
 import crossSrc from '@/assets/icons/cross.svg';
 import fillSrc from '@/assets/icons/fill.svg';
 import hamburgerSrc from '@/assets/icons/hamburger.svg';
@@ -14,8 +14,16 @@ import previewSrc from '@/assets/icons/preview.svg';
 
 import './Toolbar.scss';
 
-import type { ResumeData, SectionId, SectionIds } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
+import type {
+  ResumeData,
+  SectionId,
+  SectionIds,
+  SectionIdsDeletable,
+  TabpanelIds,
+} from '@/types/resumeData';
+import type { ArrayElement, ArraySplice, ReadonlyDeep } from 'type-fest';
+
+export type ControlsIds = ['delete-all', 'fill-all', 'preview'];
 
 export interface ToolbarProps {
   activeSectionIds: SectionId[];
@@ -45,6 +53,7 @@ export default function Toolbar({
   activeSectionIds,
   className,
   data,
+  // TODO: it should be clearAndDeleteAll
   deleteAll,
   fillAll,
   isNavbarExpanded,
@@ -74,28 +83,29 @@ export default function Toolbar({
   // Keyboard navigation.
 
   //! Order matters.
-  const controls = ['delete-all', 'fill-all', 'preview'];
+  const controls: ControlsIds = ['delete-all', 'fill-all', 'preview'];
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    const target = e.target as HTMLDivElement;
-    const id = target.id;
+    const target = e.target as HTMLButtonElement;
 
-    // "Toggle Navbar" button.
+    const id = target.id as
+      | 'toggle-controls'
+      | 'toggle-navbar'
+      | ArrayElement<ControlsIds>;
 
-    if (
-      id === 'toggle-navbar' &&
-      (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
-    ) {
-      document.getElementById('toggle-controls')!.focus();
-    }
+    // "Toggle Controls" and "Toggle Navigation" buttons keyboard navigation.
+    if (id === 'toggle-controls' || id === 'toggle-navbar') {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        if (id === 'toggle-controls') {
+          // TODO: use refs!
+          document.getElementById('toggle-navbar')!.focus();
+        } else {
+          // TODO: use refs!
+          document.getElementById('toggle-controls')!.focus();
+        }
+      }
 
-    // "Toggle Controls" button, i.e. the button expanding/hiding the toolbar.
-
-    if (
-      id === 'toggle-controls' &&
-      (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
-    ) {
-      document.getElementById('toggle-navbar')!.focus();
+      return;
     }
 
     // Control buttons keyboard navigation.
@@ -110,39 +120,45 @@ export default function Toolbar({
       case 'ArrowLeft':
         // If the leftmost button is focused, focus the rightmost one.
         if (i === 0) {
+          // TODO: use refs!
           document.getElementById('preview')!.focus();
           break;
         }
 
         // Otherwise focus the button to the left.
+        // TODO: use refs!
         document.getElementById(controls[i - 1])!.focus();
 
         break;
       case 'ArrowRight':
         // If the rightmost button is focused, focus the leftmost one.
         if (i === controls.length - 1) {
+          // TODO: use refs!
           document.getElementById('delete-all')!.focus();
           break;
         }
 
         // Otherwise, focus the button to the right.
+        // TODO: use refs!
         document.getElementById(controls[i + 1])!.focus();
 
         break;
       case 'Escape':
-        // Hide the toolbar and focus the "Toggle Controls" button.
+        // Hide the controls menu and focus the "Toggle Controls" button.
         toggleControls();
+        // TODO: use refs!
         document.getElementById('toggle-controls')!.focus();
 
         break;
       case 'Tab':
-        // `e.shifKey === false` behaviour is programmed in `AppLayout`.
+        // `e.shifKey === false` behaviour (when Shift isn't held) is programmed in `AppLayout`.
         if (!e.shiftKey) break;
 
         e.preventDefault();
 
-        // Hide the toolbar and focus the "Toggle Controls" button.
+        // Hide the controls menu and focus the "Toggle Controls" button.
         toggleControls();
+        // TODO: use refs!
         document.getElementById('toggle-controls')!.focus();
 
         break;
@@ -150,14 +166,17 @@ export default function Toolbar({
   }
 
   function handleBlur(e: React.FocusEvent<HTMLUListElement>) {
+    const target = e.target as unknown as HTMLButtonElement;
+    const id = target.id as ArrayElement<ControlsIds>;
+
     /**
      * [1]: Otherwise click on "Toggle Controls" will run `toggleControls()`
      * twice.
      */
     if (
-      controls.includes(e.target.id) &&
+      controls.includes(id) &&
       (e.relatedTarget === null ||
-        (!controls.includes(e.relatedTarget.id) &&
+        (!controls.includes(e.relatedTarget.id as ArrayElement<ControlsIds>) &&
           e.relatedTarget !== toggleControlsRef.current)) // [1]
     ) {
       toggleControls();
@@ -174,6 +193,19 @@ export default function Toolbar({
     setIsPreviewModalShown(false);
   }
 
+  const deletableSectionIds: SectionIdsDeletable = possibleSectionIds.toSpliced(
+    0,
+    1,
+  ) as ArraySplice<SectionIds, 0, 1>;
+
+  type AppendSuffix<T extends SectionIds> = {
+    [K in keyof T]: `${T[K]}-tabpanel`;
+  };
+
+  const tabpanelIds: TabpanelIds = possibleSectionIds.map(
+    (sectionId) => `${sectionId}-tabpanel`,
+  ) as AppendSuffix<SectionIds>;
+
   return (
     <>
       <div
@@ -188,11 +220,12 @@ export default function Toolbar({
         role="toolbar"
         onKeyDown={handleKeyDown}
       >
+        {/* Why doesn't it have `aria-haspopup` like the "toggle-controls" button? */}
         <AppbarIconButton
           alt="Toggle Navigation"
           aria-controls="navbar"
           aria-expanded={isNavbarExpanded}
-          //? Why is it "Navigation" instead of "Toggle Navigation"?
+          // It's different from `alt` because it's used as a label for `navbar`.
           aria-label="Navigation"
           className="Toolbar-Item Toolbar-Item_toggleNavbar"
           iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
@@ -206,10 +239,12 @@ export default function Toolbar({
           tabIndex={2}
           onClick={toggleNavbar}
         />
+        {/* TODO: instead of a `...-hidden` class there should be conditional rendering. Right? */}
         <div
           aria-labelledby="toggle-controls"
           aria-orientation="horizontal"
           className={ControlsClassName}
+          data-testid="control-btns"
           id="control-btns"
           role="menu"
         >
@@ -217,14 +252,13 @@ export default function Toolbar({
             <li>
               {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
               <AppbarIconButton
-                //! WTF? WHY ARE THEY DIFFERENT?
                 alt="Clear All"
-                // All sections but the undeletable "Personal Details" section
-                aria-controls={clsx(possibleSectionIds.toSpliced(1, 1))}
-                //! WTF? WHY ARE THEY DIFFERENT?
-                aria-label="Delete All"
+                // All sections' tabs but the undeletable "Personal Details"'s one and all tabpanels.
+                aria-controls={clsx([...deletableSectionIds, ...tabpanelIds])}
+                aria-label="Clear All"
                 className="Toolbar-Item Toolbar-Item_deleteAll"
-                iconSrc={clearSrc}
+                iconSrc={deleteSrc}
+                // TODO: make `clear-all`. Don't forget about the `controls` tuple.
                 id="delete-all"
                 ref={firstControlRef}
                 role="menuitem"
@@ -236,7 +270,9 @@ export default function Toolbar({
               {/* TODO: add a warning that clicking "Fill All" will result in loss of all data. */}
               <AppbarIconButton
                 alt="Fill All"
-                aria-controls={clsx(possibleSectionIds)}
+                //? Shouldn't it actually control only those tabs that aren't displayed? Since it can't do anything to those tabs that are displayed.
+                // All sections' tabs but the undeletable "Personal Details"'s one and all tabpanels.
+                aria-controls={clsx([...deletableSectionIds, ...tabpanelIds])}
                 aria-label="Fill All"
                 className="Toolbar-Item Toolbar-Item_fillAll"
                 iconSrc={fillSrc}
@@ -248,6 +284,7 @@ export default function Toolbar({
             </li>
             <li>
               <AppbarIconButton
+                // FIXME: add `aria-controls`!
                 //? Should `alt` and `aria-label` differ here?
                 alt="Preview"
                 aria-label="Open Preview"
@@ -262,12 +299,11 @@ export default function Toolbar({
           </ul>
         </div>
         <AppbarIconButton
-          // TODO: so, is it "Toggle Controls"...
           alt="Toggle Controls"
           aria-controls="control-btns"
           aria-expanded={areControlsExpanded}
           aria-haspopup="menu"
-          // TODO: or "Control Buttons"?
+          // It's different from `alt` because it's used as a label for the menu
           aria-label="Control Buttons"
           className="Toolbar-Item Toolbar-Item_toggleControls"
           iconSrc={kebabSrc}

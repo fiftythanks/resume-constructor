@@ -1,5 +1,9 @@
 import type { UUID } from 'crypto';
 
+type AppendSuffix<T extends readonly string[], Suffix extends string> = {
+  [K in keyof T]: `${T[K]}${Suffix}`;
+};
+
 export type SectionId =
   | 'certifications'
   | 'education'
@@ -11,6 +15,15 @@ export type SectionId =
 
 export type SectionIds = [
   'personal',
+  'links',
+  'skills',
+  'experience',
+  'projects',
+  'education',
+  'certifications',
+];
+
+export type SectionIdsDeletable = [
   'links',
   'skills',
   'experience',
@@ -37,6 +50,8 @@ export type SectionTitles = {
   projects: 'Projects';
   skills: 'Technical Skills';
 };
+
+export type TabpanelIds = AppendSuffix<SectionIds, '-tabpanel'>;
 
 export interface Personal {
   address: string;
