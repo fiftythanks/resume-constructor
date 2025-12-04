@@ -243,6 +243,7 @@ async function renderControls(props?: ToolbarProps) {
   return { user, controls };
 }
 
+// TODO: assert that `Preview` gets correct `data` and `activeSectionIds`
 describe('Toolbar', () => {
   it('should render a toolbar', () => {
     renderToolbar();

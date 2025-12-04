@@ -257,3 +257,45 @@ function renderAppLayout(props?: AppLayoutProps) {
 
 // TEST PLAN
 // - [ ] should render
+// - [ ] should render the opened section's title as a heading
+// - [ ] should render a main section that owns `app-layout-heading` and `${openedSectionId}-tabpanel`
+// - [ ] should correctly render children
+// "Open Previous Section" button
+// - [ ] should render with an accessible name "Open Previous Section" when the opened section isn't "Personal Details"
+// - [ ] should not render when the opened section is "Personal Details"
+// - [ ] should call `openSection(activeSectionIds[openedSectionIndex - 1])` on click
+// "Open Next Section" button
+// - [ ] should render with an accessible name "Open Next Section" when the opened section isn't the last one
+// - [ ] should not render when the opened section is the last one
+// - [ ] should call `openSection(activeSectionIds[openedSectionIndex + 1])` on click
+// Navbar
+// - [ ] should render when it's expanded
+// - [ ] should not render when it's not expanded
+// - [ ] should have an "Add Sections" button when there are inactive sections
+// - [ ] should not have an "Add Sectoins" button when all sections are active
+// - [ ] should render tabs for all active sections
+// - [ ] should not render tabs for inactive sections
+// - [ ] should render no more tabs than there are active sections
+// - [ ] should have the opened section selected
+// - [ ] should call `openSection` when a section is selected
+// - [ ] should have the editor mode on when `editorMode === true`
+// - [ ] should have the editor mode off when `editorMode === false`
+// - [ ] should call `toggleEditorMode` when the editor mode is toggled
+// - [ ] should call `deleteSections` when a section is deleted
+// - [ ] should call `reorderSections` when sections are reordered via DnD
+//   "Add Sections" dialog
+//   - [ ] should have an add button for each section that isn't active
+//   - [ ] should not have add buttons for active sections
+//   - [ ] should have no more add buttons than there are inactive sections
+//   - [ ] should call `addSections` when a section is added
+//   - [ ] should call `resetScreenReaderAnnouncement` when shown
+// Toolbar
+// - [ ] should render
+// - [ ] should have correct `aria-expanded` derived from `isNavbarExpanded` for its "Toggle Navigation" button
+// - [ ] should call `toggleNavbar` when the navbar is toggled
+// - [ ] should have correct `aria-controls` props' values that are derived from `activeSectionIds` and `possibleSectionIds` for its "Clear All" and "Delete All"
+// - [ ] should call `deleteAll` when all sections are deleted
+// - [ ] should call `fillAll` when all sections are filled
+//   "Preview" dialog
+//   - [ ] should have correct data
+// Keyboard navigation

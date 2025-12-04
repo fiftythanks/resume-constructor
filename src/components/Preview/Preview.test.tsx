@@ -97,6 +97,7 @@ function mockWithNumPagesTemporary(numPages: number) {
   return restore;
 }
 
+// TODO: add `activeSectionIds` and `data` tests by changing the mocks in such a way that the props become testable.
 describe('Preview', () => {
   /**
    * Since to test this component, we can safely use the same data and state, I
