@@ -107,6 +107,7 @@
     "pdfjs-dist": "^5.4.54",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "tabbable": "^6.3.0",
     "use-immer": "^0.11.0"
   },
   "lint-staged": {
