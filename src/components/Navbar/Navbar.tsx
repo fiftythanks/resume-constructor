@@ -71,6 +71,7 @@ export interface NavbarProps {
   activeSectionIds: SectionId[];
   addSections: UseAppStateReturn['addSections'];
   canAddSections: boolean;
+  className?: string;
   deleteSections: UseAppStateReturn['deleteSections'];
   editorMode: boolean;
   isExpanded: boolean;
@@ -92,6 +93,7 @@ export default function Navbar({
   addSections,
   //? What is the purpose of passing such a prop? It's useless. You can figure this out inside `Navbar`, can't you? Or is it for the separation of concerns?
   canAddSections,
+  className,
   deleteSections,
   editorMode,
   isExpanded,
@@ -387,7 +389,7 @@ export default function Navbar({
     <>
       <nav
         aria-labelledby="toggle-navbar"
-        className={clsx(['Navbar', !isExpanded && 'Navbar_hidden'])}
+        className={clsx([className, 'Navbar', !isExpanded && 'Navbar_hidden'])}
         id="navbar"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}

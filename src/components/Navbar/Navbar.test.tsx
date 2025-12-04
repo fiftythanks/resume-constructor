@@ -101,13 +101,22 @@ describe('Navbar', () => {
     expect(nav).toBeInTheDocument();
   });
 
-  it('should render a navigation with an accessible name derived from an element with an ID "toggle-navbar" when `isExpanded === false`', () => {
+  it('should not render a navigation with an accessible name derived from an element with an ID "toggle-navbar" when `isExpanded === false`', () => {
     renderComponents(getProps({ isExpanded: false }));
 
     const nav = screen.queryByRole('navigation', { name: 'Navigation' });
 
     // This class sets the `display: none` property.
     expect(nav).toHaveClass('Navbar_hidden');
+  });
+
+  it('should use the prop `className` in its class', () => {
+    renderComponents(getProps({ className: 'bluh-bluh' }));
+    const nav = screen.getByRole('navigation', { name: 'Navigation' });
+
+    const classList = nav.classList;
+
+    expect(classList).toContain('bluh-bluh');
   });
 
   describe('"Resume Sections" tablist', () => {
