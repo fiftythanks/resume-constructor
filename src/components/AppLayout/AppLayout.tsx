@@ -4,8 +4,6 @@ import type { KeyboardEvent, ReactNode } from 'react';
 import { clsx } from 'clsx';
 import { tabbable } from 'tabbable';
 
-import useAppState from '@/hooks/useAppState';
-
 import Button from '@/components/Button';
 import Navbar from '@/components/Navbar';
 import Toolbar from '@/components/Toolbar';
@@ -20,20 +18,20 @@ import type {
 } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
-interface AppLayoutProps {
+export interface AppLayoutProps {
   activeSectionIds: SectionId[];
-  addSections: ReturnType<typeof useAppState>['addSections'];
+  addSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
   children: ReactNode;
   data: ResumeData;
   deleteAll: () => void;
-  deleteSections: ReturnType<typeof useAppState>['deleteSections'];
+  deleteSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
   editorMode: boolean;
   fillAll: () => void;
   isNavbarExpanded: boolean;
   openedSectionId: SectionId;
-  openSection: ReturnType<typeof useAppState>['openSection'];
+  openSection: (sectionId: SectionId) => void;
   possibleSectionIds: SectionIds;
-  reorderSections: ReturnType<typeof useAppState>['reorderSections'];
+  reorderSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
   resetScreenReaderAnnouncement: () => void;
   sectionTitles: SectionTitles;
   toggleEditorMode: () => void;
