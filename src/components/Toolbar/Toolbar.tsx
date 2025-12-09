@@ -254,6 +254,7 @@ export default function Toolbar({
               <AppbarIconButton
                 alt="Clear All"
                 // All sections' tabs but the undeletable "Personal Details"'s one and all tabpanels.
+                // TODO: it shouldn't control inactive sections because they are already clear.
                 aria-controls={clsx([...deletableSectionIds, ...tabpanelIds])}
                 aria-label="Clear All"
                 className="Toolbar-Item Toolbar-Item_deleteAll"

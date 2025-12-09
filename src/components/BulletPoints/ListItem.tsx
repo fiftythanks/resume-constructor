@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, RefCallback } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import { useSortable } from '@dnd-kit/sortable';
@@ -20,16 +20,18 @@ export interface ListItemProps {
   index: number;
   name: string;
   placeholder?: string;
+  setFirstTabbable?: RefCallback<HTMLButtonElement>;
   value: string;
 }
 
 /**
- * An list item (`<li>`) used in `BulletPoints`. Consists of a drag handle, an
+ * A list item (`<li>`) used in `BulletPoints`. Consists of a drag handle, an
  * input field and a delete button.
  */
 export default function ListItem({
   deleteItem,
   edit,
+  setFirstTabbable,
   id,
   index,
   name,
@@ -61,8 +63,11 @@ export default function ListItem({
       <button
         aria-label={`Drag bullet point ${index + 1}`}
         className="BulletPoints-Button BulletPoints-Button_dragHandle"
-        ref={setActivatorNodeRef}
         type="button"
+        ref={(node) => {
+          setActivatorNodeRef(node);
+          if (setFirstTabbable !== undefined) setFirstTabbable(node);
+        }}
         {...attributes}
         {...listeners}
       >

@@ -1,21 +1,28 @@
 import React from 'react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, Ref } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Certifications } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 export interface CertificationsProps {
   data: Certifications;
+  firstTabbable: Ref<HTMLTextAreaElement | null>;
   functions: ReturnType<typeof useResumeData>['certificationsFunctions'];
 }
+
+type ReadonlyCertificationsProps = ReadonlyExcept<
+  CertificationsProps,
+  'firstTabbable'
+>;
 
 // The Certifications section form.
 export default function Certifications({
   data,
+  firstTabbable,
   functions,
-}: ReadonlyDeep<CertificationsProps>) {
+}: ReadonlyCertificationsProps) {
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target as {
       name: 'certificates' | 'interests' | 'skills';
@@ -43,6 +50,7 @@ export default function Certifications({
             id="certificates"
             name="certificates"
             placeholder="List any relevant certifications, e.g., AWS Certified Cloud Practitioner, Google IT Support Professional Certificate."
+            ref={firstTabbable}
             value={data.certificates}
             onChange={handleInputChange}
           />

@@ -1,17 +1,18 @@
 import React from 'react';
+import type { RefCallback } from 'react';
 
 import useAppState from '@/hooks/useAppState';
 import useResumeData from '@/hooks/useResumeData';
 
 import BulletPoints from '@/components/BulletPoints';
 
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Skills } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 export interface SkillsProps {
   data: Skills;
   functions: ReturnType<typeof useResumeData>['skillsFunctions'];
-
+  setFirstTabbable: RefCallback<HTMLButtonElement>;
   updateScreenReaderAnnouncement: ReturnType<
     typeof useAppState
   >['updateScreenReaderAnnouncement'];
@@ -22,9 +23,10 @@ export interface SkillsProps {
  */
 export default function Skills({
   data,
+  setFirstTabbable,
   functions,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<SkillsProps>) {
+}: ReadonlyExcept<SkillsProps, 'setFirstTabbable'>) {
   // Skills don't need to be bullet points. I'd say they must not be bullet points at all. They are single-line. Why on earth are they bullet points? It's strange and super redundant. For each line it should be a simple input field, and that's all.
   // TODO: switch to simple input fields from redundant bullet points.
   return (
@@ -43,6 +45,7 @@ export default function Skills({
         itemName="language"
         legend="Languages"
         name="language"
+        setFirstTabbable={setFirstTabbable}
         updateData={(value) => functions.updateSkills('languages', value)}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />

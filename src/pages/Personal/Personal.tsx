@@ -1,13 +1,14 @@
 import React from 'react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, RefObject } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Personal } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 export interface PersonalProps {
   data: Personal;
+  firstTabbable: RefObject<HTMLInputElement | null>;
   functions: ReturnType<typeof useResumeData>['personalFunctions'];
 }
 
@@ -16,8 +17,9 @@ export interface PersonalProps {
  */
 export default function Personal({
   data,
+  firstTabbable,
   functions,
-}: ReadonlyDeep<PersonalProps>) {
+}: ReadonlyExcept<PersonalProps, 'firstTabbable'>) {
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -44,9 +46,11 @@ export default function Personal({
           </label>
           <input
             className="section--field"
+            data-testid="first-tabbable-personal"
             id="full-name"
             name="fullName"
             placeholder="John Doe"
+            ref={firstTabbable}
             type="text"
             value={data.fullName}
             onChange={handleInputChange}

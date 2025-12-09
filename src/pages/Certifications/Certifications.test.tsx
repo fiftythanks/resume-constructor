@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Ref } from 'react';
 
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -11,13 +12,15 @@ import type { CertificationsProps } from './Certifications';
 function getProps(
   overrides?: Partial<CertificationsProps>,
 ): CertificationsProps {
+  const firstTabbable: Ref<HTMLTextAreaElement | null> = { current: null };
+
   return {
+    firstTabbable,
     data: {
       certificates: '',
       interests: '',
       skills: '',
     },
-
     functions: {
       updateCertifications(
         _field: 'certificates' | 'interests' | 'skills',
@@ -217,5 +220,21 @@ describe('Certifications', () => {
 
       expect(updateCertificationsMock).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('should assign the first tabbable element to `firstTabbable.current`', () => {
+    // Arrange
+    const firstTabbable: Ref<HTMLTextAreaElement | null> = { current: null };
+    const props = getProps({ firstTabbable });
+
+    render(<div aria-label="Certifications" id="certifications" />);
+    render(<Certifications {...props} />);
+
+    const firstTabbableElement = screen.getByRole('textbox', {
+      name: 'Certificates',
+    });
+
+    // Assert
+    expect(firstTabbable.current).toBe(firstTabbableElement);
   });
 });

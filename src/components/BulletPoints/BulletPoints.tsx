@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, RefCallback } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import {
@@ -45,6 +45,7 @@ export interface BulletPointsProps {
   placeholder1?: string;
   placeholder2?: string;
   placeholder3?: string;
+  setFirstTabbable?: RefCallback<HTMLButtonElement>;
   updateData: (newData: ItemWithId[]) => void;
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
@@ -71,11 +72,12 @@ export default function BulletPoints({
   placeholder1,
   placeholder2,
   placeholder3,
+  setFirstTabbable,
   updateData,
   updateScreenReaderAnnouncement,
 }: ReadonlyDeep<BulletPointsProps>) {
   const [_, setIsDragging] = useState(false);
-  const wasDraggedAwayFromItsInitialPositionRef = useRef(false);
+  const wasDraggedAwayFromItsInitialPosition = useRef(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -109,7 +111,7 @@ export default function BulletPoints({
 
   const announcements = {
     onDragStart({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
-      wasDraggedAwayFromItsInitialPositionRef.current = false;
+      wasDraggedAwayFromItsInitialPosition.current = false;
 
       return `Picked up draggable item ${data.findIndex((item) => item.id === active.id) + 1}.`;
     },
@@ -121,7 +123,7 @@ export default function BulletPoints({
 
       if (
         active.id !== over.id ||
-        wasDraggedAwayFromItsInitialPositionRef.current
+        wasDraggedAwayFromItsInitialPosition.current
       ) {
         /**
          * In case the draggable item is dragged over the area where it came
@@ -132,7 +134,7 @@ export default function BulletPoints({
          * announcing something like "Draggable item 1 was dragged over
          * area 1" right after the draggable item has just been picked up.
          */
-        wasDraggedAwayFromItsInitialPositionRef.current = true;
+        wasDraggedAwayFromItsInitialPosition.current = true;
 
         return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
       }
@@ -192,12 +194,15 @@ export default function BulletPoints({
                 );
 
                 if (index < data.length - 1) {
+                  // TODO: use refs!
                   document
                     .getElementById(`delete-${name}-${index + 1}`)!
                     .focus();
                 } else if (index === 0) {
+                  // TODO: use refs!
                   document.getElementById(`add-${name}`)!.focus();
                 } else {
+                  // TODO: use refs!
                   document
                     .getElementById(`delete-${name}-${index - 1}`)!
                     .focus();
@@ -238,6 +243,7 @@ export default function BulletPoints({
                   key={id}
                   name={`${name}-${index}`}
                   placeholder={placeholder}
+                  setFirstTabbable={index === 0 ? setFirstTabbable : undefined}
                   value={value}
                 />
               );
@@ -250,6 +256,7 @@ export default function BulletPoints({
         className="BulletPoints-Add"
         id={`add-${name}`}
         modifiers={['Button_paddingInline_large']}
+        ref={data.length === 0 ? setFirstTabbable : undefined}
         // TODO: add a screen reader announcement "A new bullet point was added".
         onClick={addItem}
       >

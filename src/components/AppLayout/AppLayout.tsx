@@ -1,8 +1,7 @@
 import React, { useRef } from 'react';
-import type { KeyboardEvent, ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 
 import { clsx } from 'clsx';
-import { tabbable } from 'tabbable';
 
 import Button from '@/components/Button';
 import Navbar from '@/components/Navbar';
@@ -27,6 +26,9 @@ export interface AppLayoutProps {
   deleteSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
   editorMode: boolean;
   fillAll: () => void;
+  firstTabbable: RefObject<
+    HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement | null
+  >;
   isNavbarExpanded: boolean;
   openedSectionId: SectionId;
   openSection: (sectionId: SectionId) => void;
@@ -48,6 +50,7 @@ export default function AppLayout({
   deleteSections,
   editorMode,
   fillAll,
+  firstTabbable,
   isNavbarExpanded,
   openedSectionId,
   openSection,
@@ -92,12 +95,6 @@ export default function AppLayout({
       'toggle-controls',
     ]);
 
-    // TODO: use refs!
-    const tabpanelId = `${openedSectionId}-tabpanel`;
-    const tabpanel = document.getElementById(tabpanelId)!;
-    const tabbableElements = tabbable(tabpanel);
-    const firstTabbableElement = tabbableElements[0];
-
     // TODO: extract some branches to functions to make the logic more readable.
     if (e.key === 'Tab') {
       if (isSectionId(id)) {
@@ -109,7 +106,8 @@ export default function AppLayout({
             document.getElementById('toggle-navbar')!.focus();
           } else if (!editorMode) {
             e.preventDefault();
-            firstTabbableElement.focus();
+
+            if (firstTabbable.current !== null) firstTabbable.current.focus();
 
             wasToolbarLastFocusedElement.current = false;
           }
@@ -168,12 +166,13 @@ export default function AppLayout({
       } else if (controlsRelatedBtns.has(id)) {
         if (!e.shiftKey) {
           e.preventDefault();
-          firstTabbableElement.focus();
+
+          if (firstTabbable.current !== null) firstTabbable.current.focus();
 
           wasToolbarLastFocusedElement.current = true;
         }
       } else if (
-        e.target === firstTabbableElement &&
+        e.target === firstTabbable.current &&
         e.shiftKey &&
         isNavbarExpanded &&
         !wasToolbarLastFocusedElement.current
@@ -214,6 +213,7 @@ export default function AppLayout({
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className={`AppLayout ${navbarModifier}`} onKeyDown={handleKeyDown}>
+      {/* TODO: should use conditional rendering */}
       <Navbar
         activeSectionIds={activeSectionIds}
         addSections={addSections}

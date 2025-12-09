@@ -106,6 +106,7 @@ const FUNCTIONS: ReturnType<typeof useResumeData>['educationFunctions'] = {
 function getProps(overrides?: Partial<EducationProps>): EducationProps {
   return {
     data: structuredClone(DATA),
+    firstTabbable: { current: null },
     functions: cloneDeep(FUNCTIONS),
     updateScreenReaderAnnouncement(_announcement: string) {},
     ...overrides,
@@ -518,5 +519,36 @@ describe('Education', () => {
         expect(mockFn).toHaveBeenCalledTimes(1);
       });
     });
+  });
+
+  it('should assign the "Show Previous Degree" button to `firstTabbable.current` when the button is present', () => {
+    const firstTabbable = { current: null };
+    const props = getProps({ firstTabbable });
+    props.data.shownDegreeIndex = 1;
+    render(<Education {...props} />);
+
+    const btn = screen.getByRole('button', { name: 'Show Previous Degree' });
+
+    expect(firstTabbable.current).toBe(btn);
+  });
+
+  it('should assign the "Show Next Degree" button to `firstTabbable.current` when the button is present and the "Show Previous Degree" button is not', () => {
+    const firstTabbable = { current: null };
+    render(<Education {...getProps({ firstTabbable })} />);
+
+    const btn = screen.getByRole('button', { name: 'Show Next Degree' });
+
+    expect(firstTabbable.current).toBe(btn);
+  });
+
+  it("should assign the 'Add Degree' button to `firstTabbable.current` when there's only one degree", () => {
+    const firstTabbable = { current: null };
+    const props = getProps({ firstTabbable });
+    props.data.degrees.splice(0, 2);
+    render(<Education {...props} />);
+
+    const btn = screen.getByRole('button', { name: 'Add Degree 2' });
+
+    expect(firstTabbable.current).toBe(btn);
   });
 });

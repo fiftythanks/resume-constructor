@@ -29,7 +29,7 @@ const ITEMS: ItemWithId[] = [
 function getProps(overrides?: Partial<BulletPointsProps>): BulletPointsProps {
   return {
     addItem: () => {},
-    data: ITEMS,
+    data: structuredClone(ITEMS),
     deleteItem(_itemIndex: number) {},
     editItem(_itemIndex: number, _value: string) {},
     legend: 'Some Legend',
@@ -72,6 +72,37 @@ describe('BulletPoints', () => {
     const bulletPoints = screen.getByTestId('bullet-points');
 
     expect(bulletPoints.children).toHaveLength(ITEMS.length);
+  });
+
+  it('should call `setFirstTabbable` and pass the first bullet to it when there are bullets', () => {
+    const mockFn = jest.fn((_firstTabbable) => {});
+    const props = getProps({ setFirstTabbable: mockFn });
+    render(<BulletPoints {...props} />);
+
+    const dragHandle = screen.getByRole('button', {
+      name: 'Drag bullet point 1',
+    });
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledWith(dragHandle);
+  });
+
+  it("should call `setFirstTabbable` and pass the 'Add Bullet Point' button to it when there aren't bullets", () => {
+    // Arrange
+    const mockFn = jest.fn((_firstTabbable) => {});
+    const props = getProps({ setFirstTabbable: mockFn });
+    props.data = [];
+
+    render(<BulletPoints {...props} />);
+
+    // Act
+    const btn = screen.getByRole('button', {
+      name: 'Add bullet point',
+    });
+
+    // Assert
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledWith(btn);
   });
 
   it('should render the first three bullet points with placeholders from props `placeholder1`, `placeholder2` and `placeholder3` correspondingly', () => {

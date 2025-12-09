@@ -12,6 +12,7 @@ function getProps(overrides?: Partial<ListItemProps>): ListItemProps {
   return {
     deleteItem: () => {},
     edit: () => {},
+    setFirstTabbable: (_firstTabbable: HTMLButtonElement) => {},
     id: 'some id',
     index: 1,
     name: 'some name',
@@ -89,6 +90,19 @@ describe('ListItem', () => {
 
       expect(dragHandle).toBeInTheDocument();
     });
+  });
+
+  it('should call `setFirstTabbable` and pass it the drag handle if `setFirstTabbable` is defined', () => {
+    const mockFn = jest.fn((_firstTabbable: HTMLButtonElement) => {});
+    const props = getProps({ setFirstTabbable: mockFn });
+    render(<ListItem {...props} />);
+
+    const dragHandle = screen.getByRole('button', {
+      name: 'Drag bullet point 2',
+    });
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledWith(dragHandle);
   });
 
   describe('delete btn', () => {

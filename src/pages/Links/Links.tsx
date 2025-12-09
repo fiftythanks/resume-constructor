@@ -1,9 +1,10 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
+import type { ChangeEvent, RefObject } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Links } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: make it possible to reorder links.
 
@@ -11,15 +12,20 @@ import type { ReadonlyDeep } from 'type-fest';
 
 // ? Since the email is on the same line as the links, and since it's all the contents of one section, it's kind of strange to keep two different components for all of this info, `Personal` and `Links`. It's probably more reasonable to merge the components. As a bonus, the navbar will become lower and it will be easier to adapt the app for small screen sizes, like iPhone 5's.
 
-/**
- * The Links section form.
- */
 export interface LinksProps {
   data: Links;
+  firstTabbable: RefObject<HTMLInputElement | null>;
   functions: ReturnType<typeof useResumeData>['linksFunctions'];
 }
 
-export default function Links({ data, functions }: ReadonlyDeep<LinksProps>) {
+/**
+ * The Links section form.
+ */
+export default function Links({
+  data,
+  firstTabbable,
+  functions,
+}: ReadonlyExcept<LinksProps, 'firstTabbable'>) {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -46,9 +52,11 @@ export default function Links({ data, functions }: ReadonlyDeep<LinksProps>) {
           </label>
           <input
             className="section--field"
+            data-testid="first-tabbable-links"
             id="website-text"
             name="website-text"
             placeholder="johndoe.com"
+            ref={firstTabbable}
             type="text"
             value={data.website.text}
             onChange={handleInputChange}

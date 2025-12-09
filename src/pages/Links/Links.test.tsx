@@ -15,23 +15,20 @@ function getProps(overrides?: Partial<LinksProps>): LinksProps {
         link: '',
         text: '',
       },
-
       linkedin: {
         link: '',
         text: '',
       },
-
       telegram: {
         link: '',
         text: '',
       },
-
       website: {
         link: '',
         text: '',
       },
     },
-
+    firstTabbable: { current: null },
     functions: {
       updateLinks(
         _field: 'github' | 'linkedin' | 'telegram' | 'website',
@@ -39,7 +36,6 @@ function getProps(overrides?: Partial<LinksProps>): LinksProps {
         _value: string,
       ) {},
     },
-
     ...overrides,
   };
 }
@@ -52,6 +48,21 @@ describe('Links', () => {
     const links = screen.getByRole('tabpanel', { name: 'Links' });
 
     expect(links).toBeInTheDocument();
+  });
+
+  it('should pass the first tabbable element to `firstTabbable.current`', () => {
+    // Arrange
+    const firstTabbable = { current: null };
+    const props = getProps({ firstTabbable });
+
+    render(<div aria-label="Links" id="links" />);
+    render(<Links {...props} />);
+
+    // Act
+    const firstTabbableNode = screen.getByTestId('first-tabbable-links');
+
+    // Assert
+    expect(firstTabbable.current).toBe(firstTabbableNode);
   });
 
   describe('Website', () => {

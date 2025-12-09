@@ -1,4 +1,5 @@
 import React from 'react';
+import type { RefObject } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
@@ -11,26 +12,25 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { ItemWithId, Projects } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 export interface ProjectFunctions {
   addBulletPoint: () => void;
   deleteBulletPoint: (itemIndex: number) => void;
   editBulletPoint: (itemIndex: number, value: string) => void;
-
   editLink: (
     field: 'code' | 'demo',
     type: 'link' | 'text',
     value: string,
   ) => void;
-
   editText: (field: 'projectName' | 'stack', value: string) => void;
   updateBulletPoints: (value: ItemWithId[]) => void;
 }
 
 export interface ProjectsProps {
   data: Projects;
+  firstTabbable: RefObject<HTMLButtonElement | null>;
   functions: ReturnType<typeof useResumeData>['projectsFunctions'];
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
@@ -40,13 +40,15 @@ export interface ProjectsProps {
  */
 export default function Projects({
   data,
+  firstTabbable,
   functions,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<ProjectsProps>) {
-  const { shownProjectIndex } = data;
+}: ReadonlyExcept<ProjectsProps, 'firstTabbable'>) {
+  const shownProjectIndex = data.shownProjectIndex;
 
   function addProject() {
     functions.addProject();
+    // TODO: use ref!
     document.getElementById('project-name')!.focus();
   }
 
@@ -55,23 +57,18 @@ export default function Projects({
       addBulletPoint() {
         functions.addBulletPoint(projectIndex);
       },
-
       deleteBulletPoint(itemIndex) {
         functions.deleteBulletPoint(projectIndex, itemIndex);
       },
-
       editBulletPoint(itemIndex, value) {
         functions.editBulletPoint(projectIndex, itemIndex, value);
       },
-
       editLink(field, type, value) {
         functions.editProjectLink(projectIndex, field, type, value);
       },
-
       editText(field, value) {
         functions.editProjectText(projectIndex, field, value);
       },
-
       updateBulletPoints(value) {
         functions.updateBulletPoints(projectIndex, value);
       },
@@ -92,37 +89,40 @@ export default function Projects({
       <header className="section--header">
         <h2>Project {shownProjectIndex + 1}</h2>
         {/* Conditional rendering to get rid of redundant flex gap. */}
-        {shownProjectIndex > 0 && (
+        {(shownProjectIndex > 0 ||
+          shownProjectIndex !== data.projects.length - 1) && (
           <div className="section--item-navigation">
-            <Button
-              aria-label="Show Previous Project"
-              className="section--item-navigation-button"
-              id="show-previous-project"
-              onClick={() => functions.showProject(shownProjectIndex - 1)}
-              modifiers={[
-                'Button_paddingBlock_none',
-                'Button_paddingInline_small',
-              ]}
-            >
-              <img alt="Previous" height="25px" src={prevSrc} width="25px" />
-            </Button>
-          </div>
-        )}
-        {/* Conditional rendering to get rid of redundant flex gap. */}
-        {shownProjectIndex !== data.projects.length - 1 && (
-          <div className="section--item-navigation">
-            <Button
-              aria-label="Show Next Project"
-              id="show-next-project"
-              // TODO: add screen reader announcement?
-              onClick={() => functions.showProject(shownProjectIndex + 1)}
-              modifiers={[
-                'Button_paddingBlock_none',
-                'Button_paddingInline_small',
-              ]}
-            >
-              <img alt="Previous" height="25px" src={nextSrc} width="25px" />
-            </Button>
+            {shownProjectIndex > 0 && (
+              <Button
+                aria-label="Show Previous Project"
+                className="section--item-navigation-button"
+                id="show-previous-project"
+                ref={firstTabbable}
+                onClick={() => functions.showProject(shownProjectIndex - 1)}
+                modifiers={[
+                  'Button_paddingBlock_none',
+                  'Button_paddingInline_small',
+                ]}
+              >
+                <img alt="Previous" height="25px" src={prevSrc} width="25px" />
+              </Button>
+            )}
+            {/* Conditional rendering to get rid of redundant flex gap. */}
+            {shownProjectIndex !== data.projects.length - 1 && (
+              <Button
+                aria-label="Show Next Project"
+                id="show-next-project"
+                ref={shownProjectIndex === 0 ? firstTabbable : undefined}
+                // TODO: add screen reader announcement?
+                onClick={() => functions.showProject(shownProjectIndex + 1)}
+                modifiers={[
+                  'Button_paddingBlock_none',
+                  'Button_paddingInline_small',
+                ]}
+              >
+                <img alt="Previous" height="25px" src={nextSrc} width="25px" />
+              </Button>
+            )}
           </div>
         )}
         {/* TODO: redesign it or at least put it in some other place. It looks terrible. (Talking about the UI, not the code.) */}
@@ -130,6 +130,7 @@ export default function Projects({
           aria-label={`Add Project ${data.projects.length + 1}`}
           id="add-project"
           modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
+          ref={data.projects.length === 1 ? firstTabbable : undefined}
           // TODO: add screen reader announcement.
           onClick={addProject}
         >

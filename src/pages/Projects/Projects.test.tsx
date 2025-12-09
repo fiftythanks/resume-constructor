@@ -17,16 +17,13 @@ import type { ItemWithId } from '@/types/resumeData';
 function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
   return {
     updateScreenReaderAnnouncement(_announcement: string) {},
-
     data: {
       shownProjectIndex: 0,
-
       projects: [
         {
           id: crypto.randomUUID(),
           projectName: 'Project 1 Name',
           stack: 'The best stack 1',
-
           bulletPoints: [
             {
               id: crypto.randomUUID(),
@@ -41,12 +38,10 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
               value: 'Bullet point 3',
             },
           ],
-
           code: {
             link: 'Code 1 link URL',
             text: 'Code 1 link text',
           },
-
           demo: {
             link: 'Demo 1 link URL',
             text: 'Demo 1 link text',
@@ -56,7 +51,6 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
           id: crypto.randomUUID(),
           projectName: 'Project 2 Name',
           stack: 'The best stack 2',
-
           bulletPoints: [
             {
               id: crypto.randomUUID(),
@@ -71,12 +65,10 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
               value: 'Bullet point 3',
             },
           ],
-
           code: {
             link: 'Code 2 link URL',
             text: 'Code 2 link text',
           },
-
           demo: {
             link: 'Demo 2 link URL',
             text: 'Demo 2 link text',
@@ -86,7 +78,6 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
           id: crypto.randomUUID(),
           projectName: 'Project 3 Name',
           stack: 'The best stack 3',
-
           bulletPoints: [
             {
               id: crypto.randomUUID(),
@@ -101,12 +92,10 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
               value: 'Bullet point 3',
             },
           ],
-
           code: {
             link: 'Code 3 link URL',
             text: 'Code 3 link text',
           },
-
           demo: {
             link: 'Demo 3 link URL',
             text: 'Demo 3 link text',
@@ -114,7 +103,7 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
         },
       ],
     },
-
+    firstTabbable: { current: null },
     functions: {
       addBulletPoint(_projectIndex: number) {},
       addProject() {},
@@ -122,27 +111,23 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
       deleteBulletPoint(_projectIndex: number, _itemIndex: number) {},
       showProject(_newShownProjectIndex: number) {},
       updateBulletPoints(_projectIndex: number, _value: ItemWithId[]) {},
-
       editBulletPoint(
         _projectIndex: number,
         _itemIndex: number,
         _value: string,
       ) {},
-
       editProjectLink(
         _index: number,
         _field: 'code' | 'demo',
         _type: 'link' | 'text',
         _value: string,
       ) {},
-
       editProjectText(
         _index: number,
         _field: 'projectName' | 'stack',
         _value: string,
       ) {},
     },
-
     ...overrides,
   };
 }
@@ -637,5 +622,58 @@ describe('Projects', () => {
 
       expect(updateScreenReaderAnnouncementMock).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('should pass the "Show Previous Project" button to `firstTabbable.current` when a non-first project is shown', () => {
+    // Arrange
+    const firstTabbable = { current: null };
+    const props = getProps({ firstTabbable });
+    props.data.shownProjectIndex = 1;
+
+    render(<div aria-label="Projects" id="projects" />);
+    render(<Projects {...props} />);
+
+    // Act
+    const firstTabbableNode = screen.getByRole('button', {
+      name: 'Show Previous Project',
+    });
+
+    // Assert
+    expect(firstTabbable.current).toBe(firstTabbableNode);
+  });
+
+  it('should pass the "Show Next Project" button to `firstTabbable.current` when the first project is shown and there are several projects', () => {
+    // Arrange
+    const firstTabbable = { current: null };
+    const props = getProps({ firstTabbable });
+
+    render(<div aria-label="Projects" id="projects" />);
+    render(<Projects {...props} />);
+
+    // Act
+    const firstTabbableNode = screen.getByRole('button', {
+      name: 'Show Next Project',
+    });
+
+    // Assert
+    expect(firstTabbable.current).toBe(firstTabbableNode);
+  });
+
+  it("should pass the 'Add Project' button to `firstTabbable.current` when there's only one project", () => {
+    // Arrange
+    const firstTabbable = { current: null };
+    const props = getProps({ firstTabbable });
+    props.data.projects.splice(0, 2);
+
+    render(<div aria-label="Projects" id="projects" />);
+    render(<Projects {...props} />);
+
+    // Act
+    const firstTabbableNode = screen.getByRole('button', {
+      name: 'Add Project 2',
+    });
+
+    // Assert
+    expect(firstTabbable.current).toBe(firstTabbableNode);
   });
 });

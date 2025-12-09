@@ -1,6 +1,5 @@
 import React from 'react';
-
-import { ReadonlyDeep } from 'type-fest';
+import type { RefObject } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
@@ -13,23 +12,23 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Experience, ItemWithId } from '@/types/resumeData';
 
 export interface JobFunctions {
   addBulletPoint: () => void;
   deleteBulletPoint: (itemIndex: number) => void;
-
   edit: (
     field: 'address' | 'companyName' | 'duration' | 'jobTitle',
     value: string,
   ) => void;
-
   editBulletPoint: (itemIndex: number, value: string) => void;
   updateBulletPoints: (value: ItemWithId[]) => void;
 }
 
 export interface ExperienceProps {
   data: Experience;
+  firstTabbable: RefObject<HTMLButtonElement | null>;
   functions: ReturnType<typeof useResumeData>['experienceFunctions'];
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
@@ -39,9 +38,10 @@ export interface ExperienceProps {
  */
 export default function Experience({
   data,
+  firstTabbable,
   functions,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<ExperienceProps>) {
+}: ReadonlyExcept<ExperienceProps, 'firstTabbable'>) {
   const { shownJobIndex } = data;
 
   function addJob() {
@@ -54,19 +54,15 @@ export default function Experience({
       addBulletPoint() {
         functions.addBulletPoint(jobIndex);
       },
-
       deleteBulletPoint(itemIndex) {
         functions.deleteBulletPoint(jobIndex, itemIndex);
       },
-
       edit(field, value) {
         functions.editJob(jobIndex, field, value);
       },
-
       editBulletPoint(itemIndex, value) {
         functions.editBulletPoint(jobIndex, itemIndex, value);
       },
-
       updateBulletPoints(value) {
         functions.updateBulletPoints(jobIndex, value);
       },
@@ -84,35 +80,37 @@ export default function Experience({
       <header className="section--header">
         <h2>Job {shownJobIndex + 1}</h2>
         {/* Conditional rendering to get rid of redundant flex gap. */}
-        {shownJobIndex > 0 && (
+        {(shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) && (
           <div className="section--item-navigation">
-            <Button
-              aria-label="Show Previous Job"
-              className="section--item-navigation-button"
-              id="show-previous-job"
-              onClick={() => functions.showJob(shownJobIndex - 1)}
-              modifiers={[
-                'Button_paddingBlock_none',
-                'Button_paddingInline_small',
-              ]}
-            >
-              <img alt="Previous" height="25px" src={prevSrc} width="25px" />
-            </Button>
-          </div>
-        )}
-        {shownJobIndex !== data.jobs.length - 1 && (
-          <div className="section--item-navigation">
-            <Button
-              aria-label="Show Next Job"
-              id="show-next-job"
-              onClick={() => functions.showJob(shownJobIndex + 1)}
-              modifiers={[
-                'Button_paddingBlock_none',
-                'Button_paddingInline_small',
-              ]}
-            >
-              <img alt="Previous" height="25px" src={nextSrc} width="25px" />
-            </Button>
+            {shownJobIndex > 0 && (
+              <Button
+                aria-label="Show Previous Job"
+                className="section--item-navigation-button"
+                id="show-previous-job"
+                ref={firstTabbable}
+                onClick={() => functions.showJob(shownJobIndex - 1)}
+                modifiers={[
+                  'Button_paddingBlock_none',
+                  'Button_paddingInline_small',
+                ]}
+              >
+                <img alt="Previous" height="25px" src={prevSrc} width="25px" />
+              </Button>
+            )}
+            {shownJobIndex !== data.jobs.length - 1 && (
+              <Button
+                aria-label="Show Next Job"
+                id="show-next-job"
+                ref={shownJobIndex === 0 ? firstTabbable : undefined}
+                onClick={() => functions.showJob(shownJobIndex + 1)}
+                modifiers={[
+                  'Button_paddingBlock_none',
+                  'Button_paddingInline_small',
+                ]}
+              >
+                <img alt="Previous" height="25px" src={nextSrc} width="25px" />
+              </Button>
+            )}
           </div>
         )}
         {/* TODO: redesign it or at least put it in some other place. It looks terrible. */}
@@ -120,6 +118,7 @@ export default function Experience({
           aria-label={`Add Job ${data.jobs.length + 1}`}
           id="add-job"
           modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
+          ref={data.jobs.length === 1 ? firstTabbable : undefined}
           onClick={addJob}
         >
           <img alt="Add" height="25px" src={addSrc} width="25px" />

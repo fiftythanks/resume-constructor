@@ -1,4 +1,5 @@
 import React from 'react';
+import type { RefObject } from 'react';
 
 import useResumeData from '@/hooks/useResumeData';
 
@@ -11,8 +12,8 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Education, ItemWithId } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 export interface DegreeFunctions {
   addBulletPoint: () => void;
@@ -27,19 +28,23 @@ export interface DegreeFunctions {
 
 export interface EducationProps {
   data: Education;
+  firstTabbable: RefObject<HTMLButtonElement | null>;
   functions: ReturnType<typeof useResumeData>['educationFunctions'];
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
+
+type ReadonlyEducationProps = ReadonlyExcept<EducationProps, 'firstTabbable'>;
 
 /**
  * The Education section form.
  */
 export default function Education({
   data,
+  firstTabbable,
   functions,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<EducationProps>) {
-  const { shownDegreeIndex } = data;
+}: ReadonlyEducationProps) {
+  const shownDegreeIndex = data.shownDegreeIndex;
 
   function addDegree() {
     functions.addDegree();
@@ -51,19 +56,15 @@ export default function Education({
       addBulletPoint() {
         functions.addBulletPoint(degreeIndex);
       },
-
       deleteBulletPoint(itemIndex) {
         functions.deleteBulletPoint(degreeIndex, itemIndex);
       },
-
       edit(field, value) {
         functions.editDegree(degreeIndex, field, value);
       },
-
       editBulletPoint(itemIndex, value) {
         functions.editBulletPoint(degreeIndex, itemIndex, value);
       },
-
       updateBulletPoints(value) {
         functions.updateBulletPoints(degreeIndex, value);
       },
@@ -80,13 +81,6 @@ export default function Education({
     >
       <header className="section--header">
         <h2>Degree {shownDegreeIndex + 1}</h2>
-        {/**
-         * In `Experience` and `Projects`, this logic is different. I
-         * simplified it thinking it doesn't make sense. But then I
-         * realised I may have forgotten something. I'm leaving this
-         * conditional rendering logic for the `<div>` here to see
-         * later if it actually has a purpose.
-         */}
         {/* Conditional rendering to get rid of redundant flex gap. */}
         {(shownDegreeIndex > 0 ||
           shownDegreeIndex !== data.degrees.length - 1) && (
@@ -96,6 +90,7 @@ export default function Education({
                 aria-label="Show Previous Degree"
                 className="section--item-navigation-button"
                 id="show-previous-degree"
+                ref={firstTabbable}
                 onClick={() => functions.showDegree(shownDegreeIndex - 1)}
                 modifiers={[
                   'Button_paddingBlock_none',
@@ -109,6 +104,7 @@ export default function Education({
               <Button
                 aria-label="Show Next Degree"
                 id="show-next-degree"
+                ref={data.degrees.length === 1 ? undefined : firstTabbable}
                 onClick={() => functions.showDegree(shownDegreeIndex + 1)}
                 modifiers={[
                   'Button_paddingBlock_none',
@@ -124,6 +120,7 @@ export default function Education({
           aria-label={`Add Degree ${data.degrees.length + 1}`}
           id="add-degree"
           modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
+          ref={data.degrees.length === 1 ? firstTabbable : undefined}
           onClick={addDegree}
         >
           <img alt="Add" height="25px" src={addSrc} width="25px" />

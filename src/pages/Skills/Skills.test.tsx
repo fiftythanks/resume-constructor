@@ -23,14 +23,12 @@ function getProps(overrides?: Partial<SkillsProps>): SkillsProps {
           value: 'framework',
         },
       ],
-
       languages: [
         {
           id: crypto.randomUUID(),
           value: 'language',
         },
       ],
-
       tools: [
         {
           id: crypto.randomUUID(),
@@ -38,13 +36,11 @@ function getProps(overrides?: Partial<SkillsProps>): SkillsProps {
         },
       ],
     },
-
     functions: {
       updateSkills<T extends 'frameworks' | 'languages' | 'tools'>(
         _field: T,
         _value: ResumeData['skills'][T],
       ) {},
-
       addLanguage() {},
       deleteLanguage(_index: number) {},
       editLanguage(_index: number, _value: string) {},
@@ -55,7 +51,7 @@ function getProps(overrides?: Partial<SkillsProps>): SkillsProps {
       deleteTool(_index) {},
       editTool(_index: number, _value: string) {},
     },
-
+    setFirstTabbable: (_firstTabbable) => {},
     updateScreenReaderAnnouncement(_announcement) {},
     ...overrides,
   };
@@ -213,6 +209,43 @@ describe('Skills', () => {
 
       expect(updateScreenReaderAnnouncementMock).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('should call `setFirstTabbable`', () => {
+    // Arrange
+    const mockFn = jest.fn((_firstTabbable) => {});
+    render(<div aria-label="Skills" id="skills" />);
+    render(<Skills {...getProps({ setFirstTabbable: mockFn })} />);
+
+    // Assert
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should pass the "Drag bullet point 1" button to `setFirstTabbable` when there is such button', () => {
+    const mockFn = jest.fn((_firstTabbable) => {});
+    render(<div aria-label="Skills" id="skills" />);
+    render(<Skills {...getProps({ setFirstTabbable: mockFn })} />);
+
+    const languages = screen.getByRole('group', { name: 'Languages' });
+    const btn = getByRole(languages, 'button', { name: 'Drag bullet point 1' });
+
+    expect(mockFn).toHaveBeenCalledWith(btn);
+  });
+
+  it("should pass the 'Add language' button to `setFirstTabbable` when there's no language bullets", () => {
+    // Arrange
+    const mockFn = jest.fn((_firstTabbable) => {});
+    const props = getProps({ setFirstTabbable: mockFn });
+    props.data.languages = [];
+
+    render(<div aria-label="Skills" id="skills" />);
+    render(<Skills {...props} />);
+
+    // Act
+    const btn = screen.getByRole('button', { name: 'Add language' });
+
+    // Assert
+    expect(mockFn).toHaveBeenCalledWith(btn);
   });
 
   describe('Frameworks', () => {

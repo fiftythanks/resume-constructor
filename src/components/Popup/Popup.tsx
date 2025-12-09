@@ -32,6 +32,7 @@ export interface PopupProps {
 export default function Popup({
   block,
   children,
+  // TODO: rename it to `ref`.
   externalRef,
   id,
   isShown,

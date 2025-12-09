@@ -1,18 +1,27 @@
 import React from 'react';
-import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from 'react';
+import type {
+  ButtonHTMLAttributes,
+  MouseEventHandler,
+  ReactNode,
+  RefCallback,
+  RefObject,
+} from 'react';
 
 import { clsx } from 'clsx';
 
 import './Button.scss';
 
-import type { ReadonlyDeep } from 'type-fest';
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   elements?: string | string[];
   modifiers?: string | string[];
   onClick: MouseEventHandler<HTMLButtonElement>;
+  ref?: RefCallback<HTMLButtonElement> | RefObject<HTMLButtonElement | null>;
 }
+
+type ReadonlyButtonProps = ReadonlyExcept<ButtonProps, 'ref'>;
 
 /**
  * A generic, reusable button component that accepts all standard HTML button
@@ -38,7 +47,7 @@ export default function Button({
   modifiers,
   type = 'button',
   ...rest
-}: ReadonlyDeep<ButtonProps>) {
+}: ReadonlyButtonProps) {
   const btnClassName = clsx('Button', className, elements, modifiers);
 
   return (

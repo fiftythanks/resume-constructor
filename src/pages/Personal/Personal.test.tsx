@@ -18,7 +18,7 @@ function getProps(overrides?: Partial<PersonalProps>): PersonalProps {
       phone: 'phone',
       summary: 'summary',
     },
-
+    firstTabbable: { current: null },
     functions: {
       updatePersonal(
         _field:
@@ -31,7 +31,6 @@ function getProps(overrides?: Partial<PersonalProps>): PersonalProps {
         _value: string,
       ) {},
     },
-
     ...overrides,
   };
 }
@@ -45,6 +44,15 @@ describe('Personal', () => {
     const personal = screen.getByRole('tabpanel', { name: 'Personal' });
 
     expect(personal).toBeInTheDocument();
+  });
+
+  it('should pass the first tabbable element to `firstTabbable.current`', () => {
+    const firstTabbable = { current: null };
+    render(<Personal {...getProps({ firstTabbable })} />);
+
+    const firstTabbableNode = screen.getByTestId('first-tabbable-personal');
+
+    expect(firstTabbable.current).toBe(firstTabbableNode);
   });
 
   describe('Full Name', () => {
