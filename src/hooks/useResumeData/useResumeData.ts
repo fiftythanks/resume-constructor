@@ -9,6 +9,7 @@ import { useImmer } from 'use-immer';
 import neverReached from '@/utils/neverReached';
 
 import getDefaultData from './getDefaultData';
+import getFilledData from './getFilledData';
 
 import type { ItemWithId, ResumeData, SectionId } from '@/types/resumeData';
 import type { WritableDraft } from 'immer';
@@ -20,6 +21,10 @@ import type { ReadonlyDeep } from 'type-fest';
  */
 export default function useResumeData() {
   const [data, setData] = useImmer(getDefaultData());
+
+  function fillAll() {
+    setData(getFilledData());
+  }
 
   // Its purpose is just to make `clear` shorter.
   function clearSection<K extends SectionId>(sectionId: K) {
@@ -53,30 +58,20 @@ export default function useResumeData() {
 
   // Utility function for `deleteItem`.
   function getNumberOfItems(itemType: ItemType) {
-    let numberOfItems: number;
-
     switch (itemType) {
       case 'degree': {
-        numberOfItems = data.education.degrees.length;
-        break;
+        return data.education.degrees.length;
       }
-
       case 'job': {
-        numberOfItems = data.experience.jobs.length;
-        break;
+        return data.experience.jobs.length;
       }
-
       case 'project': {
-        numberOfItems = data.projects.projects.length;
-        break;
+        return data.projects.projects.length;
       }
-
       default: {
         neverReached(itemType);
       }
     }
-
-    return numberOfItems;
   }
 
   // Utility function for `deleteItem`.
@@ -132,7 +127,6 @@ export default function useResumeData() {
 
             break;
           }
-
           case 'job': {
             draft.experience.shownJobIndex = getNextShownIndex(
               draft.experience.shownJobIndex,
@@ -144,7 +138,6 @@ export default function useResumeData() {
 
             break;
           }
-
           case 'project': {
             draft.projects.shownProjectIndex = getNextShownIndex(
               draft.projects.shownProjectIndex,
@@ -156,7 +149,6 @@ export default function useResumeData() {
 
             break;
           }
-
           default: {
             neverReached(itemType);
           }
@@ -183,7 +175,6 @@ export default function useResumeData() {
 
         break;
       }
-
       case 'job': {
         const newJob = getDefaultData('experience').jobs[0];
 
@@ -196,7 +187,6 @@ export default function useResumeData() {
 
         break;
       }
-
       case 'project': {
         const newProject = getDefaultData('projects').projects[0];
 
@@ -209,7 +199,6 @@ export default function useResumeData() {
 
         break;
       }
-
       default: {
         neverReached(itemType);
       }
@@ -235,7 +224,6 @@ export default function useResumeData() {
 
           break;
         }
-
         case 'job': {
           if (
             newShownItemIndex < data.experience.jobs.length &&
@@ -248,7 +236,6 @@ export default function useResumeData() {
 
           break;
         }
-
         case 'project': {
           if (
             newShownItemIndex < data.projects.projects.length &&
@@ -261,7 +248,6 @@ export default function useResumeData() {
 
           break;
         }
-
         default: {
           neverReached(itemType);
         }
@@ -295,7 +281,6 @@ export default function useResumeData() {
 
           break;
         }
-
         case 'job': {
           if (
             itemIndex < data.experience.jobs.length &&
@@ -311,7 +296,6 @@ export default function useResumeData() {
 
           break;
         }
-
         case 'project': {
           if (
             itemIndex < data.projects.projects.length &&
@@ -327,7 +311,6 @@ export default function useResumeData() {
 
           break;
         }
-
         default: {
           neverReached(itemType);
         }
@@ -360,7 +343,6 @@ export default function useResumeData() {
 
           break;
         }
-
         case 'job': {
           if (itemIndex < data.experience.jobs.length) {
             setData((draft) => {
@@ -372,7 +354,6 @@ export default function useResumeData() {
 
           break;
         }
-
         case 'project': {
           if (itemIndex < data.projects.projects.length) {
             setData((draft) => {
@@ -384,7 +365,6 @@ export default function useResumeData() {
 
           break;
         }
-
         default: {
           neverReached(itemType);
         }
@@ -408,9 +388,12 @@ export default function useResumeData() {
   };
 
   const educationFunctions = {
-    addDegree: () => addItem('degree'),
-    deleteDegree: (index: number) => deleteItem('degree', index),
-
+    addDegree() {
+      addItem('degree');
+    },
+    deleteDegree(index: number) {
+      deleteItem('degree', index);
+    },
     editDegree(
       index: number,
       field: 'address' | 'degree' | 'graduation' | 'uni',
@@ -420,10 +403,9 @@ export default function useResumeData() {
         draft.education.degrees[index][field] = value;
       });
     },
-
-    showDegree: (newShownDegreeIndex: number) =>
-      showItem('degree', newShownDegreeIndex),
-
+    showDegree(newShownDegreeIndex: number) {
+      showItem('degree', newShownDegreeIndex);
+    },
     // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(degreeIndex: number, value: ReadonlyDeep<ItemWithId[]>) {
       if (degreeIndex >= 0 && degreeIndex < data.education.degrees.length) {
@@ -436,13 +418,12 @@ export default function useResumeData() {
         });
       }
     },
-
-    addBulletPoint: (degreeIndex: number) =>
-      addBulletPoint('degree', degreeIndex),
-
-    deleteBulletPoint: (degreeIndex: number, bulletIndex: number) =>
-      deleteBulletPoint('degree', degreeIndex, bulletIndex),
-
+    addBulletPoint(degreeIndex: number) {
+      addBulletPoint('degree', degreeIndex);
+    },
+    deleteBulletPoint(degreeIndex: number, bulletIndex: number) {
+      deleteBulletPoint('degree', degreeIndex, bulletIndex);
+    },
     editBulletPoint(degreeIndex: number, itemIndex: number, value: string) {
       if (
         degreeIndex >= 0 &&
@@ -459,11 +440,18 @@ export default function useResumeData() {
   };
 
   const experienceFunctions = {
-    addJob: () => addItem('job'),
-    deleteJob: (index: number) => deleteItem('job', index),
-    showJob: (newShownJobIndex: number) => showItem('job', newShownJobIndex),
-    addBulletPoint: (jobIndex: number) => addBulletPoint('job', jobIndex),
-
+    addJob() {
+      addItem('job');
+    },
+    deleteJob(index: number) {
+      deleteItem('job', index);
+    },
+    showJob(newShownJobIndex: number) {
+      showItem('job', newShownJobIndex);
+    },
+    addBulletPoint(jobIndex: number) {
+      addBulletPoint('job', jobIndex);
+    },
     editJob(
       index: number,
       field: 'address' | 'companyName' | 'duration' | 'jobTitle',
@@ -475,7 +463,6 @@ export default function useResumeData() {
         });
       }
     },
-
     // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(jobIndex: number, value: ReadonlyDeep<ItemWithId[]>) {
       if (jobIndex >= 0 && jobIndex < data.experience.jobs.length) {
@@ -488,11 +475,10 @@ export default function useResumeData() {
         });
       }
     },
-
     // TODO: so, itemIndex or bulletIndex?
-    deleteBulletPoint: (jobIndex: number, bulletIndex: number) =>
-      deleteBulletPoint('job', jobIndex, bulletIndex),
-
+    deleteBulletPoint(jobIndex: number, bulletIndex: number) {
+      deleteBulletPoint('job', jobIndex, bulletIndex);
+    },
     editBulletPoint(jobIndex: number, itemIndex: number, value: string) {
       if (
         jobIndex >= 0 &&
@@ -537,9 +523,12 @@ export default function useResumeData() {
   };
 
   const projectsFunctions = {
-    addProject: () => addItem('project'),
-    deleteProject: (index: number) => deleteItem('project', index),
-
+    addProject() {
+      addItem('project');
+    },
+    deleteProject(index: number) {
+      deleteItem('project', index);
+    },
     editProjectLink(
       index: number,
       field: 'code' | 'demo',
@@ -552,7 +541,6 @@ export default function useResumeData() {
         });
       }
     },
-
     editProjectText(
       index: number,
       field: 'projectName' | 'stack',
@@ -564,10 +552,9 @@ export default function useResumeData() {
         });
       }
     },
-
-    showProject: (newShownProjectIndex: number) =>
-      showItem('project', newShownProjectIndex),
-
+    showProject(newShownProjectIndex: number) {
+      showItem('project', newShownProjectIndex);
+    },
     // This function doesn't look good, but it is needed for dnd-kit's API.
     updateBulletPoints(
       projectIndex: number,
@@ -583,14 +570,13 @@ export default function useResumeData() {
         });
       }
     },
-
-    addBulletPoint: (projectIndex: number) =>
-      addBulletPoint('project', projectIndex),
-
+    addBulletPoint(projectIndex: number) {
+      addBulletPoint('project', projectIndex);
+    },
     // FIXME: `bulletIndex` or `itemIndex`? Fix inconsistency.
-    deleteBulletPoint: (projectIndex: number, bulletIndex: number) =>
-      deleteBulletPoint('project', projectIndex, bulletIndex),
-
+    deleteBulletPoint(projectIndex: number, bulletIndex: number) {
+      deleteBulletPoint('project', projectIndex, bulletIndex);
+    },
     editBulletPoint(projectIndex: number, itemIndex: number, value: string) {
       if (
         projectIndex >= 0 &&
@@ -620,7 +606,6 @@ export default function useResumeData() {
         draft.skills[field] = newFieldObject;
       });
     },
-
     addLanguage() {
       setData((draft) => {
         draft.skills.languages.push({
@@ -629,7 +614,6 @@ export default function useResumeData() {
         });
       });
     },
-
     deleteLanguage(languageIndex: number) {
       if (languageIndex >= 0 && languageIndex < data.skills.languages.length) {
         setData((draft) => {
@@ -637,7 +621,6 @@ export default function useResumeData() {
         });
       }
     },
-
     /**
      * To change it, you need to refactor `BulletPoints`, its `editItem`
      * function.
@@ -650,7 +633,6 @@ export default function useResumeData() {
         });
       }
     },
-
     addFramework() {
       setData((draft) => {
         draft.skills.frameworks.push({
@@ -659,7 +641,6 @@ export default function useResumeData() {
         });
       });
     },
-
     deleteFramework(frameworkIndex: number) {
       if (
         frameworkIndex >= 0 &&
@@ -670,7 +651,6 @@ export default function useResumeData() {
         });
       }
     },
-
     /**
      * To change it, you need to refactor `BulletPoints`, its `editItem`
      * function.
@@ -686,7 +666,6 @@ export default function useResumeData() {
         });
       }
     },
-
     addTool() {
       setData((draft) => {
         draft.skills.tools.push({
@@ -695,7 +674,6 @@ export default function useResumeData() {
         });
       });
     },
-
     deleteTool(toolIndex: number) {
       if (toolIndex >= 0 && toolIndex < data.skills.tools.length) {
         setData((draft) => {
@@ -703,7 +681,6 @@ export default function useResumeData() {
         });
       }
     },
-
     /**
      * To change it, you need to refactor `BulletPoints`, its `editItem`
      * function.
@@ -725,6 +702,7 @@ export default function useResumeData() {
     data,
     educationFunctions,
     experienceFunctions,
+    fillAll,
     linksFunctions,
     personalFunctions,
     projectsFunctions,
