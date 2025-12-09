@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // It disallowed using `crypto`, which is well supported.
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
 import React from 'react';
+import type { RefObject } from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -212,8 +212,12 @@ const SECTION_TITLES: SectionTitles = {
 
 function Tabpanel({ sectionId }: { sectionId: SectionId }) {
   return (
-    <div id={`${sectionId}-tabpanel`}>
-      <input type="text" />
+    <div
+      aria-label={SECTION_TITLES[sectionId]}
+      id={`${sectionId}-tabpanel`}
+      role="tabpanel"
+    >
+      <input data-testid="first-tabbable" type="text" />
     </div>
   );
 }
@@ -235,6 +239,7 @@ function getProps(
     deleteSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
     editorMode: false,
     fillAll() {},
+    firstTabbable: { current: null },
     isNavbarExpanded: false,
     openedSectionId: 'personal',
     openSection(_sectionId: SectionId) {},
@@ -255,47 +260,904 @@ function renderAppLayout(props?: AppLayoutProps) {
   render(<AppLayout {...getProps(props)} />);
 }
 
-// TEST PLAN
-// - [ ] should render
-// - [ ] should render the opened section's title as a heading
-// - [ ] should render a main section that owns `app-layout-heading` and `${openedSectionId}-tabpanel`
-// - [ ] should correctly render children
-// "Open Previous Section" button
-// - [ ] should render with an accessible name "Open Previous Section" when the opened section isn't "Personal Details"
-// - [ ] should not render when the opened section is "Personal Details"
-// - [ ] should call `openSection(activeSectionIds[openedSectionIndex - 1])` on click
-// "Open Next Section" button
-// - [ ] should render with an accessible name "Open Next Section" when the opened section isn't the last one
-// - [ ] should not render when the opened section is the last one
-// - [ ] should call `openSection(activeSectionIds[openedSectionIndex + 1])` on click
-// Navbar
-// - [ ] should render when it's expanded
-// - [ ] should not render when it's not expanded
-// - [ ] should have an "Add Sections" button when there are inactive sections
-// - [ ] should not have an "Add Sectoins" button when all sections are active
-// - [ ] should render tabs for all active sections
-// - [ ] should not render tabs for inactive sections
-// - [ ] should render no more tabs than there are active sections
-// - [ ] should have the opened section selected
-// - [ ] should call `openSection` when a section is selected
-// - [ ] should have the editor mode on when `editorMode === true`
-// - [ ] should have the editor mode off when `editorMode === false`
-// - [ ] should call `toggleEditorMode` when the editor mode is toggled
-// - [ ] should call `deleteSections` when a section is deleted
-// - [ ] should call `reorderSections` when sections are reordered via DnD
-//   "Add Sections" dialog
-//   - [ ] should have an add button for each section that isn't active
-//   - [ ] should not have add buttons for active sections
-//   - [ ] should have no more add buttons than there are inactive sections
-//   - [ ] should call `addSections` when a section is added
-//   - [ ] should call `resetScreenReaderAnnouncement` when shown
-// Toolbar
-// - [ ] should render
-// - [ ] should have correct `aria-expanded` derived from `isNavbarExpanded` for its "Toggle Navigation" button
-// - [ ] should call `toggleNavbar` when the navbar is toggled
-// - [ ] should have correct `aria-controls` props' values that are derived from `activeSectionIds` and `possibleSectionIds` for its "Clear All" and "Delete All"
-// - [ ] should call `deleteAll` when all sections are deleted
-// - [ ] should call `fillAll` when all sections are filled
-//   "Preview" dialog
-//   - [ ] should have correct data
-// Keyboard navigation
+// TODO: should call `reorderSections` when sections are reordered via DnD
+// TODO: should have correct data for the preview dialog.
+
+function renderAppLayoutWithNavbarExpanded(props?: Partial<AppLayoutProps>) {
+  return renderAppLayout(getProps({ ...props, isNavbarExpanded: true }));
+}
+
+describe('AppLayout', () => {
+  it("should render the opened section's title as heading", () => {
+    renderAppLayout();
+
+    const heading = screen.getByRole('heading', {
+      name: SECTION_TITLES.personal,
+    });
+
+    expect(heading).toBeInTheDocument();
+  });
+
+  it('should correctly render children', () => {
+    renderAppLayout();
+
+    const children = screen.getByRole('tabpanel', {
+      name: SECTION_TITLES.personal,
+    });
+
+    expect(children).toBeInTheDocument();
+  });
+
+  // Main section
+
+  it('should render a main section', () => {
+    renderAppLayout();
+
+    const main = screen.getByRole('main');
+
+    expect(main).toBeInTheDocument();
+  });
+
+  describe('Main section', () => {
+    it('should own the section heading and the tabpanel', () => {
+      // Arrange
+      renderAppLayout();
+      const main = screen.getByRole('main');
+
+      const name = SECTION_TITLES.personal;
+
+      const heading = screen.getByRole('heading', { name });
+      const headingId = heading.id;
+
+      const tabpanel = screen.getByRole('tabpanel', { name });
+      const tabpanelId = tabpanel.id;
+
+      // Act
+      const ariaOwns = main.getAttribute('aria-owns')!;
+      const ownedElementsIds = ariaOwns.split(' ');
+
+      // Assert
+      expect(ownedElementsIds).toContain(headingId);
+      expect(ownedElementsIds).toContain(tabpanelId);
+    });
+  });
+
+  // "Open Next Section" button
+
+  it("should render an 'Open Next Section' button when the opened section isn't the last one", () => {
+    renderAppLayout();
+
+    const btn = screen.getByRole('button', { name: 'Open Next Section' });
+
+    expect(btn).toBeInTheDocument();
+  });
+
+  it('should not render an "Open Next Section" button when the opened section is the last one', () => {
+    renderAppLayout(getProps({ openedSectionId: POSSIBLE_SECTION_IDS.at(-1) }));
+
+    const btn = screen.queryByRole('button', { name: 'Open Next Section' });
+
+    expect(btn).not.toBeInTheDocument();
+  });
+
+  describe('"Open Next Section" button', () => {
+    it("should call `openSection` passing the next section's ID to it when pressed", async () => {
+      // Arrange
+      const mockFn = jest.fn((_sectionId: SectionId) => {});
+      const props = getProps({ openSection: mockFn });
+
+      renderAppLayout(props);
+      const user = userEvent.setup();
+
+      const btn = screen.getByRole('button', { name: 'Open Next Section' });
+
+      // Act
+      await user.click(btn);
+
+      // Assert
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).toHaveBeenCalledWith(POSSIBLE_SECTION_IDS[1]);
+    });
+  });
+
+  // "Open Previous Section" button
+
+  it("should render an 'Open Previous Section' button when the opened section isn't the first one", () => {
+    renderAppLayout(getProps({ openedSectionId: POSSIBLE_SECTION_IDS[3] }));
+
+    const btn = screen.getByRole('button', { name: 'Open Previous Section' });
+
+    expect(btn).toBeInTheDocument();
+  });
+
+  it('should not render an "Open Previous Section" button when the opened section is the first one', () => {
+    renderAppLayout();
+
+    const btn = screen.queryByRole('button', { name: 'Open Previous Section' });
+
+    expect(btn).not.toBeInTheDocument();
+  });
+
+  describe('"Open Previous Section" button', () => {
+    it("should call `openSection` passing the previous section's ID to it when pressed", async () => {
+      // Arrange
+      const openedSectionId = POSSIBLE_SECTION_IDS[3];
+      const mockFn = jest.fn((_sectionId: SectionId) => {});
+      const props = getProps({ openedSectionId, openSection: mockFn });
+
+      renderAppLayout(props);
+      const user = userEvent.setup();
+
+      const btn = screen.getByRole('button', { name: 'Open Previous Section' });
+
+      // Act
+      await user.click(btn);
+
+      // Assert
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).toHaveBeenCalledWith(POSSIBLE_SECTION_IDS[2]);
+    });
+  });
+
+  // Navbar
+
+  it("should render the navbar when it's expanded", () => {
+    renderAppLayout(getProps({ isNavbarExpanded: true }));
+
+    const navbar = screen.getByRole('navigation', { name: 'Navigation' });
+    const navbarClassList = navbar.classList;
+
+    expect(navbarClassList).not.toContain('Navbar_hidden');
+  });
+
+  it("should not render the navbar when it's hidden", () => {
+    renderAppLayout();
+
+    const navbar = screen.getByRole('navigation', { name: 'Navigation' });
+    const navbarClassList = navbar.classList;
+
+    expect(navbarClassList).toContain('Navbar_hidden');
+  });
+
+  describe('Navbar', () => {
+    it('should contain tabs for all active sections', () => {
+      // Arrange
+      const activeSectionIds = POSSIBLE_SECTION_IDS.slice(0, 4);
+      const props = getProps({ activeSectionIds });
+
+      renderAppLayoutWithNavbarExpanded(props);
+
+      // Act
+      const tabMap = new Map();
+
+      activeSectionIds.forEach((sectionId) => {
+        const name = SECTION_TITLES[sectionId];
+        const tab = screen.getByRole('tab', { name });
+        tabMap.set(sectionId, tab);
+      });
+
+      // Assert
+      expect(tabMap.get(activeSectionIds[0])).toBeInTheDocument();
+      expect(tabMap.get(activeSectionIds[1])).toBeInTheDocument();
+      expect(tabMap.get(activeSectionIds[2])).toBeInTheDocument();
+      expect(tabMap.get(activeSectionIds[3])).toBeInTheDocument();
+    });
+
+    it('should not contain more tabs than there are active sections', () => {
+      // Arrange
+      const activeSectionIds = POSSIBLE_SECTION_IDS.slice(0, 4);
+      const props = getProps({ activeSectionIds });
+
+      renderAppLayoutWithNavbarExpanded(props);
+
+      // Act
+      const tabs = screen.getAllByRole('tab');
+
+      // Assert
+      expect(tabs).toHaveLength(activeSectionIds.length);
+    });
+
+    it("should have the opened section's tab selected", () => {
+      renderAppLayoutWithNavbarExpanded();
+
+      const tab = screen.getByRole('tab', {
+        name: SECTION_TITLES.personal,
+        selected: true,
+      });
+
+      expect(tab).toBeInTheDocument();
+    });
+
+    it('should call `openSection` with the correct section ID when a section is selected', async () => {
+      // Arrange
+      const mockFn = jest.fn((_sectionId: SectionId) => {});
+      const props = getProps({ openSection: mockFn });
+
+      renderAppLayoutWithNavbarExpanded(props);
+      const user = userEvent.setup();
+
+      const tab = screen.getByRole('tab', { name: SECTION_TITLES.education });
+
+      // Act
+      await user.click(tab);
+
+      // Assert
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).toHaveBeenCalledWith('education');
+    });
+
+    it('should contain the "Toggle Editor Mode" button', () => {
+      renderAppLayoutWithNavbarExpanded();
+
+      const btn = screen.getByRole('button', { name: 'Toggle Editor Mode' });
+
+      expect(btn).toBeInTheDocument();
+    });
+
+    it('should call `deleteSections` with the correct section ID when a section is deleted', async () => {
+      // Arrange
+      const mockFn = jest.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
+      const props = getProps({ deleteSections: mockFn, editorMode: true });
+
+      renderAppLayoutWithNavbarExpanded(props);
+      const user = userEvent.setup();
+
+      const deleteBtn = screen.getByRole('button', {
+        name: `Delete ${SECTION_TITLES.education}`,
+      });
+
+      // Act
+      await user.click(deleteBtn);
+
+      // Assert
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).toHaveBeenCalledWith(['education']);
+    });
+
+    describe('"Toggle Editor Mode" button', () => {
+      it('should not be pressed when the editor mode is off', () => {
+        renderAppLayoutWithNavbarExpanded();
+
+        const btn = screen.getByRole('button', {
+          name: 'Toggle Editor Mode',
+          pressed: false,
+        });
+
+        expect(btn).toBeInTheDocument();
+      });
+
+      it('should be pressed when the editor mode is on', () => {
+        renderAppLayoutWithNavbarExpanded(getProps({ editorMode: true }));
+
+        const btn = screen.getByRole('button', {
+          name: 'Toggle Editor Mode',
+          pressed: true,
+        });
+
+        expect(btn).toBeInTheDocument();
+      });
+
+      it('should call `toggleEditorMode` when pressed', async () => {
+        // Arrange
+        const mockFn = jest.fn();
+        const props = getProps({ toggleEditorMode: mockFn });
+
+        renderAppLayoutWithNavbarExpanded(props);
+        const user = userEvent.setup();
+
+        const btn = screen.getByRole('button', { name: 'Toggle Editor Mode' });
+
+        // Act
+        await user.click(btn);
+
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it("should not contain the 'Add Sections' button when all sections are active", () => {
+      renderAppLayoutWithNavbarExpanded();
+
+      const btn = screen.queryByRole('button', { name: 'Add Sections' });
+
+      expect(btn).not.toBeInTheDocument();
+    });
+
+    it('should contain the "Add Sections" button when there are inactive sections', () => {
+      // Arrange
+      const activeSectionIds = POSSIBLE_SECTION_IDS.slice(0, 4);
+      const props = getProps({ activeSectionIds });
+
+      renderAppLayoutWithNavbarExpanded(props);
+
+      // Act
+      const btn = screen.getByRole('button', { name: 'Add Sections' });
+
+      // Assert
+      expect(btn).toBeInTheDocument();
+    });
+
+    describe('"Add Sections" dialog', () => {
+      it('should call `addSections` with the correct section ID when a section is added', async () => {
+        // Arrange
+        const activeSectionIds: SectionId[] = ['personal'];
+        const mockFn = jest.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
+        const props = getProps({ activeSectionIds, addSections: mockFn });
+
+        renderAppLayoutWithNavbarExpanded(props);
+        const user = userEvent.setup();
+
+        const addSectionsBtn = screen.getByRole('button', {
+          name: 'Add Sections',
+        });
+
+        await user.click(addSectionsBtn);
+
+        const addBtn = screen.getByRole('button', {
+          name: `Add ${SECTION_TITLES.education}`,
+        });
+
+        // Act
+        await user.click(addBtn);
+
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(mockFn).toHaveBeenCalledWith(['education']);
+      });
+
+      it('should call `resetScreenReaderAnnouncement` when shown', async () => {
+        // Arrange
+        const mockFn = jest.fn();
+        const activeSectionIds: SectionId[] = ['personal'];
+
+        const props = getProps({
+          activeSectionIds,
+          resetScreenReaderAnnouncement: mockFn,
+        });
+
+        renderAppLayoutWithNavbarExpanded(props);
+        const user = userEvent.setup();
+
+        const addSecitonsBtn = screen.getByRole('button', {
+          name: 'Add Sections',
+        });
+
+        // Act
+        await user.click(addSecitonsBtn);
+
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  // Toolbar
+
+  it('should render the toolbar', () => {
+    renderAppLayout();
+
+    const toolbar = screen.getByRole('toolbar');
+
+    expect(toolbar).toBeInTheDocument();
+    expect(toolbar).toHaveAttribute('data-testid', 'toolbar');
+  });
+
+  describe('Toolbar', () => {
+    describe('"Toggle Navigation" button', () => {
+      it("shouldn't be expanded when `isNavbarExpanded === false`", () => {
+        renderAppLayout();
+
+        const btn = screen.getByRole('button', {
+          name: 'Navigation',
+          expanded: false,
+        });
+
+        expect(btn).toBeInTheDocument();
+      });
+
+      it('should be expanded when `isNavbarExpanded === true`', () => {
+        renderAppLayout(getProps({ isNavbarExpanded: true }));
+
+        const btn = screen.getByRole('button', {
+          name: 'Navigation',
+          expanded: true,
+        });
+
+        expect(btn).toBeInTheDocument();
+      });
+
+      it('should call `toggleNavbar` when pressed', async () => {
+        // Arrange
+        const mockFn = jest.fn();
+        const props = getProps({ toggleNavbar: mockFn });
+
+        renderAppLayout(props);
+        const user = userEvent.setup();
+
+        const btn = screen.getByRole('button', { name: 'Navigation' });
+
+        // Act
+        await user.click(btn);
+
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('"Clear All" button', () => {
+      it('should control all the undeletable tabs and all tabpanels', async () => {
+        // Arrange
+        renderAppLayout();
+        const user = userEvent.setup();
+
+        const toggleControlsBtn = screen.getByRole('button', {
+          name: 'Control Buttons',
+          expanded: false,
+        });
+
+        await user.click(toggleControlsBtn);
+
+        const clearAllBtn = screen.getByRole('menuitem', { name: 'Clear All' });
+
+        // Act
+        const controlledElementsIds = clearAllBtn
+          .getAttribute('aria-controls')
+          ?.split(' ');
+
+        // Assert
+        expect(controlledElementsIds).toHaveLength(
+          POSSIBLE_SECTION_IDS.length * 2 - 1,
+        );
+
+        expect(controlledElementsIds).toContain('links');
+        expect(controlledElementsIds).toContain('skills');
+        expect(controlledElementsIds).toContain('experience');
+        expect(controlledElementsIds).toContain('projects');
+        expect(controlledElementsIds).toContain('education');
+        expect(controlledElementsIds).toContain('certifications');
+        expect(controlledElementsIds).toContain('personal-tabpanel');
+        expect(controlledElementsIds).toContain('links-tabpanel');
+        expect(controlledElementsIds).toContain('skills-tabpanel');
+        expect(controlledElementsIds).toContain('experience-tabpanel');
+        expect(controlledElementsIds).toContain('projects-tabpanel');
+        expect(controlledElementsIds).toContain('education-tabpanel');
+        expect(controlledElementsIds).toContain('certifications-tabpanel');
+      });
+
+      it('should call `deleteAll` when pressed', async () => {
+        // Arrange
+        const mockFn = jest.fn();
+        const props = getProps({ deleteAll: mockFn });
+
+        renderAppLayout(props);
+        const user = userEvent.setup();
+
+        const toggleControlsBtn = screen.getByRole('button', {
+          name: 'Control Buttons',
+          expanded: false,
+        });
+
+        await user.click(toggleControlsBtn);
+
+        const clearAllBtn = screen.getByRole('menuitem', { name: 'Clear All' });
+
+        // Act
+        await user.click(clearAllBtn);
+
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('"Fill All" button', () => {
+      it('should call `fillAll` when pressed', async () => {
+        // Arrange
+        const mockFn = jest.fn();
+        const props = getProps({ fillAll: mockFn });
+
+        renderAppLayout(props);
+        const user = userEvent.setup();
+
+        const toggleControlsBtn = screen.getByRole('button', {
+          name: 'Control Buttons',
+          expanded: false,
+        });
+
+        await user.click(toggleControlsBtn);
+
+        const fillAllBtn = screen.getByRole('menuitem', { name: 'Fill All' });
+
+        // Act
+        await user.click(fillAllBtn);
+
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('Keyboard navigation', () => {
+    describe('Tab keypress', () => {
+      describe('Section tab is focused', () => {
+        describe("Opened section's tab is focused", () => {
+          describe('Shift is pressed', () => {
+            it('should focus the "Toggle Navigation" button', async () => {
+              // Arrange
+              renderAppLayoutWithNavbarExpanded();
+              const user = userEvent.setup();
+
+              const tab = screen.getByRole('tab', {
+                name: SECTION_TITLES.personal,
+              });
+
+              const toggleNavbarBtn = screen.getByRole('button', {
+                name: 'Navigation',
+              });
+
+              tab.focus();
+
+              // Act
+              await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+              // Assert
+              expect(toggleNavbarBtn).toHaveFocus();
+            });
+          });
+
+          describe("Editor mode is off and shift isn't pressed", () => {
+            it('should focus the first tabbable element of the rendered tabpanel', async () => {
+              // Arrange
+              const firstTabbable: RefObject<HTMLButtonElement | null> = {
+                current: null,
+              };
+
+              render(<button data-testid="first-tabbable" />);
+
+              firstTabbable.current = screen.getByTestId(
+                'first-tabbable',
+              ) as HTMLButtonElement;
+
+              renderAppLayoutWithNavbarExpanded(getProps({ firstTabbable }));
+              const user = userEvent.setup();
+
+              const tab = screen.getByRole('tab', {
+                name: SECTION_TITLES.personal,
+              });
+
+              tab.focus();
+
+              // Act
+              await user.keyboard('{Tab}');
+
+              // Assert
+              expect(firstTabbable.current).toHaveFocus();
+            });
+          });
+        });
+
+        describe("Not the opened section's tab is focused, Shift is pressed and the editor mode is off", () => {
+          it('should focus the "Toggle Navigation" button if the focused tab is higher than the selected tab is', async () => {
+            // Arrange
+            const openedSectionId: SectionId = 'experience';
+            const props = getProps({ openedSectionId });
+
+            renderAppLayoutWithNavbarExpanded(props);
+            const user = userEvent.setup();
+
+            let name: string = SECTION_TITLES.personal;
+            const focusedTab = screen.getByRole('tab', { name });
+            focusedTab.focus();
+
+            name = 'Navigation';
+            const toggleNavbarBtn = screen.getByRole('button', { name });
+
+            // Act
+            await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+            // Assert
+            expect(toggleNavbarBtn).toHaveFocus();
+          });
+
+          it('should focus the selected tab if the focused tab is lower than it is', async () => {
+            // Arrange
+            renderAppLayoutWithNavbarExpanded();
+            const user = userEvent.setup();
+
+            let name: string = SECTION_TITLES.education;
+            const focusedTab = screen.getByRole('tab', { name });
+            focusedTab.focus();
+
+            name = SECTION_TITLES.personal;
+            const selectedTab = screen.getByRole('tab', { name });
+
+            // Act
+            await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+            // Assert
+            expect(selectedTab).toHaveFocus();
+          });
+        });
+      });
+
+      describe('"Toggle Editor Mode" button is focused', () => {
+        describe('Shift is pressed', () => {
+          describe('There are inactive sections', () => {
+            it('should focus the "Add Sections" button', async () => {
+              // Arrange
+              const props = getProps();
+              props.activeSectionIds.splice(3, 1);
+
+              renderAppLayoutWithNavbarExpanded(props);
+              const user = userEvent.setup();
+
+              let name = 'Toggle Editor Mode';
+              const toggleEditorModeBtn = screen.getByRole('button', { name });
+              toggleEditorModeBtn.focus();
+
+              name = 'Add Sections';
+              const addSectionsBtn = screen.getByRole('button', { name });
+
+              // Act
+              await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+              // Assert
+              expect(addSectionsBtn).toHaveFocus();
+            });
+          });
+
+          describe('Editor mode is on and all sections are active', () => {
+            it("should focus the last tab's delete button", async () => {
+              // Arrange
+              const props = getProps({ editorMode: true });
+
+              renderAppLayoutWithNavbarExpanded(props);
+              const user = userEvent.setup();
+
+              let name = 'Toggle Editor Mode';
+              const toggleEditorModeBtn = screen.getByRole('button', { name });
+              toggleEditorModeBtn.focus();
+
+              name = `Delete ${SECTION_TITLES[POSSIBLE_SECTION_IDS.at(-1)!]}`;
+              const deleteBtn = screen.getByRole('button', { name });
+
+              // Act
+              await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+              // Assert
+              expect(deleteBtn).toHaveFocus();
+            });
+          });
+
+          describe('Editor mode is off and all sections are active', () => {
+            it('should focus the selected tab', async () => {
+              // Arrange
+              renderAppLayoutWithNavbarExpanded();
+              const user = userEvent.setup();
+
+              let name = 'Toggle Editor Mode';
+              const toggleEditorModeBtn = screen.getByRole('button', { name });
+              toggleEditorModeBtn.focus();
+
+              name = SECTION_TITLES.personal;
+              const selectedTab = screen.getByRole('tab', { name });
+
+              // Act
+              await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+              // Assert
+              expect(selectedTab).toHaveFocus();
+            });
+          });
+        });
+
+        describe("Shift isn't pressed", () => {
+          it('should focus the "Toggle Control Buttons" button', async () => {
+            // Arrange
+            renderAppLayoutWithNavbarExpanded();
+            const user = userEvent.setup();
+
+            let name = 'Toggle Editor Mode';
+            const toggleEditorModeBtn = screen.getByRole('button', { name });
+            toggleEditorModeBtn.focus();
+
+            name = 'Control Buttons';
+            const toggleControlsBtn = screen.getByRole('button', { name });
+
+            // Act
+            await user.keyboard('{Tab}');
+
+            // Assert
+            expect(toggleControlsBtn).toHaveFocus();
+          });
+        });
+      });
+
+      describe("'Toggle Navigation' button is focused and Shift isn't pressed", () => {
+        describe('Editor mode is on', () => {
+          it('should focus the "Personal Details" tab', async () => {
+            // Arrange
+            renderAppLayoutWithNavbarExpanded();
+            const user = userEvent.setup();
+
+            let name = 'Navigation';
+            const toggleNavbarBtn = screen.getByRole('button', { name });
+            toggleNavbarBtn.focus();
+
+            name = SECTION_TITLES.personal;
+            const tab = screen.getByRole('tab', { name });
+
+            // Act
+            await user.keyboard('{Tab}');
+
+            // Assert
+            expect(tab).toHaveFocus();
+          });
+        });
+
+        describe('Editor mode is off', () => {
+          it("should focus the opened section's tab", async () => {
+            // Arrange
+            const props = getProps({ openedSectionId: 'education' });
+
+            renderAppLayoutWithNavbarExpanded(props);
+            const user = userEvent.setup();
+
+            let name = 'Navigation';
+            const toggleNavbarBtn = screen.getByRole('button', { name });
+            toggleNavbarBtn.focus();
+
+            name = SECTION_TITLES.education;
+            const tab = screen.getByRole('tab', { name });
+
+            // Act
+            await user.keyboard('{Tab}');
+
+            // Assert
+            expect(tab).toHaveFocus();
+          });
+        });
+      });
+
+      describe("A control button from the 'Control Buttons' menu is focused and Shift isn't pressed", () => {
+        it('should focus the first tabbable element of the tabpanel', async () => {
+          // Arrange
+          const firstTabbable: RefObject<HTMLButtonElement | null> = {
+            current: null,
+          };
+
+          render(<button data-testid="first-tabbable" />);
+
+          firstTabbable.current = screen.getByTestId(
+            'first-tabbable',
+          ) as HTMLButtonElement;
+
+          const props = getProps({ firstTabbable });
+
+          renderAppLayoutWithNavbarExpanded(props);
+          const user = userEvent.setup();
+
+          let name = 'Control Buttons';
+          const toggleControlsBtn = screen.getByRole('button', { name });
+          await user.click(toggleControlsBtn);
+
+          name = 'Fill All';
+          const controlBtn = screen.getByRole('menuitem', { name });
+          controlBtn.focus();
+
+          // Act
+          await user.keyboard('{Tab}');
+
+          // Assert
+          expect(firstTabbable.current).toHaveFocus();
+        });
+      });
+
+      describe("Tabpanel's first tabbable element is focused, Shift is pressed, the navbar is expanded and the last time focus was outside the tabpanel, it was inside the navbar", () => {
+        it('should focus the selected tab', async () => {
+          // Arrange
+          const firstTabbable: RefObject<HTMLButtonElement | null> = {
+            current: null,
+          };
+
+          render(<button data-testid="first-tabbable" />);
+
+          firstTabbable.current = screen.getByTestId(
+            'first-tabbable',
+          ) as HTMLButtonElement;
+
+          const openedSectionId = 'projects';
+          const props = getProps({ firstTabbable, openedSectionId });
+
+          renderAppLayoutWithNavbarExpanded(props);
+          const user = userEvent.setup();
+
+          let name: string = SECTION_TITLES.education;
+          const educationTab = screen.getByRole('tab', { name });
+          educationTab.focus();
+
+          // Focus the tabpanel's first tabbable element.
+          await user.keyboard('{Tab}');
+
+          name = SECTION_TITLES.projects;
+          const selectedTab = screen.getByRole('tab', { name });
+
+          // Act
+          await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+          // Assert
+          expect(selectedTab).toHaveFocus();
+        });
+      });
+    });
+
+    describe("Escape keypress and the 'Add Sections', 'Toggle Editor Mode' button, a tab or a tab's delete button is focused", () => {
+      describe('Editor mode is on', () => {
+        it('should toggle editor mode', async () => {
+          // Arrange
+          const mockFn = jest.fn();
+          const editorMode = true;
+          const props = getProps({ editorMode, toggleEditorMode: mockFn });
+
+          renderAppLayoutWithNavbarExpanded(props);
+          const user = userEvent.setup();
+
+          const name = `Delete ${SECTION_TITLES.education}`;
+          const deleteBtn = screen.getByRole('button', { name });
+          deleteBtn.focus();
+
+          // Act
+          await user.keyboard('{Escape}');
+
+          // Assert
+          expect(mockFn).toHaveBeenCalledTimes(1);
+        });
+
+        describe('Delete button is focused', () => {
+          it('should focus the corresponding tab', async () => {
+            // Arrange
+            renderAppLayoutWithNavbarExpanded(getProps({ editorMode: true }));
+            const user = userEvent.setup();
+
+            let name = `Delete ${SECTION_TITLES.education}`;
+            const deleteBtn = screen.getByRole('button', { name });
+            deleteBtn.focus();
+
+            name = SECTION_TITLES.education;
+            const tab = screen.getByRole('tab', { name });
+
+            // Act
+            await user.keyboard('{Escape}');
+
+            // Assert
+            expect(tab).toHaveFocus();
+          });
+        });
+      });
+
+      describe('Editor mode is off', () => {
+        it('should toggle the navbar and focus the "Toggle Navbar" button', async () => {
+          // Arrange
+          const mockFn = jest.fn();
+          const props = getProps({ toggleNavbar: mockFn });
+
+          renderAppLayoutWithNavbarExpanded(props);
+          const user = userEvent.setup();
+
+          let name: string = SECTION_TITLES.education;
+          const tab = screen.getByRole('tab', { name });
+          tab.focus();
+
+          name = 'Navigation';
+          const toggleNavbarBtn = screen.getByRole('button', { name });
+
+          // Act
+          await user.keyboard('{Escape}');
+
+          // Assert
+          expect(mockFn).toHaveBeenCalledTimes(1);
+          expect(toggleNavbarBtn).toHaveFocus();
+        });
+      });
+    });
+  });
+});
