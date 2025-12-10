@@ -3,8 +3,8 @@
 .AppLayout {
   display: grid;
   grid-template:
-    auto 1fr calc(v.$appbar-button-size + 2 * 1rem) / calc(
-      v.$appbar-button-size + 2 * 1rem
+    auto 1fr calc(v.$appbar-icon-button-size + 2 * 1rem) / calc(
+      v.$appbar-icon-button-size + 2 * 1rem
     )
     1fr;
   row-gap: 1rem;
