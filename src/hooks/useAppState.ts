@@ -190,6 +190,16 @@ export default function useAppState() {
     });
   }, []);
 
+  const addAllSections = useCallback(() => {
+    const setOfActiveSectionIds = new Set(sectionsState.activeSectionIds);
+
+    const inactiveSectionIds = SECTION_IDS.filter(
+      (sectionId) => !setOfActiveSectionIds.has(sectionId),
+    );
+
+    addSections(inactiveSectionIds);
+  }, [addSections, sectionsState.activeSectionIds]);
+
   // TODO: make it possible to delete just one section by passing its ID as a single string.
   /**
    * Deletes sections from the navbar. If an undeletable section's ID is passed,
@@ -306,6 +316,7 @@ export default function useAppState() {
 
   return {
     activeSectionIds,
+    addAllSections,
     addSections,
     deleteAll,
     deleteSections,

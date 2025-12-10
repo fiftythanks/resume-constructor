@@ -91,6 +91,7 @@ export default function App() {
   // FIXME (application-wide): because they aren't properly imported, the functions' JSDoc comments aren't shared. Either there's some workaround or I should export all functions from the hook or somewhere else to see JSDoc.
   const {
     activeSectionIds,
+    addAllSections,
     addSections,
     deleteAll,
     deleteSections,
@@ -205,8 +206,6 @@ export default function App() {
         addSections={addSections}
         data={data}
         editorMode={editorMode}
-        // TODO: Looks dirty. Improve it.
-        fillAll={fillAll}
         firstTabbable={firstTabbable}
         isNavbarExpanded={isNavbarExpanded}
         openedSectionId={openedSectionId}
@@ -226,6 +225,10 @@ export default function App() {
         deleteSections={(sectionIds) => {
           clear(sectionIds);
           deleteSections(sectionIds);
+        }}
+        fillAll={() => {
+          addAllSections();
+          fillAll();
         }}
       >
         {sections[openedSectionId]}

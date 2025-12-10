@@ -16,31 +16,23 @@ function getFirstInactiveSectionId(
   activeSectionIds: SectionId[],
   possibleSectionIds: SectionIds,
 ) {
-  let firstInactiveSectionId: SectionId | undefined;
-
   for (const sectionId of possibleSectionIds) {
     if (!activeSectionIds.includes(sectionId)) {
-      firstInactiveSectionId = sectionId;
-
-      break;
+      return sectionId;
     }
   }
 
-  return firstInactiveSectionId;
+  return;
 }
 
 function getFirstDeletableSectionId(activeSectionIds: SectionId[]) {
-  let firstDeletableSectionId: SectionId | undefined;
-
   for (const sectionId of activeSectionIds) {
     if (!undeletableSectionIds.includes(sectionId)) {
-      firstDeletableSectionId = sectionId;
-
-      break;
+      return sectionId;
     }
   }
 
-  return firstDeletableSectionId;
+  return;
 }
 
 // Returns values reused many times in the following tests
@@ -301,6 +293,21 @@ describe('useAppState', () => {
       it('should announce itself to screen readers', async () => {
         expect(result.current.screenReaderAnnouncement).not.toBe('');
       });
+    });
+  });
+
+  describe('addAllSections', () => {
+    it('should add all sections that are inactive', async () => {
+      const { result } = renderHook(() => useAppState());
+      expect(result.current.activeSectionIds).toHaveLength(1);
+
+      await act(async () => {
+        result.current.addAllSections();
+      });
+
+      expect(result.current.activeSectionIds).toEqual(
+        result.current.possibleSectionIds,
+      );
     });
   });
 
