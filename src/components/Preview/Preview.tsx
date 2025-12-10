@@ -194,26 +194,15 @@ export default function Preview({
             Previous Page
           </Button>
         )}
-        <PDFDownloadLink
-          document={document}
-          fileName="Resume.pdf"
-          // `Button_paddingInline_medium` replacement.
-          style={{ paddingInline: '1rem' }}
-        >
+        <PDFDownloadLink document={document} fileName="Resume.pdf">
           {({ loading, error }) => {
             if (loading) return null;
             if (error) throw error;
-
-            // TODO: delete or get back to how it was.
-            // return (
-            //   <Button
-            //     className="Preview-DownloadBtn Preview-ActionBtn"
-            //     modifiers={['Button_paddingInline_medium']}
-            //   >
-            //     Download
-            //   </Button>
-            // );
-            return 'Download';
+            return (
+              <Button modifiers={['Button_paddingInline_medium']}>
+                Download
+              </Button>
+            );
           }}
         </PDFDownloadLink>
         {numPages > openedPageIndex && (
@@ -250,27 +239,17 @@ export default function Preview({
             Previous Page
           </Button>
         )}
-        <PDFDownloadLink
-          document={document}
-          fileName="Resume.pdf"
-          // `Button_paddingInline_medium` replacement.
-          style={{ paddingInline: '1rem' }}
-        >
+        <PDFDownloadLink document={document} fileName="Resume.pdf">
           {({ loading, error }) => {
             //? Does it render nothing in this case, or does it render an anchor tag anyway?
             if (loading) return null;
             if (error) throw error;
 
-            // TODO: delete or get back to how it was.
-            // return (
-            //   <Button
-            //     className="Preview-DownloadBtn Preview-ActionBtn"
-            //     modifiers={['Button_paddingInline_medium']}
-            //   >
-            //     Download
-            //   </Button>
-            // );
-            return 'Download';
+            return (
+              <Button modifiers={['Button_paddingInline_medium']}>
+                Download
+              </Button>
+            );
           }}
         </PDFDownloadLink>
         {numPages > openedPageIndex && (

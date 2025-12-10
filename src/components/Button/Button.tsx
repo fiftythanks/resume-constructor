@@ -17,7 +17,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   elements?: string | string[];
   modifiers?: string | string[];
-  onClick: MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
   ref?: RefCallback<HTMLButtonElement> | RefObject<HTMLButtonElement | null>;
 }
 

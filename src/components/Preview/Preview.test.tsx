@@ -19,7 +19,7 @@ import type { DocumentProps, UsePDFInstance } from '@react-pdf/renderer';
 
 // Testing plan:
 // TODO: to be finished as soon as I figure out how the component works.
-// Download Link
+// Download buttons
 // - [ ] If loading, should not render.
 // - [ ] If error, should throw.
 
@@ -136,17 +136,15 @@ describe('Preview', () => {
     expect(popup).toBeInTheDocument();
   });
 
-  describe('Download links', () => {
-    it('should render two download links with text "Download"', async () => {
+  describe('Download buttons', () => {
+    it('should render two download buttons with text "Download"', async () => {
       renderPreview();
 
-      const downloadLinks: HTMLAnchorElement[] = await screen.findAllByTestId(
-        'mock-pdf-download-link',
-      );
+      const downloadBtns = await screen.findAllByRole('button', {
+        name: 'Download',
+      });
 
-      expect(downloadLinks).toHaveLength(2);
-      expect(downloadLinks[0].text).toBe('Download');
-      expect(downloadLinks[1].text).toBe('Download');
+      expect(downloadBtns).toHaveLength(2);
     });
   });
 
