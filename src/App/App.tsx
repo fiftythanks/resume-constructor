@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 
 import { SpeedInsights } from '@vercel/speed-insights/react';
+
+import useAppState from '@/hooks/useAppState';
+import useResumeData from '@/hooks/useResumeData/useResumeData';
 
 import Certifications from '@/pages/Certifications';
 import Education from '@/pages/Education';
@@ -12,15 +15,9 @@ import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
-// @ts-expect-error REMOVE LATER
-import fillAll from './fillAll';
+import neverReached from '@/utils/neverReached';
 
-import useAppState from '@/hooks/useAppState';
-import useResumeData from '@/hooks/useResumeData/useResumeData';
-
-// ===========================================
-// Application-wide TODOs, FIXMEs and dilemmas
-// ===========================================
+// TODOs, FIXMEs and dilemmas
 
 // ? `modifiers[]` props aren't convenient. Should I make them simple strings?
 // ? Are tabulletPointanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
@@ -64,13 +61,19 @@ import useResumeData from '@/hooks/useResumeData/useResumeData';
  */
 // TODO (application-wide): add tips on how to fill each section properly, in which order sections should be, etc.
 
-// ==============================================
-// Component-specific TODOs, FIXMEs and dilemmas
-// ==============================================
-
-// There's no such TODOs, FIXMEs or dilemmas at the moment.
-
 export default function App() {
+  const firstTabbablePersonal = useRef<HTMLInputElement>(null);
+  const firstTabbableLinks = useRef<HTMLInputElement>(null);
+  const firstTabbableSkills = useRef<HTMLButtonElement>(null);
+  const firstTabbableExperience = useRef<HTMLButtonElement>(null);
+  const firstTabbableProjects = useRef<HTMLButtonElement>(null);
+  const firstTabbableEducation = useRef<HTMLButtonElement>(null);
+  const firstTabbableCertifications = useRef<HTMLTextAreaElement>(null);
+
+  const [firstTabbable, setFirstTabbable] = useState<
+    RefObject<HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement | null>
+  >(firstTabbablePersonal);
+
   const {
     certificationsFunctions,
     clear,
@@ -78,9 +81,10 @@ export default function App() {
     data,
     educationFunctions,
     experienceFunctions,
+    fillAll,
     linksFunctions,
     personalFunctions,
-    projectFunctions,
+    projectsFunctions,
     skillsFunctions,
   } = useResumeData();
 
@@ -98,25 +102,70 @@ export default function App() {
     reorderSections,
     resetScreenReaderAnnouncement,
     screenReaderAnnouncement,
+    sectionTitles,
     toggleEditorMode,
     toggleNavbar,
     updateScreenReaderAnnouncement,
   } = useAppState();
 
+  useEffect(() => {
+    switch (openedSectionId) {
+      case 'certifications':
+        setFirstTabbable(firstTabbableCertifications);
+        break;
+      case 'education':
+        setFirstTabbable(firstTabbableEducation);
+        break;
+      case 'experience':
+        setFirstTabbable(firstTabbableExperience);
+        break;
+      case 'links':
+        setFirstTabbable(firstTabbableLinks);
+        break;
+      case 'personal':
+        setFirstTabbable(firstTabbablePersonal);
+        break;
+      case 'projects':
+        setFirstTabbable(firstTabbableProjects);
+        break;
+      case 'skills':
+        setFirstTabbable(firstTabbableSkills);
+        break;
+      default:
+        neverReached(openedSectionId);
+    }
+  }, [openedSectionId]);
+
   // Section components.
   const sections = {
-    personal: <Personal data={data.personal} functions={personalFunctions} />,
-    links: <Links data={data.links} functions={linksFunctions} />,
+    personal: (
+      <Personal
+        data={data.personal}
+        firstTabbable={firstTabbablePersonal}
+        functions={personalFunctions}
+      />
+    ),
+    links: (
+      <Links
+        data={data.links}
+        firstTabbable={firstTabbableLinks}
+        functions={linksFunctions}
+      />
+    ),
     skills: (
       <Skills
         data={data.skills}
         functions={skillsFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        setFirstTabbable={(node) => {
+          if (node !== null) firstTabbableSkills.current = node;
+        }}
       />
     ),
     experience: (
       <Experience
         data={data.experience}
+        firstTabbable={firstTabbableExperience}
         functions={experienceFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
@@ -124,13 +173,15 @@ export default function App() {
     projects: (
       <Projects
         data={data.projects}
-        functions={projectFunctions}
+        firstTabbable={firstTabbableProjects}
+        functions={projectsFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     education: (
       <Education
         data={data.education}
+        firstTabbable={firstTabbableEducation}
         functions={educationFunctions}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
@@ -138,19 +189,10 @@ export default function App() {
     certifications: (
       <Certifications
         data={data.certifications}
+        firstTabbable={firstTabbableCertifications}
         functions={certificationsFunctions}
       />
     ),
-  };
-
-  const sectionFunctions = {
-    certificationsFunctions,
-    educationFunctions,
-    experienceFunctions,
-    linksFunctions,
-    personalFunctions,
-    projectFunctions,
-    skillsFunctions,
   };
 
   return (
@@ -162,30 +204,29 @@ export default function App() {
         activeSectionIds={activeSectionIds}
         addSections={addSections}
         data={data}
-        // TODO: Pass delete functions with clear functions, and maybe rename to not confuse clearing, deleting and doing both.
-        deleteAll={() => deleteAll(clear)}
-        deleteSections={(sectionIDs) => deleteSections(sectionIDs, clear)}
         editorMode={editorMode}
+        // TODO: Looks dirty. Improve it.
+        fillAll={fillAll}
+        firstTabbable={firstTabbable}
         isNavbarExpanded={isNavbarExpanded}
         openedSectionId={openedSectionId}
         openSection={openSection}
         possibleSectionIds={possibleSectionIds}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
-        selectSection={openSection}
+        sectionTitles={sectionTitles}
         toggleEditorMode={toggleEditorMode}
         toggleNavbar={toggleNavbar}
-        // TODO: Looks dirty. Improve it.
-        fillAll={() =>
-          fillAll(
-            activeSectionIds,
-            addSections,
-            clear,
-            clearAll,
-            possibleSectionIds,
-            sectionFunctions,
-          )
-        }
+        // TODO: Rename to not confuse clearing, deleting and doing both.
+        deleteAll={() => {
+          clearAll();
+          deleteAll();
+        }}
+        // TODO: Rename to not confuse clearing, deleting and doing both.
+        deleteSections={(sectionIds) => {
+          clear(sectionIds);
+          deleteSections(sectionIds);
+        }}
       >
         {sections[openedSectionId]}
       </AppLayout>
