@@ -14,6 +14,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
 
 import neverReached from '@/utils/neverReached';
+import possibleSectionIds from '@/utils/possibleSectionIds';
 
 import Toolbar from './Toolbar';
 
@@ -196,25 +197,15 @@ const DATA: ResumeData = {
   },
 };
 
-const POSSIBLE_SECTION_IDS: SectionIds = [
-  'personal',
-  'links',
-  'skills',
-  'experience',
-  'projects',
-  'education',
-  'certifications',
-];
-
 function getProps(overrides?: Partial<ToolbarProps>): ToolbarProps {
   return {
-    activeSectionIds: structuredClone(POSSIBLE_SECTION_IDS),
+    possibleSectionIds,
+    activeSectionIds: structuredClone(possibleSectionIds),
     className: 'Toolbar',
     data: cloneDeep(DATA),
     deleteAll() {},
     fillAll() {},
     isNavbarExpanded: false,
-    possibleSectionIds: structuredClone(POSSIBLE_SECTION_IDS),
     toggleNavbar() {},
     ...overrides,
   };
@@ -437,13 +428,13 @@ describe('Toolbar', () => {
      */
 
     const deletableSectionIds: SectionIdsDeletable =
-      POSSIBLE_SECTION_IDS.toSpliced(0, 1) as ArraySplice<SectionIds, 0, 1>;
+      possibleSectionIds.toSpliced(0, 1) as ArraySplice<SectionIds, 0, 1>;
 
     type AppendSuffix<T extends SectionIds> = {
       [K in keyof T]: `${T[K]}-tabpanel`;
     };
 
-    const tabpanelIds: TabpanelIds = POSSIBLE_SECTION_IDS.map(
+    const tabpanelIds: TabpanelIds = possibleSectionIds.map(
       (sectionId) => `${sectionId}-tabpanel`,
     ) as AppendSuffix<SectionIds>;
 

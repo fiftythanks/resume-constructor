@@ -5,6 +5,8 @@ import { clsx } from 'clsx';
 import AppbarIconButton from '@/components/AppbarIconButton';
 import Preview from '@/components/Preview';
 
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
 import deleteSrc from '@/assets/icons/clear.svg';
 import crossSrc from '@/assets/icons/cross.svg';
 import fillSrc from '@/assets/icons/fill.svg';
@@ -32,7 +34,6 @@ export interface ToolbarProps {
   deleteAll: () => void;
   fillAll: () => void;
   isNavbarExpanded: boolean;
-  possibleSectionIds: SectionIds;
   toggleNavbar: () => void;
 }
 
@@ -57,7 +58,6 @@ export default function Toolbar({
   deleteAll,
   fillAll,
   isNavbarExpanded,
-  possibleSectionIds,
   toggleNavbar,
 }: ReadonlyDeep<ToolbarProps>) {
   const [areControlsExpanded, setAreControlsExpanded] = useState(false);

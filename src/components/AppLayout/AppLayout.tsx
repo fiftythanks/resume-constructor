@@ -7,14 +7,11 @@ import Button from '@/components/Button';
 import Navbar from '@/components/Navbar';
 import Toolbar from '@/components/Toolbar';
 
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
 import './AppLayout.scss';
 
-import type {
-  ResumeData,
-  SectionId,
-  SectionIds,
-  SectionTitles,
-} from '@/types/resumeData';
+import type { ResumeData, SectionId, SectionTitles } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 export interface AppLayoutProps {
@@ -32,7 +29,6 @@ export interface AppLayoutProps {
   isNavbarExpanded: boolean;
   openedSectionId: SectionId;
   openSection: (sectionId: SectionId) => void;
-  possibleSectionIds: SectionIds;
   reorderSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
   resetScreenReaderAnnouncement: () => void;
   sectionTitles: SectionTitles;
@@ -54,7 +50,6 @@ export default function AppLayout({
   isNavbarExpanded,
   openedSectionId,
   openSection,
-  possibleSectionIds,
   reorderSections,
   resetScreenReaderAnnouncement,
   sectionTitles,
@@ -212,7 +207,11 @@ export default function AppLayout({
 
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div className={`AppLayout ${navbarModifier}`} onKeyDown={handleKeyDown}>
+    <div
+      className={`AppLayout ${navbarModifier}`}
+      data-testid="app-layout"
+      onKeyDown={handleKeyDown}
+    >
       {/* TODO: should use conditional rendering */}
       <Navbar
         activeSectionIds={activeSectionIds}

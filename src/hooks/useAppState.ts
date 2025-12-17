@@ -1,21 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
+import type { SectionId, SectionTitles } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: split this hook in three separate hooks: `useUiState` for navbar/editorMode state logic, `useSectionsState` for most of the logic here, and something like `useScreenReaderAnnouncement` for screen-reader logic.
 
 // TODO: either pass it to `INITIAL_ACTIVE_SECTION_IDS` or merge them for now. What's the purpose of having two identical arrays that won't change?
-//! Order matters.
-const SECTION_IDS: SectionIds = [
-  'personal',
-  'links',
-  'skills',
-  'experience',
-  'projects',
-  'education',
-  'certifications',
-];
 
 const SECTION_TITLES: SectionTitles = {
   personal: 'Personal Details',
@@ -193,7 +185,7 @@ export default function useAppState() {
   const addAllSections = useCallback(() => {
     const setOfActiveSectionIds = new Set(sectionsState.activeSectionIds);
 
-    const inactiveSectionIds = SECTION_IDS.filter(
+    const inactiveSectionIds = possibleSectionIds.filter(
       (sectionId) => !setOfActiveSectionIds.has(sectionId),
     );
 
@@ -273,7 +265,7 @@ export default function useAppState() {
    * unless it's already opened.
    */
   const deleteAll = useCallback(() => {
-    deleteSections(SECTION_IDS);
+    deleteSections(possibleSectionIds);
   }, [deleteSections]);
 
   /**
@@ -330,7 +322,6 @@ export default function useAppState() {
     toggleEditorMode,
     toggleNavbar,
     updateScreenReaderAnnouncement,
-    possibleSectionIds: SECTION_IDS,
     sectionTitles: SECTION_TITLES,
   };
 }

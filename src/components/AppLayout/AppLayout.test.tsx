@@ -9,15 +9,12 @@ import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
 
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
 import AppLayout from './AppLayout';
 
 import type { AppLayoutProps } from './AppLayout';
-import type {
-  ResumeData,
-  SectionId,
-  SectionIds,
-  SectionTitles,
-} from '@/types/resumeData';
+import type { ResumeData, SectionId, SectionTitles } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 const DATA: ResumeData = {
@@ -190,16 +187,6 @@ const DATA: ResumeData = {
   },
 };
 
-const POSSIBLE_SECTION_IDS: SectionIds = [
-  'personal',
-  'links',
-  'skills',
-  'experience',
-  'projects',
-  'education',
-  'certifications',
-];
-
 const SECTION_TITLES: SectionTitles = {
   certifications: 'Certifications',
   education: 'Education',
@@ -231,7 +218,7 @@ function getProps(
       : overrides.openedSectionId;
 
   return {
-    activeSectionIds: structuredClone(POSSIBLE_SECTION_IDS),
+    activeSectionIds: structuredClone(possibleSectionIds),
     addSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
     children: <Tabpanel sectionId={openedSectionId} />,
     data: cloneDeep(DATA),
@@ -243,7 +230,6 @@ function getProps(
     isNavbarExpanded: false,
     openedSectionId: 'personal',
     openSection(_sectionId: SectionId) {},
-    possibleSectionIds: structuredClone(POSSIBLE_SECTION_IDS),
     reorderSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
     resetScreenReaderAnnouncement() {},
     sectionTitles: structuredClone(SECTION_TITLES),
@@ -333,7 +319,7 @@ describe('AppLayout', () => {
   });
 
   it('should not render an "Open Next Section" button when the opened section is the last one', () => {
-    renderAppLayout(getProps({ openedSectionId: POSSIBLE_SECTION_IDS.at(-1) }));
+    renderAppLayout(getProps({ openedSectionId: possibleSectionIds.at(-1) }));
 
     const btn = screen.queryByRole('button', { name: 'Open Next Section' });
 
@@ -356,14 +342,14 @@ describe('AppLayout', () => {
 
       // Assert
       expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(mockFn).toHaveBeenCalledWith(POSSIBLE_SECTION_IDS[1]);
+      expect(mockFn).toHaveBeenCalledWith(possibleSectionIds[1]);
     });
   });
 
   // "Open Previous Section" button
 
   it("should render an 'Open Previous Section' button when the opened section isn't the first one", () => {
-    renderAppLayout(getProps({ openedSectionId: POSSIBLE_SECTION_IDS[3] }));
+    renderAppLayout(getProps({ openedSectionId: possibleSectionIds[3] }));
 
     const btn = screen.getByRole('button', { name: 'Open Previous Section' });
 
@@ -381,7 +367,7 @@ describe('AppLayout', () => {
   describe('"Open Previous Section" button', () => {
     it("should call `openSection` passing the previous section's ID to it when pressed", async () => {
       // Arrange
-      const openedSectionId = POSSIBLE_SECTION_IDS[3];
+      const openedSectionId = possibleSectionIds[3];
       const mockFn = jest.fn((_sectionId: SectionId) => {});
       const props = getProps({ openedSectionId, openSection: mockFn });
 
@@ -395,7 +381,7 @@ describe('AppLayout', () => {
 
       // Assert
       expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(mockFn).toHaveBeenCalledWith(POSSIBLE_SECTION_IDS[2]);
+      expect(mockFn).toHaveBeenCalledWith(possibleSectionIds[2]);
     });
   });
 
@@ -422,7 +408,7 @@ describe('AppLayout', () => {
   describe('Navbar', () => {
     it('should contain tabs for all active sections', () => {
       // Arrange
-      const activeSectionIds = POSSIBLE_SECTION_IDS.slice(0, 4);
+      const activeSectionIds = possibleSectionIds.slice(0, 4);
       const props = getProps({ activeSectionIds });
 
       renderAppLayoutWithNavbarExpanded(props);
@@ -445,7 +431,7 @@ describe('AppLayout', () => {
 
     it('should not contain more tabs than there are active sections', () => {
       // Arrange
-      const activeSectionIds = POSSIBLE_SECTION_IDS.slice(0, 4);
+      const activeSectionIds = possibleSectionIds.slice(0, 4);
       const props = getProps({ activeSectionIds });
 
       renderAppLayoutWithNavbarExpanded(props);
@@ -565,7 +551,7 @@ describe('AppLayout', () => {
 
     it('should contain the "Add Sections" button when there are inactive sections', () => {
       // Arrange
-      const activeSectionIds = POSSIBLE_SECTION_IDS.slice(0, 4);
+      const activeSectionIds = possibleSectionIds.slice(0, 4);
       const props = getProps({ activeSectionIds });
 
       renderAppLayoutWithNavbarExpanded(props);
@@ -706,7 +692,7 @@ describe('AppLayout', () => {
 
         // Assert
         expect(controlledElementsIds).toHaveLength(
-          POSSIBLE_SECTION_IDS.length * 2 - 1,
+          possibleSectionIds.length * 2 - 1,
         );
 
         expect(controlledElementsIds).toContain('links');
@@ -917,7 +903,7 @@ describe('AppLayout', () => {
               const toggleEditorModeBtn = screen.getByRole('button', { name });
               toggleEditorModeBtn.focus();
 
-              name = `Delete ${SECTION_TITLES[POSSIBLE_SECTION_IDS.at(-1)!]}`;
+              name = `Delete ${SECTION_TITLES[possibleSectionIds.at(-1)!]}`;
               const deleteBtn = screen.getByRole('button', { name });
 
               // Act

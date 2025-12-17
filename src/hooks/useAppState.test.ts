@@ -2,20 +2,18 @@
 import { act, renderHook } from '@testing-library/react';
 
 import neverReached from '@/utils/neverReached';
+import possibleSectionIds from '@/utils/possibleSectionIds';
 
 import useAppState from './useAppState';
 
-import type { SectionId, SectionIds } from '@/types/resumeData';
+import type { SectionId } from '@/types/resumeData';
 
 // TODO: refactor it entirely. It's too hard to read.
 
 // Whenever you change which sections are undeletable, update this array.
 const undeletableSectionIds = ['personal'];
 
-function getFirstInactiveSectionId(
-  activeSectionIds: SectionId[],
-  possibleSectionIds: SectionIds,
-) {
+function getFirstInactiveSectionId(activeSectionIds: SectionId[]) {
   for (const sectionId of possibleSectionIds) {
     if (!activeSectionIds.includes(sectionId)) {
       return sectionId;
@@ -43,10 +41,7 @@ function init() {
     getFirstDeletableSectionId(result.current.activeSectionIds);
 
   const getInactiveSectionId = () =>
-    getFirstInactiveSectionId(
-      result.current.activeSectionIds,
-      result.current.possibleSectionIds,
-    );
+    getFirstInactiveSectionId(result.current.activeSectionIds);
 
   return {
     getDeletableSectionId,
@@ -272,7 +267,7 @@ describe('useAppState', () => {
         if (!areAllSectionsActive) {
           const activeSectionIds = new Set(result.current.activeSectionIds);
 
-          const sectionIdsToAdd = result.current.possibleSectionIds.filter(
+          const sectionIdsToAdd = possibleSectionIds.filter(
             (sectionId) => !activeSectionIds.has(sectionId),
           );
 
@@ -305,9 +300,7 @@ describe('useAppState', () => {
         result.current.addAllSections();
       });
 
-      expect(result.current.activeSectionIds).toEqual(
-        result.current.possibleSectionIds,
-      );
+      expect(result.current.activeSectionIds).toEqual(possibleSectionIds);
     });
   });
 

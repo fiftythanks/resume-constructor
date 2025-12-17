@@ -4,10 +4,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
 import AddSections from './AddSections';
 
 import type { AddSectionsProps } from './AddSections';
-import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
+import type { SectionId, SectionTitles } from '@/types/resumeData';
 
 /**
  * Since `Popup` is portalled to `popup-root`, there must exist an
@@ -25,18 +27,8 @@ const ACTIVE_SECTION_IDS: SectionId[] = [
   'experience',
 ];
 
-const POSSIBLE_SECTION_IDS: SectionIds = [
-  'personal',
-  'links',
-  'skills',
-  'experience',
-  'projects',
-  'education',
-  'certifications',
-];
-
 function getAddableSectionIds(): SectionId[] {
-  return POSSIBLE_SECTION_IDS.filter(
+  return possibleSectionIds.filter(
     (sectionId) => !ACTIVE_SECTION_IDS.includes(sectionId),
   );
 }
@@ -53,11 +45,11 @@ const SECTION_TITLES: SectionTitles = {
 
 function getProps(overrides?: Partial<AddSectionsProps>): AddSectionsProps {
   return {
+    possibleSectionIds,
     activeSectionIds: ACTIVE_SECTION_IDS,
     addSections: () => {},
     isShown: true,
     onClose: () => {},
-    possibleSectionIds: POSSIBLE_SECTION_IDS,
     sectionTitles: SECTION_TITLES,
     ...overrides,
   };
@@ -201,12 +193,12 @@ describe('AddSections', () => {
 
     it('should call `onClose` if the added section is the only addable section', async () => {
       const onCloseMock = jest.fn();
-      const activeSectionIds = POSSIBLE_SECTION_IDS.toSpliced(-1, 1);
+      const activeSectionIds = possibleSectionIds.toSpliced(-1, 1);
       const props = getProps({ activeSectionIds, onClose: onCloseMock });
       render(<Container />);
       render(<AddSections {...props} />);
       const user = userEvent.setup();
-      const addableSectionId = POSSIBLE_SECTION_IDS.at(-1)!;
+      const addableSectionId = possibleSectionIds.at(-1)!;
       const addableSectionTitle = SECTION_TITLES[addableSectionId];
 
       const addBtn = screen.getByRole('button', {

@@ -3,11 +3,13 @@ import React from 'react';
 import Button from '@/components/Button';
 import Popup from '@/components/Popup';
 
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
 import closeSrc from '@/assets/icons/cross.svg';
 
 import './AddSections.scss';
 
-import type { SectionId, SectionIds, SectionTitles } from '@/types/resumeData';
+import type { SectionId, SectionTitles } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 //? (1) Should it be in the bottom? It's visually in an upper corner of the modal. Shouldn't it be on top of `AddSections-List` in the DOM?
@@ -17,7 +19,6 @@ export interface AddSectionsProps {
   addSections: (sectionIds: SectionId[]) => void;
   isShown: boolean;
   onClose: () => void;
-  possibleSectionIds: SectionIds;
   sectionTitles: SectionTitles;
 }
 
@@ -34,7 +35,6 @@ export default function AddSections({
   addSections,
   isShown,
   onClose,
-  possibleSectionIds,
   sectionTitles,
 }: ReadonlyDeep<AddSectionsProps>) {
   /**

@@ -6,26 +6,17 @@ import { clsx } from 'clsx';
 import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
 
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
 import Navbar from './Navbar';
 
 import type { NavbarProps } from './Navbar';
 import type {
   SectionId,
-  SectionIds,
   SectionTitle,
   SectionTitles,
 } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
-
-const POSSIBLE_SECTION_IDS: SectionIds = [
-  'personal',
-  'links',
-  'skills',
-  'experience',
-  'projects',
-  'education',
-  'certifications',
-];
 
 const SECTION_TITLES: SectionTitles = {
   certifications: 'Certifications',
@@ -38,21 +29,12 @@ const SECTION_TITLES: SectionTitles = {
 };
 
 const PROPS: NavbarProps = {
-  activeSectionIds: POSSIBLE_SECTION_IDS,
+  activeSectionIds: possibleSectionIds,
   addSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
   canAddSections: true,
   deleteSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
   editorMode: false,
   isExpanded: true,
-  possibleSectionIds: [
-    'personal',
-    'links',
-    'skills',
-    'experience',
-    'projects',
-    'education',
-    'certifications',
-  ],
   reorderSections(_newActiveSectionIds: ReadonlyDeep<SectionId[]>) {},
   resetScreenReaderAnnouncement() {},
   sectionTitles: SECTION_TITLES,
@@ -135,7 +117,7 @@ describe('Navbar', () => {
 
     it('should have the correct `aria-owns` attribute for the tablist that specifies all section IDs', () => {
       renderComponents();
-      const correctValue = clsx(POSSIBLE_SECTION_IDS);
+      const correctValue = clsx(possibleSectionIds);
 
       const tablist = screen.getByRole('tablist', { name: 'Resume Sections' });
 
@@ -147,19 +129,19 @@ describe('Navbar', () => {
     it('should render tabs for all active sections', () => {
       renderComponents(getProps());
 
-      let name: SectionTitle = SECTION_TITLES['personal'];
+      let name: SectionTitle = SECTION_TITLES.personal;
       const personalTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES['links'];
+      name = SECTION_TITLES.links;
       const linksTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES['skills'];
+      name = SECTION_TITLES.skills;
       const skillsTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES['experience'];
+      name = SECTION_TITLES.experience;
       const experienceTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES['projects'];
+      name = SECTION_TITLES.projects;
       const projectsTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES['education'];
+      name = SECTION_TITLES.education;
       const educationTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES['certifications'];
+      name = SECTION_TITLES.certifications;
       const certificationsTab = screen.getByRole('tab', { name });
 
       expect(personalTab).toBeInTheDocument();

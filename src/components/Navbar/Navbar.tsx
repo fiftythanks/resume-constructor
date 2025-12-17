@@ -29,6 +29,8 @@ import AddSections from '@/components/AddSections';
 import AppbarIconButton from '@/components/AppbarIconButton';
 import NavbarItem from '@/components/NavbarItem';
 
+import possibleSectionIds from '@/utils/possibleSectionIds';
+
 import addSrc from '@/assets/icons/add.svg';
 import doneSrc from '@/assets/icons/done.svg';
 import editSrc from '@/assets/icons/edit.svg';
@@ -75,7 +77,6 @@ export interface NavbarProps {
   deleteSections: UseAppStateReturn['deleteSections'];
   editorMode: boolean;
   isExpanded: boolean;
-  possibleSectionIds: UseAppStateReturn['possibleSectionIds'];
   reorderSections: UseAppStateReturn['reorderSections'];
   resetScreenReaderAnnouncement: () => void;
   sectionTitles: SectionTitles;
@@ -97,7 +98,6 @@ export default function Navbar({
   deleteSections,
   editorMode,
   isExpanded,
-  possibleSectionIds,
   reorderSections,
   resetScreenReaderAnnouncement,
   sectionTitles,
@@ -403,16 +403,16 @@ export default function Navbar({
           role="tablist"
         >
           <NavbarItem
-            alt={sectionTitles['personal']}
+            alt={sectionTitles.personal}
             className="Navbar-NavbarItem Navbar-NavbarItem_personal"
             iconSrc={ICONS.personal}
             isDraggable={false}
             isEditorMode={editorMode}
             isSelected={selectedSectionId === 'personal'}
             sectionId="personal"
-            sectionTitle={sectionTitles['personal']}
+            sectionTitle={sectionTitles.personal}
             tabIndex={personalNavbarItemTabIndex}
-            title={sectionTitles['personal']}
+            title={sectionTitles.personal}
             onSelectSection={() => selectSection('personal')}
           />
           {/**
