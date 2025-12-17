@@ -7,26 +7,13 @@ import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
+import sectionTitles from '@/utils/sectionTitles';
 
 import Navbar from './Navbar';
 
 import type { NavbarProps } from './Navbar';
-import type {
-  SectionId,
-  SectionTitle,
-  SectionTitles,
-} from '@/types/resumeData';
+import type { SectionId, SectionTitle } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
-
-const SECTION_TITLES: SectionTitles = {
-  certifications: 'Certifications',
-  education: 'Education',
-  experience: 'Work Experience',
-  links: 'Links',
-  personal: 'Personal Details',
-  projects: 'Projects',
-  skills: 'Technical Skills',
-};
 
 const PROPS: NavbarProps = {
   activeSectionIds: possibleSectionIds,
@@ -37,7 +24,6 @@ const PROPS: NavbarProps = {
   isExpanded: true,
   reorderSections(_newActiveSectionIds: ReadonlyDeep<SectionId[]>) {},
   resetScreenReaderAnnouncement() {},
-  sectionTitles: SECTION_TITLES,
   selectedSectionId: 'personal',
   selectSection(_sectionId: SectionId) {},
   toggleEditorMode() {},
@@ -70,7 +56,7 @@ function getDeleteBtn(sectionId: SectionId) {
   if (sectionId === 'personal') return null;
 
   return screen.getByRole('button', {
-    name: `Delete ${SECTION_TITLES[sectionId]}`,
+    name: `Delete ${sectionTitles[sectionId]}`,
   });
 }
 
@@ -129,19 +115,19 @@ describe('Navbar', () => {
     it('should render tabs for all active sections', () => {
       renderComponents(getProps());
 
-      let name: SectionTitle = SECTION_TITLES.personal;
+      let name: SectionTitle = sectionTitles.personal;
       const personalTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES.links;
+      name = sectionTitles.links;
       const linksTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES.skills;
+      name = sectionTitles.skills;
       const skillsTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES.experience;
+      name = sectionTitles.experience;
       const experienceTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES.projects;
+      name = sectionTitles.projects;
       const projectsTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES.education;
+      name = sectionTitles.education;
       const educationTab = screen.getByRole('tab', { name });
-      name = SECTION_TITLES.certifications;
+      name = sectionTitles.certifications;
       const certificationsTab = screen.getByRole('tab', { name });
 
       expect(personalTab).toBeInTheDocument();
@@ -157,15 +143,15 @@ describe('Navbar', () => {
       const activeSectionIds: SectionId[] = ['personal', 'education'];
       renderComponents(getProps({ activeSectionIds }));
 
-      let name: SectionTitle = SECTION_TITLES['links'];
+      let name: SectionTitle = sectionTitles['links'];
       const linksTab = screen.queryByRole('tab', { name });
-      name = SECTION_TITLES['skills'];
+      name = sectionTitles['skills'];
       const skillsTab = screen.queryByRole('tab', { name });
-      name = SECTION_TITLES['experience'];
+      name = sectionTitles['experience'];
       const experienceTab = screen.queryByRole('tab', { name });
-      name = SECTION_TITLES['projects'];
+      name = sectionTitles['projects'];
       const projectsTab = screen.queryByRole('tab', { name });
-      name = SECTION_TITLES['certifications'];
+      name = sectionTitles['certifications'];
       const certificationsTab = screen.queryByRole('tab', { name });
 
       expect(linksTab).not.toBeInTheDocument();
@@ -179,7 +165,7 @@ describe('Navbar', () => {
       const mockFn = jest.fn((_sectionId: SectionId) => {});
       renderComponents(getProps({ selectSection: mockFn }));
       const user = userEvent.setup();
-      const tab = screen.getByRole('tab', { name: SECTION_TITLES['skills'] });
+      const tab = screen.getByRole('tab', { name: sectionTitles['skills'] });
 
       await user.click(tab);
 
@@ -194,7 +180,7 @@ describe('Navbar', () => {
 
       renderComponents(props);
       const user = userEvent.setup();
-      const tab = screen.getByRole('tab', { name: SECTION_TITLES['skills'] });
+      const tab = screen.getByRole('tab', { name: sectionTitles['skills'] });
 
       await user.click(tab);
 
@@ -359,7 +345,7 @@ describe('Navbar', () => {
   describe('"Add Sections" dialog', () => {
     function getAddBtn(sectionId: SectionId) {
       return screen.queryByRole('button', {
-        name: `Add ${SECTION_TITLES[sectionId]}`,
+        name: `Add ${sectionTitles[sectionId]}`,
       });
     }
     it('should render add-buttons for all inactive sections', async () => {
@@ -465,7 +451,7 @@ describe('Navbar', () => {
       renderComponents(getProps({ editorMode: true }));
 
       // Act
-      const name = SECTION_TITLES['education'];
+      const name = sectionTitles['education'];
       const draggableTab = screen.getByRole('tab', { name });
       const descriptionNodeId = draggableTab.getAttribute('aria-describedBy');
       const descriptionNode = document.getElementById(descriptionNodeId!)!;
@@ -479,7 +465,7 @@ describe('Navbar', () => {
     it('should not provide tabs with an accessible description when the editor mode is off', () => {
       renderComponents();
 
-      const name = SECTION_TITLES['education'];
+      const name = sectionTitles['education'];
       const draggableTab = screen.getByRole('tab', { name });
       const descriptionNodeId = draggableTab.getAttribute('aria-describedBy');
 
@@ -489,7 +475,7 @@ describe('Navbar', () => {
     it('should not provide undraggable tabs with an accessible description', () => {
       renderComponents(getProps({ editorMode: true }));
 
-      const tab = screen.getByRole('tab', { name: SECTION_TITLES['personal'] });
+      const tab = screen.getByRole('tab', { name: sectionTitles['personal'] });
       const descriptionNodeId = tab.getAttribute('aria-describedBy');
 
       expect(descriptionNodeId).toBeNull();
@@ -505,7 +491,7 @@ describe('Navbar', () => {
           renderComponents(getProps({ activeSectionIds }));
           const user = userEvent.setup();
 
-          const name = SECTION_TITLES['personal'];
+          const name = sectionTitles['personal'];
           const tab = screen.getByRole('tab', { name });
           const btn = screen.getByRole('button', { name: 'Add Sections' });
           tab.focus();
@@ -523,7 +509,7 @@ describe('Navbar', () => {
           renderComponents(getProps({ activeSectionIds }));
           const user = userEvent.setup();
 
-          const name = SECTION_TITLES['personal'];
+          const name = sectionTitles['personal'];
           const tab = screen.getByRole('tab', { name });
           tab.focus();
 
@@ -545,11 +531,11 @@ describe('Navbar', () => {
           renderComponents();
           const user = userEvent.setup();
 
-          let name: SectionTitle = SECTION_TITLES['personal'];
+          let name: SectionTitle = sectionTitles['personal'];
           const personalTab = screen.getByRole('tab', { name });
           personalTab.focus();
 
-          name = SECTION_TITLES['links'];
+          name = sectionTitles['links'];
           const linksTab = screen.getByRole('tab', { name });
 
           // Act
@@ -567,7 +553,7 @@ describe('Navbar', () => {
           const user = userEvent.setup();
 
           const tab = screen.getByRole('tab', {
-            name: SECTION_TITLES['links'],
+            name: sectionTitles['links'],
           });
           const btn = screen.getByRole('button', { name: 'Add Sections' });
           tab.focus();
@@ -588,7 +574,7 @@ describe('Navbar', () => {
           const user = userEvent.setup();
 
           const tab = screen.getByRole('tab', {
-            name: SECTION_TITLES['links'],
+            name: sectionTitles['links'],
           });
           const btn = screen.getByRole('button', {
             name: 'Toggle Editor Mode',
@@ -607,11 +593,11 @@ describe('Navbar', () => {
           renderComponents();
           const user = userEvent.setup();
 
-          let name: SectionTitle = SECTION_TITLES['education'];
+          let name: SectionTitle = sectionTitles['education'];
           const educationTab = screen.getByRole('tab', { name });
           educationTab.focus();
 
-          name = SECTION_TITLES['projects'];
+          name = sectionTitles['projects'];
           const projectsTab = screen.getByRole('tab', { name });
 
           // Act
@@ -628,7 +614,7 @@ describe('Navbar', () => {
           const user = userEvent.setup();
 
           const tab = screen.getByRole('tab', {
-            name: SECTION_TITLES['personal'],
+            name: sectionTitles['personal'],
           });
 
           const btn = screen.getByRole('button', {
@@ -737,7 +723,7 @@ describe('Navbar', () => {
         renderComponents(getProps({ activeSectionIds }));
         const user = userEvent.setup();
 
-        const name = SECTION_TITLES['projects'];
+        const name = sectionTitles['projects'];
         const tab = screen.getByRole('tab', { name });
 
         const btn = screen.getByRole('button', { name: 'Add Sections' });
@@ -757,7 +743,7 @@ describe('Navbar', () => {
         renderComponents();
         const user = userEvent.setup();
 
-        let name: string = SECTION_TITLES['personal'];
+        let name: string = sectionTitles['personal'];
         const tab = screen.getByRole('tab', { name });
         name = 'Toggle Editor Mode';
         const btn = screen.getByRole('button', { name });
@@ -795,7 +781,7 @@ describe('Navbar', () => {
         renderComponents(getProps({ canAddSections: false }));
         const user = userEvent.setup();
 
-        let name: string = SECTION_TITLES['certifications'];
+        let name: string = sectionTitles['certifications'];
         const tab = screen.getByRole('tab', { name });
         name = 'Toggle Editor Mode';
         const btn = screen.getByRole('button', { name });

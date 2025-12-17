@@ -30,6 +30,7 @@ import AppbarIconButton from '@/components/AppbarIconButton';
 import NavbarItem from '@/components/NavbarItem';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
+import sectionTitles from '@/utils/sectionTitles';
 
 import addSrc from '@/assets/icons/add.svg';
 import doneSrc from '@/assets/icons/done.svg';
@@ -45,7 +46,7 @@ import './Navbar.scss';
 
 import skillsSrc from '@/assets/icons/sections/skills.svg';
 
-import type { SectionId, SectionTitles } from '@/types/resumeData';
+import type { SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 /**
@@ -79,7 +80,6 @@ export interface NavbarProps {
   isExpanded: boolean;
   reorderSections: UseAppStateReturn['reorderSections'];
   resetScreenReaderAnnouncement: () => void;
-  sectionTitles: SectionTitles;
   selectedSectionId: SectionId;
   selectSection: (sectionId: SectionId) => void;
   toggleEditorMode: () => void;
@@ -100,7 +100,6 @@ export default function Navbar({
   isExpanded,
   reorderSections,
   resetScreenReaderAnnouncement,
-  sectionTitles,
   selectedSectionId,
   selectSection,
   toggleEditorMode,
@@ -474,8 +473,6 @@ export default function Navbar({
         activeSectionIds={activeSectionIds}
         addSections={addSections}
         isShown={isAddSectionsPopupShown}
-        possibleSectionIds={possibleSectionIds}
-        sectionTitles={sectionTitles}
         onClose={closeAddSectionsPopup}
       />
     </>

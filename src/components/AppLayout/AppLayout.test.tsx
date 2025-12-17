@@ -10,11 +10,12 @@ import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
+import sectionTitles from '@/utils/sectionTitles';
 
 import AppLayout from './AppLayout';
 
 import type { AppLayoutProps } from './AppLayout';
-import type { ResumeData, SectionId, SectionTitles } from '@/types/resumeData';
+import type { ResumeData, SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 const DATA: ResumeData = {
@@ -187,20 +188,10 @@ const DATA: ResumeData = {
   },
 };
 
-const SECTION_TITLES: SectionTitles = {
-  certifications: 'Certifications',
-  education: 'Education',
-  experience: 'Work Experience',
-  links: 'Links',
-  personal: 'Personal Details',
-  projects: 'Projects',
-  skills: 'Technical Skills',
-};
-
 function Tabpanel({ sectionId }: { sectionId: SectionId }) {
   return (
     <div
-      aria-label={SECTION_TITLES[sectionId]}
+      aria-label={sectionTitles[sectionId]}
       id={`${sectionId}-tabpanel`}
       role="tabpanel"
     >
@@ -232,7 +223,6 @@ function getProps(
     openSection(_sectionId: SectionId) {},
     reorderSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
     resetScreenReaderAnnouncement() {},
-    sectionTitles: structuredClone(SECTION_TITLES),
     toggleEditorMode() {},
     toggleNavbar() {},
     ...overrides,
@@ -258,7 +248,7 @@ describe('AppLayout', () => {
     renderAppLayout();
 
     const heading = screen.getByRole('heading', {
-      name: SECTION_TITLES.personal,
+      name: sectionTitles.personal,
     });
 
     expect(heading).toBeInTheDocument();
@@ -268,7 +258,7 @@ describe('AppLayout', () => {
     renderAppLayout();
 
     const children = screen.getByRole('tabpanel', {
-      name: SECTION_TITLES.personal,
+      name: sectionTitles.personal,
     });
 
     expect(children).toBeInTheDocument();
@@ -290,7 +280,7 @@ describe('AppLayout', () => {
       renderAppLayout();
       const main = screen.getByRole('main');
 
-      const name = SECTION_TITLES.personal;
+      const name = sectionTitles.personal;
 
       const heading = screen.getByRole('heading', { name });
       const headingId = heading.id;
@@ -417,7 +407,7 @@ describe('AppLayout', () => {
       const tabMap = new Map();
 
       activeSectionIds.forEach((sectionId) => {
-        const name = SECTION_TITLES[sectionId];
+        const name = sectionTitles[sectionId];
         const tab = screen.getByRole('tab', { name });
         tabMap.set(sectionId, tab);
       });
@@ -447,7 +437,7 @@ describe('AppLayout', () => {
       renderAppLayoutWithNavbarExpanded();
 
       const tab = screen.getByRole('tab', {
-        name: SECTION_TITLES.personal,
+        name: sectionTitles.personal,
         selected: true,
       });
 
@@ -462,7 +452,7 @@ describe('AppLayout', () => {
       renderAppLayoutWithNavbarExpanded(props);
       const user = userEvent.setup();
 
-      const tab = screen.getByRole('tab', { name: SECTION_TITLES.education });
+      const tab = screen.getByRole('tab', { name: sectionTitles.education });
 
       // Act
       await user.click(tab);
@@ -489,7 +479,7 @@ describe('AppLayout', () => {
       const user = userEvent.setup();
 
       const deleteBtn = screen.getByRole('button', {
-        name: `Delete ${SECTION_TITLES.education}`,
+        name: `Delete ${sectionTitles.education}`,
       });
 
       // Act
@@ -580,7 +570,7 @@ describe('AppLayout', () => {
         await user.click(addSectionsBtn);
 
         const addBtn = screen.getByRole('button', {
-          name: `Add ${SECTION_TITLES.education}`,
+          name: `Add ${sectionTitles.education}`,
         });
 
         // Act
@@ -773,7 +763,7 @@ describe('AppLayout', () => {
               const user = userEvent.setup();
 
               const tab = screen.getByRole('tab', {
-                name: SECTION_TITLES.personal,
+                name: sectionTitles.personal,
               });
 
               const toggleNavbarBtn = screen.getByRole('button', {
@@ -807,7 +797,7 @@ describe('AppLayout', () => {
               const user = userEvent.setup();
 
               const tab = screen.getByRole('tab', {
-                name: SECTION_TITLES.personal,
+                name: sectionTitles.personal,
               });
 
               tab.focus();
@@ -830,7 +820,7 @@ describe('AppLayout', () => {
             renderAppLayoutWithNavbarExpanded(props);
             const user = userEvent.setup();
 
-            let name: string = SECTION_TITLES.personal;
+            let name: string = sectionTitles.personal;
             const focusedTab = screen.getByRole('tab', { name });
             focusedTab.focus();
 
@@ -849,11 +839,11 @@ describe('AppLayout', () => {
             renderAppLayoutWithNavbarExpanded();
             const user = userEvent.setup();
 
-            let name: string = SECTION_TITLES.education;
+            let name: string = sectionTitles.education;
             const focusedTab = screen.getByRole('tab', { name });
             focusedTab.focus();
 
-            name = SECTION_TITLES.personal;
+            name = sectionTitles.personal;
             const selectedTab = screen.getByRole('tab', { name });
 
             // Act
@@ -903,7 +893,7 @@ describe('AppLayout', () => {
               const toggleEditorModeBtn = screen.getByRole('button', { name });
               toggleEditorModeBtn.focus();
 
-              name = `Delete ${SECTION_TITLES[possibleSectionIds.at(-1)!]}`;
+              name = `Delete ${sectionTitles[possibleSectionIds.at(-1)!]}`;
               const deleteBtn = screen.getByRole('button', { name });
 
               // Act
@@ -924,7 +914,7 @@ describe('AppLayout', () => {
               const toggleEditorModeBtn = screen.getByRole('button', { name });
               toggleEditorModeBtn.focus();
 
-              name = SECTION_TITLES.personal;
+              name = sectionTitles.personal;
               const selectedTab = screen.getByRole('tab', { name });
 
               // Act
@@ -969,7 +959,7 @@ describe('AppLayout', () => {
             const toggleNavbarBtn = screen.getByRole('button', { name });
             toggleNavbarBtn.focus();
 
-            name = SECTION_TITLES.personal;
+            name = sectionTitles.personal;
             const tab = screen.getByRole('tab', { name });
 
             // Act
@@ -992,7 +982,7 @@ describe('AppLayout', () => {
             const toggleNavbarBtn = screen.getByRole('button', { name });
             toggleNavbarBtn.focus();
 
-            name = SECTION_TITLES.education;
+            name = sectionTitles.education;
             const tab = screen.getByRole('tab', { name });
 
             // Act
@@ -1057,14 +1047,14 @@ describe('AppLayout', () => {
           renderAppLayoutWithNavbarExpanded(props);
           const user = userEvent.setup();
 
-          let name: string = SECTION_TITLES.education;
+          let name: string = sectionTitles.education;
           const educationTab = screen.getByRole('tab', { name });
           educationTab.focus();
 
           // Focus the tabpanel's first tabbable element.
           await user.keyboard('{Tab}');
 
-          name = SECTION_TITLES.projects;
+          name = sectionTitles.projects;
           const selectedTab = screen.getByRole('tab', { name });
 
           // Act
@@ -1087,7 +1077,7 @@ describe('AppLayout', () => {
           renderAppLayoutWithNavbarExpanded(props);
           const user = userEvent.setup();
 
-          const name = `Delete ${SECTION_TITLES.education}`;
+          const name = `Delete ${sectionTitles.education}`;
           const deleteBtn = screen.getByRole('button', { name });
           deleteBtn.focus();
 
@@ -1104,11 +1094,11 @@ describe('AppLayout', () => {
             renderAppLayoutWithNavbarExpanded(getProps({ editorMode: true }));
             const user = userEvent.setup();
 
-            let name = `Delete ${SECTION_TITLES.education}`;
+            let name = `Delete ${sectionTitles.education}`;
             const deleteBtn = screen.getByRole('button', { name });
             deleteBtn.focus();
 
-            name = SECTION_TITLES.education;
+            name = sectionTitles.education;
             const tab = screen.getByRole('tab', { name });
 
             // Act
@@ -1129,7 +1119,7 @@ describe('AppLayout', () => {
           renderAppLayoutWithNavbarExpanded(props);
           const user = userEvent.setup();
 
-          let name: string = SECTION_TITLES.education;
+          let name: string = sectionTitles.education;
           const tab = screen.getByRole('tab', { name });
           tab.focus();
 

@@ -5,11 +5,12 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
+import sectionTitles from '@/utils/sectionTitles';
 
 import AddSections from './AddSections';
 
 import type { AddSectionsProps } from './AddSections';
-import type { SectionId, SectionTitles } from '@/types/resumeData';
+import type { SectionId } from '@/types/resumeData';
 
 /**
  * Since `Popup` is portalled to `popup-root`, there must exist an
@@ -33,24 +34,12 @@ function getAddableSectionIds(): SectionId[] {
   );
 }
 
-const SECTION_TITLES: SectionTitles = {
-  certifications: 'Certifications',
-  education: 'Education',
-  experience: 'Work Experience',
-  links: 'Links',
-  personal: 'Personal Details',
-  projects: 'Projects',
-  skills: 'Technical Skills',
-};
-
 function getProps(overrides?: Partial<AddSectionsProps>): AddSectionsProps {
   return {
-    possibleSectionIds,
     activeSectionIds: ACTIVE_SECTION_IDS,
     addSections: () => {},
     isShown: true,
     onClose: () => {},
-    sectionTitles: SECTION_TITLES,
     ...overrides,
   };
 }
@@ -111,7 +100,7 @@ describe('AddSections', () => {
 
       addableSectionIds.forEach((sectionId) => {
         const addBtn = screen.getByRole('button', {
-          name: `Add ${SECTION_TITLES[sectionId]}`,
+          name: `Add ${sectionTitles[sectionId]}`,
         });
 
         expect(addBtn).toBeInTheDocument();
@@ -124,7 +113,7 @@ describe('AddSections', () => {
 
       ACTIVE_SECTION_IDS.forEach((sectionId) => {
         const addBtn = screen.queryByRole('button', {
-          name: `Add ${SECTION_TITLES[sectionId]}`,
+          name: `Add ${sectionTitles[sectionId]}`,
         });
 
         expect(addBtn).not.toBeInTheDocument();
@@ -140,7 +129,7 @@ describe('AddSections', () => {
       const sectionToAddId = addableSectionIds[0];
 
       const btn = screen.getByRole('button', {
-        name: `Add ${SECTION_TITLES[sectionToAddId]}`,
+        name: `Add ${sectionTitles[sectionToAddId]}`,
       });
 
       await user.click(btn);
@@ -156,11 +145,11 @@ describe('AddSections', () => {
       const addableSectionIds = getAddableSectionIds();
 
       const firstAddBtn = screen.getByRole('button', {
-        name: `Add ${SECTION_TITLES[addableSectionIds[0]]}`,
+        name: `Add ${sectionTitles[addableSectionIds[0]]}`,
       });
 
       const secondAddBtn = screen.getByRole('button', {
-        name: `Add ${SECTION_TITLES[addableSectionIds[1]]}`,
+        name: `Add ${sectionTitles[addableSectionIds[1]]}`,
       });
 
       firstAddBtn.focus();
@@ -177,11 +166,11 @@ describe('AddSections', () => {
       const addableSectionIds = getAddableSectionIds();
 
       const lastAddBtn = screen.getByRole('button', {
-        name: `Add ${SECTION_TITLES[addableSectionIds.at(-1)!]}`,
+        name: `Add ${sectionTitles[addableSectionIds.at(-1)!]}`,
       });
 
       const oneBeforeLastAddBtn = screen.getByRole('button', {
-        name: `Add ${SECTION_TITLES[addableSectionIds.at(-2)!]}`,
+        name: `Add ${sectionTitles[addableSectionIds.at(-2)!]}`,
       });
 
       lastAddBtn.focus();
@@ -199,7 +188,7 @@ describe('AddSections', () => {
       render(<AddSections {...props} />);
       const user = userEvent.setup();
       const addableSectionId = possibleSectionIds.at(-1)!;
-      const addableSectionTitle = SECTION_TITLES[addableSectionId];
+      const addableSectionTitle = sectionTitles[addableSectionId];
 
       const addBtn = screen.getByRole('button', {
         name: `Add ${addableSectionTitle}`,

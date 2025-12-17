@@ -8,10 +8,11 @@ import Navbar from '@/components/Navbar';
 import Toolbar from '@/components/Toolbar';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
+import sectionTitles from '@/utils/sectionTitles';
 
 import './AppLayout.scss';
 
-import type { ResumeData, SectionId, SectionTitles } from '@/types/resumeData';
+import type { ResumeData, SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 export interface AppLayoutProps {
@@ -31,7 +32,6 @@ export interface AppLayoutProps {
   openSection: (sectionId: SectionId) => void;
   reorderSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
   resetScreenReaderAnnouncement: () => void;
-  sectionTitles: SectionTitles;
   toggleEditorMode: () => void;
   toggleNavbar: () => void;
 }
@@ -52,7 +52,6 @@ export default function AppLayout({
   openSection,
   reorderSections,
   resetScreenReaderAnnouncement,
-  sectionTitles,
   toggleEditorMode,
   toggleNavbar,
 }: ReadonlyDeep<AppLayoutProps>) {
@@ -221,10 +220,8 @@ export default function AppLayout({
         deleteSections={deleteSections}
         editorMode={editorMode}
         isExpanded={isNavbarExpanded}
-        possibleSectionIds={possibleSectionIds}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
-        sectionTitles={sectionTitles}
         selectedSectionId={openedSectionId}
         selectSection={openSection}
         toggleEditorMode={toggleEditorMode}
@@ -236,7 +233,6 @@ export default function AppLayout({
         deleteAll={deleteAll}
         fillAll={fillAll}
         isNavbarExpanded={isNavbarExpanded}
-        possibleSectionIds={possibleSectionIds}
         toggleNavbar={toggleNavbar}
       />
       {/* This heading is here intentionally for layout purposes. */}

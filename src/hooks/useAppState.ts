@@ -1,23 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
+import sectionTitles from '@/utils/sectionTitles';
 
-import type { SectionId, SectionTitles } from '@/types/resumeData';
+import type { SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: split this hook in three separate hooks: `useUiState` for navbar/editorMode state logic, `useSectionsState` for most of the logic here, and something like `useScreenReaderAnnouncement` for screen-reader logic.
-
-// TODO: either pass it to `INITIAL_ACTIVE_SECTION_IDS` or merge them for now. What's the purpose of having two identical arrays that won't change?
-
-const SECTION_TITLES: SectionTitles = {
-  personal: 'Personal Details',
-  links: 'Links',
-  skills: 'Technical Skills',
-  experience: 'Work Experience',
-  projects: 'Projects',
-  education: 'Education',
-  certifications: 'Certifications',
-};
 
 // TODO: decide which initial sections to use.
 const INITIAL_ACTIVE_SECTION_IDS: SectionId[] = [
@@ -40,7 +29,7 @@ function getSectionTitlesString(
 ) {
   const input = [...sectionIds];
 
-  return input.map((sectionId) => SECTION_TITLES[sectionId]).join(', ');
+  return input.map((sectionId) => sectionTitles[sectionId]).join(', ');
 }
 
 /**
@@ -112,7 +101,7 @@ export default function useAppState() {
 
     // If a new section is opened.
     if (previousOpenedSectionId !== openedSectionId) {
-      screenReaderAnnouncement += ` Section ${SECTION_TITLES[openedSectionId]} was opened.`;
+      screenReaderAnnouncement += ` Section ${sectionTitles[openedSectionId]} was opened.`;
 
       previousSectionsStateRef.current.previousOpenedSectionId =
         openedSectionId;
@@ -322,6 +311,5 @@ export default function useAppState() {
     toggleEditorMode,
     toggleNavbar,
     updateScreenReaderAnnouncement,
-    sectionTitles: SECTION_TITLES,
   };
 }
