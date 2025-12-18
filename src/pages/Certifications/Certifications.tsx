@@ -56,12 +56,15 @@ export default function Certifications({
           />
         </li>
         <li className="section--list-item">
-          <label className="section--field-label" htmlFor="skills">
+          <label
+            className="section--field-label"
+            htmlFor="certifications-skills"
+          >
             Skills
           </label>
           <textarea
             className="section--field section--field__textarea"
-            id="skills"
+            id="certifications-skills"
             name="skills"
             placeholder="Highlight key skills not covered elsewhere, e.g., Strategic Planning, Problem Solving, Leadership, Teamwork."
             value={data.skills}
