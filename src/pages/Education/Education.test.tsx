@@ -521,6 +521,7 @@ describe('Education', () => {
     });
   });
 
+  // FIXME: what happened? The test fails.
   it('should assign the "Show Previous Degree" button to `firstTabbable.current` when the button is present', () => {
     const firstTabbable = { current: null };
     const props = getProps({ firstTabbable });
