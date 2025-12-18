@@ -99,11 +99,9 @@ export default function App() {
     isNavbarExpanded,
     openSection,
     openedSectionId,
-    possibleSectionIds,
     reorderSections,
     resetScreenReaderAnnouncement,
     screenReaderAnnouncement,
-    sectionTitles,
     toggleEditorMode,
     toggleNavbar,
     updateScreenReaderAnnouncement,
@@ -198,7 +196,11 @@ export default function App() {
 
   return (
     <>
-      <span aria-live="polite" className="visually-hidden">
+      <span
+        aria-live="polite"
+        className="visually-hidden"
+        data-testid="screen-reader-announcement"
+      >
         {screenReaderAnnouncement}
       </span>
       <AppLayout
@@ -210,10 +212,8 @@ export default function App() {
         isNavbarExpanded={isNavbarExpanded}
         openedSectionId={openedSectionId}
         openSection={openSection}
-        possibleSectionIds={possibleSectionIds}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
-        sectionTitles={sectionTitles}
         toggleEditorMode={toggleEditorMode}
         toggleNavbar={toggleNavbar}
         // TODO: Rename to not confuse clearing, deleting and doing both.
