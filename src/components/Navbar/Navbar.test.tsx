@@ -145,13 +145,13 @@ describe('Navbar', () => {
 
       let name: SectionTitle = sectionTitles['links'];
       const linksTab = screen.queryByRole('tab', { name });
-      name = sectionTitles['skills'];
+      name = sectionTitles.skills;
       const skillsTab = screen.queryByRole('tab', { name });
-      name = sectionTitles['experience'];
+      name = sectionTitles.experience;
       const experienceTab = screen.queryByRole('tab', { name });
-      name = sectionTitles['projects'];
+      name = sectionTitles.projects;
       const projectsTab = screen.queryByRole('tab', { name });
-      name = sectionTitles['certifications'];
+      name = sectionTitles.certifications;
       const certificationsTab = screen.queryByRole('tab', { name });
 
       expect(linksTab).not.toBeInTheDocument();
