@@ -199,7 +199,6 @@ const DATA: ResumeData = {
 
 function getProps(overrides?: Partial<ToolbarProps>): ToolbarProps {
   return {
-    possibleSectionIds,
     activeSectionIds: structuredClone(possibleSectionIds),
     className: 'Toolbar',
     data: cloneDeep(DATA),
