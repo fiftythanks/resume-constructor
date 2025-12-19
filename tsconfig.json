@@ -21,13 +21,15 @@
     }
   },
   "include": [
-    "src",
     "babel.config.cjs",
+    "e2e",
     "eslint.config.ts",
     "jest.config.tsx",
     "jest.setup.tsx",
+    "playwright.config.ts",
     "postcss.config.ts",
     "prettier.config.js",
+    "src",
     "stylelint.config.js",
     "webpack.common.cjs",
     "webpack.dev.cjs",
