@@ -1,8 +1,8 @@
 {
-  "name": "template",
+  "name": "resume-constructor",
   "version": "1.0.0",
-  "description": "Template repository with ESLint and Prettier configured for vanilla JS.",
-  "main": "index.js",
+  "description": "A TypeScript application designed to create software-engineering resumes based on principles from the book The Tech Resume Inside Out.",
+  "main": "index.tsx",
   "type": "module",
   "scripts": {
     "test": "jest --passWithNoTests",
