@@ -7,15 +7,23 @@
 ![Test Coverage](https://img.shields.io/badge/Tests-8.5k%2B_Lines-2ea44f?logo=jest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-E2E-45ba4b?logo=playwright&logoColor=white)
 ![Style](https://img.shields.io/badge/Style-SCSS_%2B_BEM-hotpink?logo=sass&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Accessibility](https://img.shields.io/badge/A11y-WCAG_2.2-blueviolet?logo=w3c&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+## Mobile Experience
+
+> Since the desktop version is currently WIP, here is a preview of the mobile-first workflow.
+
+|                                         **1. Clean Editor**                                          |                                      **2. Intuitive UI**                                      |                                       **3. Professional Output**                                       |
+| :--------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------: |
+| <img src="./.github/assets/personal.jpg" width="280" alt="Clean form for entering personal details"> | <img src="./.github/assets/ui.jpg" width="280" alt="Easy to navigate and use user interface"> | <img src="./.github/assets/preview.jpg" width="280" alt="High-quality PDF preview before downloading"> |
 
 # Resume Constructor
 
-A TypeScript application designed to create software-engineering resumes based on principles from the book *The Tech Resume Inside Out*.
+A TypeScript application designed to create software-engineering resumes based on principles from the book _The Tech Resume Inside Out_.
 
 **[Open Live Demo](https://resume-constructor.vercel.app)**
-*(Please view on a mobile device or use DevTools Device Mode, as the desktop version is currently WIP)*
+_(Please view on a mobile device or use DevTools Device Mode, as the desktop version is currently WIP)_
 
 This is the **capstone project** for The Odin Project (frontend curriculum), demonstrating a **production-grade development workflow** without relying on bootstrapping tools like Create React App.
 
@@ -27,7 +35,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
 - **Build System:** **Custom webpack 5 configuration** (manual setup). Correctly configured with **multi-entry points** and specific **Terser settings** (as per PDF.js documentation) to ensure the PDF worker runs in a background thread without breaking in production builds.
 - **Type Safety:** 100% strictly typed **TypeScript** codebase.
 - **Testing Strategy:** Comprehensive coverage (8,500+ lines of tests, > 60% of the codebase size), TDD, Testing Pyramid.
-  - **Unit/Integration (Jest):** Covers UI components and custom hooks isolated logic. 
+  - **Unit/Integration (Jest):** Covers UI components and custom hooks isolated logic.
   - **E2E (Playwright):** Covers critical user flows and export functionality.
 - **Inclusive Design (A11y):** Built with a strict **“accessibility-first”** mindset. All features, including complex interactions like drag & drop, are fully keyboard-navigable and compatible with screen readers (tested with Orca).
 - **Rich Interactive Experience:** Implemented a fully accessible Drag & Drop interface using `dnd-kit` for intuitive reordering of resume sections and list items. The feature includes:
@@ -102,3 +110,4 @@ npm test
 
 # Run E2E tests
 npm run e2e
+```
