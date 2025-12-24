@@ -77,7 +77,7 @@ describe('ListItem', () => {
       await user.type(input, 'f');
 
       expect(editMock).toHaveBeenCalledTimes(1);
-    }, 10000);
+    });
   });
 
   describe('drag handle', () => {

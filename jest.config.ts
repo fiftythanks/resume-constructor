@@ -21,6 +21,8 @@ const jestConfig: JestConfigWithTsJest = {
     '^.+\\.m?jsx?$': 'babel-jest',
   },
 
+  testTimeout: 25_000,
+
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 

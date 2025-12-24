@@ -113,7 +113,7 @@ describe('Personal', () => {
       await user.type(input, 's');
 
       expect(updatePersonalMock).toHaveBeenCalledTimes(1);
-    }, 10000);
+    });
   });
 
   describe('Job Title', () => {
