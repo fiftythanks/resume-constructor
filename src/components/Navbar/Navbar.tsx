@@ -149,6 +149,7 @@ export default function Navbar({
       const newIndex = activeSectionIds.indexOf(over.id as SectionId);
 
       const newActiveSectionIds = arrayMove(
+        // TODO: no need in spreading the array. `arrayMove` doesn't change the original array.
         [...activeSectionIds],
         oldIndex,
         newIndex,
@@ -188,8 +189,11 @@ export default function Navbar({
     };
   }
 
+  // TODO: optimise. When a new section gets selected, all tabs are rerendered. This isn't optimal.
   const items = draggableSectionIds.map((sectionId) => {
     const isSelected = selectedSectionId === sectionId;
+
+    //? Why?
     const tabIndex = isSelected || editorMode ? 0 : -1;
 
     return (

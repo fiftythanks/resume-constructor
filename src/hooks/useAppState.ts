@@ -43,6 +43,7 @@ export default function useAppState() {
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
   const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
+  //? Since `previousSectionsStateRef` uses sets, maybe this, original, state should do this as well? Or the opposite way.
   const [sectionsState, setSectionsState] = useState<SectionsState>({
     activeSectionIds: INITIAL_ACTIVE_SECTION_IDS,
     openedSectionId: 'personal',
@@ -50,6 +51,7 @@ export default function useAppState() {
 
   const previousEditorModeRef = useRef(editorMode);
 
+  // TODO: rename the properties to `activeSectionIds` and `openedSectionId`.
   const previousSectionsStateRef = useRef({
     previousActiveSectionIds: new Set(sectionsState.activeSectionIds),
     previousOpenedSectionId: sectionsState.openedSectionId,

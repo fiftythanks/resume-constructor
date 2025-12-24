@@ -68,6 +68,7 @@ export default function NavbarItem({
     isSelected && !isEditorMode && 'NavbarItem-Button_active',
   );
 
+  // TODO: no empty lines inside objects!
   const btnAttributes = {
     // TODO: add screen reader announcements (when all sections are implemented).
 

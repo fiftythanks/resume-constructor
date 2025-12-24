@@ -47,7 +47,7 @@ export default function useNavbarItemSortable({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: sectionId, disabled: isDraggable && isEditorMode });
+  } = useSortable({ id: sectionId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
