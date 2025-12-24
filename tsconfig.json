@@ -24,7 +24,7 @@
     "babel.config.cjs",
     "e2e",
     "eslint.config.ts",
-    "jest.config.tsx",
+    "jest.config.ts",
     "jest.setup.tsx",
     "playwright.config.ts",
     "postcss.config.ts",
