@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "jest --passWithNoTests",
+    "test:ci": "jest --passWithNoTests --watchAll=false",
     "e2e": "playwright test --pass-with-no-tests",
     "start-g": "webpack serve --open-app-name 'google-chrome' --config webpack.dev.cjs",
     "start": "webpack serve --config webpack.dev.cjs",
