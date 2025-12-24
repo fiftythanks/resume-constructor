@@ -114,7 +114,8 @@
   "lint-staged": {
     "src/**/*.{mjs,js,jsx,mts,ts,tsx}": [
       "eslint --fix",
-      "prettier --write --ignore-unknown"
+      "prettier --write --ignore-unknown",
+      "jest --bail --findRelatedTests --passWithNoTests"
     ],
     "src/**/*.{html,json}": "prettier --write --ignore-unknown",
     "src/**/*.scss": [
