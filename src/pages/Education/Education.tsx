@@ -104,7 +104,7 @@ export default function Education({
               <Button
                 aria-label="Show Next Degree"
                 id="show-next-degree"
-                ref={data.degrees.length === 1 ? undefined : firstTabbable}
+                ref={shownDegreeIndex === 0 ? firstTabbable : undefined}
                 onClick={() => functions.showDegree(shownDegreeIndex + 1)}
                 modifiers={[
                   'Button_paddingBlock_none',
