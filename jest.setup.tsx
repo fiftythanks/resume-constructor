@@ -31,8 +31,6 @@ HTMLDialogElement.prototype.showModal = jest.fn(function () {
   this.open = true;
 });
 
-jest.mock('@/hooks/useDebouncedWindowSize', () => () => ({ innerWidth: 250 }));
-
 jest.mock('pdfjs-dist/webpack', () => {
   const render = () => ({
     cancel() {},
