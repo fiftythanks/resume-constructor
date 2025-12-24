@@ -4,7 +4,6 @@ import useDebouncedWindowSize from './useDebouncedWindowSize';
 
 jest.useFakeTimers();
 
-// FIXME: what happened? The tests fail.
 describe('useDebouncedWindowSize', () => {
   const initialInnerHeight = window.innerHeight;
   const initialInnerWidth = window.innerWidth;
