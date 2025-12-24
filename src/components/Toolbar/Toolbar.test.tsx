@@ -1,7 +1,7 @@
 // It disallowed using `crypto`, which is well supported.
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import React from 'react';
+import React, { act } from 'react';
 
 import {
   getByAltText,
@@ -813,7 +813,7 @@ describe('Toolbar', () => {
         controlBtn.focus();
 
         // Act
-        controlBtn.blur();
+        await act(async () => controlBtn.blur());
 
         // Assert
         toggleControls = await screen.findByRole('button', {
