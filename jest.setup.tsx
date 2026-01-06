@@ -70,6 +70,9 @@ jest.mock('@react-pdf/renderer', () => ({
   Text: jest.fn(({ ..._props }) => {}),
   View: jest.fn(({ ..._props }) => {}),
   Font: {
+    load() {
+      return new Promise((resolve) => setTimeout(() => resolve(true), 0));
+    },
     register(_data: unknown) {},
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -88,7 +91,7 @@ jest.mock('@react-pdf/renderer', () => ({
       url: 'blob:mock-pdf-url',
       loading: false,
       error: null,
-      blob: null,
+      blob: new Blob(),
     });
 
     const setDocumentMock = useCallback(

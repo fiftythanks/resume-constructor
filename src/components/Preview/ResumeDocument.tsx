@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
   Document,
-  Font,
   Link,
   Page,
   StyleSheet,
@@ -13,43 +12,8 @@ import {
 import Icon from './Icon';
 import ResumeSection from './ResumeSection';
 
-// TODO: don't forget to implement some logic that will import a particular font subset depending on the language of the resume. Or maybe just add Russian letters to the subset by default.
-/**
- * They're of the TTF format by design. It brings much better performance
- * because WOFF is a compressed format, and the decompression takes a lot
- * of time for the `react-pdf`'s engine.
- */
-import garamondBold from '@/assets/fonts/EBGaramond-Bold.ttf';
-import garamondItalic from '@/assets/fonts/EBGaramond-Italic.ttf';
-import garamondRegular from '@/assets/fonts/EBGaramond-Regular.ttf';
-
 import type { Links, ResumeData, SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
-
-Font.register({
-  family: 'EBGaramond',
-
-  fonts: [
-    {
-      src: garamondRegular,
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-    },
-
-    {
-      src: garamondItalic,
-      fontStyle: 'italic',
-      fontWeight: 'normal',
-    },
-
-    // Bold normal.
-    {
-      src: garamondBold,
-      fontStyle: 'normal',
-      fontWeight: 'bold',
-    },
-  ],
-});
 
 // TODO: centralise link items in the Links section.
 const styles = StyleSheet.create({
@@ -59,37 +23,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: '1.25cm',
     paddingVertical: '1cm',
   },
-
   fullName: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
   },
-
   headerInfo: {
     lineHeight: 1.05,
   },
-
   jobTitle: {
     marginTop: '-4pt',
   },
-
   links: {
     display: 'flex',
     flexDirection: 'row',
     gap: 15,
   },
-
   linksIcon: {
     alignSelf: 'center',
   },
-
   linksItem: {
     display: 'flex',
     flexDirection: 'row',
     gap: 3,
   },
-
   section: {
     borderTopWidth: 0.8,
     borderTopColor: 'black',

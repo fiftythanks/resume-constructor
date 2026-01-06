@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 
-import { PDFDownloadLink, usePDF } from '@react-pdf/renderer';
+import { Font, PDFDownloadLink, usePDF } from '@react-pdf/renderer';
 // FIXME: fix the types issue. `pdfjs-dist` comes with proper types. You should figure out how to use them.
 import * as pdfjsLib from 'pdfjs-dist/webpack';
 
@@ -23,7 +23,7 @@ import closeSrc from '@/assets/icons/cross.svg';
 import './Preview.scss';
 
 import type { ResumeData, SectionId } from '@/types/resumeData';
-import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
+import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from 'pdfjs-dist';
 import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: clean up in the component.
@@ -66,15 +66,59 @@ export default function Preview({
     setCanvasNode(node);
   }, []);
 
-  // ? Messy... Is there a way to make it cleaner?
-  const document = useMemo(
-    () => <ResumeDocument activeSectionIds={activeSectionIds} data={data} />,
-    [activeSectionIds, data],
-  );
-
-  const [instance, updateInstance] = usePDF({ document });
+  /**
+   * If we don't load fonts manually, the first time resume is rendered, its
+   * content will use incorrect fonts.
+   */
+  const [areFontsLoaded, setAreFontsLoaded] = useState(false);
 
   useEffect(() => {
+    const normal = Font.load({
+      fontFamily: 'EBGaramond',
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+    });
+
+    const normalBold = Font.load({
+      fontFamily: 'EBGaramond',
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+    });
+
+    const italic = Font.load({
+      fontFamily: 'EBGaramond',
+      fontStyle: 'italic',
+      fontWeight: 'normal',
+    });
+
+    Promise.all([normal, normalBold, italic])
+      .then(() => setAreFontsLoaded(true))
+      .catch((e) => {
+        console.error(e);
+
+        // Setting to true so we still get a PDF, at least with wrong fonts.
+        setAreFontsLoaded(true);
+      });
+  }, []);
+
+  // Initialised with an empty instance (`instance.url === null`).
+  const [instance, updateInstance] = usePDF();
+
+  // ? Messy... Is there a way to make it cleaner?
+  // Prevent `usePDF` from creating a new PDF on every re-render.
+  const document = useMemo(() => {
+    // Don't define `document` until fonts are loaded.
+    if (!areFontsLoaded) {
+      return undefined;
+    }
+
+    return <ResumeDocument activeSectionIds={activeSectionIds} data={data} />;
+  }, [activeSectionIds, areFontsLoaded, data]);
+
+  // As soon as `document` is defined, create the PDF instance.
+  useEffect(() => {
+    if (document === undefined) return;
+
     updateInstance(document);
   }, [document, updateInstance]);
 
@@ -105,72 +149,73 @@ export default function Preview({
   }, [isShown, viewportWidth]);
 
   // And this one is for rendering the document with `pdf.js`.
-  //! USE_EFFECT IS TRIGGERED WHEN IT SHOULDN'T. YOU SHOULD FIND OUT WHICH STATES CAUSE THIS AND FIX THE ISSUE.
   useEffect(() => {
-    if (instance.url === null || canvasNode === null) {
-      return;
-    }
+    if (instance.blob === null || canvasNode === null) return;
 
     let isCancelled = false;
     let renderTask: null | RenderTask = null;
 
     async function loadAndRender() {
-      try {
-        const pdf: PDFDocumentProxy = await pdfjsLib.getDocument(instance.url)
-          .promise;
+      let pdf: PDFDocumentProxy;
+      let page: PDFPageProxy;
 
-        // As far as I understand from a glance, the line's purpose is to prevent the following logic from executing if `isCancelled` had been set to `true` before the `PDFDocumentLoadingTask` was resolved with `PDFDocumentProxy` (in other words, before the `pdf` got its value).
-        // TODO: explain.
+      try {
+        pdf = await pdfjsLib.getDocument(instance.url).promise;
+
         if (isCancelled) return;
 
         setNumPages(pdf.numPages);
+      } catch (e) {
+        console.error(e);
+        return;
+      }
 
-        const page = await pdf.getPage(openedPageIndex);
+      try {
+        page = await pdf.getPage(openedPageIndex);
 
         if (isCancelled) return;
+      } catch (e) {
+        console.error(e);
+        return;
+      }
 
-        const viewport = page.getViewport({ scale: 2.0 });
-        const canvas = canvasNode!;
+      // Don't proceed if the canvas has disappeared for some reason.
+      if (canvasNode === null) {
+        return;
+      }
 
-        const canvasContext = canvas.getContext('2d')!;
+      const viewport = page.getViewport({ scale: 2.0 });
 
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
+      canvasNode.width = viewport.width;
+      canvasNode.height = viewport.height;
+      canvasNode.style.width = '100%';
+      canvasNode.style.height = '100%';
 
-        /**
-         * Before I refactored the component to TypeScript, `page.render` had
-         * only `canvasContext` and `viewport` passed. But then, TypeScript
-         * didn't allow me not to use neither of them, and yet,
-         * `canvasContext`'s JSDoc says that if you pass it, the `canvas`
-         * property must be `null`.
-         *
-         * I haven't tested it, so it has to be checked. It very likely
-         * doesn't work properly now.
-         */
-        // TODO: check if it works.
+      try {
         renderTask = page.render({
-          canvasContext,
           canvas: null,
+          canvasContext: canvasNode.getContext('2d')!,
           viewport,
         });
 
         await renderTask.promise;
-      } catch {
-        return;
+      } catch (e) {
+        console.error(e);
       }
     }
 
     void loadAndRender();
 
     return () => {
-      if (renderTask === null) return;
-
       isCancelled = true;
+
+      if (renderTask === null) {
+        return;
+      }
+
       renderTask.cancel();
     };
-  }, [canvasNode, instance, openedPageIndex]);
+  }, [canvasNode, instance.blob, instance.url, openedPageIndex]);
 
   return (
     <Popup
@@ -184,84 +229,94 @@ export default function Preview({
       <button className="Preview-CloseBtn" type="button" onClick={onClose}>
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>
-      <div className="Preview-ActionBtns">
-        {openedPageIndex > 1 && (
-          <Button
-            // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
-            className="Preview-ActionBtn"
-            onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
-          >
-            Previous Page
-          </Button>
-        )}
-        <PDFDownloadLink document={document} fileName="Resume.pdf">
-          {({ loading, error }) => {
-            if (loading) return null;
-            if (error) throw error;
-            return (
-              <Button modifiers={['Button_paddingInline_medium']}>
-                Download
+      {document === undefined ||
+      !areFontsLoaded ||
+      instance.url === null ? null : (
+        <>
+          <div className="Preview-ActionBtns">
+            {openedPageIndex > 1 && (
+              <Button
+                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
+                className="Preview-ActionBtn"
+                onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
+              >
+                Previous Page
               </Button>
-            );
-          }}
-        </PDFDownloadLink>
-        {numPages > openedPageIndex && (
-          <Button
-            // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
-            className="Preview-ActionBtn"
-            onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
-          >
-            Next Page
-          </Button>
-        )}
-      </div>
-      <div className="Preview-CanvasContainer">
-        {/* FIXME: What if both `loading` and `error` are `true`? What if they are true, yet the document has loaded? */}
-        {instance.loading && <p className="Preview-PdfTextAlt">Loading...</p>}
-
-        {instance.error && (
-          <p className="Preview-PdfTextAlt">
-            Something went wrong. Try reloading the page.
-          </p>
-        )}
-
-        <div style={{ width: canvasSize.width, height: canvasSize.height }}>
-          <canvas ref={canvasCallbackRef} />
-        </div>
-      </div>
-      <div className="Preview-ActionBtns">
-        {openedPageIndex > 1 && (
-          <Button
-            // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
-            className="Preview-ActionBtn"
-            onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
-          >
-            Previous Page
-          </Button>
-        )}
-        <PDFDownloadLink document={document} fileName="Resume.pdf">
-          {({ loading, error }) => {
-            //? Does it render nothing in this case, or does it render an anchor tag anyway?
-            if (loading) return null;
-            if (error) throw error;
-
-            return (
-              <Button modifiers={['Button_paddingInline_medium']}>
-                Download
+            )}
+            <PDFDownloadLink document={document} fileName="Resume.pdf">
+              {({ loading, error }) => {
+                if (loading) return null;
+                // TODO: don't throw. Just log the error and return `null`.
+                if (error) throw error;
+                return (
+                  <Button modifiers={['Button_paddingInline_medium']}>
+                    Download
+                  </Button>
+                );
+              }}
+            </PDFDownloadLink>
+            {numPages > openedPageIndex && (
+              <Button
+                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
+                className="Preview-ActionBtn"
+                onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
+              >
+                Next Page
               </Button>
-            );
-          }}
-        </PDFDownloadLink>
-        {numPages > openedPageIndex && (
-          <Button
-            // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
-            className="Preview-ActionBtn"
-            onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
-          >
-            Next Page
-          </Button>
-        )}
-      </div>
+            )}
+          </div>
+          <div className="Preview-CanvasContainer">
+            {/* FIXME: What if both `loading` and `error` are `true`? What if they are true, yet the document has loaded? */}
+            {instance.loading && (
+              <p className="Preview-PdfTextAlt">Loading...</p>
+            )}
+
+            {instance.error && (
+              <p className="Preview-PdfTextAlt">
+                Something went wrong. Try reloading the page.
+              </p>
+            )}
+
+            <div style={{ width: canvasSize.width, height: canvasSize.height }}>
+              <canvas data-testid="preview-canvas" ref={canvasCallbackRef} />
+            </div>
+          </div>
+          <div className="Preview-ActionBtns">
+            {openedPageIndex > 1 && (
+              <Button
+                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
+                className="Preview-ActionBtn"
+                onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
+              >
+                Previous Page
+              </Button>
+            )}
+            <PDFDownloadLink document={document} fileName="Resume.pdf">
+              {({ loading, error }) => {
+                //? Does it render nothing in this case, or does it render an anchor tag anyway?
+                if (loading) return null;
+                // TODO: don't throw. Just log the error and return `null`.
+                if (error) throw error;
+
+                return (
+                  <Button modifiers={['Button_paddingInline_medium']}>
+                    Download
+                  </Button>
+                );
+              }}
+            </PDFDownloadLink>
+            {numPages > openedPageIndex && (
+              <Button
+                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
+                className="Preview-ActionBtn"
+                onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
+              >
+                Next Page
+              </Button>
+            )}
+          </div>
+        </>
+      )}
     </Popup>
   );
 }
