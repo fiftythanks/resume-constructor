@@ -17,6 +17,8 @@ import AppLayout from '@/components/AppLayout';
 
 import neverReached from '@/utils/neverReached';
 
+import loadFonts from './loadFonts';
+
 // TODOs, FIXMEs and dilemmas
 
 // ? `modifiers[]` props aren't convenient. Should I make them simple strings?
@@ -134,6 +136,12 @@ export default function App() {
         neverReached(openedSectionId);
     }
   }, [openedSectionId]);
+
+  /**
+   * Load fonts for the preview when the app mounts to prevent any font-loading
+   * issues.
+   */
+  loadFonts();
 
   // Section components.
   const sections = {
