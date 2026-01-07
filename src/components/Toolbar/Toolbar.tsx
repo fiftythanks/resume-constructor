@@ -241,20 +241,22 @@ export default function Toolbar({
         />
         {/* TODO: instead of a `...-hidden` class there should be conditional rendering. Right? */}
         <div
-          aria-labelledby="toggle-controls"
-          aria-orientation="horizontal"
           className={ControlsClassName}
           data-testid="control-btns"
           id="control-btns"
-          role="menu"
         >
-          <ul className="Toolbar-ControlsList" onBlur={handleBlur}>
-            <li>
+          <ul
+            aria-labelledby="toggle-controls"
+            aria-orientation="horizontal"
+            className="Toolbar-ControlsList"
+            role="menu"
+            onBlur={handleBlur}
+          >
+            <li role="none">
               {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
               <AppbarIconButton
                 alt="Clear All"
                 // All sections' tabs but the undeletable "Personal Details"'s one and all tabpanels.
-                // TODO: it shouldn't control inactive sections because they are already clear.
                 aria-controls={clsx([...deletableSectionIds, ...tabpanelIds])}
                 aria-label="Clear All"
                 className="Toolbar-Item Toolbar-Item_deleteAll"
@@ -267,11 +269,10 @@ export default function Toolbar({
                 onClick={deleteAll}
               />
             </li>
-            <li>
+            <li role="none">
               {/* TODO: add a warning that clicking "Fill All" will result in loss of all data. */}
               <AppbarIconButton
                 alt="Fill All"
-                //? Shouldn't it actually control only those tabs that aren't displayed? Since it can't do anything to those tabs that are displayed.
                 // All sections' tabs but the undeletable "Personal Details"'s one and all tabpanels.
                 aria-controls={clsx([...deletableSectionIds, ...tabpanelIds])}
                 aria-label="Fill All"
@@ -283,7 +284,7 @@ export default function Toolbar({
                 onClick={fillAll}
               />
             </li>
-            <li>
+            <li role="none">
               <AppbarIconButton
                 // FIXME: add `aria-controls`!
                 //? Should `alt` and `aria-label` differ here?
