@@ -30,47 +30,48 @@ export default function Skills({
   // Skills don't need to be bullet points. I'd say they must not be bullet points at all. They are single-line. Why on earth are they bullet points? It's strange and super redundant. For each line it should be a simple input field, and that's all.
   // TODO: switch to simple input fields from redundant bullet points.
   return (
-    <form
-      action="#"
+    <section
       aria-labelledby="skills"
-      className="section section__bullet-points"
+      className="section"
       id="skills-tabpanel"
       role="tabpanel"
     >
-      <BulletPoints
-        addItem={functions.addLanguage}
-        data={data.languages}
-        deleteItem={functions.deleteLanguage}
-        editItem={functions.editLanguage}
-        itemName="language"
-        legend="Languages"
-        name="language"
-        setFirstTabbable={setFirstTabbable}
-        updateData={(value) => functions.updateSkills('languages', value)}
-        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
-      />
-      <BulletPoints
-        addItem={functions.addFramework}
-        data={data.frameworks}
-        deleteItem={functions.deleteFramework}
-        editItem={functions.editFramework}
-        itemName="framework"
-        legend="Frameworks, Libraries & Databases"
-        name="framework"
-        updateData={(value) => functions.updateSkills('frameworks', value)}
-        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
-      />
-      <BulletPoints
-        addItem={functions.addTool}
-        data={data.tools}
-        deleteItem={functions.deleteTool}
-        editItem={functions.editTool}
-        itemName="tool"
-        legend="Tools & Other Technologies"
-        name="tool"
-        updateData={(value) => functions.updateSkills('tools', value)}
-        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
-      />
-    </form>
+      <form action="#" className="section--form section--form__bullet-points">
+        <BulletPoints
+          addItem={functions.addLanguage}
+          data={data.languages}
+          deleteItem={functions.deleteLanguage}
+          editItem={functions.editLanguage}
+          itemName="language"
+          legend="Languages"
+          name="language"
+          setFirstTabbable={setFirstTabbable}
+          updateData={(value) => functions.updateSkills('languages', value)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        />
+        <BulletPoints
+          addItem={functions.addFramework}
+          data={data.frameworks}
+          deleteItem={functions.deleteFramework}
+          editItem={functions.editFramework}
+          itemName="framework"
+          legend="Frameworks, Libraries & Databases"
+          name="framework"
+          updateData={(value) => functions.updateSkills('frameworks', value)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        />
+        <BulletPoints
+          addItem={functions.addTool}
+          data={data.tools}
+          deleteItem={functions.deleteTool}
+          editItem={functions.editTool}
+          itemName="tool"
+          legend="Tools & Other Technologies"
+          name="tool"
+          updateData={(value) => functions.updateSkills('tools', value)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        />
+      </form>
+    </section>
   );
 }

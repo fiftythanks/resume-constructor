@@ -72,76 +72,90 @@ export default function Education({
   }
 
   return (
-    <form
-      action="#"
+    <section
       aria-labelledby="education"
-      className="section section__bullet-points"
+      className="section"
       id="education-tabpanel"
       role="tabpanel"
     >
-      <header className="section--header">
-        <h2>Degree {shownDegreeIndex + 1}</h2>
-        {/* Conditional rendering to get rid of redundant flex gap. */}
-        {(shownDegreeIndex > 0 ||
-          shownDegreeIndex !== data.degrees.length - 1) && (
-          <div className="section--item-navigation">
-            {shownDegreeIndex > 0 && (
-              <Button
-                aria-label="Show Previous Degree"
-                className="section--item-navigation-button"
-                id="show-previous-degree"
-                ref={firstTabbable}
-                onClick={() => functions.showDegree(shownDegreeIndex - 1)}
-                modifiers={[
-                  'Button_paddingBlock_none',
-                  'Button_paddingInline_small',
-                ]}
-              >
-                <img alt="Previous" height="25px" src={prevSrc} width="25px" />
-              </Button>
-            )}
-            {shownDegreeIndex !== data.degrees.length - 1 && (
-              <Button
-                aria-label="Show Next Degree"
-                id="show-next-degree"
-                ref={shownDegreeIndex === 0 ? firstTabbable : undefined}
-                onClick={() => functions.showDegree(shownDegreeIndex + 1)}
-                modifiers={[
-                  'Button_paddingBlock_none',
-                  'Button_paddingInline_small',
-                ]}
-              >
-                <img alt="Previous" height="25px" src={nextSrc} width="25px" />
-              </Button>
-            )}
-          </div>
-        )}
-        <Button
-          aria-label={`Add Degree ${data.degrees.length + 1}`}
-          id="add-degree"
-          modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
-          ref={data.degrees.length === 1 ? firstTabbable : undefined}
-          onClick={addDegree}
-        >
-          <img alt="Add" height="25px" src={addSrc} width="25px" />
-        </Button>
-        {data.degrees.length > 1 && (
-          <button
-            aria-label={`Delete Degree ${shownDegreeIndex + 1}`}
-            className="section--delete-item"
-            id="delete-degree"
-            type="button"
-            onClick={() => functions.deleteDegree(shownDegreeIndex)}
+      <form action="#" className="section--form section--form__bullet-points">
+        <header className="section--header">
+          <h2>Degree {shownDegreeIndex + 1}</h2>
+          {/* Conditional rendering to get rid of redundant flex gap. */}
+          {(shownDegreeIndex > 0 ||
+            shownDegreeIndex !== data.degrees.length - 1) && (
+            <div className="section--item-navigation">
+              {shownDegreeIndex > 0 && (
+                <Button
+                  aria-label="Show Previous Degree"
+                  className="section--item-navigation-button"
+                  id="show-previous-degree"
+                  ref={firstTabbable}
+                  onClick={() => functions.showDegree(shownDegreeIndex - 1)}
+                  modifiers={[
+                    'Button_paddingBlock_none',
+                    'Button_paddingInline_small',
+                  ]}
+                >
+                  <img
+                    alt="Previous"
+                    height="25px"
+                    src={prevSrc}
+                    width="25px"
+                  />
+                </Button>
+              )}
+              {shownDegreeIndex !== data.degrees.length - 1 && (
+                <Button
+                  aria-label="Show Next Degree"
+                  id="show-next-degree"
+                  ref={shownDegreeIndex === 0 ? firstTabbable : undefined}
+                  onClick={() => functions.showDegree(shownDegreeIndex + 1)}
+                  modifiers={[
+                    'Button_paddingBlock_none',
+                    'Button_paddingInline_small',
+                  ]}
+                >
+                  <img
+                    alt="Previous"
+                    height="25px"
+                    src={nextSrc}
+                    width="25px"
+                  />
+                </Button>
+              )}
+            </div>
+          )}
+          <Button
+            aria-label={`Add Degree ${data.degrees.length + 1}`}
+            id="add-degree"
+            ref={data.degrees.length === 1 ? firstTabbable : undefined}
+            onClick={addDegree}
+            modifiers={[
+              'Button_paddingBlock_none',
+              'Button_paddingInline_small',
+            ]}
           >
-            <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
-          </button>
-        )}
-      </header>
-      <Degree
-        data={data.degrees[shownDegreeIndex]}
-        functions={getDegreeFunctions(shownDegreeIndex)}
-        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
-      />
-    </form>
+            <img alt="Add" height="25px" src={addSrc} width="25px" />
+          </Button>
+          {data.degrees.length > 1 && (
+            <button
+              aria-label={`Delete Degree ${shownDegreeIndex + 1}`}
+              className="section--delete-item"
+              id="delete-degree"
+              type="button"
+              onClick={() => functions.deleteDegree(shownDegreeIndex)}
+            >
+              <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
+            </button>
+          )}
+        </header>
+        <Degree
+          data={data.degrees[shownDegreeIndex]}
+          functions={getDegreeFunctions(shownDegreeIndex)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        />
+      </form>
+    </section>
   );
 }

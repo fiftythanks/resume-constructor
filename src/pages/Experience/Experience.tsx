@@ -70,77 +70,91 @@ export default function Experience({
   }
 
   return (
-    <form
-      action="#"
+    <section
       aria-labelledby="experience"
-      className="section section__bullet-points"
+      className="section"
       id="experience-tabpanel"
       role="tabpanel"
     >
-      <header className="section--header">
-        <h2>Job {shownJobIndex + 1}</h2>
-        {/* Conditional rendering to get rid of redundant flex gap. */}
-        {(shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) && (
-          <div className="section--item-navigation">
-            {shownJobIndex > 0 && (
-              <Button
-                aria-label="Show Previous Job"
-                className="section--item-navigation-button"
-                id="show-previous-job"
-                ref={firstTabbable}
-                onClick={() => functions.showJob(shownJobIndex - 1)}
-                modifiers={[
-                  'Button_paddingBlock_none',
-                  'Button_paddingInline_small',
-                ]}
-              >
-                <img alt="Previous" height="25px" src={prevSrc} width="25px" />
-              </Button>
-            )}
-            {shownJobIndex !== data.jobs.length - 1 && (
-              <Button
-                aria-label="Show Next Job"
-                id="show-next-job"
-                ref={shownJobIndex === 0 ? firstTabbable : undefined}
-                onClick={() => functions.showJob(shownJobIndex + 1)}
-                modifiers={[
-                  'Button_paddingBlock_none',
-                  'Button_paddingInline_small',
-                ]}
-              >
-                <img alt="Previous" height="25px" src={nextSrc} width="25px" />
-              </Button>
-            )}
-          </div>
-        )}
-        {/* TODO: redesign it or at least put it in some other place. It looks terrible. */}
-        <Button
-          aria-label={`Add Job ${data.jobs.length + 1}`}
-          id="add-job"
-          modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
-          ref={data.jobs.length === 1 ? firstTabbable : undefined}
-          onClick={addJob}
-        >
-          <img alt="Add" height="25px" src={addSrc} width="25px" />
-        </Button>
-        {/* You can't delete the only job. There's always at least one job. */}
-        {data.jobs.length > 1 && (
-          <button
-            aria-label={`Delete Job ${shownJobIndex + 1}`}
-            className="section--delete-item"
-            id="delete-job"
-            type="button"
-            onClick={() => functions.deleteJob(shownJobIndex)}
+      <form action="#" className="section--form section--form__bullet-points">
+        <header className="section--header">
+          <h2>Job {shownJobIndex + 1}</h2>
+          {/* Conditional rendering to get rid of redundant flex gap. */}
+          {(shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) && (
+            <div className="section--item-navigation">
+              {shownJobIndex > 0 && (
+                <Button
+                  aria-label="Show Previous Job"
+                  className="section--item-navigation-button"
+                  id="show-previous-job"
+                  ref={firstTabbable}
+                  onClick={() => functions.showJob(shownJobIndex - 1)}
+                  modifiers={[
+                    'Button_paddingBlock_none',
+                    'Button_paddingInline_small',
+                  ]}
+                >
+                  <img
+                    alt="Previous"
+                    height="25px"
+                    src={prevSrc}
+                    width="25px"
+                  />
+                </Button>
+              )}
+              {shownJobIndex !== data.jobs.length - 1 && (
+                <Button
+                  aria-label="Show Next Job"
+                  id="show-next-job"
+                  ref={shownJobIndex === 0 ? firstTabbable : undefined}
+                  onClick={() => functions.showJob(shownJobIndex + 1)}
+                  modifiers={[
+                    'Button_paddingBlock_none',
+                    'Button_paddingInline_small',
+                  ]}
+                >
+                  <img
+                    alt="Previous"
+                    height="25px"
+                    src={nextSrc}
+                    width="25px"
+                  />
+                </Button>
+              )}
+            </div>
+          )}
+          {/* TODO: redesign it or at least put it in some other place. It looks terrible. */}
+          <Button
+            aria-label={`Add Job ${data.jobs.length + 1}`}
+            id="add-job"
+            ref={data.jobs.length === 1 ? firstTabbable : undefined}
+            onClick={addJob}
+            modifiers={[
+              'Button_paddingBlock_none',
+              'Button_paddingInline_small',
+            ]}
           >
-            <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
-          </button>
-        )}
-      </header>
-      <Job
-        data={data.jobs[shownJobIndex]}
-        functions={getJobFunctions(shownJobIndex)}
-        updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
-      />
-    </form>
+            <img alt="Add" height="25px" src={addSrc} width="25px" />
+          </Button>
+          {/* You can't delete the only job. There's always at least one job. */}
+          {data.jobs.length > 1 && (
+            <button
+              aria-label={`Delete Job ${shownJobIndex + 1}`}
+              className="section--delete-item"
+              id="delete-job"
+              type="button"
+              onClick={() => functions.deleteJob(shownJobIndex)}
+            >
+              <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
+            </button>
+          )}
+        </header>
+        <Job
+          data={data.jobs[shownJobIndex]}
+          functions={getJobFunctions(shownJobIndex)}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        />
+      </form>
+    </section>
   );
 }
