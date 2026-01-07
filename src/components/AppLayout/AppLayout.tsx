@@ -226,15 +226,16 @@ export default function AppLayout({
         selectSection={openSection}
         toggleEditorMode={toggleEditorMode}
       />
-      <Toolbar
-        activeSectionIds={activeSectionIds}
-        className="AppLayout-Toolbar"
-        data={data}
-        deleteAll={deleteAll}
-        fillAll={fillAll}
-        isNavbarExpanded={isNavbarExpanded}
-        toggleNavbar={toggleNavbar}
-      />
+      <aside aria-label="Tools" className="AppLayout-Toolbar">
+        <Toolbar
+          activeSectionIds={activeSectionIds}
+          data={data}
+          deleteAll={deleteAll}
+          fillAll={fillAll}
+          isNavbarExpanded={isNavbarExpanded}
+          toggleNavbar={toggleNavbar}
+        />
+      </aside>
       {/* This heading is here intentionally for layout purposes. */}
       <h1 className="AppLayout-Title" id="app-layout-heading">
         {sectionTitles[openedSectionId]}
