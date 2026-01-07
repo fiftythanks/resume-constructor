@@ -38,129 +38,130 @@ export default function Links({
   };
 
   return (
-    <form
-      action="#"
+    <section
       aria-labelledby="links"
       className="section"
       id="links-tabpanel"
       role="tabpanel"
     >
-      <ul className="section--list">
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="website-text">
-            Website (text)
-          </label>
-          <input
-            className="section--field"
-            data-testid="first-tabbable-links"
-            id="website-text"
-            name="website-text"
-            placeholder="johndoe.com"
-            ref={firstTabbable}
-            type="text"
-            value={data.website.text}
-            onChange={handleInputChange}
-          />
-        </li>
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="website-link">
-            Website (link)
-          </label>
-          <input
-            className="section--field"
-            id="website-link"
-            name="website-link"
-            placeholder="https://johndoe.com/"
-            type="text"
-            value={data.website.link}
-            onChange={handleInputChange}
-          />
-        </li>
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="github-text">
-            GitHub (text)
-          </label>
-          <input
-            className="section--field"
-            id="github-text"
-            name="github-text"
-            placeholder="github.com/johndoe"
-            type="text"
-            value={data.github.text}
-            onChange={handleInputChange}
-          />
-        </li>
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="github-link">
-            GitHub (link)
-          </label>
-          <input
-            className="section--field"
-            id="github-link"
-            name="github-link"
-            placeholder="https://github.com/johndoe/"
-            type="text"
-            value={data.github.link}
-            onChange={handleInputChange}
-          />
-        </li>
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="linkedin-text">
-            LinkedIn (text)
-          </label>
-          <input
-            className="section--field"
-            id="linkedin-text"
-            name="linkedin-text"
-            placeholder="linkedin.com/johndoe"
-            type="text"
-            value={data.linkedin.text}
-            onChange={handleInputChange}
-          />
-        </li>
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="linkedin-link">
-            LinkedIn (link)
-          </label>
-          <input
-            className="section--field"
-            id="linkedin-link"
-            name="linkedin-link"
-            placeholder="https://linkedin.com/johndoe/"
-            type="text"
-            value={data.linkedin.link}
-            onChange={handleInputChange}
-          />
-        </li>
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="telegram-text">
-            Telegram (text)
-          </label>
-          <input
-            className="section--field"
-            id="telegram-text"
-            name="telegram-text"
-            placeholder="@johndoe"
-            type="text"
-            value={data.telegram.text}
-            onChange={handleInputChange}
-          />
-        </li>
-        <li className="section--list-item">
-          <label className="section--field-label" htmlFor="telegram-link">
-            Telegram (link)
-          </label>
-          <input
-            className="section--field"
-            id="telegram-link"
-            name="telegram-link"
-            placeholder="https://t.me/johndoe/"
-            type="text"
-            value={data.telegram.link}
-            onChange={handleInputChange}
-          />
-        </li>
-      </ul>
-    </form>
+      <form action="#" className="section--form">
+        <ul className="section--list">
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="website-text">
+              Website (text)
+            </label>
+            <input
+              className="section--field"
+              data-testid="first-tabbable-links"
+              id="website-text"
+              name="website-text"
+              placeholder="johndoe.com"
+              ref={firstTabbable}
+              type="text"
+              value={data.website.text}
+              onChange={handleInputChange}
+            />
+          </li>
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="website-link">
+              Website (link)
+            </label>
+            <input
+              className="section--field"
+              id="website-link"
+              name="website-link"
+              placeholder="https://johndoe.com/"
+              type="text"
+              value={data.website.link}
+              onChange={handleInputChange}
+            />
+          </li>
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="github-text">
+              GitHub (text)
+            </label>
+            <input
+              className="section--field"
+              id="github-text"
+              name="github-text"
+              placeholder="github.com/johndoe"
+              type="text"
+              value={data.github.text}
+              onChange={handleInputChange}
+            />
+          </li>
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="github-link">
+              GitHub (link)
+            </label>
+            <input
+              className="section--field"
+              id="github-link"
+              name="github-link"
+              placeholder="https://github.com/johndoe/"
+              type="text"
+              value={data.github.link}
+              onChange={handleInputChange}
+            />
+          </li>
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="linkedin-text">
+              LinkedIn (text)
+            </label>
+            <input
+              className="section--field"
+              id="linkedin-text"
+              name="linkedin-text"
+              placeholder="linkedin.com/johndoe"
+              type="text"
+              value={data.linkedin.text}
+              onChange={handleInputChange}
+            />
+          </li>
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="linkedin-link">
+              LinkedIn (link)
+            </label>
+            <input
+              className="section--field"
+              id="linkedin-link"
+              name="linkedin-link"
+              placeholder="https://linkedin.com/johndoe/"
+              type="text"
+              value={data.linkedin.link}
+              onChange={handleInputChange}
+            />
+          </li>
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="telegram-text">
+              Telegram (text)
+            </label>
+            <input
+              className="section--field"
+              id="telegram-text"
+              name="telegram-text"
+              placeholder="@johndoe"
+              type="text"
+              value={data.telegram.text}
+              onChange={handleInputChange}
+            />
+          </li>
+          <li className="section--list-item">
+            <label className="section--field-label" htmlFor="telegram-link">
+              Telegram (link)
+            </label>
+            <input
+              className="section--field"
+              id="telegram-link"
+              name="telegram-link"
+              placeholder="https://t.me/johndoe/"
+              type="text"
+              value={data.telegram.link}
+              onChange={handleInputChange}
+            />
+          </li>
+        </ul>
+      </form>
+    </section>
   );
 }

@@ -1,13 +1,16 @@
 @use '@/styles/utils/placeholders';
 
 .section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
   width: 100%;
 
-  &__bullet-points {
-    gap: 2rem;
+  &--form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__bullet-points {
+      gap: 2rem;
+    }
   }
 
   &--header {
