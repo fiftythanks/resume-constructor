@@ -63,15 +63,6 @@ export default function AppLayout({
   const canAddSections = activeSectionIds.length < possibleSectionIds.length;
   const openedSectionIndex = activeSectionIds.indexOf(openedSectionId);
 
-  // TODO: use conditional rendering.
-  let navbarModifier = 'AppLayout_navbar_';
-  navbarModifier += isNavbarExpanded ? 'expanded' : 'hidden';
-
-  const mainClassName = clsx([
-    'AppLayout-Main',
-    isNavbarExpanded && 'AppLayout-Main_navbar_expanded',
-  ]);
-
   // Keyboard navigation.
   function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     const target = e.target as HTMLElement;
@@ -205,9 +196,13 @@ export default function AppLayout({
   }
 
   return (
+    /**
+     * `handleKeyDown` optimises keyboard navigation between the component's
+     * children using the event's bubbling, so the rule is wrong here.
+     */
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
-      className={`AppLayout ${navbarModifier}`}
+      className="AppLayout"
       data-testid="app-layout"
       onKeyDown={handleKeyDown}
     >
@@ -226,6 +221,46 @@ export default function AppLayout({
         selectSection={openSection}
         toggleEditorMode={toggleEditorMode}
       />
+      <main className="AppLayout-Main" tabIndex={-1}>
+        <h1 className="AppLayout-Title">{sectionTitles[openedSectionId]}</h1>
+        <div
+          className={clsx([
+            'AppLayout-SectionWrapper',
+            isNavbarExpanded && 'AppLayout-SectionWrapper_navbarExpanded',
+          ])}
+        >
+          {children}
+          <div className="AppLayout-NavBtns">
+            {openedSectionIndex > 0 && (
+              <Button
+                aria-label="Open Previous Section"
+                className="AppLayout-NavBtn"
+                id="previous-section"
+                modifiers={['Button_width_medium']}
+                onClick={() =>
+                  openSection(activeSectionIds[openedSectionIndex - 1])
+                }
+              >
+                Previous
+              </Button>
+            )}
+            {activeSectionIds.length > 1 &&
+              openedSectionIndex < activeSectionIds.length - 1 && (
+                <Button
+                  aria-label="Open Next Section"
+                  className="AppLayout-NavBtn"
+                  id="next-section"
+                  modifiers={['Button_width_medium']}
+                  onClick={() =>
+                    openSection(activeSectionIds[openedSectionIndex + 1])
+                  }
+                >
+                  Next
+                </Button>
+              )}
+          </div>
+        </div>
+      </main>
       <aside aria-label="Tools" className="AppLayout-Toolbar">
         <Toolbar
           activeSectionIds={activeSectionIds}
@@ -236,46 +271,6 @@ export default function AppLayout({
           toggleNavbar={toggleNavbar}
         />
       </aside>
-      {/* This heading is here intentionally for layout purposes. */}
-      <h1 className="AppLayout-Title" id="app-layout-heading">
-        {sectionTitles[openedSectionId]}
-      </h1>
-      <main
-        aria-owns={`app-layout-heading ${openedSectionId}-tabpanel`}
-        className={mainClassName}
-        tabIndex={-1}
-      >
-        {children}
-        <div className="AppLayout-NavBtns">
-          {openedSectionIndex > 0 && (
-            <Button
-              aria-label="Open Previous Section"
-              className="AppLayout-NavBtn"
-              id="previous-section"
-              modifiers={['Button_width_medium']}
-              onClick={() =>
-                openSection(activeSectionIds[openedSectionIndex - 1])
-              }
-            >
-              Previous
-            </Button>
-          )}
-          {activeSectionIds.length > 1 &&
-            openedSectionIndex < activeSectionIds.length - 1 && (
-              <Button
-                aria-label="Open Next Section"
-                className="AppLayout-NavBtn"
-                id="next-section"
-                modifiers={['Button_width_medium']}
-                onClick={() =>
-                  openSection(activeSectionIds[openedSectionIndex + 1])
-                }
-              >
-                Next
-              </Button>
-            )}
-        </div>
-      </main>
     </div>
   );
 }

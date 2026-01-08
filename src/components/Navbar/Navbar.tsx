@@ -441,7 +441,7 @@ export default function Navbar({
                 items={draggableSectionIds}
                 strategy={verticalListSortingStrategy}
               >
-                <ul className="Navbar-Items Navbar-Items_draggable" role="none">
+                <ul className="Navbar-Items" role="none">
                   {items}
                 </ul>
               </SortableContext>
