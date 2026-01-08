@@ -230,13 +230,6 @@ export default function Toolbar({
           className="Toolbar-Item Toolbar-Item_toggleNavbar"
           iconSrc={isNavbarExpanded ? crossSrc : hamburgerSrc}
           id="toggle-navbar"
-          /**
-           * I know setting positive tab indices isn't the best practice, but
-           * it's the only place I need it in the application, simply to make
-           * the button the first element that receives focus in the application.
-           */
-          // eslint-disable-next-line jsx-a11y/tabindex-no-positive
-          tabIndex={2}
           onClick={toggleNavbar}
         />
         {/* TODO: instead of a `...-hidden` class there should be conditional rendering. Right? */}
