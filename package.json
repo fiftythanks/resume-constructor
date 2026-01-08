@@ -7,8 +7,8 @@
   "scripts": {
     "test": "jest --passWithNoTests",
     "test:ci": "jest --passWithNoTests --watchAll=false",
-    "e2e": "docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble npx playwright test",
-    "e2e:update": "docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble npx playwright test --update-snapshots",
+    "e2e": "docker run --rm -u $(id -u):$(id -g) --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble npx playwright test",
+    "e2e:update": "docker run --rm -u $(id -u):$(id -g) --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble npx playwright test --update-snapshots",
     "start-g": "webpack serve --open-app-name 'google-chrome' --config webpack.dev.cjs",
     "start": "webpack serve --config webpack.dev.cjs",
     "build": "webpack --config webpack.prod.cjs",
