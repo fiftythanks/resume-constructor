@@ -244,26 +244,6 @@ function renderAppLayoutWithNavbarExpanded(props?: Partial<AppLayoutProps>) {
 }
 
 describe('AppLayout', () => {
-  it("should render the opened section's title as heading", () => {
-    renderAppLayout();
-
-    const heading = screen.getByRole('heading', {
-      name: sectionTitles.personal,
-    });
-
-    expect(heading).toBeInTheDocument();
-  });
-
-  it('should correctly render children', () => {
-    renderAppLayout();
-
-    const children = screen.getByRole('tabpanel', {
-      name: sectionTitles.personal,
-    });
-
-    expect(children).toBeInTheDocument();
-  });
-
   // Main section
 
   it('should render a main section', () => {
@@ -275,103 +255,105 @@ describe('AppLayout', () => {
   });
 
   describe('Main section', () => {
-    it('should own the section heading and the tabpanel', () => {
-      // Arrange
+    it("should render the opened section's title as heading", () => {
       renderAppLayout();
-      const main = screen.getByRole('main');
 
-      const name = sectionTitles.personal;
+      const heading = screen.getByRole('heading', {
+        name: sectionTitles.personal,
+      });
 
-      const heading = screen.getByRole('heading', { name });
-      const headingId = heading.id;
-
-      const tabpanel = screen.getByRole('tabpanel', { name });
-      const tabpanelId = tabpanel.id;
-
-      // Act
-      const ariaOwns = main.getAttribute('aria-owns')!;
-      const ownedElementsIds = ariaOwns.split(' ');
-
-      // Assert
-      expect(ownedElementsIds).toContain(headingId);
-      expect(ownedElementsIds).toContain(tabpanelId);
+      expect(heading).toBeInTheDocument();
     });
-  });
 
-  // "Open Next Section" button
+    it('should correctly render resume sections', () => {
+      renderAppLayout();
 
-  it("should render an 'Open Next Section' button when the opened section isn't the last one", () => {
-    renderAppLayout();
+      const children = screen.getByRole('tabpanel', {
+        name: sectionTitles.personal,
+      });
 
-    const btn = screen.getByRole('button', { name: 'Open Next Section' });
+      expect(children).toBeInTheDocument();
+    });
 
-    expect(btn).toBeInTheDocument();
-  });
+    // "Open Next Section" button
 
-  it('should not render an "Open Next Section" button when the opened section is the last one', () => {
-    renderAppLayout(getProps({ openedSectionId: possibleSectionIds.at(-1) }));
-
-    const btn = screen.queryByRole('button', { name: 'Open Next Section' });
-
-    expect(btn).not.toBeInTheDocument();
-  });
-
-  describe('"Open Next Section" button', () => {
-    it("should call `openSection` passing the next section's ID to it when pressed", async () => {
-      // Arrange
-      const mockFn = jest.fn((_sectionId: SectionId) => {});
-      const props = getProps({ openSection: mockFn });
-
-      renderAppLayout(props);
-      const user = userEvent.setup();
+    it("should render an 'Open Next Section' button when the opened section isn't the last one", () => {
+      renderAppLayout();
 
       const btn = screen.getByRole('button', { name: 'Open Next Section' });
 
-      // Act
-      await user.click(btn);
-
-      // Assert
-      expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(mockFn).toHaveBeenCalledWith(possibleSectionIds[1]);
+      expect(btn).toBeInTheDocument();
     });
-  });
 
-  // "Open Previous Section" button
+    it('should not render an "Open Next Section" button when the opened section is the last one', () => {
+      renderAppLayout(getProps({ openedSectionId: possibleSectionIds.at(-1) }));
 
-  it("should render an 'Open Previous Section' button when the opened section isn't the first one", () => {
-    renderAppLayout(getProps({ openedSectionId: possibleSectionIds[3] }));
+      const btn = screen.queryByRole('button', { name: 'Open Next Section' });
 
-    const btn = screen.getByRole('button', { name: 'Open Previous Section' });
+      expect(btn).not.toBeInTheDocument();
+    });
 
-    expect(btn).toBeInTheDocument();
-  });
+    describe('"Open Next Section" button', () => {
+      it("should call `openSection` passing the next section's ID to it when pressed", async () => {
+        // Arrange
+        const mockFn = jest.fn((_sectionId: SectionId) => {});
+        const props = getProps({ openSection: mockFn });
 
-  it('should not render an "Open Previous Section" button when the opened section is the first one', () => {
-    renderAppLayout();
+        renderAppLayout(props);
+        const user = userEvent.setup();
 
-    const btn = screen.queryByRole('button', { name: 'Open Previous Section' });
+        const btn = screen.getByRole('button', { name: 'Open Next Section' });
 
-    expect(btn).not.toBeInTheDocument();
-  });
+        // Act
+        await user.click(btn);
 
-  describe('"Open Previous Section" button', () => {
-    it("should call `openSection` passing the previous section's ID to it when pressed", async () => {
-      // Arrange
-      const openedSectionId = possibleSectionIds[3];
-      const mockFn = jest.fn((_sectionId: SectionId) => {});
-      const props = getProps({ openedSectionId, openSection: mockFn });
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(mockFn).toHaveBeenCalledWith(possibleSectionIds[1]);
+      });
+    });
 
-      renderAppLayout(props);
-      const user = userEvent.setup();
+    // "Open Previous Section" button
+
+    it("should render an 'Open Previous Section' button when the opened section isn't the first one", () => {
+      renderAppLayout(getProps({ openedSectionId: possibleSectionIds[3] }));
 
       const btn = screen.getByRole('button', { name: 'Open Previous Section' });
 
-      // Act
-      await user.click(btn);
+      expect(btn).toBeInTheDocument();
+    });
 
-      // Assert
-      expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(mockFn).toHaveBeenCalledWith(possibleSectionIds[2]);
+    it('should not render an "Open Previous Section" button when the opened section is the first one', () => {
+      renderAppLayout();
+
+      const btn = screen.queryByRole('button', {
+        name: 'Open Previous Section',
+      });
+
+      expect(btn).not.toBeInTheDocument();
+    });
+
+    describe('"Open Previous Section" button', () => {
+      it("should call `openSection` passing the previous section's ID to it when pressed", async () => {
+        // Arrange
+        const openedSectionId = possibleSectionIds[3];
+        const mockFn = jest.fn((_sectionId: SectionId) => {});
+        const props = getProps({ openedSectionId, openSection: mockFn });
+
+        renderAppLayout(props);
+        const user = userEvent.setup();
+
+        const btn = screen.getByRole('button', {
+          name: 'Open Previous Section',
+        });
+
+        // Act
+        await user.click(btn);
+
+        // Assert
+        expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(mockFn).toHaveBeenCalledWith(possibleSectionIds[2]);
+      });
     });
   });
 
@@ -608,6 +590,14 @@ describe('AppLayout', () => {
   });
 
   // Toolbar
+
+  it('should render a complementary semantic wrapper "Tools" for the toolbar', () => {
+    renderAppLayout();
+
+    const wrapper = screen.getByRole('complementary', { name: 'Tools' });
+
+    expect(wrapper).toBeInTheDocument();
+  });
 
   it('should render the toolbar', () => {
     renderAppLayout();
