@@ -82,16 +82,16 @@ export default function AddSections({
       };
 
       return (
-        <Button
-          aria-label={`Add ${sectionTitles[sectionId]}`}
-          elements={['AddSections-Button']}
-          id={`add-${sectionId}`}
-          key={`add-${sectionId}`}
-          modifiers={['AddSections-Button_add']}
-          onClick={handleClick}
-        >
-          {sectionTitles[sectionId]}
-        </Button>
+        <li className="AddSections-ListItem" key={`add-${sectionId}`}>
+          <Button
+            aria-label={`Add ${sectionTitles[sectionId]}`}
+            id={`add-${sectionId}`}
+            modifiers={['Button_width_full']}
+            onClick={handleClick}
+          >
+            {sectionTitles[sectionId]}
+          </Button>
+        </li>
       );
     });
   };
@@ -106,18 +106,19 @@ export default function AddSections({
     >
       <ul className="AddSections-List">
         {createAddBtns()}
-        <Button
-          aria-label="Add All Sections"
-          elements={['AddSections-Button']}
-          id="add-all-sections"
-          modifiers={['AddSections-Button_add AddSections-Button_all']}
-          onClick={() => {
-            addSections([...possibleSectionIds]);
-            closePopup();
-          }}
-        >
-          All
-        </Button>
+        <li className="AddSections-ListItem">
+          <Button
+            aria-label="Add All Sections"
+            id="add-all-sections"
+            modifiers={['Button_width_full']}
+            onClick={() => {
+              addSections([...possibleSectionIds]);
+              closePopup();
+            }}
+          >
+            All
+          </Button>
+        </li>
       </ul>
       {/* (1) */}
       <button
