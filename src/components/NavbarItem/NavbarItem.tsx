@@ -86,7 +86,13 @@ export default function NavbarItem({
   };
 
   return (
-    <li className={listItemClassName} ref={setNodeRef} style={style} {...rest}>
+    <li
+      className={listItemClassName}
+      ref={setNodeRef}
+      role="none"
+      style={style}
+      {...rest}
+    >
       <AppbarIconButton
         alt={alt}
         className={btnClassName}
