@@ -397,57 +397,57 @@ export default function Navbar({
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       >
-        <ul
-          aria-label="Resume Sections"
-          aria-orientation="vertical"
-          aria-owns="personal links skills experience projects education certifications"
-          className="Navbar-Items"
-          id="resume-sections"
-          role="tablist"
+        <DndContext
+          /**
+           * Since the navigation bar will always stay in the same position
+           * (or at least won't move beyond the screen almost certainly),
+           * there's no need for autoscroll. It also introduces strange
+           * behaviour on mobile Firefox, so turning it off is for the best.
+           */
+          autoScroll={false}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+          sensors={sensors}
+          onDragEnd={handleDragEnd}
+          onDragStart={handleDragStart}
         >
-          <NavbarItem
-            alt={sectionTitles.personal}
-            className="Navbar-NavbarItem Navbar-NavbarItem_personal"
-            iconSrc={ICONS.personal}
-            isDraggable={false}
-            isEditorMode={editorMode}
-            isSelected={selectedSectionId === 'personal'}
-            sectionId="personal"
-            sectionTitle={sectionTitles.personal}
-            tabIndex={personalNavbarItemTabIndex}
-            title={sectionTitles.personal}
-            onSelectSection={() => selectSection('personal')}
-          />
-          {/**
-           * This structure is necessary to be able to limit the dragging to
-           * the area between "personal" and the end of `Navbar-Items`.
-           */}
-          <li className={draggableItemsWrapperClassName} role="none">
-            <DndContext
-              /**
-               * Since the navigation bar will always stay in the same position
-               * (or at least won't move beyond the screen almost certainly),
-               * there's no need for autoscroll. It also introduces strange
-               * behaviour on mobile Firefox, so turning it off is for the best.
-               */
-              autoScroll={false}
-              collisionDetection={closestCenter}
-              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-              sensors={sensors}
-              onDragEnd={handleDragEnd}
-              onDragStart={handleDragStart}
+          <SortableContext
+            items={draggableSectionIds}
+            strategy={verticalListSortingStrategy}
+          >
+            <ul
+              aria-label="Resume Sections"
+              aria-orientation="vertical"
+              aria-owns="personal links skills experience projects education certifications"
+              className="Navbar-Items"
+              id="resume-sections"
+              role="tablist"
             >
-              <SortableContext
-                items={draggableSectionIds}
-                strategy={verticalListSortingStrategy}
-              >
+              <NavbarItem
+                alt={sectionTitles.personal}
+                className="Navbar-NavbarItem Navbar-NavbarItem_personal"
+                iconSrc={ICONS.personal}
+                isDraggable={false}
+                isEditorMode={editorMode}
+                isSelected={selectedSectionId === 'personal'}
+                sectionId="personal"
+                sectionTitle={sectionTitles.personal}
+                tabIndex={personalNavbarItemTabIndex}
+                title={sectionTitles.personal}
+                onSelectSection={() => selectSection('personal')}
+              />
+              {/**
+               * This structure is necessary to be able to limit the dragging to
+               * the area between "personal" and the end of `Navbar-Items`.
+               */}
+              <li className={draggableItemsWrapperClassName} role="none">
                 <ul className="Navbar-Items" role="none">
                   {items}
                 </ul>
-              </SortableContext>
-            </DndContext>
-          </li>
-        </ul>
+              </li>
+            </ul>
+          </SortableContext>
+        </DndContext>
         {/* Control buttons */}
         {canAddSections && (
           <AppbarIconButton
