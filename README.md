@@ -89,7 +89,6 @@ src/
 The core engine is complete and **mobile-optimised**.
 Currently working on:
 
-- [ ] **E2E Coverage:** Creating Playwright tests.
 - [ ] **Persistence:** Saving drafts via LocalStorage.
 - [ ] **Medium/Large UI:** Optimising the UI for medium- and large-sized screens.
 
