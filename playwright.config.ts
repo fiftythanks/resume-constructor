@@ -59,7 +59,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run build && npx serve -p 3000 dist',
+    command: 'bun run build && bunx serve -p 3000 dist',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
