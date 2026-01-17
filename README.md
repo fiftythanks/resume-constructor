@@ -94,19 +94,21 @@ Currently working on:
 
 ### Setup & Development
 
+*If you haven’t got Bun, you can use npm. The only script that won’t work is `e2e` because `playwright.config.ts` specifies a Shell script that uses Bun for starting a local server.*
+
 ```Bash
 # Clone the repository
 git clone https://github.com/fiftythanks/resume-constructor.git
 
 # Install dependencies
-npm install
+bun install
 
 # Run development server
-npm start
+bun start
 
 # Run unit and integration tests (8.5k+ lines coverage)
-npm test
+bun run test
 
 # Run E2E tests
-npm run e2e
+bun run e2e
 ```
