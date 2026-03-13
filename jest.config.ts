@@ -1,10 +1,14 @@
+import fs from 'fs';
+
 import {
   createJsWithTsEsmPreset,
   type JestConfigWithTsJest,
   pathsToModuleNameMapper,
 } from 'ts-jest';
 
-import { compilerOptions } from './tsconfig.json';
+const { compilerOptions } = JSON.parse(
+  fs.readFileSync('./tsconfig.json', 'utf-8'),
+);
 
 const jestConfig: JestConfigWithTsJest = {
   ...createJsWithTsEsmPreset(),
