@@ -164,7 +164,7 @@ const INITIAL_RESUME_DATA: ResumeData = {
     shownDegreeIndex: 0,
   },
   // It should be certifications, skills and interests.
-  // TODO (application-wide): refactor `Certifications` and this state.
+  // TODO: refactor `Certifications` and this state.
   certifications: {
     certificates: '',
     skills: '',

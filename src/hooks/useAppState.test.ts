@@ -94,7 +94,7 @@ describe('useAppState', () => {
       'deleteSections',
     ];
 
-    // ? Is there a way to put the tests inside functions and call functions instead of all this terrible boilerplate?
+    // DILEMMA: Is there a way to put the tests inside functions and call functions instead of all this terrible boilerplate?
     // If all sections are active by default.
     if (areAllSectionsActive) {
       // Delete 'deleteSections' from the array, since it's about to be tested.

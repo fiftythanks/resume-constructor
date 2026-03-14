@@ -183,7 +183,7 @@ export default function Toolbar({
     }
   }
 
-  // ? Should the close button be focused when you open the modal with keyboard? Change it, maybe?
+  // DILEMMA: Should the close button be focused when you open the modal with keyboard? Change it, maybe?
   function showPreviewModal() {
     setIsPreviewModalShown(true);
   }
@@ -210,7 +210,7 @@ export default function Toolbar({
     <>
       <div
         /**
-         * FYI: There's no point in adding a label on small screens because
+         * NOTE: There's no point in adding a label on small screens because
          * there's just two items. On larger screens, I'm planning to put the
          * toolbar vertical and remove the toggle buttons. Then labelling it
          * will make much more sense. For now, I'll leave it as it is.
@@ -220,7 +220,7 @@ export default function Toolbar({
         role="toolbar"
         onKeyDown={handleKeyDown}
       >
-        {/* Why doesn't it have `aria-haspopup` like the "toggle-controls" button? */}
+        {/* DILEMMA: Why doesn't it have `aria-haspopup` like the "toggle-controls" button? */}
         <AppbarIconButton
           alt="Toggle Navigation"
           aria-controls="navbar"
@@ -280,7 +280,7 @@ export default function Toolbar({
             <li role="none">
               <AppbarIconButton
                 // FIXME: add `aria-controls`!
-                //? Should `alt` and `aria-label` differ here?
+                // DILEMMA: Should `alt` and `aria-label` differ here?
                 alt="Preview"
                 aria-label="Open Preview"
                 className="Toolbar-Item Toolbar-Item_preview"
@@ -307,7 +307,7 @@ export default function Toolbar({
           onClick={toggleControls}
         />
       </div>
-      {/* ? What about the `Popup` component? It's strange to use `.showModal()` and `.close()` when in reality it's just conditional rendering... Think if you need to change something here.` */}
+      {/* DILEMMA: What about the `Popup` component? It's strange to use `.showModal()` and `.close()` when in reality it's just conditional rendering... Think if you need to change something here.` */}
       {isPreviewModalShown && (
         <Preview
           activeSectionIds={activeSectionIds}

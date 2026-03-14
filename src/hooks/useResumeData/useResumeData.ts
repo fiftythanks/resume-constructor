@@ -47,7 +47,7 @@ export default function useResumeData() {
     }
   }
 
-  // ? It may be better to merge `clear` and `clearAll` together.
+  // DILEMMA: It may be better to merge `clear` and `clearAll` together.
   function clearAll() {
     setData(getDefaultData());
   }
@@ -372,9 +372,9 @@ export default function useResumeData() {
     }
   }
 
-  // ? Should I put them inside one big object, e.g. `resumeDataHandlers`, where their names will be not `personalFunctions` etc. but just `personal`? Or should I even create a separate file for all these functions maybe?
+  // DILEMMA: Should I put them inside one big object, e.g. `resumeDataHandlers`, where their names will be not `personalFunctions` etc. but just `personal`? Or should I even create a separate file for all these functions maybe?
 
-  // ? (Application-wide): is putting `clear` and other functions inside objects and then passing them down as simply `skillsFunctions` etc. not very good? Should I instead export functions on their own from this hook and then pass them down on their own, for better readability?
+  // DILEMMA: is putting `clear` and other functions inside objects and then passing them down as simply `skillsFunctions` etc. not very good? Should I instead export functions on their own from this hook and then pass them down on their own, for better readability?
 
   const certificationsFunctions = {
     updateCertifications(

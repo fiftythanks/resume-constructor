@@ -43,7 +43,7 @@ export default function useAppState() {
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
   const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
-  //? Since `previousSectionsStateRef` uses sets, maybe this, original, state should do this as well? Or the opposite way.
+  // DILEMMA: Since `previousSectionsStateRef` uses sets, maybe this, original, state should do this as well? Or the opposite way.
   const [sectionsState, setSectionsState] = useState<SectionsState>({
     activeSectionIds: INITIAL_ACTIVE_SECTION_IDS,
     openedSectionId: 'personal',
@@ -150,9 +150,9 @@ export default function useAppState() {
 
   // General functions for manipulating sections' state.
 
-  // FIXME (application-wide): when you add a bunch of sections, only the last one is announced, for some reason. Fix it. (Should be fixed already. Check.)
+  // FIXME: when you add a bunch of sections, only the last one is announced, for some reason. Fix it. (Should be fixed already. Check.)
   // TODO: make it possible to add just one section by passing its ID as a sting.
-  // ? Should I rename it to `activateSections`, since it **activates** sections?
+  // DILEMMA: Should I rename it to `activateSections`, since it **activates** sections?
   /**
    * Activates sections. In other words, adds them to the navbar and makes it
    * possible to enter the corresponding resume data.
@@ -204,7 +204,7 @@ export default function useAppState() {
           oldActiveSectionIds,
         );
 
-        // TODO (application-wide): add an array/set of the IDs of sections that are undraggable and undeletable and in every such place like this check if the collection contains the ID instead of checking like `sectionId !== 'personal'`.
+        // TODO: add an array/set of the IDs of sections that are undraggable and undeletable and in every such place like this check if the collection contains the ID instead of checking like `sectionId !== 'personal'`.
         // The "Personal" section is undeletable.
         sectionIdsToDelete.delete('personal');
 

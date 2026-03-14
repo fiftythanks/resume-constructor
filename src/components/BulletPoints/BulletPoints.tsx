@@ -166,7 +166,7 @@ export default function BulletPoints({
 
   // TODO: add the possibility of creating sub-bullet points.
   // TODO: add the possibility of making text bold (italic? underlined?).
-  // ? Should I add text styling features to all fields in the app? Would be great to let users decide where they need bold text, where italic and where underlined. Also, interesting experience with adding text styling features in form fields.
+  // DILEMMA: Should I add text styling features to all fields in the app? Would be great to let users decide where they need bold text, where italic and where underlined. Also, interesting experience with adding text styling features in form fields.
   return (
     <fieldset className={bulletPointsClassName}>
       <legend className={legendClassName}>{legend}</legend>

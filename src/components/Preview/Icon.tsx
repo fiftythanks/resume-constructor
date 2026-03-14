@@ -5,7 +5,7 @@ import { Path, Svg } from '@react-pdf/renderer';
 import type { SVGProps } from '@react-pdf/renderer';
 import type { ReadonlyDeep } from 'type-fest';
 
-//? Why do you need paths in this form? Why not just use SVG files?
+// DILEMMA: Why do you need paths in this form? Why not just use SVG files?
 /**
  * Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License -
  * https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.
