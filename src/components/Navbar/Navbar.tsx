@@ -92,7 +92,7 @@ export interface NavbarProps {
 export default function Navbar({
   activeSectionIds,
   addSections,
-  //? What is the purpose of passing such a prop? It's useless. You can figure this out inside `Navbar`, can't you? Or is it for the separation of concerns?
+  // DILEMMA: What is the purpose of passing such a prop? It's useless. You can figure this out inside `Navbar`, can't you? Or is it for the separation of concerns?
   canAddSections,
   className,
   deleteSections,
@@ -193,7 +193,7 @@ export default function Navbar({
   const items = draggableSectionIds.map((sectionId) => {
     const isSelected = selectedSectionId === sectionId;
 
-    //? Why?
+    // DILEMMA: Why?
     const tabIndex = isSelected || editorMode ? 0 : -1;
 
     return (
@@ -210,7 +210,7 @@ export default function Navbar({
         tabIndex={tabIndex}
         title={sectionTitles[sectionId]}
         onDeleteSection={getDeleteSectionFn(sectionId)}
-        //? `selectSection` is called even when a section is already selected. Won't it cause an unneccessary rerender?
+        // DILEMMA: `selectSection` is called even when a section is already selected. Won't it cause an unneccessary rerender?
         onSelectSection={() => selectSection(sectionId)}
       />
     );
@@ -255,7 +255,7 @@ export default function Navbar({
     // TODO: comment all this logic properly.
     if (isSectionId(id) && !isDragging) {
       if (activeSectionIds.length === 1) {
-        //? Why is there no `e.preventDefault()` like in the next branch?
+        // DILEMMA: Why is there no `e.preventDefault()` like in the next branch?
         if (e.key === 'ArrowDown') {
           document.getElementById('add-sections')!.focus();
         } else if (e.key === 'ArrowUp') {

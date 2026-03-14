@@ -104,7 +104,7 @@ export default function Preview({
   // Initialised with an empty instance (`instance.url === null`).
   const [instance, updateInstance] = usePDF();
 
-  // ? Messy... Is there a way to make it cleaner?
+  // DILEMMA: Messy... Is there a way to make it cleaner?
   // Prevent `usePDF` from creating a new PDF on every re-render.
   const document = useMemo(() => {
     // Don't define `document` until fonts are loaded.
@@ -122,7 +122,7 @@ export default function Preview({
     updateInstance(document);
   }, [document, updateInstance]);
 
-  // ? Does the canvas need debouncing? It was needed when there was an actual embedded PDF, but now? Canvas can itself resize properly, you just need to apply CSS, right?
+  // DILEMMA: Does the canvas need debouncing? It was needed when there was an actual embedded PDF, but now? Canvas can itself resize properly, you just need to apply CSS, right?
   /**
    * This one is for changing the size of the canvas to always keep it A4 when
    * the browser window is resized.
@@ -139,7 +139,7 @@ export default function Preview({
 
     const width = viewportWidth - 2 * paddingInline;
 
-    // ? Why is it a state? Does it need to be a state?
+    // DILEMMA: Why is it a state? Does it need to be a state?
     /**
      * Width is calculated automatically. It simply takes up as much space as
      * it can. This is desired. This line calculates what height the canvas
@@ -293,7 +293,7 @@ export default function Preview({
             )}
             <PDFDownloadLink document={document} fileName="Resume.pdf">
               {({ loading, error }) => {
-                //? Does it render nothing in this case, or does it render an anchor tag anyway?
+                // DILEMMA: Does it render nothing in this case, or does it render an anchor tag anyway?
                 if (loading) return null;
                 // TODO: don't throw. Just log the error and return `null`.
                 if (error) throw error;

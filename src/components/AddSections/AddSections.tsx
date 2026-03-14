@@ -13,7 +13,7 @@ import './AddSections.scss';
 import type { SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
-//? (1) Should it be in the bottom? It's visually in an upper corner of the modal. Shouldn't it be on top of `AddSections-List` in the DOM?
+// DILEMMA: (1) Should it be in the bottom? It's visually in an upper corner of the modal. Shouldn't it be on top of `AddSections-List` in the DOM?
 
 export interface AddSectionsProps {
   activeSectionIds: SectionId[];

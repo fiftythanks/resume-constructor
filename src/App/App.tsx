@@ -21,16 +21,16 @@ import loadFonts from './loadFonts';
 
 // TODOs, FIXMEs and dilemmas
 
-// ? `modifiers[]` props aren't convenient. Should I make them simple strings?
-// ? Are tabulletPointanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
+// DILEMMA: `modifiers[]` props aren't convenient. Should I make them simple strings?
+// DILEMMA: Are tabulletPointanels controlled by tabs valid when the tabs are hidden? Should I conditionalise related ARIA attributes?
 
 /**
  * So that you don't lose everything when the browser crashes abruply or
  * something else happens. And simply because it's more user-friendly.
  */
-// TODO (application-wide): add local storage use for the data.
+// TODO: add local storage use for the data.
 
-// TODO (application-wide): change all compile-time constants' names to UPPER_SNAKE_CASE.
+// TODO: change all compile-time constants' names to UPPER_SNAKE_CASE.
 
 /**
  * The app needs a Russian version, since I will be using it for my job search.
@@ -38,7 +38,7 @@ import loadFonts from './loadFonts';
  * different typeface, and the style of the resume should be a bit different, I
  * think.
  */
-// TODO (application-wide): add Russian version.
+// TODO: add Russian version.
 
 /**
  * I've just stumbled upon one great article about accessibility,
@@ -47,10 +47,10 @@ import loadFonts from './loadFonts';
  * guidelines, and see what I should change in the app to reasonably
  * improve accessibility.
  */
-// TODO (application-wide): fix color contrasts with APCA (https://apcacontrast.com/).
-// TODO (application-wide): go through the article and change whatever needs a change.
+// TODO: fix color contrasts with APCA (https://apcacontrast.com/).
+// TODO: go through the article and change whatever needs a change.
 
-// TODO (application-wide): determine which fields are those that aren't desirable in a software engineer's resume and add hints to their labels that explain that they aren't desirable.
+// TODO: determine which fields are those that aren't desirable in a software engineer's resume and add hints to their labels that explain that they aren't desirable.
 
 /**
  * Maybe it should be a separate component that contains a guide on creating a
@@ -61,7 +61,7 @@ import loadFonts from './loadFonts';
  * much more interesting and impressive approach that would probably put the
  * project to a new level.
  */
-// TODO (application-wide): add tips on how to fill each section properly, in which order sections should be, etc.
+// TODO: add tips on how to fill each section properly, in which order sections should be, etc.
 
 export default function App() {
   const firstTabbablePersonal = useRef<HTMLInputElement>(null);
@@ -90,7 +90,7 @@ export default function App() {
     skillsFunctions,
   } = useResumeData();
 
-  // FIXME (application-wide): because they aren't properly imported, the functions' JSDoc comments aren't shared. Either there's some workaround or I should export all functions from the hook or somewhere else to see JSDoc.
+  // FIXME: because they aren't properly imported, the functions' JSDoc comments aren't shared. Either there's some workaround or I should export all functions from the hook or somewhere else to see JSDoc.
   const {
     activeSectionIds,
     addAllSections,

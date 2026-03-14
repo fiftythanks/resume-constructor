@@ -112,7 +112,7 @@ type ResumeSectionProps = BaseProps &
     | ReadonlyDeep<SkillsProps>
   );
 
-//? Why is it named `sectionName` here, whereas it's `sectionId` absolutely everywhere else? It shouldn't be like that, should it?
+// DILEMMA: Why is it named `sectionName` here, whereas it's `sectionId` absolutely everywhere else? It shouldn't be like that, should it?
 /**
  * A resume Section (Personal Details, Education etc.) for insertion
  * directly into the rendered document.
