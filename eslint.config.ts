@@ -14,6 +14,7 @@ import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+// TODO: Update the signature (this one is deprecated).
 export default tseslint.config([
   {
     ignores: ['dist/**', '.github/**', 'node_modules/**'],
@@ -32,6 +33,7 @@ export default tseslint.config([
     extends: [
       js.configs.recommended,
       react.configs.flat.recommended,
+      react.configs.flat['jsx-runtime'],
       jsxA11y.flatConfigs.recommended,
       tseslint.configs.recommended,
       importX.configs['flat/recommended'],
@@ -262,7 +264,7 @@ export default tseslint.config([
     },
   },
   {
-    // disable type-aware linting on JS files
+    // disable type-aware linting in JS files
     files: ['**/*.{mjs,js,jsx}'],
     extends: [tseslint.configs.disableTypeChecked],
   },
