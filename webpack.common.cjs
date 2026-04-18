@@ -89,6 +89,7 @@ module.exports = {
               noEmit: false,
               allowImportingTsExtensions: false,
             },
+            onlyCompileBundledFiles: true,
           },
         },
       },
