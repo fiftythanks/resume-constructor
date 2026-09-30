@@ -6,7 +6,20 @@ import sectionTitles from '@/utils/sectionTitles';
 import type { SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
-// TODO: split this hook in three separate hooks: `useUiState` for navbar/editorMode state logic, `useSectionsState` for most of the logic here, and something like `useScreenReaderAnnouncement` for screen-reader logic.
+// TODO: split this hook into three separate hooks: `useUiState`, `useSectionsState` and `useScreenReaderAnnouncement`.
+/**
+ * `useAppState` currently violates the Single Responsibility Principle by
+ * coupling three unrelated concerns:
+ * 1. Document Section Topology: managing active sections, current tab and
+ *    reordering logic (`sectionsState`).
+ * 2. Navbar UI Interaction Mode: managing `editorMode`, which is purely a
+ *    local concern of `Navbar.tsx` and does not affect the rest of the shell.
+ * 3. Screen Reader Live Announcements: maintaining and clearing live messages.
+ *
+ * Because this hook is instantiated at the root in `App.tsx`, any change to
+ * ephemeral navbar UI state forces a full re-render of `App`, `AppLayout`,
+ * `Toolbar` and all active form tabpanels.
+ */
 
 // TODO: decide which initial sections to use.
 const INITIAL_ACTIVE_SECTION_IDS: SectionId[] = [
@@ -58,6 +71,19 @@ export default function useAppState() {
     previousOpenedSectionId: sectionsState.openedSectionId,
   });
 
+  // FIXME: eliminate `useEffect` state synchronisation and double-render cascades.
+  /**
+   * Violates 'eslint-plugin-react-you-might-not-need-an-effect'. Observing
+   * `sectionsState` inside an effect to compute `screenReaderAnnouncement`
+   * triggers an immediate secondary render pass across the entire tree whenever
+   * a section is opened, added, deleted or reordered.
+   *
+   * Screen reader announcements are discrete, event-driven reactions. They
+   * should be dispatched directly from user interaction callbacks
+   * (`openSection`, `addSections`, `deleteSections` and `reorderSections`),
+   * eliminating both the fragile mutable ref diffing (`previousSectionsStateRef`)
+   * and the redundant render cascade.
+   */
   // Announce manipulations with sections to screen readers.
   useEffect(() => {
     const { activeSectionIds, openedSectionId } = sectionsState;
@@ -117,6 +143,13 @@ export default function useAppState() {
 
   // Announce toggling the editor mode to screen readers.
   // FIXME: fix the issue with chaining state changes.
+  /**
+   * Refactor editor mode announcements out of `useEffect`. Tracking
+   * `editorMode` transitions in an effect causes chained state transitions,
+   * race conditions and potential announcement clobbering when combined with
+   * section mutations. Announcements should be dispatched directly inside the
+   * `toggleEditorMode` callback.
+   */
   useEffect(() => {
     if (previousEditorModeRef.current !== editorMode) {
       if (editorMode) {
