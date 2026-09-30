@@ -3,7 +3,6 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-import React from 'react';
 
 import { getByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

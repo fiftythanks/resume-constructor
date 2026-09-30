@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import { ChangeEvent } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
 
@@ -7,9 +7,9 @@ import type { Project } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 export interface ProjectProps {
-  data: Project;
-  functions: ProjectFunctions;
-  updateScreenReaderAnnouncement: (announcement: string) => void;
+  data: ReadonlyDeep<Project>;
+  functions: ReadonlyDeep<ProjectFunctions>;
+  updateScreenReaderAnnouncement: ReadonlyDeep<(announcement: string) => void>;
 }
 
 // TODO: it should be a fieldset, without quotation marks.
@@ -20,7 +20,7 @@ export default function Project({
   data,
   functions,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<ProjectProps>) {
+}: ProjectProps) {
   function handleLinkChange(
     e: ChangeEvent<HTMLInputElement>,
     field: 'code' | 'demo',

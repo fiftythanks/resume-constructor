@@ -1,6 +1,6 @@
-import React from 'react';
 import type { RefObject } from 'react';
 
+import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
 import Button from '@/components/Button';
@@ -12,8 +12,8 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Education, ItemWithId } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface DegreeFunctions {
   addBulletPoint: () => void;
@@ -27,23 +27,26 @@ export interface DegreeFunctions {
 }
 
 export interface EducationProps {
-  data: Education;
-  firstTabbable: RefObject<HTMLButtonElement | null>;
-  functions: ReturnType<typeof useResumeData>['educationFunctions'];
-  updateScreenReaderAnnouncement: (announcement: string) => void;
+  data: ReadonlyDeep<Education>;
+  functions: ReadonlyDeep<
+    ReturnType<typeof useResumeData>['educationFunctions']
+  >;
+  ref: RefObject<HTMLElement | null>;
+  updateScreenReaderAnnouncement: ReadonlyDeep<(announcement: string) => void>;
 }
-
-type ReadonlyEducationProps = ReadonlyExcept<EducationProps, 'firstTabbable'>;
 
 /**
  * The Education section form.
  */
 export default function Education({
   data,
-  firstTabbable,
   functions,
+  ref,
   updateScreenReaderAnnouncement,
-}: ReadonlyEducationProps) {
+}: EducationProps) {
+  const { handleFocus, handleKeyboard } =
+    useLastComponentBeforeTabpanel('education');
+
   const shownDegreeIndex = data.shownDegreeIndex;
 
   function addDegree() {
@@ -76,11 +79,13 @@ export default function Education({
       aria-labelledby="education"
       className="section"
       id="education-tabpanel"
+      ref={ref}
       role="tabpanel"
     >
       <form action="#" className="section--form section--form__bullet-points">
         <header className="section--header">
           <h2>Degree {shownDegreeIndex + 1}</h2>
+          {/* FIXME: When you press "Show Previous/Next Degree" or delete a degree, the browser loses focus. */}
           {/* Conditional rendering to get rid of redundant flex gap. */}
           {(shownDegreeIndex > 0 ||
             shownDegreeIndex !== data.degrees.length - 1) && (
@@ -90,8 +95,9 @@ export default function Education({
                   aria-label="Show Previous Degree"
                   className="section--item-navigation-button"
                   id="show-previous-degree"
-                  ref={firstTabbable}
                   onClick={() => functions.showDegree(shownDegreeIndex - 1)}
+                  onFocus={(e) => handleFocus(e)}
+                  onKeyDown={(e) => handleKeyboard(e)}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -109,8 +115,19 @@ export default function Education({
                 <Button
                   aria-label="Show Next Degree"
                   id="show-next-degree"
-                  ref={shownDegreeIndex === 0 ? firstTabbable : undefined}
                   onClick={() => functions.showDegree(shownDegreeIndex + 1)}
+                  onFocus={(e) => {
+                    // Don't handle focus if it's not the first tabbable element.
+                    if (shownDegreeIndex > 0) return;
+
+                    handleFocus(e);
+                  }}
+                  onKeyDown={(e) => {
+                    // Don't handle keydown if it's not the first tabbable element.
+                    if (shownDegreeIndex > 0) return;
+
+                    handleKeyboard(e);
+                  }}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -129,8 +146,29 @@ export default function Education({
           <Button
             aria-label={`Add Degree ${data.degrees.length + 1}`}
             id="add-degree"
-            ref={data.degrees.length === 1 ? firstTabbable : undefined}
             onClick={addDegree}
+            onFocus={(e) => {
+              // Don't handle focus if it's not the first tabbable element.
+              if (
+                shownDegreeIndex > 0 ||
+                shownDegreeIndex !== data.degrees.length - 1
+              ) {
+                return;
+              }
+
+              handleFocus(e);
+            }}
+            onKeyDown={(e) => {
+              // Don't handle keydown if it's not the first tabbable element.
+              if (
+                shownDegreeIndex > 0 ||
+                shownDegreeIndex !== data.degrees.length - 1
+              ) {
+                return;
+              }
+
+              handleKeyboard(e);
+            }}
             modifiers={[
               'Button_paddingBlock_none',
               'Button_paddingInline_small',

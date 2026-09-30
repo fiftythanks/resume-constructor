@@ -3,7 +3,6 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -106,7 +105,7 @@ const FUNCTIONS: ReturnType<typeof useResumeData>['educationFunctions'] = {
 function getProps(overrides?: Partial<EducationProps>): EducationProps {
   return {
     data: structuredClone(DATA),
-    firstTabbable: { current: null },
+    ref: { current: null },
     functions: cloneDeep(FUNCTIONS),
     updateScreenReaderAnnouncement(_announcement: string) {},
     ...overrides,
@@ -521,34 +520,12 @@ describe('Education', () => {
     });
   });
 
-  it('should assign the "Show Previous Degree" button to `firstTabbable.current` when the button is present', () => {
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
-    props.data.shownDegreeIndex = 1;
-    render(<Education {...props} />);
+  it('should pass the section element to `ref.current`', () => {
+    const ref = { current: null };
+    render(<Education {...getProps({ ref })} />);
 
-    const btn = screen.getByRole('button', { name: 'Show Previous Degree' });
+    const education = screen.getByRole('tabpanel');
 
-    expect(firstTabbable.current).toBe(btn);
-  });
-
-  it('should assign the "Show Next Degree" button to `firstTabbable.current` when the button is present and the "Show Previous Degree" button is not', () => {
-    const firstTabbable = { current: null };
-    render(<Education {...getProps({ firstTabbable })} />);
-
-    const btn = screen.getByRole('button', { name: 'Show Next Degree' });
-
-    expect(firstTabbable.current).toBe(btn);
-  });
-
-  it("should assign the 'Add Degree' button to `firstTabbable.current` when there's only one degree", () => {
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
-    props.data.degrees.splice(0, 2);
-    render(<Education {...props} />);
-
-    const btn = screen.getByRole('button', { name: 'Add Degree 2' });
-
-    expect(firstTabbable.current).toBe(btn);
+    expect(ref.current).toBe(education);
   });
 });

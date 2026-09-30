@@ -1,21 +1,18 @@
-import React from 'react';
-import type { RefCallback } from 'react';
+import type { RefObject } from 'react';
 
-import useAppState from '@/hooks/useAppState';
+import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
 import BulletPoints from '@/components/BulletPoints';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Skills } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface SkillsProps {
-  data: Skills;
-  functions: ReturnType<typeof useResumeData>['skillsFunctions'];
-  setFirstTabbable: RefCallback<HTMLButtonElement>;
-  updateScreenReaderAnnouncement: ReturnType<
-    typeof useAppState
-  >['updateScreenReaderAnnouncement'];
+  data: ReadonlyDeep<Skills>;
+  functions: ReadonlyDeep<ReturnType<typeof useResumeData>['skillsFunctions']>;
+  ref: RefObject<HTMLElement | null>;
+  updateScreenReaderAnnouncement: ReadonlyDeep<(announcement: string) => void>;
 }
 
 /**
@@ -23,10 +20,13 @@ export interface SkillsProps {
  */
 export default function Skills({
   data,
-  setFirstTabbable,
   functions,
+  ref,
   updateScreenReaderAnnouncement,
-}: ReadonlyExcept<SkillsProps, 'setFirstTabbable'>) {
+}: SkillsProps) {
+  const { handleFocus, handleKeyboard } =
+    useLastComponentBeforeTabpanel('skills');
+
   // Skills don't need to be bullet points. I'd say they must not be bullet points at all. They are single-line. Why on earth are they bullet points? It's strange and super redundant. For each line it should be a simple input field, and that's all.
   // TODO: switch to simple input fields from redundant bullet points.
   return (
@@ -34,6 +34,7 @@ export default function Skills({
       aria-labelledby="skills"
       className="section"
       id="skills-tabpanel"
+      ref={ref}
       role="tabpanel"
     >
       <form action="#" className="section--form section--form__bullet-points">
@@ -42,10 +43,11 @@ export default function Skills({
           data={data.languages}
           deleteItem={functions.deleteLanguage}
           editItem={functions.editLanguage}
+          handleFocusOnFirstElement={handleFocus}
+          handleKeyDownOnFirstElement={handleKeyboard}
           itemName="language"
           legend="Languages"
           name="language"
-          setFirstTabbable={setFirstTabbable}
           updateData={(value) => functions.updateSkills('languages', value)}
           updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
         />

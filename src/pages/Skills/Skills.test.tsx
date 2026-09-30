@@ -3,7 +3,6 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-import React from 'react';
 
 import { getByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -51,7 +50,7 @@ function getProps(overrides?: Partial<SkillsProps>): SkillsProps {
       deleteTool(_index) {},
       editTool(_index: number, _value: string) {},
     },
-    setFirstTabbable: (_firstTabbable) => {},
+    ref: { current: null },
     updateScreenReaderAnnouncement(_announcement) {},
     ...overrides,
   };
@@ -211,41 +210,13 @@ describe('Skills', () => {
     });
   });
 
-  it('should call `setFirstTabbable`', () => {
-    // Arrange
-    const mockFn = jest.fn((_firstTabbable) => {});
-    render(<div aria-label="Skills" id="skills" />);
-    render(<Skills {...getProps({ setFirstTabbable: mockFn })} />);
+  it('should pass the section element to `ref.current`', () => {
+    const ref = { current: null };
+    render(<Skills {...getProps({ ref })} />);
 
-    // Assert
-    expect(mockFn).toHaveBeenCalledTimes(1);
-  });
+    const skills = screen.getByRole('tabpanel');
 
-  it('should pass the "Drag bullet point 1" button to `setFirstTabbable` when there is such button', () => {
-    const mockFn = jest.fn((_firstTabbable) => {});
-    render(<div aria-label="Skills" id="skills" />);
-    render(<Skills {...getProps({ setFirstTabbable: mockFn })} />);
-
-    const languages = screen.getByRole('group', { name: 'Languages' });
-    const btn = getByRole(languages, 'button', { name: 'Drag bullet point 1' });
-
-    expect(mockFn).toHaveBeenCalledWith(btn);
-  });
-
-  it("should pass the 'Add language' button to `setFirstTabbable` when there's no language bullets", () => {
-    // Arrange
-    const mockFn = jest.fn((_firstTabbable) => {});
-    const props = getProps({ setFirstTabbable: mockFn });
-    props.data.languages = [];
-
-    render(<div aria-label="Skills" id="skills" />);
-    render(<Skills {...props} />);
-
-    // Act
-    const btn = screen.getByRole('button', { name: 'Add language' });
-
-    // Assert
-    expect(mockFn).toHaveBeenCalledWith(btn);
+    expect(ref.current).toBe(skills);
   });
 
   describe('Frameworks', () => {

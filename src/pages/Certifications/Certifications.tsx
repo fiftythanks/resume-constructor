@@ -1,28 +1,28 @@
-import React from 'react';
-import type { ChangeEvent, Ref } from 'react';
+import type { ChangeEvent, RefObject } from 'react';
 
+import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Certifications } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface CertificationsProps {
-  data: Certifications;
-  firstTabbable: Ref<HTMLTextAreaElement | null>;
-  functions: ReturnType<typeof useResumeData>['certificationsFunctions'];
+  data: ReadonlyDeep<Certifications>;
+  functions: ReadonlyDeep<
+    ReturnType<typeof useResumeData>['certificationsFunctions']
+  >;
+  ref: RefObject<HTMLElement | null>;
 }
-
-type ReadonlyCertificationsProps = ReadonlyExcept<
-  CertificationsProps,
-  'firstTabbable'
->;
 
 // The Certifications section form.
 export default function Certifications({
   data,
-  firstTabbable,
   functions,
-}: ReadonlyCertificationsProps) {
+  ref,
+}: CertificationsProps) {
+  const { handleFocus, handleKeyboard } =
+    useLastComponentBeforeTabpanel('certifications');
+
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target as {
       name: 'certificates' | 'interests' | 'skills';
@@ -37,6 +37,7 @@ export default function Certifications({
       aria-labelledby="certifications"
       className="section"
       id="certifications-tabpanel"
+      ref={ref}
       role="tabpanel"
     >
       <form action="#" className="section--form">
@@ -50,9 +51,10 @@ export default function Certifications({
               id="certificates"
               name="certificates"
               placeholder="List any relevant certifications, e.g., AWS Certified Cloud Practitioner, Google IT Support Professional Certificate."
-              ref={firstTabbable}
               value={data.certificates}
               onChange={handleInputChange}
+              onFocus={(e) => handleFocus(e)}
+              onKeyDown={(e) => handleKeyboard(e)}
             />
           </li>
           <li className="section--list-item">

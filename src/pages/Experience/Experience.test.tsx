@@ -3,7 +3,6 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -107,7 +106,7 @@ const FUNCTIONS: ReturnType<typeof useResumeData>['experienceFunctions'] = {
 function getProps(overrides?: Partial<ExperienceProps>): ExperienceProps {
   return {
     data: structuredClone(DATA),
-    firstTabbable: { current: null },
+    ref: { current: null },
     functions: cloneDeep(FUNCTIONS),
     updateScreenReaderAnnouncement(_announcement) {},
     ...overrides,
@@ -502,34 +501,12 @@ describe('Experience', () => {
     });
   });
 
-  it('should assign the "Show Previous Job" button to `firstTabbable.current` when the button is present', () => {
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
-    props.data.shownJobIndex = 1;
-    render(<Experience {...props} />);
+  it('should pass the section element to `ref.current`', () => {
+    const ref = { current: null };
+    render(<Experience {...getProps({ ref })} />);
 
-    const btn = screen.getByRole('button', { name: 'Show Previous Job' });
+    const experience = screen.getByRole('tabpanel');
 
-    expect(firstTabbable.current).toBe(btn);
-  });
-
-  it('should assign the "Show Next Job" button to `firstTabbable.current` when the button is present and the "Show Previous Job" button is not', () => {
-    const firstTabbable = { current: null };
-    render(<Experience {...getProps({ firstTabbable })} />);
-
-    const btn = screen.getByRole('button', { name: 'Show Next Job' });
-
-    expect(firstTabbable.current).toBe(btn);
-  });
-
-  it("should assign the 'Add Job' button to `firstTabbable.current` when there's only one degree", () => {
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
-    props.data.jobs.splice(0, 2);
-    render(<Experience {...props} />);
-
-    const btn = screen.getByRole('button', { name: 'Add Job 2' });
-
-    expect(firstTabbable.current).toBe(btn);
+    expect(ref.current).toBe(experience);
   });
 });

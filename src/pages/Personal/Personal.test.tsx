@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -18,7 +16,7 @@ function getProps(overrides?: Partial<PersonalProps>): PersonalProps {
       phone: 'phone',
       summary: 'summary',
     },
-    firstTabbable: { current: null },
+    ref: { current: null },
     functions: {
       updatePersonal(
         _field:
@@ -46,13 +44,13 @@ describe('Personal', () => {
     expect(personal).toBeInTheDocument();
   });
 
-  it('should pass the first tabbable element to `firstTabbable.current`', () => {
-    const firstTabbable = { current: null };
-    render(<Personal {...getProps({ firstTabbable })} />);
+  it('should pass the section element to `ref.current`', () => {
+    const ref = { current: null };
+    render(<Personal {...getProps({ ref })} />);
 
-    const firstTabbableNode = screen.getByTestId('first-tabbable-personal');
+    const personal = screen.getByRole('tabpanel');
 
-    expect(firstTabbable.current).toBe(firstTabbableNode);
+    expect(ref.current).toBe(personal);
   });
 
   describe('Full Name', () => {
