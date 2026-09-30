@@ -3,16 +3,14 @@ title: Form Engineering & Section Architecture
 description: Granular analysis of form controls, accessibility semantics, dynamic pagination and drag-and-drop mechanics in Resume Constructor.
 ---
 
-## Overview
-
 The editing interface of Resume Constructor is structured around seven domain sections, each mapped to a dedicated tabpanel in the application shell. Rather than relying on generic form wrappers, every page is custom-built to balance strict WCAG 2.2 AA accessibility, atomic state mutations via Immer and tactile keyboard operability.
 
 ```mermaid
 flowchart LR
-    NavbarTab["Navbar Tab<br/>(role='tab')"] -->|aria-controls| SectionPanel["Section Tabpanel<br/>(role='tabpanel')"]
+    NavbarTab["Navbar Tab<br/>(role=#quot;tab#quot;)"] -->|aria-controls| SectionPanel["Section Tabpanel<br/>(role=#quot;tabpanel#quot;)"]
     SectionPanel --> SectionForm["Accessible Form<br/>(Explicit htmlFor Labels)"]
     SectionForm --> PaginationNav["Pagination Header<br/>(Prev/Next/Add/Delete)"]
-    SectionForm --> SortableList["Sortable Accomplishments<br/>(@dnd-kit / BulletPoints)"]
+    SectionForm --> SortableList["Sortable Accomplishments<br/>(@dnd-kit/BulletPoints)"]
 ```
 
 ---
@@ -20,6 +18,7 @@ flowchart LR
 ## 1. Accessible Form Semantics
 
 Every section component is bound to the sidebar navigation using explicit WAI-ARIA tabpanel contracts:
+
 - **Tabpanel Binding:** The root element of each page is a `<section>` element marked with `role="tabpanel"`, `id="<sectionId>-tabpanel"` and `aria-labelledby="<sectionId>"`.
 - **Explicit Label Coupling:** Under `jsx-a11y/label-has-associated-control`, implicit wrapping is strictly prohibited. Every `<input>` and `<textarea>` control is programmatically linked to an adjacent `<label>` through matching `id` and `htmlFor` attributes.
 - **Reverse Focus Boundary Interception:** When navigating backwards via `Shift+Tab` from the first interactive control inside any tabpanel, `useLastComponentBeforeTabpanel` intercepts the event and returns focus directly to the controlling navbar tab button. This prevents focus traps and guarantees predictable tab-order symmetry.
@@ -30,15 +29,15 @@ Every section component is bound to the sidebar navigation using explicit WAI-AR
 
 The editor manages seven discrete section schemas defined in `src/types/resumeData.ts`:
 
-| Section | Model Interface | Primary Properties | Key Dynamic Behaviours |
-|---|---|---|---|
-| **Personal** | `Personal` | `fullName`, `jobTitle`, `email`, `phone`, `address`, `summary` | Flat form with dedicated HTML5 input types (`email`, `tel`). |
-| **Education** | `Education` | `shownDegreeIndex`, `degrees: Degree[]` | Carousel card pagination, degree fields and nested bullet points. |
-| **Experience** | `Experience` | `shownJobIndex`, `jobs: Job[]` | Carousel card pagination, job history fields and nested bullet points. |
-| **Projects** | `Projects` | `shownProjectIndex`, `projects: Project[]` | Carousel card pagination, code/demo repository links and bullet points. |
-| **Skills** | `Skills` | `languages`, `frameworks`, `tools` | Three sequential accomplishment groups managed via `BulletPoints`. |
-| **Certifications** | `Certifications` | `certificates`, `skills`, `interests` | Multiline text areas capturing credentials and professional interests. |
-| **Links** | `Links` | `website`, `github`, `linkedin`, `telegram` | Paired link descriptors containing anchor text and target URL. |
+| Section            | Model Interface  | Primary Properties                                             | Key Dynamic Behaviours                                                  |
+| ------------------ | ---------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **Personal**       | `Personal`       | `fullName`, `jobTitle`, `email`, `phone`, `address`, `summary` | Flat form with dedicated HTML5 input types (`email`, `tel`).            |
+| **Education**      | `Education`      | `shownDegreeIndex`, `degrees: Degree[]`                        | Carousel card pagination, degree fields and nested bullet points.       |
+| **Experience**     | `Experience`     | `shownJobIndex`, `jobs: Job[]`                                 | Carousel card pagination, job history fields and nested bullet points.  |
+| **Projects**       | `Projects`       | `shownProjectIndex`, `projects: Project[]`                     | Carousel card pagination, code/demo repository links and bullet points. |
+| **Skills**         | `Skills`         | `languages`, `frameworks`, `tools`                             | Three sequential accomplishment groups managed via `BulletPoints`.      |
+| **Certifications** | `Certifications` | `certificates`, `skills`, `interests`                          | Multiline text areas capturing credentials and professional interests.  |
+| **Links**          | `Links`          | `website`, `github`, `linkedin`, `telegram`                    | Paired link descriptors containing anchor text and target URL.          |
 
 ---
 
