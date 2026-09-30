@@ -18,10 +18,12 @@ function getProps(overrides?: Partial<ListItemProps>): ListItemProps {
   };
 }
 
-// disabled
-// pressed
-// roledescription
-// describedby
+/**
+ * disabled
+ * pressed
+ * roledescription
+ * describedby
+ */
 
 describe('ListItem', () => {
   describe('text input', () => {

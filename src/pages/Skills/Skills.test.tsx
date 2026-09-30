@@ -58,11 +58,13 @@ function getProps(overrides?: Partial<SkillsProps>): SkillsProps {
 
 // correct data passed
 
-// tools legend
-// addTool
-// deleteTool
-// editTool
-// updateScreenReaderAnnouncement for tools
+/**
+ * tools legend
+ * addTool
+ * deleteTool
+ * editTool
+ * updateScreenReaderAnnouncement for tools
+ */
 
 // TODO: find a way to test `updateSkills` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
 

@@ -27,8 +27,14 @@ export default function Skills({
   const { handleFocus, handleKeyboard } =
     useLastComponentBeforeTabpanel('skills');
 
-  // Skills don't need to be bullet points. I'd say they must not be bullet points at all. They are single-line. Why on earth are they bullet points? It's strange and super redundant. For each line it should be a simple input field, and that's all.
-  // TODO: switch to simple input fields from redundant bullet points.
+  /**
+   * Skills don't need to be bullet points. I'd say they must not be bullet
+   * points at all. They are single-line. Why on earth are they bullet points?
+   * It's strange and super redundant. For each line it should be a simple
+   * input field, and that's all.
+   *
+   * TODO: switch to simple input fields from redundant bullet points.
+   */
   return (
     <section
       aria-labelledby="skills"

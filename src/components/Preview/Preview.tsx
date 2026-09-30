@@ -33,8 +33,10 @@ import type { ReadonlyDeep } from 'type-fest';
 // Setting worker path to worker bundle.
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
 
-// It's how the aspect ratio is defined in the `react-pdf` library.
-// https://github.com/diegomura/react-pdf/blob/ee5c96b80326ba4441b71be4c7a85ba9f61d4174/packages/layout/src/page/getSize.ts
+/**
+ * It's how the aspect ratio is defined in the `react-pdf` library.
+ * https://github.com/diegomura/react-pdf/blob/ee5c96b80326ba4441b71be4c7a85ba9f61d4174/packages/layout/src/page/getSize.ts
+ */
 const A4_ASPECT_RATIO = 595.28 / 841.89;
 
 export interface PreviewProps {

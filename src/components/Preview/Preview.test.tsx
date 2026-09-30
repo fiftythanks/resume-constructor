@@ -17,11 +17,13 @@ import type { DocumentProps, UsePDFInstance } from '@react-pdf/renderer';
 
 // TODO: this test suite is a disaster. Refactor this rubbish heavily.
 
-// Testing plan:
-// TODO: to be finished as soon as I figure out how the component works.
-// Download buttons
-// - [ ] If loading, should not render.
-// - [ ] If error, should throw.
+/**
+ * Testing plan:
+ * TODO: to be finished as soon as I figure out how the component works.
+ * Download buttons
+ * - [ ] If loading, should not render.
+ * - [ ] If error, should throw.
+ */
 
 /**
  * Changes the implementation of `usePDF` to alter document loading status.
