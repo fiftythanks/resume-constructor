@@ -42,7 +42,7 @@
   - Deep immutability is enforced across component boundaries.
 - **React Patterns & Zero Redundant Effects:**
   - Adhere strictly to `eslint-plugin-react-you-might-not-need-an-effect`.
-  - Never use `useEffect` for state synchronisation, transformations, or event reactions. Calculate derived state during render or update state inside event callbacks.
+  - Never use `useEffect` for state synchronisation, transformations or event reactions. Calculate derived state during render or update state inside event callbacks.
   - State mutations: Use `immer` / `use-immer` for nested state updates.
 - **Form Controls & A11y:**
   - All form controls MUST have explicit labels: `jsx-a11y/label-has-associated-control` enforces `asserts: 'htmlFor'`. Never rely on implicit wrapping alone.
@@ -105,7 +105,27 @@ Every file must strictly adhere to the automated sorting hierarchy:
 
 ---
 
-## 7. Gemini 3.8 Flash Agent Verification Checklist
+## 7. Git & Commit Message Standards (Conventional Commits)
+
+Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
+
+- **Atomic Commits:** Commit every logical change independently and atomically.
+- **Commit Format:** `<tag>(<scope>): <subject>` (or `<tag>: <subject>` for broad chores).
+- **Subject Length:** First line MUST NOT exceed 50 characters (`<= 50`).
+- **Separation:** Exactly one blank line between the subject and body.
+- **Body Line Length:** Every body line MUST NOT exceed 80 characters (`<= 80`).
+- **Code Symbols in Body:** Enclose all identifiers, component names, filenames, directory paths, props and attributes in backticks in the commit body (not the first line).
+- **Spelling & Style:** Write all commit messages and code comments in traditional British English ("optimise", "initialise", "behaviour", "centre", "colour") and strictly NO Oxford comma.
+- **Allowed Tags:** `feat`, `fix`, `refactor`, `test`, `docs`, `chore`.
+- **Allowed Scopes:** Strictly lowercase:
+  - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.
+  - Pages: `personal`, `education`, `experience`, `projects`, `skills`, `certifications`, `links`, `pages`.
+  - Core: `hooks`, `utils`, `types`, `styles`.
+  - Tooling/Infra: `webpack`, `husky`, `ci`, `e2e`, `jest`, `eslint`, `package`, `readme`, `agents`.
+
+---
+
+## 8. Gemini 3.8 Flash Agent Verification Checklist
 
 Before finishing any task or concluding a turn:
 
@@ -114,3 +134,4 @@ Before finishing any task or concluding a turn:
 3. Run `bun x stylelint <modified-scss-files>` if styles were changed.
 4. Run `bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests`.
 5. If errors occur, diagnose using: `[Error Source] -> [Attempted Fix] -> [Result]`.
+
