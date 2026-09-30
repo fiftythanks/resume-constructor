@@ -31,8 +31,20 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Type check
+        run: bun x tsc --noEmit
+
+      - name: Lint JavaScript & TypeScript
+        run: bun x eslint .
+
+      - name: Lint Styles
+        run: bun x stylelint "src/**/*.scss"
+
       - name: Run Jest tests
         run: bun run test:ci
+
+      - name: Verify production build
+        run: bun run build
 
       # --- PLAYWRIGHT BYPASS (Medium-to-Large-Screen Refactor) ---
       # Playwright E2E and visual regression tests are temporarily disabled
