@@ -29,7 +29,9 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: |
+          bun install --frozen-lockfile
+          bun install --frozen-lockfile --cwd docs
 
       - name: Type check
         run: bun x tsc --noEmit
@@ -45,6 +47,12 @@ jobs:
 
       - name: Verify production build
         run: bun run build
+
+      - name: Check documentation diagnostics
+        run: bun run docs:check
+
+      - name: Verify documentation build & link integrity
+        run: bun run docs:build
 
       # --- PLAYWRIGHT BYPASS (Medium-to-Large-Screen Refactor) ---
       # Playwright E2E and visual regression tests are temporarily disabled

@@ -14,6 +14,7 @@
     "build": "webpack --config webpack.prod.cjs",
     "docs:dev": "bun --cwd docs dev",
     "docs:build": "bun --cwd docs build",
+    "docs:check": "bun --cwd docs check",
     "p": "git add . && git commit && git push origin main",
     "prepare": "husky"
   },
@@ -126,7 +127,13 @@
       "prettier --write --ignore-unknown",
       "jest --bail --findRelatedTests --passWithNoTests"
     ],
-    "src/**/*.{html,json}": "prettier --write --ignore-unknown",
+    "docs/**/*.{ts,tsx,astro}": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
+    ],
+    "docs/**/*.md": "prettier --write --ignore-unknown",
+    "*.md": "prettier --write --ignore-unknown",
+    "{src,docs}/**/*.{html,json}": "prettier --write --ignore-unknown",
     "src/**/*.scss": [
       "stylelint --fix",
       "prettier --write --ignore-unknown"
