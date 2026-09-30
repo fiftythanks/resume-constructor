@@ -107,24 +107,24 @@ In strict compliance with `eslint-plugin-react-you-might-not-need-an-effect`:
 
 ```text
 resume-constructor/
-├── docs/                 # Astro Starlight documentation portal
+├── docs/                     # Astro Starlight documentation portal
 ├── src/
-│   ├── App/              # Application shell and font initialisation
-│   ├── assets/           # Static icons and graphic assets
-│   ├── components/       # Reusable, domain-agnostic UI primitives
-│   │   ├── AddSections/  # Section selection modal dialog
+│   ├── App/                  # Application shell and font initialisation
+│   ├── assets/               # Static icons and graphic assets
+│   ├── components/           # Reusable, domain-agnostic UI primitives
+│   │   ├── AddSections/      # Section selection modal dialog
 │   │   ├── AppbarIconButton/ # Responsive appbar action buttons
-│   │   ├── AppLayout/    # Macro shell (Sidebar, Navbar, Toolbar, Main)
-│   │   ├── BulletPoints/ # Dynamic sortable accomplishment lists
-│   │   ├── Button/       # Base button primitive
-│   │   ├── Popup/        # Modal dialog wrapper with focus trap
-│   │   └── Preview/      # PDF rendering & canvas rasterization
-│   ├── hooks/            # Custom React hooks (state, layout, a11y)
-│   ├── pages/            # Feature form sections (Personal, Education...)
-│   ├── styles/           # Global SCSS, custom properties, BEM base
-│   ├── types/            # TypeScript domain interfaces and utility types
-│   └── utils/            # Pure helper functions (capitalize, neverReached)
-├── webpack.common.cjs    # Shared webpack 5 build configuration
-├── webpack.dev.cjs       # Development server configuration
-└── webpack.prod.cjs      # Production optimization pipeline
+│   │   ├── AppLayout/        # Macro shell (Sidebar, Navbar, Toolbar, Main)
+│   │   ├── BulletPoints/     # Dynamic sortable accomplishment lists
+│   │   ├── Button/           # Base button primitive
+│   │   ├── Popup/            # Modal dialog wrapper with focus trap
+│   │   └── Preview/          # PDF rendering & canvas rasterization
+│   ├── hooks/                # Custom React hooks (state, layout, a11y)
+│   ├── pages/                # Feature form sections (Personal, Education...)
+│   ├── styles/               # Global SCSS, custom properties, BEM base
+│   ├── types/                # TypeScript domain interfaces and utility types
+│   └── utils/                # Pure helper functions (capitalize, neverReached)
+├── webpack.common.cjs        # Shared webpack 5 build configuration
+├── webpack.dev.cjs           # Development server configuration
+└── webpack.prod.cjs          # Production optimization pipeline
 ```
