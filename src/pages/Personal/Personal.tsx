@@ -1,25 +1,26 @@
-import React from 'react';
 import type { ChangeEvent, RefObject } from 'react';
 
+import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Personal } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface PersonalProps {
-  data: Personal;
-  firstTabbable: RefObject<HTMLInputElement | null>;
-  functions: ReturnType<typeof useResumeData>['personalFunctions'];
+  data: ReadonlyDeep<Personal>;
+  functions: ReadonlyDeep<
+    ReturnType<typeof useResumeData>['personalFunctions']
+  >;
+  ref: RefObject<HTMLElement | null>;
 }
 
 /**
  * The Personal Details section form.
  */
-export default function Personal({
-  data,
-  firstTabbable,
-  functions,
-}: ReadonlyExcept<PersonalProps, 'firstTabbable'>) {
+export default function Personal({ data, functions, ref }: PersonalProps) {
+  const { handleFocus, handleKeyboard } =
+    useLastComponentBeforeTabpanel('personal');
+
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -36,6 +37,7 @@ export default function Personal({
       aria-labelledby="personal"
       className="section"
       id="personal-tabpanel"
+      ref={ref}
       role="tabpanel"
     >
       <form action="#" className="section--form">
@@ -50,10 +52,11 @@ export default function Personal({
               id="full-name"
               name="fullName"
               placeholder="John Doe"
-              ref={firstTabbable}
               type="text"
               value={data.fullName}
               onChange={handleInputChange}
+              onFocus={(e) => handleFocus(e)}
+              onKeyDown={(e) => handleKeyboard(e)}
             />
           </li>
           <li className="section--list-item">

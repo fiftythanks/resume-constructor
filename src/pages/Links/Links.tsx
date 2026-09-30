@@ -1,10 +1,10 @@
-import React from 'react';
 import type { ChangeEvent, RefObject } from 'react';
 
+import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Links } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: make it possible to reorder links.
 
@@ -13,19 +13,18 @@ import type { Links } from '@/types/resumeData';
 // DILEMMA: Since the email is on the same line as the links, and since it's all the contents of one section, it's kind of strange to keep two different components for all of this info, `Personal` and `Links`. It's probably more reasonable to merge the components. As a bonus, the navbar will become lower and it will be easier to adapt the app for small screen sizes, like iPhone 5's.
 
 export interface LinksProps {
-  data: Links;
-  firstTabbable: RefObject<HTMLInputElement | null>;
-  functions: ReturnType<typeof useResumeData>['linksFunctions'];
+  data: ReadonlyDeep<Links>;
+  functions: ReadonlyDeep<ReturnType<typeof useResumeData>['linksFunctions']>;
+  ref: RefObject<HTMLElement | null>;
 }
 
 /**
  * The Links section form.
  */
-export default function Links({
-  data,
-  firstTabbable,
-  functions,
-}: ReadonlyExcept<LinksProps, 'firstTabbable'>) {
+export default function Links({ data, functions, ref }: LinksProps) {
+  const { handleFocus, handleKeyboard } =
+    useLastComponentBeforeTabpanel('links');
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -42,6 +41,7 @@ export default function Links({
       aria-labelledby="links"
       className="section"
       id="links-tabpanel"
+      ref={ref}
       role="tabpanel"
     >
       <form action="#" className="section--form">
@@ -56,10 +56,11 @@ export default function Links({
               id="website-text"
               name="website-text"
               placeholder="johndoe.com"
-              ref={firstTabbable}
               type="text"
               value={data.website.text}
               onChange={handleInputChange}
+              onFocus={(e) => handleFocus(e)}
+              onKeyDown={(e) => handleKeyboard(e)}
             />
           </li>
           <li className="section--list-item">

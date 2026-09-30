@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -28,7 +26,7 @@ function getProps(overrides?: Partial<LinksProps>): LinksProps {
         text: '',
       },
     },
-    firstTabbable: { current: null },
+    ref: { current: null },
     functions: {
       updateLinks(
         _field: 'github' | 'linkedin' | 'telegram' | 'website',
@@ -50,19 +48,19 @@ describe('Links', () => {
     expect(links).toBeInTheDocument();
   });
 
-  it('should pass the first tabbable element to `firstTabbable.current`', () => {
+  it('should pass the section element to `ref.current`', () => {
     // Arrange
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
+    const ref = { current: null };
+    const props = getProps({ ref });
 
     render(<div aria-label="Links" id="links" />);
     render(<Links {...props} />);
 
     // Act
-    const firstTabbableNode = screen.getByTestId('first-tabbable-links');
+    const links = screen.getByRole('tabpanel');
 
     // Assert
-    expect(firstTabbable.current).toBe(firstTabbableNode);
+    expect(ref.current).toBe(links);
   });
 
   describe('Website', () => {

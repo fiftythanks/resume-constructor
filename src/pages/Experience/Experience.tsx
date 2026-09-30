@@ -1,6 +1,6 @@
-import React from 'react';
 import type { RefObject } from 'react';
 
+import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
 import Button from '@/components/Button';
@@ -12,8 +12,8 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Experience, ItemWithId } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface JobFunctions {
   addBulletPoint: () => void;
@@ -27,10 +27,12 @@ export interface JobFunctions {
 }
 
 export interface ExperienceProps {
-  data: Experience;
-  firstTabbable: RefObject<HTMLButtonElement | null>;
-  functions: ReturnType<typeof useResumeData>['experienceFunctions'];
-  updateScreenReaderAnnouncement: (announcement: string) => void;
+  data: ReadonlyDeep<Experience>;
+  functions: ReadonlyDeep<
+    ReturnType<typeof useResumeData>['experienceFunctions']
+  >;
+  ref: RefObject<HTMLElement | null>;
+  updateScreenReaderAnnouncement: ReadonlyDeep<(announcement: string) => void>;
 }
 
 /**
@@ -38,10 +40,13 @@ export interface ExperienceProps {
  */
 export default function Experience({
   data,
-  firstTabbable,
   functions,
+  ref,
   updateScreenReaderAnnouncement,
-}: ReadonlyExcept<ExperienceProps, 'firstTabbable'>) {
+}: ExperienceProps) {
+  const { handleFocus, handleKeyboard } =
+    useLastComponentBeforeTabpanel('experience');
+
   const { shownJobIndex } = data;
 
   function addJob() {
@@ -74,11 +79,13 @@ export default function Experience({
       aria-labelledby="experience"
       className="section"
       id="experience-tabpanel"
+      ref={ref}
       role="tabpanel"
     >
       <form action="#" className="section--form section--form__bullet-points">
         <header className="section--header">
           <h2>Job {shownJobIndex + 1}</h2>
+          {/* FIXME: When you press "Show Previous/Next Job" or delete a job, the browser loses focus. */}
           {/* Conditional rendering to get rid of redundant flex gap. */}
           {(shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) && (
             <div className="section--item-navigation">
@@ -87,8 +94,9 @@ export default function Experience({
                   aria-label="Show Previous Job"
                   className="section--item-navigation-button"
                   id="show-previous-job"
-                  ref={firstTabbable}
                   onClick={() => functions.showJob(shownJobIndex - 1)}
+                  onFocus={(e) => handleFocus(e)}
+                  onKeyDown={(e) => handleKeyboard(e)}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -106,8 +114,19 @@ export default function Experience({
                 <Button
                   aria-label="Show Next Job"
                   id="show-next-job"
-                  ref={shownJobIndex === 0 ? firstTabbable : undefined}
                   onClick={() => functions.showJob(shownJobIndex + 1)}
+                  onFocus={(e) => {
+                    // Don't handle focus if it's not the first tabbable element.
+                    if (shownJobIndex > 0) return;
+
+                    handleFocus(e);
+                  }}
+                  onKeyDown={(e) => {
+                    // Don't handle keydown if it's not the first tabbable element.
+                    if (shownJobIndex > 0) return;
+
+                    handleKeyboard(e);
+                  }}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -127,8 +146,23 @@ export default function Experience({
           <Button
             aria-label={`Add Job ${data.jobs.length + 1}`}
             id="add-job"
-            ref={data.jobs.length === 1 ? firstTabbable : undefined}
             onClick={addJob}
+            onFocus={(e) => {
+              // Don't handle focus if it's not the first tabbable element.
+              if (shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) {
+                return;
+              }
+
+              handleFocus(e);
+            }}
+            onKeyDown={(e) => {
+              // Don't handle keydown if it's not the first tabbable element.
+              if (shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) {
+                return;
+              }
+
+              handleKeyboard(e);
+            }}
             modifiers={[
               'Button_paddingBlock_none',
               'Button_paddingInline_small',

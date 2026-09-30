@@ -1,6 +1,6 @@
-import React from 'react';
 import type { RefObject } from 'react';
 
+import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
 import Button from '@/components/Button';
@@ -12,8 +12,8 @@ import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { ItemWithId, Projects } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface ProjectFunctions {
   addBulletPoint: () => void;
@@ -29,10 +29,12 @@ export interface ProjectFunctions {
 }
 
 export interface ProjectsProps {
-  data: Projects;
-  firstTabbable: RefObject<HTMLButtonElement | null>;
-  functions: ReturnType<typeof useResumeData>['projectsFunctions'];
-  updateScreenReaderAnnouncement: (announcement: string) => void;
+  data: ReadonlyDeep<Projects>;
+  functions: ReadonlyDeep<
+    ReturnType<typeof useResumeData>['projectsFunctions']
+  >;
+  ref: RefObject<HTMLElement | null>;
+  updateScreenReaderAnnouncement: ReadonlyDeep<(announcement: string) => void>;
 }
 
 /**
@@ -40,10 +42,13 @@ export interface ProjectsProps {
  */
 export default function Projects({
   data,
-  firstTabbable,
   functions,
+  ref,
   updateScreenReaderAnnouncement,
-}: ReadonlyExcept<ProjectsProps, 'firstTabbable'>) {
+}: ProjectsProps) {
+  const { handleFocus, handleKeyboard } =
+    useLastComponentBeforeTabpanel('projects');
+
   const shownProjectIndex = data.shownProjectIndex;
 
   function addProject() {
@@ -80,6 +85,7 @@ export default function Projects({
       aria-labelledby="projects"
       className="section"
       id="projects-tabpanel"
+      ref={ref}
       role="tabpanel"
     >
       <form action="#" className="section--form section--form__bullet-points">
@@ -97,8 +103,9 @@ export default function Projects({
                   aria-label="Show Previous Project"
                   className="section--item-navigation-button"
                   id="show-previous-project"
-                  ref={firstTabbable}
                   onClick={() => functions.showProject(shownProjectIndex - 1)}
+                  onFocus={(e) => handleFocus(e)}
+                  onKeyDown={(e) => handleKeyboard(e)}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -117,9 +124,20 @@ export default function Projects({
                 <Button
                   aria-label="Show Next Project"
                   id="show-next-project"
-                  ref={shownProjectIndex === 0 ? firstTabbable : undefined}
                   // TODO: add screen reader announcement?
                   onClick={() => functions.showProject(shownProjectIndex + 1)}
+                  onFocus={(e) => {
+                    // Don't handle focus if it's not the first tabbable element.
+                    if (shownProjectIndex > 0) return;
+
+                    handleFocus(e);
+                  }}
+                  onKeyDown={(e) => {
+                    // Don't handle keydown if it's not the first tabbable element.
+                    if (shownProjectIndex > 0) return;
+
+                    handleKeyboard(e);
+                  }}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -139,9 +157,30 @@ export default function Projects({
           <Button
             aria-label={`Add Project ${data.projects.length + 1}`}
             id="add-project"
-            ref={data.projects.length === 1 ? firstTabbable : undefined}
             // TODO: add screen reader announcement.
             onClick={addProject}
+            onFocus={(e) => {
+              // Don't handle focus if it's not the first tabbable element.
+              if (
+                shownProjectIndex > 0 ||
+                shownProjectIndex !== data.projects.length - 1
+              ) {
+                return;
+              }
+
+              handleFocus(e);
+            }}
+            onKeyDown={(e) => {
+              // Don't handle keydown if it's not the first tabbable element.
+              if (
+                shownProjectIndex > 0 ||
+                shownProjectIndex !== data.projects.length - 1
+              ) {
+                return;
+              }
+
+              handleKeyboard(e);
+            }}
             modifiers={[
               'Button_paddingBlock_none',
               'Button_paddingInline_small',

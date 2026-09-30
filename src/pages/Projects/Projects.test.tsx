@@ -3,7 +3,6 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -103,7 +102,7 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
         },
       ],
     },
-    firstTabbable: { current: null },
+    ref: { current: null },
     functions: {
       addBulletPoint(_projectIndex: number) {},
       addProject() {},
@@ -624,56 +623,12 @@ describe('Projects', () => {
     });
   });
 
-  it('should pass the "Show Previous Project" button to `firstTabbable.current` when a non-first project is shown', () => {
-    // Arrange
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
-    props.data.shownProjectIndex = 1;
+  it('should pass the section element to `ref.current`', () => {
+    const ref = { current: null };
+    render(<Projects {...getProps({ ref })} />);
 
-    render(<div aria-label="Projects" id="projects" />);
-    render(<Projects {...props} />);
+    const projects = screen.getByRole('tabpanel');
 
-    // Act
-    const firstTabbableNode = screen.getByRole('button', {
-      name: 'Show Previous Project',
-    });
-
-    // Assert
-    expect(firstTabbable.current).toBe(firstTabbableNode);
-  });
-
-  it('should pass the "Show Next Project" button to `firstTabbable.current` when the first project is shown and there are several projects', () => {
-    // Arrange
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
-
-    render(<div aria-label="Projects" id="projects" />);
-    render(<Projects {...props} />);
-
-    // Act
-    const firstTabbableNode = screen.getByRole('button', {
-      name: 'Show Next Project',
-    });
-
-    // Assert
-    expect(firstTabbable.current).toBe(firstTabbableNode);
-  });
-
-  it("should pass the 'Add Project' button to `firstTabbable.current` when there's only one project", () => {
-    // Arrange
-    const firstTabbable = { current: null };
-    const props = getProps({ firstTabbable });
-    props.data.projects.splice(0, 2);
-
-    render(<div aria-label="Projects" id="projects" />);
-    render(<Projects {...props} />);
-
-    // Act
-    const firstTabbableNode = screen.getByRole('button', {
-      name: 'Add Project 2',
-    });
-
-    // Assert
-    expect(firstTabbable.current).toBe(firstTabbableNode);
+    expect(ref.current).toBe(projects);
   });
 });

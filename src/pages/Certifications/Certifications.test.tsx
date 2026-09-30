@@ -1,6 +1,3 @@
-import React from 'react';
-import type { Ref } from 'react';
-
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -12,10 +9,8 @@ import type { CertificationsProps } from './Certifications';
 function getProps(
   overrides?: Partial<CertificationsProps>,
 ): CertificationsProps {
-  const firstTabbable: Ref<HTMLTextAreaElement | null> = { current: null };
-
   return {
-    firstTabbable,
+    ref: { current: null },
     data: {
       certificates: '',
       interests: '',
@@ -222,19 +217,17 @@ describe('Certifications', () => {
     });
   });
 
-  it('should assign the first tabbable element to `firstTabbable.current`', () => {
+  it('should pass the section element to `ref.current`', () => {
     // Arrange
-    const firstTabbable: Ref<HTMLTextAreaElement | null> = { current: null };
-    const props = getProps({ firstTabbable });
+    const ref = { current: null };
+    const props = getProps({ ref });
 
     render(<div aria-label="Certifications" id="certifications" />);
     render(<Certifications {...props} />);
 
-    const firstTabbableElement = screen.getByRole('textbox', {
-      name: 'Certificates',
-    });
+    const certifications = screen.getByRole('tabpanel');
 
     // Assert
-    expect(firstTabbable.current).toBe(firstTabbableElement);
+    expect(ref.current).toBe(certifications);
   });
 });
