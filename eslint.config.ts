@@ -17,7 +17,13 @@ import tseslint from 'typescript-eslint';
 // TODO: Update the signature (this one is deprecated).
 export default tseslint.config([
   {
-    ignores: ['dist/**', '.github/**', 'node_modules/**'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      '.github/**',
+      '.git/**',
+      '.husky/**',
+    ],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
