@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Path, Svg } from '@react-pdf/renderer';
 
 import type { SVGProps } from '@react-pdf/renderer';

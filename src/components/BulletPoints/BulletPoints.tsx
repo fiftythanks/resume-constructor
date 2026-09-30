@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import type { ChangeEvent, RefCallback } from 'react';
+import { useRef, useState } from 'react';
+import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import {
@@ -26,18 +26,22 @@ import Button from '@/components/Button';
 
 import ListItem from './ListItem';
 
-import './BulletPoints.scss';
-
 import type { ItemWithId } from '@/types/resumeData';
 import type { Active, DragEndEvent, Over } from '@dnd-kit/core';
 import type { ReadonlyDeep } from 'type-fest';
 
+import './BulletPoints.scss';
+
 export interface BulletPointsProps {
-  addItem: () => void;
+  addItem: ReadonlyDeep<() => void>;
   className?: string;
-  data: ItemWithId[];
-  deleteItem: (itemIndex: number) => void;
-  editItem: (itemIndex: number, value: string) => void;
+  data: ReadonlyDeep<ItemWithId[]>;
+  deleteItem: ReadonlyDeep<(itemIndex: number) => void>;
+  editItem: ReadonlyDeep<(itemIndex: number, value: string) => void>;
+  handleFocusOnFirstElement?: ReadonlyDeep<
+    (e: FocusEvent<HTMLButtonElement>) => void
+  >;
+  handleKeyDownOnFirstElement?: ReadonlyDeep<(e: KeyboardEvent) => void>;
   itemName?: string;
   legend: string;
   legendCentralized?: boolean;
@@ -45,9 +49,8 @@ export interface BulletPointsProps {
   placeholder1?: string;
   placeholder2?: string;
   placeholder3?: string;
-  setFirstTabbable?: RefCallback<HTMLButtonElement>;
-  updateData: (newData: ItemWithId[]) => void;
-  updateScreenReaderAnnouncement: (announcement: string) => void;
+  updateData: ReadonlyDeep<(newData: ItemWithId[]) => void>;
+  updateScreenReaderAnnouncement: ReadonlyDeep<(announcement: string) => void>;
 }
 
 // TODO: explain the purpose of `legend` and `legendCentralized`. Why is it called a legend, anyway?
@@ -72,10 +75,11 @@ export default function BulletPoints({
   placeholder1,
   placeholder2,
   placeholder3,
-  setFirstTabbable,
   updateData,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<BulletPointsProps>) {
+  handleKeyDownOnFirstElement,
+  handleFocusOnFirstElement,
+}: BulletPointsProps) {
   const [_, setIsDragging] = useState(false);
   const wasDraggedAwayFromItsInitialPosition = useRef(false);
 
@@ -243,8 +247,27 @@ export default function BulletPoints({
                   key={id}
                   name={`${name}-${index}`}
                   placeholder={placeholder}
-                  setFirstTabbable={index === 0 ? setFirstTabbable : undefined}
                   value={value}
+                  handleFocusOnFirstElement={(e) => {
+                    if (
+                      index !== 0 ||
+                      handleFocusOnFirstElement === undefined
+                    ) {
+                      return;
+                    }
+
+                    handleFocusOnFirstElement(e);
+                  }}
+                  handleKeyDownOnFirstElement={(e) => {
+                    if (
+                      index !== 0 ||
+                      handleKeyDownOnFirstElement === undefined
+                    ) {
+                      return;
+                    }
+
+                    handleKeyDownOnFirstElement(e);
+                  }}
                 />
               );
             })}
@@ -256,7 +279,6 @@ export default function BulletPoints({
         className="BulletPoints-Add"
         id={`add-${name}`}
         modifiers={['Button_paddingInline_large']}
-        ref={data.length === 0 ? setFirstTabbable : undefined}
         // TODO: add a screen reader announcement "A new bullet point was added".
         onClick={addItem}
       >

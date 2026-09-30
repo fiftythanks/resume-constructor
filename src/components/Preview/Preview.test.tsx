@@ -163,9 +163,17 @@ describe('Preview', () => {
       const user = userEvent.setup();
       const btn = await screen.findByRole('button', { name: 'Close Popup' });
 
+      const closeSpy = jest
+        .spyOn(HTMLDialogElement.prototype, 'close')
+        .mockImplementation(function (this: HTMLDialogElement) {
+          this.dispatchEvent(new Event('close'));
+        });
+
       await user.click(btn);
 
       expect(mockFn).toHaveBeenCalledTimes(1);
+
+      closeSpy.mockRestore();
     });
   });
 

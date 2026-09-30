@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -12,7 +10,6 @@ function getProps(overrides?: Partial<ListItemProps>): ListItemProps {
   return {
     deleteItem: () => {},
     edit: () => {},
-    setFirstTabbable: (_firstTabbable: HTMLButtonElement) => {},
     id: 'some id',
     index: 1,
     name: 'some name',
@@ -90,19 +87,36 @@ describe('ListItem', () => {
 
       expect(dragHandle).toBeInTheDocument();
     });
-  });
 
-  it('should call `setFirstTabbable` and pass it the drag handle if `setFirstTabbable` is defined', () => {
-    const mockFn = jest.fn((_firstTabbable: HTMLButtonElement) => {});
-    const props = getProps({ setFirstTabbable: mockFn });
-    render(<ListItem {...props} />);
+    it('should call `handleFocusOnFirstElement` when focused if `handleFocusOnFirstElement` is defined', () => {
+      const mockFn = jest.fn();
+      const props = getProps({ handleFocusOnFirstElement: mockFn });
+      render(<ListItem {...props} />);
 
-    const dragHandle = screen.getByRole('button', {
-      name: 'Drag bullet point 2',
+      const dragHandle = screen.getByRole('button', {
+        name: 'Drag bullet point 2',
+      });
+
+      dragHandle.focus();
+
+      expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenCalledWith(dragHandle);
+    it('should call `handleKeyDownOnFirstElement` when key is pressed if `handleKeyDownOnFirstElement` is defined', async () => {
+      const mockFn = jest.fn();
+      const user = userEvent.setup();
+      const props = getProps({ handleKeyDownOnFirstElement: mockFn });
+      render(<ListItem {...props} />);
+
+      const dragHandle = screen.getByRole('button', {
+        name: 'Drag bullet point 2',
+      });
+
+      dragHandle.focus();
+      await user.keyboard('{Tab}');
+
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('delete btn', () => {

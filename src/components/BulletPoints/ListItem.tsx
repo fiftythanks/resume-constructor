@@ -1,5 +1,4 @@
-import React from 'react';
-import type { ChangeEvent, RefCallback } from 'react';
+import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import { useSortable } from '@dnd-kit/sortable';
@@ -9,18 +8,21 @@ import { clsx } from 'clsx';
 import deleteSrc from '@/assets/icons/delete.svg';
 import dragSrc from '@/assets/icons/drag.svg';
 
-import './BulletPoints.scss';
-
 import type { ReadonlyDeep } from 'type-fest';
 
+import './BulletPoints.scss';
+
 export interface ListItemProps {
-  deleteItem: () => void;
-  edit: (e: ChangeEvent<HTMLInputElement>) => void;
+  deleteItem: ReadonlyDeep<() => void>;
+  edit: ReadonlyDeep<(e: ChangeEvent<HTMLInputElement>) => void>;
+  handleFocusOnFirstElement?: ReadonlyDeep<
+    (e: FocusEvent<HTMLButtonElement>) => void
+  >;
+  handleKeyDownOnFirstElement?: ReadonlyDeep<(e: KeyboardEvent) => void>;
   id: string;
   index: number;
   name: string;
   placeholder?: string;
-  setFirstTabbable?: RefCallback<HTMLButtonElement>;
   value: string;
 }
 
@@ -31,13 +33,14 @@ export interface ListItemProps {
 export default function ListItem({
   deleteItem,
   edit,
-  setFirstTabbable,
   id,
   index,
   name,
+  handleFocusOnFirstElement,
+  handleKeyDownOnFirstElement,
   placeholder,
   value,
-}: ReadonlyDeep<ListItemProps>) {
+}: ListItemProps) {
   const {
     attributes,
     isDragging,
@@ -63,13 +66,24 @@ export default function ListItem({
       <button
         aria-label={`Drag bullet point ${index + 1}`}
         className="BulletPoints-Button BulletPoints-Button_dragHandle"
+        ref={(node) => setActivatorNodeRef(node)}
         type="button"
-        ref={(node) => {
-          setActivatorNodeRef(node);
-          if (setFirstTabbable !== undefined) setFirstTabbable(node);
+        onFocus={(e) => {
+          if (handleFocusOnFirstElement === undefined) return;
+
+          handleFocusOnFirstElement(e);
         }}
         {...attributes}
-        {...listeners}
+        {...{
+          ...listeners,
+          onKeyDown: (e) => {
+            if (handleKeyDownOnFirstElement !== undefined) {
+              handleKeyDownOnFirstElement(e);
+            }
+
+            listeners?.onKeyDown?.(e);
+          },
+        }}
       >
         <img alt="Drag" height="25px" src={dragSrc} width="25px" />
       </button>

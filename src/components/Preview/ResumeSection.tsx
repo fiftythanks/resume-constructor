@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Link, StyleSheet, Text, View } from '@react-pdf/renderer';
 
 import neverReached from '@/utils/neverReached';

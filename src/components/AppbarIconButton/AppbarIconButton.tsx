@@ -1,15 +1,17 @@
-import React from 'react';
 import type { ButtonHTMLAttributes, Ref } from 'react';
 
 import { clsx } from 'clsx';
 
-import './AppbarIconButton.scss';
-
 import type { ReadonlyDeep } from 'type-fest';
 
-export interface AppbarIconButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
-  alt: string;
+import './AppbarIconButton.scss';
+
+export interface AppbarIconButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'children'
+> {
+  // TODO: Probably unnecessary prop. Delete it.
+  alt?: string;
   iconSrc: string;
   ref?: Ref<HTMLButtonElement>;
 }
