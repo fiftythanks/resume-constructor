@@ -14,7 +14,7 @@ flowchart TD
     Tabs --> Boundary["Focus Hand-Off<br/>(useLastComponentBeforeTabpanel)"]
     Boundary --> Tabpanel["Form Controls<br/>(Strict htmlFor Labels)"]
 
-    Shell --> LiveRegion["Central Announcement Region<br/>(aria-live='polite')"]
+    Shell --> LiveRegion["Central Announcement Region<br/>(aria-live=#quot;polite#quot;)"]
     Shell --> Modals["Modal Dialogs<br/>(Focus Trap via tabbable)"]
 ```
 
@@ -51,6 +51,7 @@ The modal primitive in `src/components/Popup/` complies with the **W3C APG Modal
 When a keyboard user tabs from the navbar into an open tabpanel, focus lands on the first form control. However, when navigating backwards using `Shift+Tab`, standard DOM order would jump into preceding layout containers rather than returning to the active tab.
 
 `src/hooks/useLastComponentBeforeTabpanel.ts` solves this boundary dilemma:
+
 1. Tracks focus entry into tabpanels using `focusin` events and verifies whether `e.relatedTarget` was the activating section tab.
 2. Intercepts `Shift+Tab` on the first interactive element via `e.preventDefault()`.
 3. Programmatically transfers focus back to the controlling tab button, creating complete bidirectional focus symmetry.
