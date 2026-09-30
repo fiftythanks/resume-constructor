@@ -840,8 +840,11 @@ describe('AppLayout', () => {
           describe('There are inactive sections', () => {
             it('should focus the "Add Sections" button', async () => {
               // Arrange
-              const props = getProps();
-              props.activeSectionIds.splice(3, 1);
+              const props = getProps({
+                activeSectionIds: possibleSectionIds.filter(
+                  (_, index) => index !== 3,
+                ),
+              });
 
               renderAppLayoutWithNavbarExpanded(props);
               const user = userEvent.setup();
