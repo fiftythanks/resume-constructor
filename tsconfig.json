@@ -23,6 +23,7 @@
   },
   "include": [
     "babel.config.cjs",
+    "commitlint.config.cjs",
     "e2e",
     "eslint.config.ts",
     "jest.config.ts",
