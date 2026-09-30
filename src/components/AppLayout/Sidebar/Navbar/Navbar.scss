@@ -7,10 +7,6 @@
   align-items: center;
   width: v.$appbar-block-size;
 
-  &_hidden {
-    display: none;
-  }
-
   &-Items {
     display: flex;
     flex-direction: column;

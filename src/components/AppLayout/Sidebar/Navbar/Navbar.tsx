@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState } from 'react';
+import { RefObject, useMemo, useRef, useState } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import {
@@ -27,10 +26,11 @@ import useAppState from '@/hooks/useAppState';
 
 import AddSections from '@/components/AddSections';
 import AppbarIconButton from '@/components/AppbarIconButton';
-import NavbarItem from '@/components/NavbarItem';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
+
+import NavbarItem from './NavbarItem';
 
 import addSrc from '@/assets/icons/add.svg';
 import doneSrc from '@/assets/icons/done.svg';
@@ -41,13 +41,12 @@ import experienceSrc from '@/assets/icons/sections/experience.svg';
 import linksSrc from '@/assets/icons/sections/links.svg';
 import personalSrc from '@/assets/icons/sections/personal.svg';
 import projectsSrc from '@/assets/icons/sections/projects.svg';
-
-import './Navbar.scss';
-
 import skillsSrc from '@/assets/icons/sections/skills.svg';
 
-import type { SectionId } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
+import type { SectionId, SectionIds } from '@/types/resumeData';
+import type { ReadonlyDeep, Replace } from 'type-fest';
+
+import './Navbar.scss';
 
 /**
  * The tab shouldn't be draggable in the navbar. You can't put
@@ -71,18 +70,17 @@ const ICONS = {
 type UseAppStateReturn = ReturnType<typeof useAppState>;
 
 export interface NavbarProps {
-  activeSectionIds: SectionId[];
-  addSections: UseAppStateReturn['addSections'];
+  activeSectionIds: ReadonlyDeep<SectionId[]>;
+  addSections: ReadonlyDeep<UseAppStateReturn['addSections']>;
   canAddSections: boolean;
   className?: string;
-  deleteSections: UseAppStateReturn['deleteSections'];
+  deleteSections: ReadonlyDeep<UseAppStateReturn['deleteSections']>;
   editorMode: boolean;
-  isExpanded: boolean;
-  reorderSections: UseAppStateReturn['reorderSections'];
-  resetScreenReaderAnnouncement: () => void;
+  reorderSections: ReadonlyDeep<UseAppStateReturn['reorderSections']>;
+  resetScreenReaderAnnouncement: ReadonlyDeep<() => void>;
   selectedSectionId: SectionId;
-  selectSection: (sectionId: SectionId) => void;
-  toggleEditorMode: () => void;
+  selectSection: ReadonlyDeep<(sectionId: SectionId) => void>;
+  toggleEditorMode: ReadonlyDeep<() => void>;
 }
 
 /**
@@ -97,15 +95,39 @@ export default function Navbar({
   className,
   deleteSections,
   editorMode,
-  isExpanded,
   reorderSections,
   resetScreenReaderAnnouncement,
   selectedSectionId,
   selectSection,
   toggleEditorMode,
-}: ReadonlyDeep<NavbarProps>) {
+}: NavbarProps) {
   // For the "Add Sections" popup
   const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
+
+  const addSectionsBtn = useRef<HTMLButtonElement>(null);
+  const editSectionsBtn = useRef<HTMLButtonElement>(null);
+
+  const linksTab = useRef<HTMLButtonElement>(null);
+  const skillsTab = useRef<HTMLButtonElement>(null);
+  const experienceTab = useRef<HTMLButtonElement>(null);
+  const projectsTab = useRef<HTMLButtonElement>(null);
+  const educationTab = useRef<HTMLButtonElement>(null);
+  const certificationsTab = useRef<HTMLButtonElement>(null);
+
+  const tabRefs: Record<
+    Exclude<SectionId, 'personal'>,
+    RefObject<HTMLButtonElement | null>
+  > = useMemo(
+    () => ({
+      links: linksTab,
+      skills: skillsTab,
+      experience: experienceTab,
+      projects: projectsTab,
+      education: educationTab,
+      certifications: certificationsTab,
+    }),
+    [],
+  );
 
   // Drag and drop hooks
   const sensors = useSensors(
@@ -128,10 +150,14 @@ export default function Navbar({
     setIsAddSectionsPopupShown(false);
 
     if (canAddSections) {
-      document.getElementById('add-sections')!.focus();
+      addSectionsBtn.current!.focus();
     } else {
-      const lastAddedSectionId = activeSectionIds.at(-1)!;
-      document.getElementById(lastAddedSectionId)!.focus();
+      type LastSectionId<T = SectionIds> = T extends [...unknown[], infer L]
+        ? L
+        : never;
+
+      const lastAddedSectionId = activeSectionIds.at(-1) as LastSectionId;
+      tabRefs[lastAddedSectionId].current!.focus();
     }
   }
 
@@ -193,7 +219,7 @@ export default function Navbar({
   const items = draggableSectionIds.map((sectionId) => {
     const isSelected = selectedSectionId === sectionId;
 
-    // DILEMMA: Why?
+    // Allows natural tabbing without JS.
     const tabIndex = isSelected || editorMode ? 0 : -1;
 
     return (
@@ -205,6 +231,7 @@ export default function Navbar({
         isEditorMode={editorMode}
         isSelected={isSelected}
         key={sectionId}
+        ref={tabRefs[sectionId]}
         sectionId={sectionId}
         sectionTitle={sectionTitles[sectionId]}
         tabIndex={tabIndex}
@@ -236,21 +263,19 @@ export default function Navbar({
     return false;
   }
 
+  type DeleteSectionBtnId = `delete-${Exclude<SectionId, 'personal'>}`;
+
+  function isDeleteSectionBtnId(string: string): string is DeleteSectionBtnId {
+    for (const sectionId of activeSectionIds) {
+      if (`delete-${sectionId}` === string) return true;
+    }
+
+    return false;
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
     const target = e.target as HTMLButtonElement;
     const id = target.id;
-
-    type DeleteSectionBtnId = `delete-${SectionId}`;
-
-    function isDeleteSectionBtnId(
-      string: string,
-    ): string is DeleteSectionBtnId {
-      for (const sectionId of activeSectionIds) {
-        if (`delete-${sectionId}` === string) return true;
-      }
-
-      return false;
-    }
 
     // TODO: comment all this logic properly.
     if (isSectionId(id) && !isDragging) {
@@ -341,7 +366,6 @@ export default function Navbar({
         } else {
           document.getElementById(activeSectionIds.at(-1)!)!.focus();
         }
-        // FIXME: doesn't work. Fix.
       } else if (
         e.key === 'Tab' &&
         e.shiftKey === true &&
@@ -350,7 +374,7 @@ export default function Navbar({
       ) {
         e.preventDefault();
 
-        document.getElementById(activeSectionIds[1])!.focus();
+        document.getElementById(`delete-${activeSectionIds.at(-1)}`)!.focus();
       }
     }
   }
@@ -381,18 +405,30 @@ export default function Navbar({
       } else {
         document.getElementById(activeSectionIds[i - 1])!.focus();
       }
+    } else if (e.key === 'Escape' && !isDragging) {
+      if (editorMode) {
+        toggleEditorMode();
+
+        if (isDeleteSectionBtnId(id)) {
+          const sectionId = id.replace('delete-', '') as Replace<
+            typeof id,
+            'delete-',
+            ''
+          >;
+
+          tabRefs[sectionId].current!.focus();
+        }
+      }
     }
   }
 
-  // If there's no selected section, `Personal` is focusable.
-  const personalNavbarItemTabIndex =
-    selectedSectionId === 'personal' || editorMode ? 0 : -1;
-
   return (
     <>
+      {/* Event delegation: Key events from focusable children (tabs, delete buttons, control buttons) bubble up to this container. */}
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <nav
         aria-labelledby="toggle-navbar"
-        className={clsx([className, 'Navbar', !isExpanded && 'Navbar_hidden'])}
+        className={clsx(['Navbar', className])}
         id="navbar"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
@@ -432,9 +468,11 @@ export default function Navbar({
                 isSelected={selectedSectionId === 'personal'}
                 sectionId="personal"
                 sectionTitle={sectionTitles.personal}
-                tabIndex={personalNavbarItemTabIndex}
                 title={sectionTitles.personal}
                 onSelectSection={() => selectSection('personal')}
+                tabIndex={
+                  selectedSectionId === 'personal' || editorMode ? 0 : -1
+                }
               />
               {/**
                * This structure is necessary to be able to limit the dragging to
@@ -458,6 +496,7 @@ export default function Navbar({
             className="Navbar-Control Navbar-Control_onTop"
             iconSrc={ICONS.add}
             id="add-sections"
+            ref={addSectionsBtn}
             onClick={showAddSectionsPopup}
           />
         )}
@@ -470,6 +509,7 @@ export default function Navbar({
           iconSrc={editorMode ? ICONS.done : ICONS.edit}
           id="edit-sections"
           key="toggle-editor-mode"
+          ref={editSectionsBtn}
           onClick={toggleEditorMode}
         />
       </nav>

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { clsx } from 'clsx';
@@ -61,21 +59,12 @@ function getDeleteBtn(sectionId: SectionId) {
 }
 
 describe('Navbar', () => {
-  it('should render a navigation with an accessible name derived from an element with an ID "toggle-navbar" when `isExpanded === true`', () => {
+  it('should render a navigation with an accessible name derived from an element with an ID "toggle-navbar"', () => {
     renderComponents();
 
     const nav = screen.getByRole('navigation', { name: 'Navigation' });
 
     expect(nav).toBeInTheDocument();
-  });
-
-  it('should not render a navigation with an accessible name derived from an element with an ID "toggle-navbar" when `isExpanded === false`', () => {
-    renderComponents(getProps({ isExpanded: false }));
-
-    const nav = screen.queryByRole('navigation', { name: 'Navigation' });
-
-    // This class sets the `display: none` property.
-    expect(nav).toHaveClass('Navbar_hidden');
   });
 
   it('should use the prop `className` in its class', () => {

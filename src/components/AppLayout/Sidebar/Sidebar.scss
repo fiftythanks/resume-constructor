@@ -1,0 +1,34 @@
+@use '@/styles/utils/variables' as v;
+
+.Sidebar {
+  --padding: 1rem;
+
+  display: flex;
+  position: relative;
+  padding: var(--padding);
+  width: 100%;
+  height: calc(v.$appbar-icon-button-size + 2 * var(--padding));
+  container-type: size;
+
+  &-Item {
+    &_hidden {
+      display: none;
+    }
+
+    &_navbar {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+    }
+
+    &_navbarToggle {
+      margin-right: auto;
+    }
+
+    &_toolbar {
+      position: absolute;
+      right: calc(100cqh + 2 * var(--padding));
+      bottom: var(--padding);
+    }
+  }
+}

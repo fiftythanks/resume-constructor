@@ -1,5 +1,4 @@
-import React from 'react';
-import type { LiHTMLAttributes } from 'react';
+import type { LiHTMLAttributes, RefObject } from 'react';
 
 import { clsx } from 'clsx';
 
@@ -9,10 +8,10 @@ import useNavbarItemSortable from './useNavbarItemSortable';
 
 import deleteBtnIconSrc from '@/assets/icons/delete-cross.svg';
 
-import './NavbarItem.scss';
-
 import type { SectionId, SectionTitle } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
+
+import './NavbarItem.scss';
 
 export interface NavbarItemProps extends LiHTMLAttributes<HTMLLIElement> {
   alt: string;
@@ -20,8 +19,9 @@ export interface NavbarItemProps extends LiHTMLAttributes<HTMLLIElement> {
   isDraggable: boolean;
   isEditorMode: boolean;
   isSelected: boolean;
-  onDeleteSection?: () => void;
-  onSelectSection: () => void;
+  onDeleteSection?: ReadonlyDeep<() => void>;
+  onSelectSection: ReadonlyDeep<() => void>;
+  ref?: RefObject<HTMLButtonElement | null>;
   sectionId: SectionId;
   sectionTitle: SectionTitle;
   tabIndex: -1 | 0;
@@ -41,13 +41,14 @@ export default function NavbarItem({
   isDraggable,
   isEditorMode,
   isSelected,
+  ref,
   sectionId,
   sectionTitle,
   tabIndex,
   onDeleteSection,
   onSelectSection,
   ...rest
-}: ReadonlyDeep<NavbarItemProps>) {
+}: NavbarItemProps) {
   const { dndAttributes, isDragging, setNodeRef, style } =
     useNavbarItemSortable({
       isEditorMode,
@@ -71,18 +72,23 @@ export default function NavbarItem({
   // TODO: no empty lines inside objects!
   const btnAttributes = {
     // TODO: add screen reader announcements (when all sections are implemented).
-
     id: sectionId,
     tabIndex,
     'aria-controls': `${sectionId}-tabpanel`,
     'aria-label': sectionTitle,
     'aria-selected': isSelected,
     role: 'tab',
-
     // To indicate that the tabbing functionality is disabled
     'aria-disabled': isEditorMode,
-
-    ...dndAttributes,
+    'aria-describedBy': dndAttributes?.['aria-describedby'],
+    'aria-roledescription': dndAttributes?.['aria-roledescription'],
+    ref(node: HTMLButtonElement) {
+      dndAttributes?.setActivatorNodeRef(node);
+      if (ref !== undefined) ref.current = node;
+    },
+    ...(dndAttributes !== null && dndAttributes.listeners !== undefined
+      ? dndAttributes.listeners
+      : {}),
   };
 
   return (

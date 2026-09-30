@@ -3,12 +3,13 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import type { SectionId } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
+import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 
 interface DndAttributes {
   'aria-describedby': string;
   'aria-roledescription': string;
-  ref: (element: HTMLElement | null) => void;
+  listeners: SyntheticListenerMap | undefined;
+  setActivatorNodeRef: ReturnType<typeof useSortable>['setActivatorNodeRef'];
 }
 
 interface UseNavbarItemSortableParams {
@@ -18,9 +19,9 @@ interface UseNavbarItemSortableParams {
 }
 
 interface UseNavbarItemSortableReturn {
-  dndAttributes: DndAttributes | Record<string, never>;
+  dndAttributes: DndAttributes | null;
   isDragging: boolean;
-  setNodeRef: (node: HTMLElement | null) => void;
+  setNodeRef: ReturnType<typeof useSortable>['setNodeRef'];
   style: {
     transform: string | undefined;
     transition: string | undefined;
@@ -38,7 +39,7 @@ export default function useNavbarItemSortable({
   isDraggable,
   isEditorMode,
   sectionId,
-}: ReadonlyDeep<UseNavbarItemSortableParams>): UseNavbarItemSortableReturn {
+}: UseNavbarItemSortableParams): UseNavbarItemSortableReturn {
   const {
     attributes,
     listeners,
@@ -54,15 +55,15 @@ export default function useNavbarItemSortable({
     transition,
   };
 
-  const dndAttributes =
+  const dndAttributes: DndAttributes | null =
     isDraggable && isEditorMode
       ? {
+          setActivatorNodeRef,
           'aria-roledescription': 'draggable',
           'aria-describedby': attributes['aria-describedby'],
-          ref: setActivatorNodeRef,
-          ...listeners,
+          listeners,
         }
-      : {};
+      : null;
 
   return {
     dndAttributes,
