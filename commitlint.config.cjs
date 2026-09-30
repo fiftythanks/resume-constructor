@@ -19,6 +19,7 @@ module.exports = {
         'certifications',
         'ci',
         'components',
+        'docs',
         'e2e',
         'education',
         'eslint',
