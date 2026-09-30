@@ -3,9 +3,7 @@ title: System Architecture & Design Patterns
 description: Core architectural principles, zero-bootstrap philosophy, component colocation and state flow in Resume Constructor.
 ---
 
-## Overview
-
-Resume Constructor is a production-grade, zero-bootstrap resume generator built on **React 19**, **TypeScript (strict)**, **SCSS with BEM**, custom **webpack 5** and the **Bun** runtime. It implements the formatting, typography and content standards defined in _The Tech Resume Inside Out_.
+Resume Constructor is a production-grade, zero-bootstrap resume generator built on **React 19**, **TypeScript (strict)**, **SCSS with BEM**, custom **webpack 5** and the **Bun** runtime. It implements the formatting, typography and content standards defined in [The Tech Resume Inside Out](https://thetechresume.com/) book by Gergely Orosz.
 
 The codebase is engineered around strict boundaries between presentation, form state, document rendering and accessibility infrastructure.
 
@@ -27,7 +25,7 @@ flowchart TD
 
 ### 1. Zero-Bootstrap Philosophy
 
-The application avoids heavy UI component libraries (such as Material UI, Tailwind or Chakra). Every UI element — from buttons and modal dialogs to sortable lists and form controls — is built from first principles using semantic HTML5, CSS custom properties, BEM methodology and WAI-ARIA authoring practices. This ensures:
+The application avoids heavy UI component libraries (such as Material UI, Tailwind or Chakra). Every UI element — from buttons and modal dialogs to sortable lists and form controls — is built from first principles using semantic HTML, CSS custom properties, BEM methodology and WAI-ARIA authoring practices. This ensures:
 
 - Zero styling abstraction leaks.
 - Total control over DOM hierarchy and keyboard focus trapping.
@@ -50,21 +48,31 @@ src/components/Button/
 Component prop interfaces enforce deep immutability across component boundaries using the custom `ReadonlyExcept` utility type:
 
 ```ts
+import type { MouseEvent, ReactNode, RefCallback, RefObject } from 'react';
+
 import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 
 export interface ButtonProps {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'icon';
   disabled?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  ref?: RefCallback<HTMLButtonElement> | RefObject<HTMLButtonElement | null>;
+  variant?: 'icon' | 'primary' | 'secondary';
 }
 
-export const Button = forwardRef<
-  HTMLButtonElement,
-  ReadonlyExcept<ButtonProps, 'ref'>
->(function Button(props, ref) {
-  // props cannot be mutated; ref remains accessible to React
-});
+export function Button({
+  children,
+  ref,
+  variant = 'primary',
+  ...rest
+}: ReadonlyExcept<ButtonProps, 'ref'>) {
+  // props are deeply immutable; ref remains accessible as a first-class React 19 prop
+  return (
+    <button ref={ref} {...rest}>
+      {children}
+    </button>
+  );
+}
 ```
 
 This prevents accidental prop mutation and enforces pure functional component contracts.
