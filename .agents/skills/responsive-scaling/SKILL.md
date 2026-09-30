@@ -7,7 +7,7 @@ description: >-
 
 # Responsive Scaling & Parity Execution Guide
 
-This skill enforces the architecture defined in [responsive-scaling-strategy.md](file:///home/saprilonty/repos/resume-constructor/docs/architecture/responsive-scaling-strategy.md).
+This skill guides responsive adaptations, macro-layout rules and rendering engine parity.
 
 ---
 

@@ -135,3 +135,7 @@ dist
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Local internal notes
+/notes/
+
