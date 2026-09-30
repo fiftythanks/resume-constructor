@@ -396,30 +396,6 @@ describe('useAppState', () => {
     });
   });
 
-  describe('toggleNavbar', () => {
-    let result: { current: ReturnType<typeof useAppState> };
-
-    beforeEach(() => {
-      ({ result } = renderHook(() => useAppState()));
-    });
-
-    it('should expand/hide navbar', async () => {
-      const initialIsNavbarExpanded = result.current.isNavbarExpanded;
-
-      await act(async () => {
-        result.current.toggleNavbar();
-      });
-
-      expect(result.current.isNavbarExpanded).toBe(!initialIsNavbarExpanded);
-
-      await act(async () => {
-        result.current.toggleNavbar();
-      });
-
-      expect(result.current.isNavbarExpanded).toBe(initialIsNavbarExpanded);
-    });
-  });
-
   describe('reorderSections', () => {
     it('should reorder sections', async () => {
       const { getInactiveSectionId, result } = init();

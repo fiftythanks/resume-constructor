@@ -1,6 +1,7 @@
-import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useMemo, useRef } from 'react';
 
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { tabbable } from 'tabbable';
 
 import useAppState from '@/hooks/useAppState';
 import useResumeData from '@/hooks/useResumeData/useResumeData';
@@ -15,9 +16,9 @@ import Skills from '@/pages/Skills';
 
 import AppLayout from '@/components/AppLayout';
 
-import neverReached from '@/utils/neverReached';
-
 import loadFonts from './loadFonts';
+
+import type { SectionId } from '@/types/resumeData';
 
 // TODOs, FIXMEs and dilemmas
 
@@ -64,17 +65,27 @@ import loadFonts from './loadFonts';
 // TODO: add tips on how to fill each section properly, in which order sections should be, etc.
 
 export default function App() {
-  const firstTabbablePersonal = useRef<HTMLInputElement>(null);
-  const firstTabbableLinks = useRef<HTMLInputElement>(null);
-  const firstTabbableSkills = useRef<HTMLButtonElement>(null);
-  const firstTabbableExperience = useRef<HTMLButtonElement>(null);
-  const firstTabbableProjects = useRef<HTMLButtonElement>(null);
-  const firstTabbableEducation = useRef<HTMLButtonElement>(null);
-  const firstTabbableCertifications = useRef<HTMLTextAreaElement>(null);
+  const personal = useRef<HTMLElement>(null);
+  const links = useRef<HTMLElement>(null);
+  const skills = useRef<HTMLElement>(null);
+  const experience = useRef<HTMLElement>(null);
+  const projects = useRef<HTMLElement>(null);
+  const education = useRef<HTMLElement>(null);
+  const certifications = useRef<HTMLElement>(null);
 
-  const [firstTabbable, setFirstTabbable] = useState<
-    RefObject<HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement | null>
-  >(firstTabbablePersonal);
+  // TODO: Explain the purpose of this object.
+  const sectionRefs: Record<SectionId, RefObject<HTMLElement | null>> = useMemo(
+    () => ({
+      personal,
+      links,
+      skills,
+      experience,
+      projects,
+      education,
+      certifications,
+    }),
+    [],
+  );
 
   const {
     certificationsFunctions,
@@ -90,7 +101,11 @@ export default function App() {
     skillsFunctions,
   } = useResumeData();
 
-  // FIXME: because they aren't properly imported, the functions' JSDoc comments aren't shared. Either there's some workaround or I should export all functions from the hook or somewhere else to see JSDoc.
+  /**
+   * FIXME: Because they aren't properly imported, the functions' JSDoc comments
+   * aren't shared. Either there's some workaround or I should export all
+   * functions from the hook or somewhere else to see JSDoc.
+   */
   const {
     activeSectionIds,
     addAllSections,
@@ -98,48 +113,18 @@ export default function App() {
     deleteAll,
     deleteSections,
     editorMode,
-    isNavbarExpanded,
     openSection,
     openedSectionId,
     reorderSections,
     resetScreenReaderAnnouncement,
     screenReaderAnnouncement,
     toggleEditorMode,
-    toggleNavbar,
     updateScreenReaderAnnouncement,
   } = useAppState();
 
-  useEffect(() => {
-    switch (openedSectionId) {
-      case 'certifications':
-        setFirstTabbable(firstTabbableCertifications);
-        break;
-      case 'education':
-        setFirstTabbable(firstTabbableEducation);
-        break;
-      case 'experience':
-        setFirstTabbable(firstTabbableExperience);
-        break;
-      case 'links':
-        setFirstTabbable(firstTabbableLinks);
-        break;
-      case 'personal':
-        setFirstTabbable(firstTabbablePersonal);
-        break;
-      case 'projects':
-        setFirstTabbable(firstTabbableProjects);
-        break;
-      case 'skills':
-        setFirstTabbable(firstTabbableSkills);
-        break;
-      default:
-        neverReached(openedSectionId);
-    }
-  }, [openedSectionId]);
-
   /**
-   * Load fonts for the preview when the app mounts to prevent any font-loading
-   * issues.
+   * Load fonts for the React-PDF preview when the app mounts to prevent any
+   * font-loading issues.
    */
   loadFonts();
 
@@ -148,59 +133,87 @@ export default function App() {
     personal: (
       <Personal
         data={data.personal}
-        firstTabbable={firstTabbablePersonal}
         functions={personalFunctions}
+        ref={personal}
       />
     ),
-    links: (
-      <Links
-        data={data.links}
-        firstTabbable={firstTabbableLinks}
-        functions={linksFunctions}
-      />
-    ),
+    links: <Links data={data.links} functions={linksFunctions} ref={links} />,
     skills: (
       <Skills
         data={data.skills}
         functions={skillsFunctions}
+        ref={skills}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
-        setFirstTabbable={(node) => {
-          if (node !== null) firstTabbableSkills.current = node;
-        }}
       />
     ),
     experience: (
       <Experience
         data={data.experience}
-        firstTabbable={firstTabbableExperience}
         functions={experienceFunctions}
+        ref={experience}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     projects: (
       <Projects
         data={data.projects}
-        firstTabbable={firstTabbableProjects}
         functions={projectsFunctions}
+        ref={projects}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     education: (
       <Education
         data={data.education}
-        firstTabbable={firstTabbableEducation}
         functions={educationFunctions}
+        ref={education}
         updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
       />
     ),
     certifications: (
       <Certifications
         data={data.certifications}
-        firstTabbable={firstTabbableCertifications}
         functions={certificationsFunctions}
+        ref={certifications}
       />
     ),
   };
+
+  /**
+   * Moves focus to the first tabbable element of the corresponding tabpanel if
+   * the active tab is focused at the moment of invocation.
+   */
+  const focusSection = useCallback(() => {
+    if (sectionRefs[openedSectionId].current === null) return;
+
+    /**
+     * `tabbable` has no support for `jsdom`. Its documentation highly
+     * recommends setting `displayCheck` to `none` for `jsdom`, therefore.
+     *
+     * TODO: A better solution might be to define a global mock like this:
+     *
+     * ```
+     * // __mocks__/tabbable.js
+     *
+     * const lib = jest.requireActual('tabbable');
+     *
+     * const tabbable = {
+     *    ...lib,
+     *    tabbable: (node, options) => lib.tabbable(node, { ...options, displayCheck: 'none' }),
+     *    focusable: (node, options) => lib.focusable(node, { ...options, displayCheck: 'none' }),
+     *    isFocusable: (node, options) => lib.isFocusable(node, { ...options, displayCheck: 'none' }),
+     *    isTabbable: (node, options) => lib.isTabbable(node, { ...options, displayCheck: 'none' }),
+     * };
+     *
+     * module.exports = tabbable;
+     * ```
+     */
+    const allTabbable = tabbable(sectionRefs[openedSectionId].current, {
+      displayCheck: process.env.NODE_ENV === 'test' ? 'none' : 'full',
+    });
+
+    if (allTabbable.length > 0) allTabbable[0].focus();
+  }, [openedSectionId, sectionRefs]);
 
   return (
     <>
@@ -216,14 +229,12 @@ export default function App() {
         addSections={addSections}
         data={data}
         editorMode={editorMode}
-        firstTabbable={firstTabbable}
-        isNavbarExpanded={isNavbarExpanded}
+        focusSection={focusSection}
         openedSectionId={openedSectionId}
         openSection={openSection}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         toggleEditorMode={toggleEditorMode}
-        toggleNavbar={toggleNavbar}
         // TODO: Rename to not confuse clearing, deleting and doing both.
         deleteAll={() => {
           clearAll();

@@ -38,9 +38,10 @@ function getSectionTitlesString(
  * expanded, all sections' IDs, functions to add or delete sections and more.
  */
 export default function useAppState() {
+  // TODO: There's no reason to keep the `editorMode` state so high! Put it into `AppLayout`.
   // TODO: rename `editorMode` to `isEditorModeOn` or something similar.
   const [editorMode, setEditorMode] = useState(false);
-  const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
+
   const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
   // DILEMMA: Since `previousSectionsStateRef` uses sets, maybe this, original, state should do this as well? Or the opposite way.
@@ -288,13 +289,6 @@ export default function useAppState() {
     setEditorMode((currentMode) => !currentMode);
   }, []);
 
-  // TODO: check if there is a need in another screen reader announcement.
-  // Toggles the navbar's visibility.
-  const toggleNavbar = useCallback(() => {
-    setIsNavbarExpanded((currentState) => !currentState);
-    setEditorMode((isEditorModeOn) => isEditorModeOn && false);
-  }, []);
-
   const { activeSectionIds, openedSectionId } = sectionsState;
 
   return {
@@ -304,14 +298,12 @@ export default function useAppState() {
     deleteAll,
     deleteSections,
     editorMode,
-    isNavbarExpanded,
     openSection,
     openedSectionId,
     reorderSections,
     resetScreenReaderAnnouncement,
     screenReaderAnnouncement,
     toggleEditorMode,
-    toggleNavbar,
     updateScreenReaderAnnouncement,
   };
 }

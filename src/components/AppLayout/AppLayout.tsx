@@ -1,39 +1,37 @@
-import React, { useRef } from 'react';
-import type { KeyboardEvent, ReactNode, RefObject } from 'react';
+import { useState } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 
 import { clsx } from 'clsx';
 
 import Button from '@/components/Button';
-import Navbar from '@/components/Navbar';
-import Toolbar from '@/components/Toolbar';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
 
-import './AppLayout.scss';
+import Sidebar from './Sidebar';
 
 import type { ResumeData, SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
+import './AppLayout.scss';
+
 export interface AppLayoutProps {
-  activeSectionIds: SectionId[];
-  addSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
-  children: ReactNode;
-  data: ResumeData;
-  deleteAll: () => void;
-  deleteSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
+  activeSectionIds: ReadonlyDeep<SectionId[]>;
+  addSections: ReadonlyDeep<(sectionIds: ReadonlyDeep<SectionId[]>) => void>;
+  children: ReadonlyDeep<ReactNode>;
+  data: ReadonlyDeep<ResumeData>;
+  deleteAll: ReadonlyDeep<() => void>;
+  deleteSections: ReadonlyDeep<(sectionIds: ReadonlyDeep<SectionId[]>) => void>;
   editorMode: boolean;
-  fillAll: () => void;
-  firstTabbable: RefObject<
-    HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement | null
-  >;
-  isNavbarExpanded: boolean;
+  fillAll: ReadonlyDeep<() => void>;
+  focusSection: ReadonlyDeep<() => void>;
   openedSectionId: SectionId;
-  openSection: (sectionId: SectionId) => void;
-  reorderSections: (sectionIds: ReadonlyDeep<SectionId[]>) => void;
-  resetScreenReaderAnnouncement: () => void;
-  toggleEditorMode: () => void;
-  toggleNavbar: () => void;
+  openSection: ReadonlyDeep<(sectionId: SectionId) => void>;
+  reorderSections: ReadonlyDeep<
+    (sectionIds: ReadonlyDeep<SectionId[]>) => void
+  >;
+  resetScreenReaderAnnouncement: ReadonlyDeep<() => void>;
+  toggleEditorMode: ReadonlyDeep<() => void>;
 }
 
 // TODO: add a JSDoc comment.
@@ -46,151 +44,35 @@ export default function AppLayout({
   deleteSections,
   editorMode,
   fillAll,
-  firstTabbable,
-  isNavbarExpanded,
+  focusSection,
   openedSectionId,
   openSection,
   reorderSections,
   resetScreenReaderAnnouncement,
   toggleEditorMode,
-  toggleNavbar,
-}: ReadonlyDeep<AppLayoutProps>) {
-  // For keyboard navigation.
-  // TODO: add an explanatory comment.
-  // TODO: rename it. It's not about toolbar, it's about the "Toggle Control Buttons" button and the control buttons themselves.
-  const wasToolbarLastFocusedElement = useRef(false);
+}: AppLayoutProps) {
+  const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
 
   const canAddSections = activeSectionIds.length < possibleSectionIds.length;
   const openedSectionIndex = activeSectionIds.indexOf(openedSectionId);
 
   // Keyboard navigation.
+  /**
+   * Most of top-level keyboard navigation is achieved via the natural order of
+   * nodes in the DOM. And before deciding to do otherwise, all other ways of
+   * accomplishing the task in front of you must be considered carefully,
+   * because moving focus manually is simply less convenient, more prone to bugs
+   * and often signals of poor decisions either being taken or having been taken
+   * before.
+   */
   function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     const target = e.target as HTMLElement;
-
     const id = target.id;
 
-    function isSectionId(str: string): str is SectionId {
-      return possibleSectionIds.includes(str as SectionId);
-    }
-
-    const controlsRelatedBtns = new Set([
-      'delete-all',
-      'fill-all',
-      'preview',
-      'toggle-controls',
-    ]);
-
-    // TODO: extract some branches to functions to make the logic more readable.
     if (e.key === 'Tab') {
-      if (isSectionId(id)) {
-        if (id === openedSectionId) {
-          if (e.shiftKey) {
-            e.preventDefault();
-
-            // TODO: use refs!
-            document.getElementById('toggle-navbar')!.focus();
-          } else if (!editorMode) {
-            e.preventDefault();
-
-            if (firstTabbable.current !== null) firstTabbable.current.focus();
-
-            wasToolbarLastFocusedElement.current = false;
-          }
-        } else if (e.shiftKey && !editorMode) {
-          e.preventDefault();
-
-          const focusedTabIndex = activeSectionIds.indexOf(id);
-          const selectedTabIndex = activeSectionIds.indexOf(openedSectionId);
-
-          /**
-           * The focused tab is higher than the selected tab (the tab
-           * corresponding to the opened section in the navbar).
-           */
-          const isHigher = focusedTabIndex < selectedTabIndex;
-
-          if (isHigher) {
-            // TODO: use refs!
-            document.getElementById('toggle-navbar')!.focus();
-          } else {
-            // TODO: use refs!
-            document.getElementById(openedSectionId)!.focus();
-          }
-        }
-      } else if (id === 'edit-sections') {
+      if (id === openedSectionId && !editorMode && !e.shiftKey) {
         e.preventDefault();
-
-        if (e.shiftKey) {
-          if (canAddSections) {
-            // TODO: use refs!
-            document.getElementById('add-sections')!.focus();
-          } else if (editorMode) {
-            // TODO: use refs!
-            document
-              .getElementById(`delete-${activeSectionIds.at(-1)}`)!
-              .focus();
-          } else {
-            // TODO: use refs!
-            document.getElementById(openedSectionId)!.focus();
-          }
-        } else {
-          // TODO: use refs!
-          document.getElementById('toggle-controls')!.focus();
-        }
-      } else if (id === 'toggle-navbar') {
-        if (isNavbarExpanded && !e.shiftKey) {
-          e.preventDefault();
-
-          if (editorMode) {
-            // TODO: use refs!
-            document.getElementById('personal')!.focus();
-          } else {
-            // TODO: use refs!
-            document.getElementById(openedSectionId)!.focus();
-          }
-        }
-      } else if (controlsRelatedBtns.has(id)) {
-        if (!e.shiftKey) {
-          e.preventDefault();
-
-          if (firstTabbable.current !== null) firstTabbable.current.focus();
-
-          wasToolbarLastFocusedElement.current = true;
-        }
-      } else if (
-        e.target === firstTabbable.current &&
-        e.shiftKey &&
-        isNavbarExpanded &&
-        !wasToolbarLastFocusedElement.current
-      ) {
-        e.preventDefault();
-
-        // TODO: use refs!
-        document.getElementById(openedSectionId)!.focus();
-      }
-    } else if (e.key === 'Escape') {
-      const deleteSectionBtns = possibleSectionIds.map(
-        (sectionId) => `delete-${sectionId}`,
-      );
-
-      const navbarChildrenIds = new Set([
-        'add-sections',
-        'edit-sections',
-        ...deleteSectionBtns,
-        ...possibleSectionIds,
-      ]);
-
-      if (navbarChildrenIds.has(id)) {
-        if (editorMode) {
-          toggleEditorMode();
-
-          if (/^delete-/.test(id)) {
-            const sectionId = id.replace('delete-', '');
-            document.getElementById(sectionId)!.focus();
-          }
-        } else {
-          toggleNavbar();
-          document.getElementById('toggle-navbar')!.focus();
-        }
+        focusSection();
       }
     }
   }
@@ -206,31 +88,27 @@ export default function AppLayout({
       data-testid="app-layout"
       onKeyDown={handleKeyDown}
     >
-      {/* TODO: should use conditional rendering */}
-      <Navbar
+      {/* DILEMMA: Add a skip link allowing to jump to the main content? */}
+      <Sidebar
         activeSectionIds={activeSectionIds}
         addSections={addSections}
         canAddSections={canAddSections}
-        className="AppLayout-Navbar"
+        data={data}
+        deleteAll={deleteAll}
         deleteSections={deleteSections}
         editorMode={editorMode}
-        isExpanded={isNavbarExpanded}
+        fillAll={fillAll}
+        isNavbarExpanded={isNavbarExpanded}
         reorderSections={reorderSections}
         resetScreenReaderAnnouncement={resetScreenReaderAnnouncement}
         selectedSectionId={openedSectionId}
         selectSection={openSection}
         toggleEditorMode={toggleEditorMode}
+        toggleNavbar={() => {
+          if (isNavbarExpanded && editorMode) toggleEditorMode();
+          setIsNavbarExpanded(!isNavbarExpanded);
+        }}
       />
-      <aside aria-label="Tools" className="AppLayout-Toolbar">
-        <Toolbar
-          activeSectionIds={activeSectionIds}
-          data={data}
-          deleteAll={deleteAll}
-          fillAll={fillAll}
-          isNavbarExpanded={isNavbarExpanded}
-          toggleNavbar={toggleNavbar}
-        />
-      </aside>
       <main className="AppLayout-Main" tabIndex={-1}>
         <h1 className="AppLayout-Title">{sectionTitles[openedSectionId]}</h1>
         <div
