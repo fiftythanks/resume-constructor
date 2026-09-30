@@ -75,7 +75,7 @@ We strictly enforce the Conventional Commits specification with specific formatt
 | `fix`      | Bug fix in component markup, logic, accessibility or styles              |
 | `refactor` | Code restructuring with no change to external behaviour                  |
 | `test`     | Adding, updating or fixing automated unit, integration or E2E tests      |
-| `docs`     | In-source documentation (JSDoc, inline comments, TODOs/FIXMEs)           |
+| `docs`     | Documentation portal (`docs/`), guides, in-source JSDoc and comments     |
 | `chore`    | Tooling, build pipeline, dependencies, CI, git hooks and repository docs |
 
 ### Allowed Scopes by Domain
@@ -121,6 +121,7 @@ All scopes must be **strictly lowercase**.
 - `eslint`: ESLint flat configuration and rules (`eslint.config.js`)
 - `package`: Dependency manifests and runtime updates (`package.json`, `bun.lock`)
 - `readme`: Root repository documentation (`README.md`)
+- `docs`: Documentation portal, guides and configuration (`docs/`)
 - `agents`: AI instructions and skills (`GEMINI.md`, `.agents/skills/`)
 
 > [!NOTE]

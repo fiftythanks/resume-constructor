@@ -122,7 +122,7 @@ Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
   - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.
   - Pages: `personal`, `education`, `experience`, `projects`, `skills`, `certifications`, `links`, `pages`.
   - Core: `hooks`, `utils`, `types`, `styles`.
-  - Tooling/Infra: `webpack`, `husky`, `ci`, `e2e`, `jest`, `eslint`, `package`, `readme`, `agents`.
+  - Tooling/Infra: `webpack`, `husky`, `ci`, `e2e`, `jest`, `eslint`, `package`, `readme`, `docs`, `agents`.
 
 ---
 
@@ -135,4 +135,3 @@ Before finishing any task or concluding a turn:
 3. Run `bun x stylelint <modified-scss-files>` if styles were changed.
 4. Run `bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests`.
 5. If errors occur, diagnose using: `[Error Source] -> [Attempted Fix] -> [Result]`.
-
