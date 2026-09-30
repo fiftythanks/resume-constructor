@@ -2,8 +2,9 @@
 
 ## 1. Project Overview & Architectural Principles
 
-- **Core Stack:** React 19, TypeScript (strict), SCSS + BEM, custom Webpack 5, Bun runtime/package manager.
+- **Core Stack:** React 19, TypeScript (strict), SCSS + BEM, custom webpack 5, Bun runtime/package manager.
 - **Domain:** Production-grade, zero-bootstrap resume generator implementing _The Tech Resume Inside Out_.
+- **Branding & Casing:** Always spell `webpack` in strictly lowercase letters (`webpack`, never capitalised as `Webpack`).
 - **Key Constraints:**
   - Component colocation: `Component.tsx`, `Component.scss`, `Component.test.tsx`, `index.tsx` (barrel export).
   - Strict separation: UI primitives (`src/components/`) decoupled from feature pages (`src/pages/`) and business logic (`src/hooks/`).
