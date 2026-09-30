@@ -1,10 +1,7 @@
 // It disallowed using `crypto`, which is well supported.
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import React from 'react';
-import type { RefObject } from 'react';
-
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
@@ -217,19 +214,17 @@ function getProps(
     deleteSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
     editorMode: false,
     fillAll() {},
-    firstTabbable: { current: null },
-    isNavbarExpanded: false,
+    focusSection: jest.fn(),
     openedSectionId: 'personal',
     openSection(_sectionId: SectionId) {},
     reorderSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
     resetScreenReaderAnnouncement() {},
     toggleEditorMode() {},
-    toggleNavbar() {},
     ...overrides,
   };
 }
 
-function renderAppLayout(props?: AppLayoutProps) {
+function renderAppLayout(props?: Partial<AppLayoutProps>) {
   // Necessary for the dialogs "Preview" and "Add Sections".
   render(<div id="popup-root" />);
 
@@ -240,7 +235,8 @@ function renderAppLayout(props?: AppLayoutProps) {
 // TODO: should have correct data for the preview dialog.
 
 function renderAppLayoutWithNavbarExpanded(props?: Partial<AppLayoutProps>) {
-  return renderAppLayout(getProps({ ...props, isNavbarExpanded: true }));
+  renderAppLayout(props);
+  fireEvent.click(screen.getByRole('button', { name: 'Navigation' }));
 }
 
 describe('AppLayout', () => {
@@ -360,12 +356,12 @@ describe('AppLayout', () => {
   // Navbar
 
   it("should render the navbar when it's expanded", () => {
-    renderAppLayout(getProps({ isNavbarExpanded: true }));
+    renderAppLayoutWithNavbarExpanded();
 
     const navbar = screen.getByRole('navigation', { name: 'Navigation' });
     const navbarClassList = navbar.classList;
 
-    expect(navbarClassList).not.toContain('Navbar_hidden');
+    expect(navbarClassList).not.toContain('Sidebar-Item_hidden');
   });
 
   it("should not render the navbar when it's hidden", () => {
@@ -374,7 +370,7 @@ describe('AppLayout', () => {
     const navbar = screen.getByRole('navigation', { name: 'Navigation' });
     const navbarClassList = navbar.classList;
 
-    expect(navbarClassList).toContain('Navbar_hidden');
+    expect(navbarClassList).toContain('Sidebar-Item_hidden');
   });
 
   describe('Navbar', () => {
@@ -591,10 +587,10 @@ describe('AppLayout', () => {
 
   // Toolbar
 
-  it('should render a complementary semantic wrapper "Tools" for the toolbar', () => {
+  it('should render a complementary semantic wrapper for the sidebar', () => {
     renderAppLayout();
 
-    const wrapper = screen.getByRole('complementary', { name: 'Tools' });
+    const wrapper = screen.getByRole('complementary');
 
     expect(wrapper).toBeInTheDocument();
   });
@@ -605,12 +601,11 @@ describe('AppLayout', () => {
     const toolbar = screen.getByRole('toolbar');
 
     expect(toolbar).toBeInTheDocument();
-    expect(toolbar).toHaveAttribute('data-testid', 'toolbar');
   });
 
   describe('Toolbar', () => {
     describe('"Toggle Navigation" button', () => {
-      it("shouldn't be expanded when `isNavbarExpanded === false`", () => {
+      it("shouldn't be expanded initially", () => {
         renderAppLayout();
 
         const btn = screen.getByRole('button', {
@@ -621,32 +616,34 @@ describe('AppLayout', () => {
         expect(btn).toBeInTheDocument();
       });
 
-      it('should be expanded when `isNavbarExpanded === true`', () => {
-        renderAppLayout(getProps({ isNavbarExpanded: true }));
+      it('should be expanded when clicked', async () => {
+        renderAppLayout();
+        const user = userEvent.setup();
 
         const btn = screen.getByRole('button', {
           name: 'Navigation',
-          expanded: true,
+          expanded: false,
         });
 
-        expect(btn).toBeInTheDocument();
+        await user.click(btn);
+
+        expect(btn).toHaveAttribute('aria-expanded', 'true');
       });
 
-      it('should call `toggleNavbar` when pressed', async () => {
+      it('should toggle navbar expanded state when pressed', async () => {
         // Arrange
-        const mockFn = jest.fn();
-        const props = getProps({ toggleNavbar: mockFn });
-
-        renderAppLayout(props);
+        renderAppLayout();
         const user = userEvent.setup();
 
         const btn = screen.getByRole('button', { name: 'Navigation' });
+        expect(btn).toHaveAttribute('aria-expanded', 'false');
 
-        // Act
+        // Act & Assert
         await user.click(btn);
+        expect(btn).toHaveAttribute('aria-expanded', 'true');
 
-        // Assert
-        expect(mockFn).toHaveBeenCalledTimes(1);
+        await user.click(btn);
+        expect(btn).toHaveAttribute('aria-expanded', 'false');
       });
     });
 
@@ -656,14 +653,14 @@ describe('AppLayout', () => {
         renderAppLayout();
         const user = userEvent.setup();
 
-        const toggleControlsBtn = screen.getByRole('button', {
-          name: 'Control Buttons',
+        const toggleToolbarBtn = screen.getByRole('button', {
+          name: 'Toolbar',
           expanded: false,
         });
 
-        await user.click(toggleControlsBtn);
+        await user.click(toggleToolbarBtn);
 
-        const clearAllBtn = screen.getByRole('menuitem', { name: 'Clear All' });
+        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
 
         // Act
         const controlledElementsIds = clearAllBtn
@@ -698,14 +695,14 @@ describe('AppLayout', () => {
         renderAppLayout(props);
         const user = userEvent.setup();
 
-        const toggleControlsBtn = screen.getByRole('button', {
-          name: 'Control Buttons',
+        const toggleToolbarBtn = screen.getByRole('button', {
+          name: 'Toolbar',
           expanded: false,
         });
 
-        await user.click(toggleControlsBtn);
+        await user.click(toggleToolbarBtn);
 
-        const clearAllBtn = screen.getByRole('menuitem', { name: 'Clear All' });
+        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
 
         // Act
         await user.click(clearAllBtn);
@@ -724,14 +721,14 @@ describe('AppLayout', () => {
         renderAppLayout(props);
         const user = userEvent.setup();
 
-        const toggleControlsBtn = screen.getByRole('button', {
-          name: 'Control Buttons',
+        const toggleToolbarBtn = screen.getByRole('button', {
+          name: 'Toolbar',
           expanded: false,
         });
 
-        await user.click(toggleControlsBtn);
+        await user.click(toggleToolbarBtn);
 
-        const fillAllBtn = screen.getByRole('menuitem', { name: 'Fill All' });
+        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);
@@ -771,19 +768,12 @@ describe('AppLayout', () => {
           });
 
           describe("Editor mode is off and shift isn't pressed", () => {
-            it('should focus the first tabbable element of the rendered tabpanel', async () => {
+            it('should call focusSection', async () => {
               // Arrange
-              const firstTabbable: RefObject<HTMLButtonElement | null> = {
-                current: null,
-              };
+              const mockFocusSection = jest.fn();
+              const props = getProps({ focusSection: mockFocusSection });
 
-              render(<button data-testid="first-tabbable" />);
-
-              firstTabbable.current = screen.getByTestId(
-                'first-tabbable',
-              ) as HTMLButtonElement;
-
-              renderAppLayoutWithNavbarExpanded(getProps({ firstTabbable }));
+              renderAppLayoutWithNavbarExpanded(props);
               const user = userEvent.setup();
 
               const tab = screen.getByRole('tab', {
@@ -796,7 +786,7 @@ describe('AppLayout', () => {
               await user.keyboard('{Tab}');
 
               // Assert
-              expect(firstTabbable.current).toHaveFocus();
+              expect(mockFocusSection).toHaveBeenCalledTimes(1);
             });
           });
         });
@@ -917,7 +907,7 @@ describe('AppLayout', () => {
         });
 
         describe("Shift isn't pressed", () => {
-          it('should focus the "Toggle Control Buttons" button', async () => {
+          it('should focus the "Toolbar" button', async () => {
             // Arrange
             renderAppLayoutWithNavbarExpanded();
             const user = userEvent.setup();
@@ -926,14 +916,14 @@ describe('AppLayout', () => {
             const toggleEditorModeBtn = screen.getByRole('button', { name });
             toggleEditorModeBtn.focus();
 
-            name = 'Control Buttons';
-            const toggleControlsBtn = screen.getByRole('button', { name });
+            name = 'Toolbar';
+            const toggleToolbarBtn = screen.getByRole('button', { name });
 
             // Act
             await user.keyboard('{Tab}');
 
             // Assert
-            expect(toggleControlsBtn).toHaveFocus();
+            expect(toggleToolbarBtn).toHaveFocus();
           });
         });
       });
@@ -984,74 +974,27 @@ describe('AppLayout', () => {
         });
       });
 
-      describe("A control button from the 'Control Buttons' menu is focused and Shift isn't pressed", () => {
+      describe("A control button from the 'Toolbar' is focused and Shift isn't pressed", () => {
         it('should focus the first tabbable element of the tabpanel', async () => {
           // Arrange
-          const firstTabbable: RefObject<HTMLButtonElement | null> = {
-            current: null,
-          };
-
-          render(<button data-testid="first-tabbable" />);
-
-          firstTabbable.current = screen.getByTestId(
-            'first-tabbable',
-          ) as HTMLButtonElement;
-
-          const props = getProps({ firstTabbable });
-
-          renderAppLayoutWithNavbarExpanded(props);
+          renderAppLayoutWithNavbarExpanded();
           const user = userEvent.setup();
 
-          let name = 'Control Buttons';
-          const toggleControlsBtn = screen.getByRole('button', { name });
-          await user.click(toggleControlsBtn);
+          const toggleToolbarBtn = screen.getByRole('button', {
+            name: 'Toolbar',
+          });
+          await user.click(toggleToolbarBtn);
 
-          name = 'Fill All';
-          const controlBtn = screen.getByRole('menuitem', { name });
+          const controlBtn = screen.getByRole('button', {
+            name: 'Open Preview',
+          });
           controlBtn.focus();
 
           // Act
           await user.keyboard('{Tab}');
 
           // Assert
-          expect(firstTabbable.current).toHaveFocus();
-        });
-      });
-
-      describe("Tabpanel's first tabbable element is focused, Shift is pressed, the navbar is expanded and the last time focus was outside the tabpanel, it was inside the navbar", () => {
-        it('should focus the selected tab', async () => {
-          // Arrange
-          const firstTabbable: RefObject<HTMLButtonElement | null> = {
-            current: null,
-          };
-
-          render(<button data-testid="first-tabbable" />);
-
-          firstTabbable.current = screen.getByTestId(
-            'first-tabbable',
-          ) as HTMLButtonElement;
-
-          const openedSectionId = 'projects';
-          const props = getProps({ firstTabbable, openedSectionId });
-
-          renderAppLayoutWithNavbarExpanded(props);
-          const user = userEvent.setup();
-
-          let name: string = sectionTitles.education;
-          const educationTab = screen.getByRole('tab', { name });
-          educationTab.focus();
-
-          // Focus the tabpanel's first tabbable element.
-          await user.keyboard('{Tab}');
-
-          name = sectionTitles.projects;
-          const selectedTab = screen.getByRole('tab', { name });
-
-          // Act
-          await user.keyboard('{Shift>}{Tab}{/Shift}');
-
-          // Assert
-          expect(selectedTab).toHaveFocus();
+          expect(screen.getByTestId('first-tabbable')).toHaveFocus();
         });
       });
     });
@@ -1097,31 +1040,6 @@ describe('AppLayout', () => {
             // Assert
             expect(tab).toHaveFocus();
           });
-        });
-      });
-
-      describe('Editor mode is off', () => {
-        it('should toggle the navbar and focus the "Toggle Navbar" button', async () => {
-          // Arrange
-          const mockFn = jest.fn();
-          const props = getProps({ toggleNavbar: mockFn });
-
-          renderAppLayoutWithNavbarExpanded(props);
-          const user = userEvent.setup();
-
-          let name: string = sectionTitles.education;
-          const tab = screen.getByRole('tab', { name });
-          tab.focus();
-
-          name = 'Navigation';
-          const toggleNavbarBtn = screen.getByRole('button', { name });
-
-          // Act
-          await user.keyboard('{Escape}');
-
-          // Assert
-          expect(mockFn).toHaveBeenCalledTimes(1);
-          expect(toggleNavbarBtn).toHaveFocus();
         });
       });
     });

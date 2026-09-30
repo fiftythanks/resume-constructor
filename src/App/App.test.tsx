@@ -1,4 +1,4 @@
-import React, { act } from 'react';
+import { act } from 'react';
 
 import {
   ByRoleOptions,
@@ -48,14 +48,14 @@ async function renderAppWithNavbarAndControlsExpanded() {
   const renderAppWithNavbarExpandedReturn = await renderAppWithNavbarExpanded();
 
   const toggleControlsBtn = screen.getByRole('button', {
-    name: 'Control Buttons',
+    name: 'Toolbar',
     expanded: false,
   });
 
   await renderAppWithNavbarExpandedReturn.user.click(toggleControlsBtn);
 
-  const clearAllBtn = screen.getByRole('menuitem', { name: 'Clear All' });
-  const fillAllBtn = screen.getByRole('menuitem', { name: 'Fill All' });
+  const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
+  const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
   return {
     ...renderAppWithNavbarExpandedReturn,
@@ -572,7 +572,7 @@ describe('App', () => {
 
       it('should clear "Personal Details"', async () => {
         // Arrange
-        const { initialTabs, toggleControlsBtn, user } =
+        const { initialTabs, user } =
           await renderAppWithNavbarAndControlsExpanded();
 
         // Focus "Personal Details".
@@ -590,8 +590,7 @@ describe('App', () => {
 
         await user.keyboard('Some other data');
 
-        await user.click(toggleControlsBtn);
-        const clearAllBtn = screen.getByRole('menuitem', { name: 'Clear All' });
+        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
 
         // Act
         await user.click(clearAllBtn);
@@ -604,7 +603,7 @@ describe('App', () => {
       it("should clear sections permanently, so they're empty when re-added", async () => {
         // Arrange
         const result = await renderAppWithNavbarAndControlsExpanded();
-        const { navbar, toggleControlsBtn, user } = result;
+        const { navbar, user } = result;
         let addSectionsBtn = result.addSectionsBtn;
 
         await user.click(addSectionsBtn);
@@ -642,8 +641,7 @@ describe('App', () => {
         textboxes[1].focus();
         await user.keyboard('some other input');
 
-        await user.click(toggleControlsBtn);
-        const clearAllBtn = screen.getByRole('menuitem', { name: 'Clear All' });
+        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
 
         // Act
         await user.click(clearAllBtn);
@@ -798,16 +796,7 @@ describe('App', () => {
         summary.focus();
         await user.keyboard('some summary');
 
-        // Expand the control buttons again.
-
-        const toggleControlsBtn = screen.getByRole('button', {
-          name: 'Control Buttons',
-          expanded: false,
-        });
-
-        await user.click(toggleControlsBtn);
-
-        const fillAllBtn = screen.getByRole('menuitem', { name: 'Fill All' });
+        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);
@@ -920,16 +909,7 @@ describe('App', () => {
         firstBulletPoint.focus();
         await user.keyboard('some bullet');
 
-        // Expand the control buttons again.
-
-        const toggleControlsBtn = screen.getByRole('button', {
-          name: 'Control Buttons',
-          expanded: false,
-        });
-
-        await user.click(toggleControlsBtn);
-
-        fillAllBtn = screen.getByRole('menuitem', { name: 'Fill All' });
+        fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);
@@ -987,13 +967,7 @@ describe('App', () => {
         // Close the dialog.
         await user.keyboard('{Escape}');
 
-        // Expand the control buttons again.
-        options.name = 'Control Buttons';
-        options.expanded = false;
-        const toggleControlsBtn = screen.getByRole('button', options);
-        await user.click(toggleControlsBtn);
-
-        const fillAllBtn = screen.getByRole('menuitem', { name: 'Fill All' });
+        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);
