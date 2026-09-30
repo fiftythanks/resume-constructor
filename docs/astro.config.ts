@@ -1,5 +1,5 @@
-import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { defineConfig } from 'astro/config';
 import starlightGithubAlerts from 'starlight-github-alerts';
 import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
@@ -25,6 +25,31 @@ export default defineConfig({
         {
           label: 'Start Here',
           items: [{ label: 'Getting Started', slug: 'getting-started' }],
+        },
+        {
+          label: 'Architecture Guides',
+          items: [
+            {
+              label: 'System Architecture',
+              slug: 'guides/architecture',
+            },
+            {
+              label: 'Form Engineering',
+              slug: 'guides/form-engineering',
+            },
+            {
+              label: 'Rendering Pipeline',
+              slug: 'guides/preview-rendering',
+            },
+            {
+              label: 'Inclusive Design & A11y',
+              slug: 'guides/accessibility',
+            },
+            {
+              label: 'Project Roadmap',
+              slug: 'guides/roadmap',
+            },
+          ],
         },
         typeDocSidebarGroup,
       ],
