@@ -64,21 +64,6 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
       },
-      // TODO: get rid of `babel-loader` as soon as you fully migrate to TypeScript.
-      {
-        test: /\.m?jsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            targets: 'defaults',
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-          },
-        },
-        resolve: {
-          fullySpecified: false,
-        },
-      },
       {
         test: /\.m?tsx?$/,
         exclude: /node_modules/,
