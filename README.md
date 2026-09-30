@@ -51,12 +51,12 @@ The codebase follows **Component Colocation** and **Barrel Export** patterns to 
 ```text
 src/
 ├── components/                # Shared UI Kit (buttons, popups, toolbar)
-│   └── Button/                # Colocation: Logic, styles, tests and types in one place
+│   └── Button/                # Colocation: Logic, styles, tests and types
 │       ├── Button.tsx
 │       ├── Button.scss        # BEM styling
 │       ├── Button.test.tsx
 │       └── index.tsx          # Barrel export
-├── pages/                     # Feature views (Education, Experience, Skills forms)
+├── pages/                     # Feature views (Education, Experience, Skills)
 ├── hooks/                     # Isolated business logic (custom hooks)
 │   ├── useResumeData/         # Complex state management logic
 │   └── useResumeData.test.ts  # Logic-only testing

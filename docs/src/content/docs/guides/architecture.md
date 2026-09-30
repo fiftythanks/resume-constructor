@@ -66,7 +66,10 @@ export function Button({
   variant = 'primary',
   ...rest
 }: ReadonlyExcept<ButtonProps, 'ref'>) {
-  // props are deeply immutable; ref remains accessible as a first-class React 19 prop
+  /**
+   * Props are deeply immutable; ref remains accessible as a
+   * first-class React 19 prop.
+   */
   return (
     <button ref={ref} {...rest}>
       {children}
