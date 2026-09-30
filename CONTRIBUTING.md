@@ -16,7 +16,7 @@ cd resume-constructor
 # Install dependencies (respecting lockfile)
 bun install --frozen-lockfile
 
-# Start local development server (Webpack 5 dev server)
+# Start local development server (webpack 5 dev server)
 bun start
 
 # Run unit and integration tests (Jest)
@@ -113,7 +113,7 @@ All scopes must be **strictly lowercase**.
 
 #### Domain D: Infrastructure, Tooling & Build System
 
-- `webpack`: Webpack configuration files (`webpack.*.cjs`)
+- `webpack`: webpack configuration files (`webpack.*.cjs`)
 - `husky`: Git pre-commit and pre-push hooks (`.husky/`)
 - `ci`: Continuous Integration workflows (`.github/workflows/`)
 - `e2e`: Playwright test suites and configs (`e2e/`, `playwright.config.ts`)

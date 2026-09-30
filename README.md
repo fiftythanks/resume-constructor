@@ -1,6 +1,6 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
-![Webpack](https://img.shields.io/badge/Webpack-Custom-8DD6F9?logo=webpack&logoColor=black)
+![webpack](https://img.shields.io/badge/webpack-Custom-8DD6F9?logo=webpack&logoColor=black)
 ![PostCSS](https://img.shields.io/badge/PostCSS-DD3A0A?logo=postcss&logoColor=white)
 
 ![Test Coverage](https://img.shields.io/badge/Tests-11.7k%2B_Lines-2ea44f?logo=jest&logoColor=white)
@@ -31,7 +31,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
 ### Key Engineering Highlights
 
 - **Architecture:** Strict separation of concerns (UI Kit vs Business Logic) combined with component colocation (tests, styles and logic kept together) for high maintainability.
-- **Build System:** **Custom Webpack 5 multi-entry configuration** compiling the main application and `pdf.worker` in parallel to run document processing in a background worker thread.
+- **Build System:** **Custom webpack 5 multi-entry configuration** compiling the main application and `pdf.worker` in parallel to run document processing in a background worker thread.
 - **Strict Type Safety:** TypeScript application source code (`strict: true`, no implicit `any`, no unreachable code) enforcing deep immutability across component boundaries via `ReadonlyExcept` and `type-fest`'s `ReadonlyDeep`.
 - **Testing Strategy:** Over 560 automated unit and integration tests (11,700+ lines of Jest and React Testing Library specs, accounting for over 60% of the codebase size), querying elements strictly by accessible roles and simulating user interactions.
   - **E2E & Automated Audits (Playwright):** Dockerised smoke and visual regression test suites verifying core user flows (data population, canvas rendering, PDF blob download) and automated `@axe-core/playwright` accessibility audits.
