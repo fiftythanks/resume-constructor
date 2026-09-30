@@ -5,6 +5,7 @@ import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightPageActions from 'starlight-page-actions';
 import starlightScrollToTop from 'starlight-scroll-to-top';
+import starlightTypeDoc, { typeDocSidebarGroup } from 'starlight-typedoc';
 
 export default defineConfig({
   site: 'https://docs.resume-constructor.sholokhov.dev',
@@ -25,10 +26,49 @@ export default defineConfig({
           label: 'Start Here',
           items: [{ label: 'Getting Started', slug: 'getting-started' }],
         },
+        typeDocSidebarGroup,
       ],
       plugins: [
+        starlightTypeDoc({
+          entryPoints: [
+            '../src/types/resumeData.ts',
+            '../src/types/ReadonlyExcept.ts',
+            '../src/hooks/useAppState.ts',
+            '../src/hooks/useDebouncedWindowSize.ts',
+            '../src/hooks/useLastComponentBeforeTabpanel.ts',
+            '../src/hooks/useResumeData/index.ts',
+            '../src/utils/capitalize.ts',
+            '../src/utils/neverReached.ts',
+            '../src/utils/possibleSectionIds.ts',
+            '../src/utils/sectionTitles.ts',
+            '../src/components/Button/index.tsx',
+            '../src/components/Popup/index.tsx',
+            '../src/components/AddSections/index.tsx',
+            '../src/components/AppbarIconButton/index.tsx',
+            '../src/components/AppLayout/index.tsx',
+            '../src/components/BulletPoints/index.tsx',
+            '../src/components/Preview/index.tsx',
+            '../src/pages/Personal/index.tsx',
+            '../src/pages/Education/index.tsx',
+            '../src/pages/Experience/index.tsx',
+            '../src/pages/Projects/index.tsx',
+            '../src/pages/Skills/index.tsx',
+            '../src/pages/Certifications/index.tsx',
+            '../src/pages/Links/index.tsx',
+          ],
+          pagination: true,
+          tsconfig: '../tsconfig.json',
+          typeDoc: {
+            enumMembersFormat: 'table',
+            parametersFormat: 'table',
+            propertiesFormat: 'table',
+            typeDeclarationFormat: 'table',
+          },
+        }),
         starlightGithubAlerts(),
-        starlightLinksValidator(),
+        starlightLinksValidator({
+          exclude: ['/api/**'],
+        }),
         starlightLlmsTxt(),
         starlightPageActions(),
         starlightScrollToTop(),
