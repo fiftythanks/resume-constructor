@@ -1,4 +1,5 @@
 import starlight from '@astrojs/starlight';
+import mermaid from 'astro-mermaid';
 import { defineConfig } from 'astro/config';
 import starlightGithubAlerts from 'starlight-github-alerts';
 import starlightLinksValidator from 'starlight-links-validator';
@@ -10,6 +11,7 @@ import starlightTypeDoc, { typeDocSidebarGroup } from 'starlight-typedoc';
 export default defineConfig({
   site: 'https://docs.resume-constructor.sholokhov.dev',
   integrations: [
+    mermaid(),
     starlight({
       title: 'Resume Constructor',
       description:
