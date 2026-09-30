@@ -1,10 +1,9 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![Webpack](https://img.shields.io/badge/Webpack-Custom-8DD6F9?logo=webpack&logoColor=black)
-![Babel](https://img.shields.io/badge/Babel-F9DC3E?logo=babel&logoColor=black)
 ![PostCSS](https://img.shields.io/badge/PostCSS-DD3A0A?logo=postcss&logoColor=white)
 
-![Test Coverage](https://img.shields.io/badge/Tests-8.5k%2B_Lines-2ea44f?logo=jest&logoColor=white)
+![Test Coverage](https://img.shields.io/badge/Tests-11.7k%2B_Lines-2ea44f?logo=jest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-E2E-45ba4b?logo=playwright&logoColor=white)
 ![Style](https://img.shields.io/badge/Style-SCSS_%2B_BEM-hotpink?logo=sass&logoColor=white)
 ![Accessibility](https://img.shields.io/badge/A11y-WCAG_2.2-blueviolet?logo=w3c&logoColor=white)
@@ -31,18 +30,17 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
 
 ### Key Engineering Highlights
 
-- **Architecture:** Strict separation of concerns (UI Kit vs. Business Logic) combined with component colocation (tests, styles and logic kept together) for high maintainability.
-- **Build System:** **Custom webpack 5 configuration** (manual setup). Correctly configured with **multi-entry points** and specific **Terser settings** (as per PDF.js documentation) to ensure the PDF worker runs in a background thread without breaking in production builds.
-- **Type Safety:** 100% strictly typed **TypeScript** codebase.
-- **Testing Strategy:** Comprehensive coverage (8,500+ lines of tests, > 60% of the codebase size), TDD, Testing Pyramid.
-  - **Unit/Integration (Jest):** Covers UI components and custom hooks isolated logic.
-  - **E2E (Playwright):** Covers critical user flows and export functionality.
-- **Inclusive Design (A11y):** Built with a strict **“accessibility-first”** mindset. All features, including complex interactions like drag & drop, are fully keyboard-navigable and compatible with screen readers (tested with Orca).
-- **Rich Interactive Experience:** Implemented a fully accessible Drag & Drop interface using `dnd-kit` for intuitive reordering of resume sections and list items. The feature includes:
-  - **Intuitive Visual Feedback:** Custom animations (iOS-style “jiggling” icons in edit mode) to clearly communicate component states.
-  - **Full Keyboard Support:** All DnD operations can be performed using only the keyboard (Tab, Space, Arrow Keys).
-  - **Screen Reader Compatibility:** Thoroughly tested with screen readers to ensure all actions and state changes are announced correctly.
-- **Pragmatic Rendering Strategy:** Conducted a deep dive into React-PDF and PDF.js internals to render PDF as an embedded document without a toolbar in Firefox. After identifying critical constraints within PDF.js, I made a strategic decision to pivot to a Canvas-based rendering solution for the preview/download screen. This ensured 100% cross-browser consistency without over-engineering.
+- **Architecture:** Strict separation of concerns (UI Kit vs Business Logic) combined with component colocation (tests, styles and logic kept together) for high maintainability.
+- **Build System:** **Custom Webpack 5 multi-entry configuration** compiling the main application and `pdf.worker` in parallel to run document processing in a background worker thread.
+- **Strict Type Safety:** TypeScript application source code (`strict: true`, no implicit `any`, no unreachable code) enforcing deep immutability across component boundaries via `ReadonlyExcept` and `type-fest`'s `ReadonlyDeep`.
+- **Testing Strategy:** Over 560 automated unit and integration tests (11,700+ lines of Jest and React Testing Library specs, accounting for over 60% of the codebase size), querying elements strictly by accessible roles and simulating user interactions.
+  - **E2E & Automated Audits (Playwright):** Dockerised smoke and visual regression test suites verifying core user flows (data population, canvas rendering, PDF blob download) and automated `@axe-core/playwright` accessibility audits.
+- **Inclusive Design (A11y):** Built targeting WCAG 2.2 AA standards. All features, including complex interactions like drag & drop, are fully keyboard-navigable with focus management via `tabbable`, dynamic announcements via `aria-live="polite"` and explicit `htmlFor` form labeling.
+- **Rich Interactive Experience:** Implemented an accessible Drag & Drop interface using `@dnd-kit` for intuitive reordering of resume sections and list items:
+  - **Visual Feedback:** Edit-mode shake indicator communicating draggable state.
+  - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
+  - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
+- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML5 `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF. _(Work in progress: transitioning to a pure JSX DOM live preview to eliminate canvas rasterisation overhead)._
 
 ---
 
@@ -94,7 +92,7 @@ Currently working on:
 
 ### Setup & Development
 
-*If you haven’t got Bun, you can use npm. The only script that won’t work is `e2e` because `playwright.config.ts` specifies a Shell script that uses Bun for starting a local server.*
+_Bun (v1.1+) is required. The repository uses `bun.lock` and relies on Bun runtime scripts for local development, testing and building._
 
 ```Bash
 # Clone the repository
@@ -106,7 +104,7 @@ bun install
 # Run development server
 bun start
 
-# Run unit and integration tests (8.5k+ lines coverage)
+# Run unit and integration tests (11.7k+ lines coverage)
 bun run test
 
 # Run E2E tests
