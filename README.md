@@ -82,13 +82,20 @@ src/
   - **Prettier:** Ensures consistent formatting across all file types.
   - **Husky & lint-staged:** Pre-commit hooks that prevent unformatted or broken code from entering the repository.
 
-### Project Status: MVP
+### Documentation & Roadmap
 
-The core engine is complete and **mobile-optimised**.
-Currently working on:
+Comprehensive technical documentation, architecture deep dives and the complete TypeDoc API reference are available on our documentation portal:
 
-- [ ] **Persistence:** Saving drafts via LocalStorage.
-- [ ] **Medium/Large UI:** Optimising the UI for medium- and large-sized screens.
+- **Documentation Portal:** [docs.resume-constructor.sholokhov.dev](https://docs.resume-constructor.sholokhov.dev)
+- **Detailed Roadmap & Technical Decisions:** [docs.resume-constructor.sholokhov.dev/guides/roadmap](https://docs.resume-constructor.sholokhov.dev/guides/roadmap)
+
+#### Major Planned Milestones
+
+1. **Responsive Multi-Screen Workspace:** Unified desktop sidebar, side-by-side editing and live preview pane for tablet and desktop viewports (`@media (min-width: 768px)`).
+2. **Pure JSX Live Preview:** Instant DOM preview engine bypassing canvas rasterisation overhead, paired with a "Switch to Real PDF" engine mode toggle.
+3. **Data Persistence & Draft Recovery:** Automatic `localStorage` synchronisation with snapshot history.
+4. **Form Ergonomics & Semantic Fieldsets:** Refactoring item cards to semantic `<fieldset>` elements, skills input modernisation and consolidating contact sections.
+5. **Internationalisation (i18n):** Multilingual resume support and Cyrillic font subset loading.
 
 ### Setup & Development
 
