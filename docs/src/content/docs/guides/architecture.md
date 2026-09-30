@@ -96,13 +96,19 @@ Manages the structured content of the resume (`Personal`, `Education`, `Experien
 
 ### 2. UI & Interaction State (`useAppState`)
 
-Manages ephemeral shell state:
+Manages ephemeral shell state and section orchestration:
 
-- **Active Section IDs:** The ordered collection of enabled resume sections.
-- **Current Tab:** The currently opened section in the editor.
+- **Active Section IDs:** The ordered collection of enabled resume sections (`activeSectionIds`).
+- **Opened Section ID:** The currently opened section tab displayed in the form editor (`openedSectionId`).
 - **Editor Mode:** Section management mode in the navbar (`editorMode`) enabling drag-and-drop section reordering and one-click section removal.
-- **Modal Dialog States:** Visibility of "Add Sections", "Clear All" and "Fill All" popups.
-- **Screen Reader Live Announcements:** Centralised `announcement` string rendered into an `aria-live="polite"` region.
+- **Screen Reader Live Announcements:** Centralised string (`screenReaderAnnouncement`) announcing section additions, deletions and reordering via `aria-live="polite"`.
+- **Section Operations:** Callbacks to add, delete, open and reorder sections.
+
+Modal dialog visibility is managed locally within each respective shell component rather than in `useAppState`:
+
+- `Navbar` manages the `<AddSections>` popup dialog (`isAddSectionsPopupShown`).
+- `Toolbar` manages the full-screen `<Preview>` modal dialog (`isPreviewModalShown`).
+- Toolbar operations such as "Clear All" (`deleteAll`) and "Fill All" (`fillAll`) trigger state resets immediately without modal popups.
 
 ### Zero Redundant Effects
 
