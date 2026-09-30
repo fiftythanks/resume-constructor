@@ -110,3 +110,8 @@ bun run test
 # Run E2E tests
 bun run e2e
 ```
+
+### Contributing
+
+Please review [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code style,
+branching model, git hooks and Conventional Commits specification.
