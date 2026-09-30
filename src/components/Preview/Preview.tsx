@@ -1,4 +1,4 @@
-import React, {
+import {
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -38,10 +38,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
 const A4_ASPECT_RATIO = 595.28 / 841.89;
 
 export interface PreviewProps {
-  activeSectionIds: SectionId[];
-  data: ResumeData;
+  activeSectionIds: ReadonlyDeep<SectionId[]>;
+  data: ReadonlyDeep<ResumeData>;
   isShown: boolean;
-  onClose: () => void;
+  onClose: ReadonlyDeep<() => void>;
 }
 
 /**
@@ -52,7 +52,7 @@ export default function Preview({
   data,
   isShown,
   onClose,
-}: ReadonlyDeep<PreviewProps>) {
+}: PreviewProps) {
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [canvasNode, setCanvasNode] = useState<HTMLCanvasElement | null>(null);
   const [numPages, setNumPages] = useState(0);
@@ -226,7 +226,13 @@ export default function Preview({
       title="Preview"
       onClose={onClose}
     >
-      <button className="Preview-CloseBtn" type="button" onClick={onClose}>
+      <button
+        className="Preview-CloseBtn"
+        type="button"
+        onClick={() => {
+          if (popupRef.current !== null) popupRef.current.close();
+        }}
+      >
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>
       {document === undefined ||

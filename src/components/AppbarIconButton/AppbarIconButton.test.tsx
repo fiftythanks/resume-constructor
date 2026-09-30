@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -40,7 +38,7 @@ describe('AppbarIconButton', () => {
     const props = getProps();
     render(<AppbarIconButton {...props} />);
 
-    const icon = screen.getByAltText(props.alt);
+    const icon = screen.getByAltText(props.alt!);
 
     expect(icon).toHaveAttribute('src', props.iconSrc);
   });
