@@ -16,6 +16,7 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"]
     }

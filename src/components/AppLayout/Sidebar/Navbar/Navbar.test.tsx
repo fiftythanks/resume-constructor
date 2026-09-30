@@ -19,7 +19,6 @@ const PROPS: NavbarProps = {
   canAddSections: true,
   deleteSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
   editorMode: false,
-  isExpanded: true,
   reorderSections(_newActiveSectionIds: ReadonlyDeep<SectionId[]>) {},
   resetScreenReaderAnnouncement() {},
   selectedSectionId: 'personal',
