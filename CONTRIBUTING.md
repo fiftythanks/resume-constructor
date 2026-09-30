@@ -62,6 +62,7 @@ We strictly enforce the Conventional Commits specification with specific formatt
 3. **Body Line Length:** Each line in the body must not exceed **80 characters**.
 4. **Code References in Body:** Any identifiers, filenames, directory paths, component names, props or HTML/ARIA attributes in the body must be enclosed in **backticks** (e.g. `NavbarItem`, `src/hooks/`, `aria-describedby`).
 5. **Language & Grammar:** Write all commit messages and code comments in **traditional British English** (e.g. "optimise", "initialise", "behaviour", "centre", "colour") and with **no Oxford commas** (use "A, B and C", never "A, B, and C").
+6. **Dash Typography:** Em-rules (—) must **always** be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. Never attach an em-rule directly to adjacent words. En-rules (–), representing ranges and similar things, must **not** have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
 
 ---
 

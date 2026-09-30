@@ -117,6 +117,7 @@ Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
 - **Body Line Length:** Every body line MUST NOT exceed 80 characters (`<= 80`).
 - **Code Symbols in Body:** Enclose all identifiers, component names, filenames, directory paths, props and attributes in backticks in the commit body (not the first line).
 - **Spelling & Style:** Write all commit messages and code comments in traditional British English ("optimise", "initialise", "behaviour", "centre", "colour") and strictly NO Oxford comma.
+- **Dash Typography:** Em-rules (—) must ALWAYS be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. En-rules (–), representing ranges and similar things, must NOT have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
 - **Allowed Tags:** `feat`, `fix`, `refactor`, `test`, `docs`, `chore`.
 - **Allowed Scopes:** Strictly lowercase:
   - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.
