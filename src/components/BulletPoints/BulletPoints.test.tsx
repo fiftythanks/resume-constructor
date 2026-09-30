@@ -223,7 +223,7 @@ describe('BulletPoints', () => {
     expect(dragHandle).toHaveFocus();
 
     const descriptionNode = document.getElementById(
-      dragHandle.getAttribute('aria-describedBy')!,
+      dragHandle.getAttribute('aria-describedby')!,
     )!;
 
     const cleanText = (text: string) => text.replaceAll(/\s+/g, ' ').trim();

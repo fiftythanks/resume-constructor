@@ -442,7 +442,7 @@ describe('Navbar', () => {
       // Act
       const name = sectionTitles['education'];
       const draggableTab = screen.getByRole('tab', { name });
-      const descriptionNodeId = draggableTab.getAttribute('aria-describedBy');
+      const descriptionNodeId = draggableTab.getAttribute('aria-describedby');
       const descriptionNode = document.getElementById(descriptionNodeId!)!;
 
       // Assert
@@ -456,7 +456,7 @@ describe('Navbar', () => {
 
       const name = sectionTitles['education'];
       const draggableTab = screen.getByRole('tab', { name });
-      const descriptionNodeId = draggableTab.getAttribute('aria-describedBy');
+      const descriptionNodeId = draggableTab.getAttribute('aria-describedby');
 
       expect(descriptionNodeId).toBeNull();
     });
@@ -465,7 +465,7 @@ describe('Navbar', () => {
       renderComponents(getProps({ editorMode: true }));
 
       const tab = screen.getByRole('tab', { name: sectionTitles['personal'] });
-      const descriptionNodeId = tab.getAttribute('aria-describedBy');
+      const descriptionNodeId = tab.getAttribute('aria-describedby');
 
       expect(descriptionNodeId).toBeNull();
     });

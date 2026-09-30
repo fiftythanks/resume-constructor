@@ -80,7 +80,7 @@ export default function NavbarItem({
     role: 'tab',
     // To indicate that the tabbing functionality is disabled
     'aria-disabled': isEditorMode,
-    'aria-describedBy': dndAttributes?.['aria-describedby'],
+    'aria-describedby': dndAttributes?.['aria-describedby'],
     'aria-roledescription': dndAttributes?.['aria-roledescription'],
     ref(node: HTMLButtonElement) {
       dndAttributes?.setActivatorNodeRef(node);
