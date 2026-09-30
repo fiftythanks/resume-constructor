@@ -47,6 +47,9 @@
   - State mutations: Use `immer` / `use-immer` for nested state updates.
 - **Form Controls & A11y:**
   - All form controls MUST have explicit labels: `jsx-a11y/label-has-associated-control` enforces `asserts: 'htmlFor'`. Never rely on implicit wrapping alone.
+- **Comment Standards:**
+  - All multiline comments MUST use JSDoc-style block comments (`/** ... */`) with leading asterisks on continuation lines, never consecutive single-line (`//`) comments.
+  - Single-line comments (`//`) are strictly reserved for standalone, single-line remarks. Consecutive single-line comments are permitted only when representing distinct annotations (e.g. separate `// TODO:` or `// DILEMMA:` entries).
 
 ---
 

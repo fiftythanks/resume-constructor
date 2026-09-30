@@ -64,6 +64,12 @@ We strictly enforce the Conventional Commits specification with specific formatt
 5. **Language & Grammar:** Write all commit messages and code comments in **traditional British English** (e.g. "optimise", "initialise", "behaviour", "centre", "colour") and with **no Oxford commas** (use "A, B and C", never "A, B, and C").
 6. **Dash Typography:** Em-rules (—) must **always** be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. Never attach an em-rule directly to adjacent words. En-rules (–), representing ranges and similar things, must **not** have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
 
+### Code Comments Standards
+
+1. **Multiline Comments:** Any code comment spanning multiple lines must be formatted as a JSDoc-style block comment (`/** ... */`) with leading asterisks on each continuation line. Consecutive `//` comments used to wrap sentences or paragraphs are strictly prohibited.
+2. **Single-line Comments:** The `//` syntax is strictly reserved for standalone, single-line remarks. Consecutive single-line comments are permitted only when representing distinct annotations (e.g. separate `// TODO:` or `// DILEMMA:` entries).
+3. **Language & Typography:** Comments must be written in traditional British English with strictly no Oxford comma, spaced em-rules (`—`) and unspaced en-rules (`–`) for ranges.
+
 ---
 
 ## 4. Systematised Tags & Scopes
