@@ -19,7 +19,10 @@ export default tseslint.config([
   {
     ignores: [
       'dist/**',
+      '**/dist/**',
+      '**/.astro/**',
       'node_modules/**',
+      '**/node_modules/**',
       '.github/**',
       '.git/**',
       '.husky/**',
@@ -273,6 +276,27 @@ export default tseslint.config([
     // disable type-aware linting in JS files
     files: ['**/*.{mjs,js,jsx}'],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+  // Scoped configuration for the Astro documentation subproject.
+  {
+    files: ['docs/**/*.{ts,tsx}'],
+    rules: {
+      'import-x/no-unresolved': [
+        'error',
+        {
+          ignore: ['^astro:'],
+        },
+      ],
+    },
+    settings: {
+      'import-x/resolver-next': [
+        createTypeScriptImportResolver({
+          alwaysTryTypes: true,
+          project: 'docs/tsconfig.json',
+        }),
+        createNodeResolver(),
+      ],
+    },
   },
   {
     files: ['**/*.{test,spec}.{mjs,js,jsx,mts,ts,tsx}'],
