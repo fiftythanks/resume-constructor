@@ -40,7 +40,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
   - **Visual Feedback:** Edit-mode shake indicator communicating draggable state.
   - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
   - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
-- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML5 `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF. _(Work in progress: transitioning to a pure JSX DOM live preview to eliminate canvas rasterisation overhead)._
+- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML5 `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF. _(Work in progress: introducing a side-by-side pure JSX DOM live preview on tablet and desktop screens for real-time typing feedback while retaining the on-demand Canvas modal for final pre-download inspection)._
 
 ---
 
@@ -91,8 +91,8 @@ Comprehensive technical documentation, architecture deep dives and the complete 
 
 #### Major Planned Milestones
 
-1. **Responsive Multi-Screen Workspace:** Unified desktop sidebar, side-by-side editing and live preview pane for tablet and desktop viewports (`@media (min-width: 768px)`).
-2. **Pure JSX Live Preview:** Instant DOM preview engine bypassing canvas rasterisation overhead, paired with a "Switch to Real PDF" engine mode toggle.
+1. **Responsive Multi-Screen Workspace:** Unified desktop sidebar, side-by-side editing and live preview pane for tablet and desktop viewports (`@media (min-width: 768px)`). Mobile remains a focused single-column editor with the modal pre-download preview.
+2. **Pure JSX Live Preview (Tablet/Desktop):** Instant DOM preview engine providing typing feedback on wider viewports without canvas overhead while retaining the pre-download PDF inspection modal.
 3. **Data Persistence & Draft Recovery:** Automatic `localStorage` synchronisation with snapshot history.
 4. **Form Ergonomics & Semantic Fieldsets:** Refactoring item cards to semantic `<fieldset>` elements, skills input modernisation and consolidating contact sections.
 5. **Internationalisation (i18n):** Multilingual resume support and Cyrillic font subset loading.

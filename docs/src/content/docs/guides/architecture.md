@@ -16,7 +16,7 @@ flowchart TD
 
     AppLayout --> Sidebar["Sidebar<br/>(Toolbar, Navbar Tabs)"]
     AppLayout --> FormView["Main: Form Editor<br/>(Personal, Education, Experience...)"]
-    AppLayout --> PreviewView["Main: Preview Engine<br/>(React-PDF + PDF.js Canvas)"]
+    Sidebar --> PreviewModal["Preview Modal<br/>(React-PDF Blob + PDF.js Canvas)"]
 ```
 
 ---
