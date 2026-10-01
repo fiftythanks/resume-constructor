@@ -62,13 +62,15 @@ We strictly enforce the Conventional Commits specification with specific formatt
 3. **Body Line Length:** Each line in the body must not exceed **80 characters**.
 4. **Code References in Body:** Any identifiers, filenames, directory paths, component names, props or HTML/ARIA attributes in the body must be enclosed in **backticks** (e.g. `NavbarItem`, `src/hooks/`, `aria-describedby`).
 5. **Language & Grammar:** Write all commit messages and code comments in **traditional British English** (e.g. "optimise", "initialise", "behaviour", "centre", "colour") and with **no Oxford commas** (use "A, B and C", never "A, B, and C").
-6. **Dash Typography:** Em-rules (—) must **always** be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. Never attach an em-rule directly to adjacent words. En-rules (–), representing ranges and similar things, must **not** have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
+6. **Dash Typography:** Em-rules ("—") must **always** be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. Never attach an em-rule directly to adjacent words. En-rules ("–"), representing ranges and similar things, must **not** have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
+7. **Slash Typography:** A forward slash ("/") must only be surrounded by spaces if it separates compound words (e.g. "word combination / another combination"). When separating single words, terms, identifiers or paths, no spaces are needed (e.g. "`Sidebar`/`Navbar`", "Prev/Next/Add/Delete", "true/false").
+8. **Quotation Marks in Prose vs Code:** In documentation, commit messages and code comments, **always use double quotes** (`"..."`) for quotes and punctuation references (not British-style single quotes). Single quotes (`'...'`) are strictly reserved for code implementation (JavaScript, TypeScript and SCSS). Identifiers, symbols and code references in prose must use **backticks** (`` `...` ``).
 
 ### Code Comments Standards
 
 1. **Multiline Comments:** Any code comment spanning multiple lines must be formatted as a JSDoc-style block comment (`/** ... */`) with leading asterisks on each continuation line. Consecutive `//` comments used to wrap sentences or paragraphs are strictly prohibited.
 2. **Single-line Comments:** The `//` syntax is strictly reserved for standalone, single-line remarks. Consecutive single-line comments are permitted only when representing distinct annotations (e.g. separate `// TODO:` or `// DILEMMA:` entries).
-3. **Language & Typography:** Comments must be written in traditional British English with strictly no Oxford comma, spaced em-rules (`—`) and unspaced en-rules (`–`) for ranges.
+3. **Language & Typography:** Comments and documentation must be written in traditional British English with strictly no Oxford comma, double quotes (`"..."`) for quoted natural language, spaced em-rules ("—"), unspaced en-rules ("–") for ranges and forward slashes ("/") spaced only when separating compound words.
 
 ---
 

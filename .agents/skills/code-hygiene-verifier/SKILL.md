@@ -127,6 +127,17 @@ Rule mandates explicit `htmlFor` association:
 
 ---
 
+### G. Typography & Documentation Standards
+
+All documentation, markdown files, commit messages and code comments must adhere to strict typographic rules:
+
+- **Language & Casing:** Traditional British English ("optimise", "initialise", "behaviour", "centre", "colour"), lowercase `webpack`, no Oxford comma.
+- **Quotation Marks:** In documentation and prose, always use double quotes (`"..."`) for natural language and punctuation references (never single quotes). Single quotes (`'...'`) are reserved for code syntax (TypeScript, JavaScript and SCSS). Backticks (`` `...` ``) are used for code identifiers, symbols and file paths.
+- **Dash Typography:** Spaced em-rules ("—") for parenthetical statements, unspaced en-rules ("–") for numerical or chronological ranges ("1–10", "2020–2024").
+- **Slash Typography:** Forward slashes ("/") must only be surrounded by spaces when separating compound words (e.g. "macro layout / navigation adaptation"). Never use spaces when separating single words or identifiers (e.g. "`Sidebar`/`Navbar`", "Prev/Next/Add/Delete", "true/false").
+
+---
+
 ## 3. Full Pre-Push Audit
 
 Before pushing or completing large refactors:

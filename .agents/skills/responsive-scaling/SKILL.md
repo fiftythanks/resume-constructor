@@ -57,7 +57,7 @@ The document preview has two distinct rendering modes with strict constraints:
 
 1. **Focus Order & DOM Alignment:**
    - The DOM sequence must match the visual layout: `<aside>` -> `<nav>` -> `<main>`.
-   - Never use CSS Grid `grid-column` / `grid-row` to reorder elements visually in a way that diverges from the DOM tab order.
+   - Never use CSS Grid `grid-column`/`grid-row` to reorder elements visually in a way that diverges from the DOM tab order.
 2. **Dynamic ARIA State Syncing:**
    - When the mobile navbar toggle button is hidden at desktop breakpoints (`display: none` at `>= 768px`), ensure the desktop sidebar navigation state explicitly forces `aria-expanded="true"`.
    - Ensure screen reader announcements (`aria-live="polite"`) accurately reflect desktop mode transitions.
