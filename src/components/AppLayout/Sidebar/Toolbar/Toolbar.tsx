@@ -56,7 +56,7 @@ export default function Toolbar({
   const previewBtn = useRef<HTMLButtonElement | null>(null);
 
   /**
-   * The supposed order is:
+   * NOTE: The order is:
    * 1. "Delete All".
    * 2. "Fill All".
    * 3. "Preview".
@@ -116,8 +116,6 @@ export default function Toolbar({
 
     if (previewBtn.current !== null) {
       previewBtn.current.focus();
-    } else {
-      console.log('The button is `null`.');
     }
   }
 
