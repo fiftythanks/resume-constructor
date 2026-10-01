@@ -18,15 +18,14 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 - **Hybrid CSS Architecture:** Global `@media` queries exclusively govern macro-layout shifts in `AppLayout`, while all internal component responsiveness relies on CSS Container Queries (`@container`).
 - **Unified Sidebar (`@media (min-width: 768px)`):** Transition from mobile bottom-docked navigation to a permanent desktop sidebar on the left containing both navigation tabs and toolbar actions.
 - **Dynamic ARIA Synchronisation:** When hiding mobile drawer toggles on wider screens, React state will programmatically enforce a permanently expanded `aria-expanded="true"` state on desktop navigation.
-- **Dual-Pane Side-by-Side Workspace:** On medium and large displays, the interface will display the active section editor alongside a persistent live preview pane.
+- **Dual-Pane Side-by-Side Workspace:** On medium and large displays, the interface will display the active section editor alongside a persistent live preview pane. Mobile viewports remain single-column form editors without live preview due to screen real estate constraints, with preview accessed via the on-demand modal before download.
 - **Skip Links (WCAG 2.4.1):** Introduce keyboard skip links as the first interactive element inside the sidebar to allow keyboard and screen reader users to jump straight to the active form editor.
 
-### Pure JSX Live Preview & Real PDF Parity
+### Pure JSX Live Preview (Desktop/Tablet) & Real PDF Parity
 
-- **Main-Thread Performance:** Implement a pure DOM-based JSX live preview for real-time typing feedback, bypassing canvas rasterization overhead during rapid keystrokes.
+- **Main-Thread Performance:** Implement a pure DOM-based JSX live preview exclusively for wider viewports to provide instant typing feedback. Running the existing `@react-pdf/renderer` compilation and `pdfjs-dist` canvas rasterization dynamically during interactive typing would cause disastrous performance degradation; the pure JSX DOM engine eliminates canvas rasterization overhead.
 - **Engine Parity via Universal Primitives:** Enforce strict Yoga-compliant Flexbox rules across shared layout primitives to guarantee pixel-level parity between DOM preview and exported PDF.
-- **Deferred PDF Generation:** Defer heavy binary PDF compilation and canvas rendering to an explicit modal dialog or dedicated view with native light dismiss.
-- **Engine Mode Toggle:** Provide a "Switch to Real PDF" preview toggle for inspecting exact vector PDF pagination.
+- **Pre-Download Real PDF Verification:** Retain the full `@react-pdf/renderer` and `pdfjs-dist` canvas modal pipeline as the final pre-download inspection step with an engine toggle ("Switch to Real PDF") within the desktop preview pane to verify exact vector pagination on demand.
 - **Effect Pruning:** Replace `useDebouncedWindowSize` and synchronous resize listeners with modern `@container` queries and `ResizeObserver`.
 
 ---
