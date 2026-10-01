@@ -11,7 +11,7 @@
 
 ## Mobile Experience
 
-> [!ATTENTION]
+> [!IMPORTANT]
 > The tablet and desktop versions with live preview are currently under development. The mobile version is complete, though. Below are screenshots of the mobile interface for demonstration purposes.
 
 |                                         **1. Clean Editor**                                          |                                      **2. Intuitive UI**                                      |                                       **3. Professional Output**                                       |
