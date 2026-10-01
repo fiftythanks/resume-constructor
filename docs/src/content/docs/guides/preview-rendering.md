@@ -47,8 +47,9 @@ Unlike standard web CSS, layout in `@react-pdf/renderer` is driven entirely by t
 
 The pre-download inspection modal in `src/components/Preview/Preview.tsx` visualises the real document compiled from `@react-pdf/renderer` without relying on inconsistent native browser PDF reader plug-ins:
 
-> [!NOTE]
-> This canvas rendering is strictly executed on demand when opening the preview modal before downloading. It is intentionally not dynamic during interactive typing: compiling `@react-pdf/renderer` documents into binary blobs and rasterising pages onto a `<canvas>` dynamically on every keystroke would be disastrous for performance. For real-time typing feedback, a lightweight pure-JSX DOM live preview is planned exclusively for larger displays where screen space allows (see [Roadmap](/guides/roadmap)).
+:::note
+This canvas rendering is strictly executed on demand when opening the preview modal before downloading. It is intentionally not dynamic during interactive typing: compiling `@react-pdf/renderer` documents into binary blobs and rasterising pages onto a `<canvas>` dynamically on every keystroke would be disastrous for performance. For real-time typing feedback, a lightweight pure-JSX DOM live preview is planned exclusively for larger displays where screen space allows (see [Roadmap](/guides/roadmap)).
+:::
 
 1. **Worker Offloading:** PDF parsing and font decoding run off the main thread inside `pdfjs-dist/build/pdf.worker.mjs`, bundled via webpack 5 as an independent chunk (`pdf.worker.bundle.js`).
 2. **Scale Factor Calculation:** The preview calculates the available container width inside the modal dialog and applies a high-DPI scaling factor (`scale: 2.0`) to guarantee razor-sharp typography on Retina displays.
