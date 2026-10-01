@@ -115,7 +115,7 @@ Every file must strictly adhere to the automated sorting hierarchy:
 Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
 
 - **Atomic Commits:** Commit every logical change independently and atomically. Always create a git commit immediately upon accomplishing and verifying each task.
-- **Commit Format:** `<tag>(<scope>): <subject>` (or `<tag>: <subject>` for broad chores).
+- **Commit Format:** `<tag>(<scope>): <subject>` (or `<tag>: <subject>` for broad chores or docs).
 - **Subject Length:** First line MUST NOT exceed 50 characters (`<= 50`).
 - **Separation:** Exactly one blank line between the subject and body.
 - **Body Line Length:** Every body line MUST NOT exceed 80 characters (`<= 80`).
