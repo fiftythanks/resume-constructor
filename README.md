@@ -11,7 +11,8 @@
 
 ## Mobile Experience
 
-> Since the desktop version is currently WIP, here is a preview of the mobile-first workflow.
+> [!ATTENTION]
+> The tablet and desktop versions with live preview are currently under development. The mobile version is complete, though. Below are screenshots of the mobile interface for demonstration purposes.
 
 |                                         **1. Clean Editor**                                          |                                      **2. Intuitive UI**                                      |                                       **3. Professional Output**                                       |
 | :--------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------: |
@@ -21,8 +22,7 @@
 
 A TypeScript application designed to create software-engineering resumes based on principles from the book _The Tech Resume Inside Out_.
 
-**[Open Live Demo](https://resume-constructor.vercel.app)**
-_(Please view on a mobile device or use DevTools Device Mode, as the desktop version is currently WIP)_
+**[Open Live Demo](https://resume-constructor.sholokhov.dev)**
 
 This is the **capstone project** for The Odin Project (frontend curriculum), demonstrating a **production-grade development workflow** without relying on bootstrapping tools like Create React App.
 
@@ -40,7 +40,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
   - **Visual Feedback:** Edit-mode shake indicator communicating draggable state.
   - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
   - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
-- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF. _(Work in progress: introducing a side-by-side pure JSX DOM live preview on tablet and desktop screens for real-time typing feedback while retaining the on-demand Canvas modal for final pre-download inspection)._
+- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF.
 
 ---
 
