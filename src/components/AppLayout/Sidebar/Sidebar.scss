@@ -5,6 +5,7 @@
 
   display: flex;
   position: relative;
+  flex-shrink: 0;
   padding: var(--padding);
   width: 100%;
   height: calc(v.$appbar-icon-button-size + 2 * var(--padding));
