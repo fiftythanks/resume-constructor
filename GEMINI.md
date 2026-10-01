@@ -114,7 +114,7 @@ Every file must strictly adhere to the automated sorting hierarchy:
 
 Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
 
-- **Atomic Commits:** Commit every logical change independently and atomically.
+- **Atomic Commits:** Commit every logical change independently and atomically. Always create a git commit immediately upon accomplishing and verifying each task.
 - **Commit Format:** `<tag>(<scope>): <subject>` (or `<tag>: <subject>` for broad chores).
 - **Subject Length:** First line MUST NOT exceed 50 characters (`<= 50`).
 - **Separation:** Exactly one blank line between the subject and body.
@@ -142,3 +142,4 @@ Before finishing any task or concluding a turn:
 3. Run `bun x stylelint <modified-scss-files>` if styles were changed.
 4. Run `bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests`.
 5. If errors occur, diagnose using: `[Error Source] -> [Attempted Fix] -> [Result]`.
+6. Once all verification checks pass cleanly, create an atomic git commit for the completed change following the commit conventions in section 7 before concluding the task.
