@@ -140,6 +140,7 @@ export default function MyComponent({
    ```
 
 4. **Responsive Strategy:** Use `@container` for internal component layout shifts. Do not use `@media` inside UI components.
+5. **Comment & Typography Standards:** Multiline JSDoc blocks (`/** ... */`), traditional British English, strictly no Oxford comma, double quotes (`"..."`) for natural language, spaced em-rules ("—"), unspaced en-rules ("–") for ranges and forward slashes ("/") surrounded by spaces only when separating compound words.
 
 ---
 

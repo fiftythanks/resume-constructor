@@ -57,8 +57,8 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
 ### D. Accessible Drag & Drop (`@dnd-kit`)
 
 - Keyboard controls must be fully operational:
-  - `Space` / `Enter`: Pick up item / drop item.
-  - `ArrowUp` / `ArrowDown`: Move item.
+  - `Space`/`Enter`: Pick up item / drop item.
+  - `ArrowUp`/`ArrowDown`: Move item.
   - `Escape`: Cancel drag operation.
 - Provide descriptive `aria-roledescription="sortable item"` and update screen reader announcements on pick up, movement and drop.
 

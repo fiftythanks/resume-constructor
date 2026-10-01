@@ -50,6 +50,7 @@
 - **Comment Standards:**
   - All multiline comments MUST use JSDoc-style block comments (`/** ... */`) with leading asterisks on continuation lines, never consecutive single-line (`//`) comments.
   - Single-line comments (`//`) are strictly reserved for standalone, single-line remarks. Consecutive single-line comments are permitted only when representing distinct annotations (e.g. separate `// TODO:` or `// DILEMMA:` entries).
+  - Comment and documentation typography must strictly adhere to project standards: traditional British English, no Oxford comma, double quotes (`"..."`) for natural language, spaced em-rules ("—"), unspaced en-rules ("–") and forward slashes ("/") surrounded by spaces only when separating compound words.
 
 ---
 
@@ -120,7 +121,9 @@ Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
 - **Body Line Length:** Every body line MUST NOT exceed 80 characters (`<= 80`).
 - **Code Symbols in Body:** Enclose all identifiers, component names, filenames, directory paths, props and attributes in backticks in the commit body (not the first line).
 - **Spelling & Style:** Write all commit messages and code comments in traditional British English ("optimise", "initialise", "behaviour", "centre", "colour") and strictly NO Oxford comma.
-- **Dash Typography:** Em-rules (—) must ALWAYS be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. En-rules (–), representing ranges and similar things, must NOT have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
+- **Quotation Marks in Prose vs Code:** In documentation, commit messages and code comments, ALWAYS use double quotes (`"..."`) for quotes and natural language punctuation (do NOT use British-style single quotation marks in prose). Single quotes (`'...'`) are strictly reserved for code implementation (TypeScript, JavaScript and SCSS). Enclose all code symbols, identifiers and file paths in backticks (`` `...` ``).
+- **Dash Typography:** Em-rules ("—") must ALWAYS be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. En-rules ("–"), representing ranges and similar things, must NOT have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
+- **Slash Typography:** A forward slash ("/") must ONLY be surrounded by spaces if it separates compound words (e.g. "word combination / another combination"). When separating single words, terms, identifiers or paths, no spaces are permitted (e.g. "`Sidebar`/`Navbar`", "Prev/Next/Add/Delete", "true/false").
 - **Allowed Tags:** `feat`, `fix`, `refactor`, `test`, `docs`, `chore`.
 - **Allowed Scopes:** Strictly lowercase:
   - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.

@@ -22,13 +22,13 @@ Every section component is bound to the sidebar navigation using explicit WAI-AR
 - **Tabpanel Binding:** The root element of each page is a `<section>` element marked with `role="tabpanel"`, `id="<sectionId>-tabpanel"` and `aria-labelledby="<sectionId>"`.
 - **Explicit Label Coupling:** Under `jsx-a11y/label-has-associated-control`, implicit wrapping is strictly prohibited. Every `<input>` and `<textarea>` control is programmatically linked to an adjacent `<label>` through matching `id` and `htmlFor` attributes.
 - **Natural DOM Source Order & Unassisted Tab Flow:** The shell and page DOM are
-  laid out so that document source order strictly mirrors logical reading order
-  (`Sidebar`/`Navbar` tabs $\rightarrow$ `<main>` active tabpanel $\rightarrow$
-  form fields in linear succession). Because positive `tabIndex` values are
-  never used, forward keyboard navigation (`Tab`) from the active navbar tab
-  directly into the panel's first interactive control occurs 100% natively via
-  browser heuristics without synthetic event listeners or manual focus
-  redirection.
+  laid out so that document source order strictly mirrors logical reading
+  order: progressing from the `Sidebar`/`Navbar` tabs, through the active
+  tabpanel in `<main>`, to individual form fields in linear succession. Because
+  positive `tabIndex` values are never used, forward keyboard navigation (`Tab`)
+  from the active navbar tab directly into the panel's first interactive control
+  occurs 100% natively via browser heuristics without synthetic event listeners
+  or manual focus redirection.
 - **Surgical Reverse Focus Boundary Interception:** The only focus edge
   requiring programmatic intervention is the reverse direction. When navigating
   backwards via `Shift+Tab` from the first interactive control inside any
