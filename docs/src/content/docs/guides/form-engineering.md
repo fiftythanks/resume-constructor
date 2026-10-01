@@ -44,7 +44,7 @@ The editor manages seven discrete section schemas defined in `src/types/resumeDa
 
 | Section            | Model Interface  | Primary Properties                                             | Key Dynamic Behaviours                                                  |
 | ------------------ | ---------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **Personal**       | `Personal`       | `fullName`, `jobTitle`, `email`, `phone`, `address`, `summary` | Flat form with dedicated HTML5 input types (`email`, `tel`).            |
+| **Personal**       | `Personal`       | `fullName`, `jobTitle`, `email`, `phone`, `address`, `summary` | Flat form with dedicated HTML input types (`email`, `tel`).             |
 | **Education**      | `Education`      | `shownDegreeIndex`, `degrees: Degree[]`                        | Carousel card pagination, degree fields and nested bullet points.       |
 | **Experience**     | `Experience`     | `shownJobIndex`, `jobs: Job[]`                                 | Carousel card pagination, job history fields and nested bullet points.  |
 | **Projects**       | `Projects`       | `shownProjectIndex`, `projects: Project[]`                     | Carousel card pagination, code/demo repository links and bullet points. |

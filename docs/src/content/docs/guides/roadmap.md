@@ -3,8 +3,6 @@ title: Project Roadmap & Technical Decisions
 description: Comprehensive synthesis of codebase TODOs, architectural dilemmas and planned system evolutions in Resume Constructor.
 ---
 
-## Overview
-
 This roadmap synthesises the architectural priorities, engineering directives and open tasks from the project specification, internal task logs and source code annotations (`TODO:`, `FIXME:`, `DILEMMA:`). Items are organised by priority and domain.
 
 ---
