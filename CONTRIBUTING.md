@@ -41,7 +41,8 @@ Create focused, short-lived topic branches branched off `main`:
 - `feat/<feature-name>`: New functionality or architectural improvements
 - `fix/<bug-name>`: Defect and layout fixes
 - `refactor/<module-name>`: Code refactoring without behaviour change
-- `chore/<task-name>`: Tooling, dependency, workflow or documentation updates
+- `chore/<task-name>`: Tooling, dependency or workflow updates
+- `docs/<task-name>`: Documentation updates
 
 ---
 
@@ -78,14 +79,14 @@ We strictly enforce the Conventional Commits specification with specific formatt
 
 ### Allowed Tags (Types)
 
-| Tag        | Purpose                                                                  |
-| ---------- | ------------------------------------------------------------------------ |
-| `feat`     | New user-facing feature or architectural capability                      |
-| `fix`      | Bug fix in component markup, logic, accessibility or styles              |
-| `refactor` | Code restructuring with no change to external behaviour                  |
-| `test`     | Adding, updating or fixing automated unit, integration or E2E tests      |
-| `docs`     | Documentation portal (`docs/`), guides, in-source JSDoc and comments     |
-| `chore`    | Tooling, build pipeline, dependencies, CI, git hooks and repository docs |
+| Tag        | Purpose                                                                               |
+| ---------- | ------------------------------------------------------------------------------------- |
+| `feat`     | New user-facing feature or architectural capability                                   |
+| `fix`      | Bug fix in component markup, logic, accessibility or styles                           |
+| `refactor` | Code restructuring with no change to external behaviour                               |
+| `test`     | Adding, updating or fixing automated unit, integration or E2E tests                   |
+| `docs`     | Documentation portal (`docs/`), guides, in-source JSDoc, comments and repository docs |
+| `chore`    | Tooling, build pipeline, dependencies, CI and git hooks                               |
 
 ### Allowed Scopes by Domain
 
