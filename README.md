@@ -40,7 +40,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
   - **Visual Feedback:** Edit-mode shake indicator communicating draggable state.
   - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
   - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
-- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML5 `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF. _(Work in progress: introducing a side-by-side pure JSX DOM live preview on tablet and desktop screens for real-time typing feedback while retaining the on-demand Canvas modal for final pre-download inspection)._
+- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF. _(Work in progress: introducing a side-by-side pure JSX DOM live preview on tablet and desktop screens for real-time typing feedback while retaining the on-demand Canvas modal for final pre-download inspection)._
 
 ---
 

@@ -3,8 +3,6 @@ title: Inclusive Design & Accessibility (WCAG 2.2 AA)
 description: Accessibility architecture, focus management, roving tabindex, dialog traps and polite live announcements in Resume Constructor.
 ---
 
-## Overview
-
 Accessibility is treated as a core architectural constraint rather than a post-development checklist. Resume Constructor conforms strictly to the **WCAG 2.2 Level AA** standard, ensuring that every user interface element is fully operable via keyboard, announces dynamic state changes to assistive technologies and preserves focus continuity across modal and tab boundaries.
 
 ```mermaid

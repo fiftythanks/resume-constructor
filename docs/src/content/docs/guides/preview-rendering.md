@@ -8,7 +8,7 @@ A central technical challenge in client-side resume generation is achieving exac
 Resume Constructor solves this problem through a dual-engine rendering pipeline:
 
 1. **Compilation Engine:** `@react-pdf/renderer` declaratively constructs an A4 document according to strict Yoga Flexbox layout rules and generates an in-memory binary PDF `Blob`.
-2. **Pre-Download Inspection Engine:** Mozilla's `pdfjs-dist` consumes the generated PDF buffer and rasterises the exact document pages onto an HTML5 `<canvas>` element inside an on-demand modal preview before downloading.
+2. **Pre-Download Inspection Engine:** Mozilla's `pdfjs-dist` consumes the generated PDF buffer and rasterises the exact document pages onto an HTML `<canvas>` element inside an on-demand modal preview before downloading.
 
 ```mermaid
 flowchart TD
@@ -18,7 +18,7 @@ flowchart TD
 
     PDFBlob --> DownloadLink["Instant Download<br/>(Sanitised #quot;[Name] - Resume.pdf#quot;)"]
     PDFBlob --> PDFWorker["pdfjs-dist Web Worker<br/>(pdf.worker.bundle.js)"]
-    PDFWorker --> CanvasRaster["HTML5 Canvas Render<br/>(Crisp High-DPI 2D Viewport)"]
+    PDFWorker --> CanvasRaster["HTML Canvas Render<br/>(Crisp High-DPI 2D Viewport)"]
 ```
 
 ---
@@ -60,7 +60,7 @@ This canvas rendering is strictly executed on demand when opening the preview mo
 
 ## 4. Headless Testing Parity (JSDOM)
 
-Standard JSDOM environments do not implement the HTML5 Canvas 2D rendering context (`HTMLCanvasElement.prototype.getContext('2d')` returns `null`).
+Standard JSDOM environments do not implement the HTML Canvas 2D rendering context (`HTMLCanvasElement.prototype.getContext('2d')` returns `null`).
 
 To maintain test execution speed without native binary canvas dependencies:
 
