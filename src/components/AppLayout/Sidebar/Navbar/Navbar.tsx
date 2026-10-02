@@ -487,31 +487,33 @@ export default function Navbar({
           </SortableContext>
         </DndContext>
         {/* Control buttons */}
-        {canAddSections && (
+        <div className="Navbar-ControlButtons">
+          {canAddSections && (
+            <AppbarIconButton
+              alt="Add Sections"
+              aria-controls="add-sections-dialog"
+              aria-haspopup="dialog"
+              aria-label="Add Sections"
+              className="Navbar-Control"
+              iconSrc={ICONS.add}
+              id="add-sections"
+              ref={addSectionsBtn}
+              onClick={showAddSectionsPopup}
+            />
+          )}
           <AppbarIconButton
-            alt="Add Sections"
-            aria-controls="add-sections-dialog"
-            aria-haspopup="dialog"
-            aria-label="Add Sections"
-            className="Navbar-Control Navbar-Control_onTop"
-            iconSrc={ICONS.add}
-            id="add-sections"
-            ref={addSectionsBtn}
-            onClick={showAddSectionsPopup}
+            alt="Toggle Editor Mode"
+            aria-controls="resume-sections"
+            aria-label="Toggle Editor Mode"
+            aria-pressed={editorMode}
+            className={editorClassName}
+            iconSrc={editorMode ? ICONS.done : ICONS.edit}
+            id="edit-sections"
+            key="toggle-editor-mode"
+            ref={editSectionsBtn}
+            onClick={toggleEditorMode}
           />
-        )}
-        <AppbarIconButton
-          alt="Toggle Editor Mode"
-          aria-controls="resume-sections"
-          aria-label="Toggle Editor Mode"
-          aria-pressed={editorMode}
-          className={editorClassName}
-          iconSrc={editorMode ? ICONS.done : ICONS.edit}
-          id="edit-sections"
-          key="toggle-editor-mode"
-          ref={editSectionsBtn}
-          onClick={toggleEditorMode}
-        />
+        </div>
       </nav>
       <AddSections
         activeSectionIds={activeSectionIds}
