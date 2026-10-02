@@ -1,16 +1,14 @@
-@use '@/styles/utils/variables' as v;
-
 .Navbar {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: var(--sidebar-gap);
   align-items: center;
-  width: v.$appbar-block-size;
 
-  &-Items {
+  &-Items,
+  &-ControlButtons {
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: var(--navbar-toolbar-gap);
     align-items: center;
     border-radius: 10px;
     padding: 0;
@@ -33,10 +31,6 @@
   &-Control {
     &_editing {
       background-color: var(--opened-section-color);
-    }
-
-    &_onTop {
-      margin-top: 1rem;
     }
   }
 }
