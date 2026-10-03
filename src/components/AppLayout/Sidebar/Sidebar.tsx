@@ -102,6 +102,7 @@ export default function Sidebar({
         isRelevantId(e.target.id)
       ) {
         toggleNavbar();
+        // TODO: Verify `navbarToggle.current.isConnected` before calling `.focus()` instead of asserting non-null `!`.
         navbarToggle.current!.focus();
       }
     }

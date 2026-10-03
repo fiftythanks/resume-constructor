@@ -50,6 +50,7 @@ export default function Projects({
 
   function addProject() {
     functions.addProject();
+    // FIXME: Replace raw `document.getElementById` lookup with React refs, and defer `.focus()` until after reconciliation while verifying `isConnected`.
     document.getElementById('project-name')?.focus();
   }
 

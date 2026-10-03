@@ -48,6 +48,7 @@ export default function Experience({
 
   function addJob() {
     functions.addJob();
+    // FIXME: Replace raw `document.getElementById` lookup with React refs, and defer `.focus()` until after reconciliation while verifying `isConnected`.
     document.getElementById('company-name')?.focus();
   }
 

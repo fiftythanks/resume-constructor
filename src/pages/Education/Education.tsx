@@ -48,6 +48,7 @@ export default function Education({
 
   function addDegree() {
     functions.addDegree();
+    // FIXME: Replace raw `document.getElementById` lookup with React refs, and defer `.focus()` until after reconciliation while verifying `isConnected`.
     document.getElementById('university-name')?.focus();
   }
 
