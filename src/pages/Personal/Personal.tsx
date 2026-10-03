@@ -18,8 +18,10 @@ export interface PersonalProps {
  * The Personal Details section form.
  */
 export default function Personal({ data, functions, ref }: PersonalProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('personal');
+  const {
+    captureLastComponentBeforeTabpanel: handleFocus,
+    focusLastComponentBeforeTabpanel: handleKeyboard,
+  } = useLastComponentBeforeTabpanel('personal');
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

@@ -84,15 +84,19 @@ export default function AppLayout({
      */
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
-      className="AppLayout"
       data-testid="app-layout"
       onKeyDown={handleKeyDown}
+      className={clsx(
+        'AppLayout',
+        isNavbarExpanded && 'AppLayout_navbarExpanded',
+      )}
     >
       {/* DILEMMA: Add a skip link allowing to jump to the main content? */}
       <Sidebar
         activeSectionIds={activeSectionIds}
         addSections={addSections}
         canAddSections={canAddSections}
+        className="AppLayout-Sidebar"
         data={data}
         deleteAll={deleteAll}
         deleteSections={deleteSections}
@@ -109,14 +113,15 @@ export default function AppLayout({
           setIsNavbarExpanded(!isNavbarExpanded);
         }}
       />
-      <main className="AppLayout-Main" tabIndex={-1}>
+      <main
+        tabIndex={-1}
+        className={clsx(
+          'AppLayout-Main',
+          isNavbarExpanded && 'AppLayout-Main_navbarExpanded',
+        )}
+      >
         <h1 className="AppLayout-Title">{sectionTitles[openedSectionId]}</h1>
-        <div
-          className={clsx([
-            'AppLayout-SectionWrapper',
-            isNavbarExpanded && 'AppLayout-SectionWrapper_navbarExpanded',
-          ])}
-        >
+        <div className="AppLayout-SectionWrapper">
           {children}
           <div className="AppLayout-NavBtns">
             {openedSectionIndex > 0 && (

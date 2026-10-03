@@ -1,14 +1,20 @@
-@use '@/styles/utils/variables' as v;
-
 .Sidebar {
-  --padding: 1rem;
+  /**
+   * Internal gap for the `Navbar` (the tablist in it, to be precise) and
+   * `Toolbar` components.
+   */
+  --navbar-toolbar-gap: 0.75rem;
+  /**
+   * Gap separating the navbar- and toolbar-toggle buttons from the navbar and
+   * toolbar themselves, as well as the control buttons inside the navbar from
+   * the navbar's tablist.
+   */
+  --sidebar-gap: 1rem;
 
   display: flex;
   position: relative;
-  flex-shrink: 0;
-  padding: var(--padding);
   width: 100%;
-  height: calc(v.$appbar-icon-button-size + 2 * var(--padding));
+  height: var(--appbar-item-size);
   container-type: size;
 
   &-Item {
@@ -18,7 +24,7 @@
 
     &_navbar {
       position: absolute;
-      bottom: 100%;
+      bottom: calc(100% + var(--sidebar-gap));
       left: 0;
     }
 
@@ -28,8 +34,8 @@
 
     &_toolbar {
       position: absolute;
-      right: calc(100cqh + 2 * var(--padding));
-      bottom: var(--padding);
+      right: calc(var(--appbar-item-size) + var(--sidebar-gap));
+      bottom: 0;
     }
   }
 }

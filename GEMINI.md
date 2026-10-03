@@ -114,7 +114,17 @@ Every file must strictly adhere to the automated sorting hierarchy:
 
 Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
 
-- **Atomic Commits:** Commit every logical change independently and atomically. Always create a git commit immediately upon accomplishing and verifying each task.
+- **Atomic Commits & Granularity:**
+  - Commit every logical change independently and atomically. Always create a git commit immediately upon accomplishing and verifying each discrete, bite-sized step.
+  - Pull requests may contain multiple commits, but individual commits MUST be small, focused and easily reviewable.
+  - **Never lump multiple major changes into a single mega-commit.** Avoid massive commits (e.g. +1,000 / -500 lines) combining primitive creation, multiple page integrations and test suites.
+  - Decompose large tasks into a sequence of small, self-contained atomic commits:
+    1. Primitive/component creation and styling (`feat(components): ...`).
+    2. Component unit and adversarial test suites (`test(components): ...`).
+    3. Individual page refactors/migrations committed separately per page (`refactor(education): ...`, `refactor(experience): ...`, `refactor(projects): ...`).
+    4. Hook modifications or shared utility extractions (`refactor(hooks): ...`).
+    5. Documentation, technical debt flagging and roadmap updates (`docs(roadmap): ...`).
+  - Target commit size: Aim for under ~200–300 lines changed per commit wherever feasible. Every intermediate commit MUST build cleanly and pass tests (`git bisect`-friendly).
 - **Commit Format:** `<tag>(<scope>): <subject>` (or `<tag>: <subject>` for broad chores or docs).
 - **Subject Length:** First line MUST NOT exceed 50 characters (`<= 50`).
 - **Separation:** Exactly one blank line between the subject and body.

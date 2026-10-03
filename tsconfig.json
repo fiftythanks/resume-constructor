@@ -32,6 +32,7 @@
     "postcss.config.ts",
     "prettier.config.js",
     "src",
+    "scripts",
     "stylelint.config.js",
     "webpack.common.cjs",
     "webpack.dev.cjs",

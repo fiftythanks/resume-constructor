@@ -149,6 +149,7 @@ export default function Navbar({
   function closeAddSectionsPopup() {
     setIsAddSectionsPopupShown(false);
 
+    // TODO: Verify `node.isConnected` and handle unmount edge cases instead of asserting non-null `!` when returning focus.
     if (canAddSections) {
       addSectionsBtn.current!.focus();
     } else {
@@ -201,6 +202,7 @@ export default function Navbar({
 
       const i = activeSectionIds.indexOf(sectionId);
 
+      // FIXME: Replace `document.getElementById(...)!.focus()` with React refs and verify `node.isConnected` when deleting sections.
       // If the deleted section is the only deletable section, focus the "Toggle Editor Mode" button.
       if (activeSectionIds.length === 2) {
         document.getElementById('edit-sections')!.focus();
@@ -278,6 +280,7 @@ export default function Navbar({
     const id = target.id;
 
     // TODO: comment all this logic properly.
+    // TODO: Replace `document.getElementById(...)!.focus()` calls with React refs and guard focus transitions with `node.isConnected`.
     if (isSectionId(id) && !isDragging) {
       if (activeSectionIds.length === 1) {
         // DILEMMA: Why is there no `e.preventDefault()` like in the next branch?
@@ -332,6 +335,7 @@ export default function Navbar({
          * delete button is focused, then... the first deletable section's
          * delete button will be focused? The same goes for Arrow Up.
          */
+        // FIXME: Replace `document.getElementById(...)!.focus()` with React refs and verify `node.isConnected` for delete buttons.
         // FIXME: fix this strange logic.
         if (i < activeSectionIds.length - 1) {
           document.getElementById(`delete-${activeSectionIds[i + 1]}`)!.focus();
@@ -351,6 +355,7 @@ export default function Navbar({
           document.getElementById(`delete-${activeSectionIds.at(-1)}`)!.focus();
         }
       }
+      // FIXME: Replace `document.getElementById(...)!.focus()` with React refs and verify `node.isConnected` for add and edit control buttons.
     } else if (id === 'add-sections') {
       if (e.key === 'ArrowDown') {
         document.getElementById('edit-sections')!.focus();
@@ -395,6 +400,7 @@ export default function Navbar({
 
       const i = activeSectionIds.indexOf(id);
 
+      // FIXME: Replace `document.getElementById(...)!.focus()` with React refs and verify `node.isConnected` on item deletion.
       // If there's only "Personal" left.
       if (activeSectionIds.length === 2) {
         document.getElementById('personal')!.focus();
@@ -416,6 +422,7 @@ export default function Navbar({
             ''
           >;
 
+          // TODO: Verify `tabRefs[sectionId].current.isConnected` before calling `.focus()` instead of asserting non-null `!`.
           tabRefs[sectionId].current!.focus();
         }
       }
@@ -487,31 +494,33 @@ export default function Navbar({
           </SortableContext>
         </DndContext>
         {/* Control buttons */}
-        {canAddSections && (
+        <div className="Navbar-ControlButtons">
+          {canAddSections && (
+            <AppbarIconButton
+              alt="Add Sections"
+              aria-controls="add-sections-dialog"
+              aria-haspopup="dialog"
+              aria-label="Add Sections"
+              className="Navbar-Control"
+              iconSrc={ICONS.add}
+              id="add-sections"
+              ref={addSectionsBtn}
+              onClick={showAddSectionsPopup}
+            />
+          )}
           <AppbarIconButton
-            alt="Add Sections"
-            aria-controls="add-sections-dialog"
-            aria-haspopup="dialog"
-            aria-label="Add Sections"
-            className="Navbar-Control Navbar-Control_onTop"
-            iconSrc={ICONS.add}
-            id="add-sections"
-            ref={addSectionsBtn}
-            onClick={showAddSectionsPopup}
+            alt="Toggle Editor Mode"
+            aria-controls="resume-sections"
+            aria-label="Toggle Editor Mode"
+            aria-pressed={editorMode}
+            className={editorClassName}
+            iconSrc={editorMode ? ICONS.done : ICONS.edit}
+            id="edit-sections"
+            key="toggle-editor-mode"
+            ref={editSectionsBtn}
+            onClick={toggleEditorMode}
           />
-        )}
-        <AppbarIconButton
-          alt="Toggle Editor Mode"
-          aria-controls="resume-sections"
-          aria-label="Toggle Editor Mode"
-          aria-pressed={editorMode}
-          className={editorClassName}
-          iconSrc={editorMode ? ICONS.done : ICONS.edit}
-          id="edit-sections"
-          key="toggle-editor-mode"
-          ref={editSectionsBtn}
-          onClick={toggleEditorMode}
-        />
+        </div>
       </nav>
       <AddSections
         activeSectionIds={activeSectionIds}

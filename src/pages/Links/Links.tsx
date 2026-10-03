@@ -22,8 +22,10 @@ export interface LinksProps {
  * The Links section form.
  */
 export default function Links({ data, functions, ref }: LinksProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('links');
+  const {
+    captureLastComponentBeforeTabpanel: handleFocus,
+    focusLastComponentBeforeTabpanel: handleKeyboard,
+  } = useLastComponentBeforeTabpanel('links');
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

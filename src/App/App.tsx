@@ -208,6 +208,7 @@ export default function App() {
      * module.exports = tabbable;
      * ```
      */
+    // TODO: Verify `sectionRefs[openedSectionId].current.isConnected` and `allTabbable[0].isConnected` before invoking `.focus()`.
     const allTabbable = tabbable(sectionRefs[openedSectionId].current, {
       displayCheck: process.env.NODE_ENV === 'test' ? 'none' : 'full',
     });

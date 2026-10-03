@@ -42,6 +42,7 @@ export default function Popup({
 }: Pick<PopupProps, 'externalRef'> &
   ReadonlyDeep<Omit<PopupProps, 'externalRef'>>) {
   const ref = useRef<HTMLDialogElement | null>(null);
+  // FIXME: Avoid non-null assertion `!` and raw `document.getElementById` lookup; manage portal root via idiomatic React refs or verified attachment.
   const rootRef = useRef(document.getElementById('popup-root')!);
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export default function Popup({
 
     if (node === null) return;
 
+    // TODO: Verify `node.isConnected` and `node.open` before calling `showModal()` or `close()` to avoid `InvalidStateError` exceptions.
     if (isShown) {
       node.showModal();
     } else {

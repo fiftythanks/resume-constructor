@@ -24,8 +24,10 @@ export default function Skills({
   ref,
   updateScreenReaderAnnouncement,
 }: SkillsProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('skills');
+  const {
+    captureLastComponentBeforeTabpanel: handleFocus,
+    focusLastComponentBeforeTabpanel: handleKeyboard,
+  } = useLastComponentBeforeTabpanel('skills');
 
   /**
    * Skills don't need to be bullet points. I'd say they must not be bullet
