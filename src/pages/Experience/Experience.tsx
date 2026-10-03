@@ -44,8 +44,10 @@ export default function Experience({
   ref,
   updateScreenReaderAnnouncement,
 }: ExperienceProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('experience');
+  const {
+    captureLastComponentBeforeTabpanel,
+    focusLastComponentBeforeTabpanel,
+  } = useLastComponentBeforeTabpanel('experience');
 
   const { shownJobIndex } = data;
 
@@ -95,8 +97,8 @@ export default function Experience({
                   className="section--item-navigation-button"
                   id="show-previous-job"
                   onClick={() => functions.showJob(shownJobIndex - 1)}
-                  onFocus={(e) => handleFocus(e)}
-                  onKeyDown={(e) => handleKeyboard(e)}
+                  onFocus={(e) => captureLastComponentBeforeTabpanel(e)}
+                  onKeyDown={(e) => focusLastComponentBeforeTabpanel(e)}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -119,13 +121,13 @@ export default function Experience({
                     // Don't handle focus if it's not the first tabbable element.
                     if (shownJobIndex > 0) return;
 
-                    handleFocus(e);
+                    captureLastComponentBeforeTabpanel(e);
                   }}
                   onKeyDown={(e) => {
                     // Don't handle keydown if it's not the first tabbable element.
                     if (shownJobIndex > 0) return;
 
-                    handleKeyboard(e);
+                    focusLastComponentBeforeTabpanel(e);
                   }}
                   modifiers={[
                     'Button_paddingBlock_none',
@@ -153,7 +155,7 @@ export default function Experience({
                 return;
               }
 
-              handleFocus(e);
+              captureLastComponentBeforeTabpanel(e);
             }}
             onKeyDown={(e) => {
               // Don't handle keydown if it's not the first tabbable element.
@@ -161,7 +163,7 @@ export default function Experience({
                 return;
               }
 
-              handleKeyboard(e);
+              focusLastComponentBeforeTabpanel(e);
             }}
             modifiers={[
               'Button_paddingBlock_none',

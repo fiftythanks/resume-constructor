@@ -46,8 +46,10 @@ export default function Projects({
   ref,
   updateScreenReaderAnnouncement,
 }: ProjectsProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('projects');
+  const {
+    captureLastComponentBeforeTabpanel,
+    focusLastComponentBeforeTabpanel,
+  } = useLastComponentBeforeTabpanel('projects');
 
   const shownProjectIndex = data.shownProjectIndex;
 
@@ -105,8 +107,8 @@ export default function Projects({
                   className="section--item-navigation-button"
                   id="show-previous-project"
                   onClick={() => functions.showProject(shownProjectIndex - 1)}
-                  onFocus={(e) => handleFocus(e)}
-                  onKeyDown={(e) => handleKeyboard(e)}
+                  onFocus={(e) => captureLastComponentBeforeTabpanel(e)}
+                  onKeyDown={(e) => focusLastComponentBeforeTabpanel(e)}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -131,13 +133,13 @@ export default function Projects({
                     // Don't handle focus if it's not the first tabbable element.
                     if (shownProjectIndex > 0) return;
 
-                    handleFocus(e);
+                    captureLastComponentBeforeTabpanel(e);
                   }}
                   onKeyDown={(e) => {
                     // Don't handle keydown if it's not the first tabbable element.
                     if (shownProjectIndex > 0) return;
 
-                    handleKeyboard(e);
+                    focusLastComponentBeforeTabpanel(e);
                   }}
                   modifiers={[
                     'Button_paddingBlock_none',
@@ -169,7 +171,7 @@ export default function Projects({
                 return;
               }
 
-              handleFocus(e);
+              captureLastComponentBeforeTabpanel(e);
             }}
             onKeyDown={(e) => {
               // Don't handle keydown if it's not the first tabbable element.
@@ -180,7 +182,7 @@ export default function Projects({
                 return;
               }
 
-              handleKeyboard(e);
+              focusLastComponentBeforeTabpanel(e);
             }}
             modifiers={[
               'Button_paddingBlock_none',

@@ -22,8 +22,10 @@ export interface LinksProps {
  * The Links section form.
  */
 export default function Links({ data, functions, ref }: LinksProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('links');
+  const {
+    captureLastComponentBeforeTabpanel,
+    focusLastComponentBeforeTabpanel,
+  } = useLastComponentBeforeTabpanel('links');
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,8 +61,8 @@ export default function Links({ data, functions, ref }: LinksProps) {
               type="text"
               value={data.website.text}
               onChange={handleInputChange}
-              onFocus={(e) => handleFocus(e)}
-              onKeyDown={(e) => handleKeyboard(e)}
+              onFocus={(e) => captureLastComponentBeforeTabpanel(e)}
+              onKeyDown={(e) => focusLastComponentBeforeTabpanel(e)}
             />
           </li>
           <li className="section--list-item">
