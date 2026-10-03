@@ -20,8 +20,10 @@ export default function Certifications({
   functions,
   ref,
 }: CertificationsProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('certifications');
+  const {
+    captureLastComponentBeforeTabpanel: handleFocus,
+    focusLastComponentBeforeTabpanel: handleKeyboard,
+  } = useLastComponentBeforeTabpanel('certifications');
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target as {

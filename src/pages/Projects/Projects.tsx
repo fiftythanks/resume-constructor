@@ -3,14 +3,9 @@ import type { RefObject } from 'react';
 import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
-import Button from '@/components/Button';
+import SectionItemHeader from '@/components/SectionItemHeader';
 
 import Project from './Project';
-
-import addSrc from '@/assets/icons/add-black.svg';
-import deleteSrc from '@/assets/icons/delete.svg';
-import nextSrc from '@/assets/icons/next.svg';
-import prevSrc from '@/assets/icons/prev.svg';
 
 import type { ItemWithId, Projects } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
@@ -46,15 +41,32 @@ export default function Projects({
   ref,
   updateScreenReaderAnnouncement,
 }: ProjectsProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('projects');
+  const {
+    captureLastComponentBeforeTabpanel,
+    focusLastComponentBeforeTabpanel,
+  } = useLastComponentBeforeTabpanel('projects');
 
   const shownProjectIndex = data.shownProjectIndex;
 
   function addProject() {
     functions.addProject();
-    // TODO: use ref!
-    document.getElementById('project-name')!.focus();
+    document.getElementById('project-name')?.focus();
+  }
+
+  function deleteProject() {
+    functions.deleteProject(shownProjectIndex);
+  }
+
+  function showNextProject() {
+    if (shownProjectIndex < data.projects.length - 1) {
+      functions.showProject(shownProjectIndex + 1);
+    }
+  }
+
+  function showPreviousProject() {
+    if (shownProjectIndex > 0) {
+      functions.showProject(shownProjectIndex - 1);
+    }
   }
 
   function getProjectFunctions(projectIndex: number): ProjectFunctions {
@@ -89,120 +101,18 @@ export default function Projects({
       role="tabpanel"
     >
       <form action="#" className="section--form section--form__bullet-points">
-        {/* On smaller mobile screens, if you believe Chrome devtools, the header doesn't fit in one line and the design breaks. It needs to be tested on real devices because they probably display content differently from the devtools. But it will be possible only after I deploy the project. */}
-        {/* TODO: test on real devices and check the problem after deploy. */}
-        {/* TODO: refactor it somehow. It's such a shit semantically. A project should be a fieldset with a legend "Project [number]". In the current form, it's like the form itself should be labelled as "Project [number]", because it doesn't have anything but one project that isn't even grouped in any way. */}
-        {/* TODO: Extract all headers like this into one reusable component, especially since all them use the global `section` SCSS block.*/}
-        <header className="section--header">
-          <h2>Project {shownProjectIndex + 1}</h2>
-          {/* Conditional rendering to get rid of redundant flex gap. */}
-          {(shownProjectIndex > 0 ||
-            shownProjectIndex !== data.projects.length - 1) && (
-            <div className="section--item-navigation">
-              {shownProjectIndex > 0 && (
-                <Button
-                  aria-label="Show Previous Project"
-                  className="section--item-navigation-button"
-                  id="show-previous-project"
-                  onClick={() => functions.showProject(shownProjectIndex - 1)}
-                  onFocus={(e) => handleFocus(e)}
-                  onKeyDown={(e) => handleKeyboard(e)}
-                  modifiers={[
-                    'Button_paddingBlock_none',
-                    'Button_paddingInline_small',
-                  ]}
-                >
-                  <img
-                    alt="Previous"
-                    height="25px"
-                    src={prevSrc}
-                    width="25px"
-                  />
-                </Button>
-              )}
-              {/* Conditional rendering to get rid of redundant flex gap. */}
-              {shownProjectIndex !== data.projects.length - 1 && (
-                <Button
-                  aria-label="Show Next Project"
-                  id="show-next-project"
-                  // TODO: add screen reader announcement?
-                  onClick={() => functions.showProject(shownProjectIndex + 1)}
-                  onFocus={(e) => {
-                    // Don't handle focus if it's not the first tabbable element.
-                    if (shownProjectIndex > 0) return;
-
-                    handleFocus(e);
-                  }}
-                  onKeyDown={(e) => {
-                    // Don't handle keydown if it's not the first tabbable element.
-                    if (shownProjectIndex > 0) return;
-
-                    handleKeyboard(e);
-                  }}
-                  modifiers={[
-                    'Button_paddingBlock_none',
-                    'Button_paddingInline_small',
-                  ]}
-                >
-                  <img
-                    alt="Previous"
-                    height="25px"
-                    src={nextSrc}
-                    width="25px"
-                  />
-                </Button>
-              )}
-            </div>
-          )}
-          {/* TODO: redesign it or at least put it in some other place. It looks terrible. (Talking about the UI, not the code.) */}
-          <Button
-            aria-label={`Add Project ${data.projects.length + 1}`}
-            id="add-project"
-            // TODO: add screen reader announcement.
-            onClick={addProject}
-            onFocus={(e) => {
-              // Don't handle focus if it's not the first tabbable element.
-              if (
-                shownProjectIndex > 0 ||
-                shownProjectIndex !== data.projects.length - 1
-              ) {
-                return;
-              }
-
-              handleFocus(e);
-            }}
-            onKeyDown={(e) => {
-              // Don't handle keydown if it's not the first tabbable element.
-              if (
-                shownProjectIndex > 0 ||
-                shownProjectIndex !== data.projects.length - 1
-              ) {
-                return;
-              }
-
-              handleKeyboard(e);
-            }}
-            modifiers={[
-              'Button_paddingBlock_none',
-              'Button_paddingInline_small',
-            ]}
-          >
-            <img alt="Add" height="25px" src={addSrc} width="25px" />
-          </Button>
-          {/* You can't delete the only project. There's always at least one project. */}
-          {data.projects.length > 1 && (
-            <button
-              aria-label={`Delete Project ${shownProjectIndex + 1}`}
-              className="section--delete-item"
-              id="delete-project"
-              type="button"
-              // TODO: add screen reader announcement.
-              onClick={() => functions.deleteProject(shownProjectIndex)}
-            >
-              <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
-            </button>
-          )}
-        </header>
+        <SectionItemHeader
+          addItem={addProject}
+          deleteItem={deleteProject}
+          handleFocus={captureLastComponentBeforeTabpanel}
+          handleKeyDown={focusLastComponentBeforeTabpanel}
+          itemName="Project"
+          itemNumber={shownProjectIndex + 1}
+          itemsNumber={data.projects.length}
+          showNextItem={showNextProject}
+          showPreviousItem={showPreviousProject}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        />
         <Project
           data={data.projects[shownProjectIndex]}
           functions={getProjectFunctions(shownProjectIndex)}

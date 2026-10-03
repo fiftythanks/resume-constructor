@@ -3,14 +3,9 @@ import type { RefObject } from 'react';
 import useLastComponentBeforeTabpanel from '@/hooks/useLastComponentBeforeTabpanel';
 import useResumeData from '@/hooks/useResumeData';
 
-import Button from '@/components/Button';
+import SectionItemHeader from '@/components/SectionItemHeader';
 
 import Job from './Job';
-
-import addSrc from '@/assets/icons/add-black.svg';
-import deleteSrc from '@/assets/icons/delete.svg';
-import nextSrc from '@/assets/icons/next.svg';
-import prevSrc from '@/assets/icons/prev.svg';
 
 import type { Experience, ItemWithId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
@@ -44,14 +39,32 @@ export default function Experience({
   ref,
   updateScreenReaderAnnouncement,
 }: ExperienceProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('experience');
+  const {
+    captureLastComponentBeforeTabpanel: handleFocus,
+    focusLastComponentBeforeTabpanel: handleKeyboard,
+  } = useLastComponentBeforeTabpanel('experience');
 
   const { shownJobIndex } = data;
 
   function addJob() {
     functions.addJob();
-    document.getElementById('company-name')!.focus();
+    document.getElementById('company-name')?.focus();
+  }
+
+  function deleteJob() {
+    functions.deleteJob(shownJobIndex);
+  }
+
+  function showNextJob() {
+    if (shownJobIndex < data.jobs.length - 1) {
+      functions.showJob(shownJobIndex + 1);
+    }
+  }
+
+  function showPreviousJob() {
+    if (shownJobIndex > 0) {
+      functions.showJob(shownJobIndex - 1);
+    }
   }
 
   function getJobFunctions(jobIndex: number): JobFunctions {
@@ -83,106 +96,18 @@ export default function Experience({
       role="tabpanel"
     >
       <form action="#" className="section--form section--form__bullet-points">
-        <header className="section--header">
-          <h2>Job {shownJobIndex + 1}</h2>
-          {/* FIXME: When you press "Show Previous/Next Job" or delete a job, the browser loses focus. */}
-          {/* Conditional rendering to get rid of redundant flex gap. */}
-          {(shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) && (
-            <div className="section--item-navigation">
-              {shownJobIndex > 0 && (
-                <Button
-                  aria-label="Show Previous Job"
-                  className="section--item-navigation-button"
-                  id="show-previous-job"
-                  onClick={() => functions.showJob(shownJobIndex - 1)}
-                  onFocus={(e) => handleFocus(e)}
-                  onKeyDown={(e) => handleKeyboard(e)}
-                  modifiers={[
-                    'Button_paddingBlock_none',
-                    'Button_paddingInline_small',
-                  ]}
-                >
-                  <img
-                    alt="Previous"
-                    height="25px"
-                    src={prevSrc}
-                    width="25px"
-                  />
-                </Button>
-              )}
-              {shownJobIndex !== data.jobs.length - 1 && (
-                <Button
-                  aria-label="Show Next Job"
-                  id="show-next-job"
-                  onClick={() => functions.showJob(shownJobIndex + 1)}
-                  onFocus={(e) => {
-                    // Don't handle focus if it's not the first tabbable element.
-                    if (shownJobIndex > 0) return;
-
-                    handleFocus(e);
-                  }}
-                  onKeyDown={(e) => {
-                    // Don't handle keydown if it's not the first tabbable element.
-                    if (shownJobIndex > 0) return;
-
-                    handleKeyboard(e);
-                  }}
-                  modifiers={[
-                    'Button_paddingBlock_none',
-                    'Button_paddingInline_small',
-                  ]}
-                >
-                  <img
-                    alt="Previous"
-                    height="25px"
-                    src={nextSrc}
-                    width="25px"
-                  />
-                </Button>
-              )}
-            </div>
-          )}
-          {/* TODO: redesign it or at least put it in some other place. It looks terrible. */}
-          <Button
-            aria-label={`Add Job ${data.jobs.length + 1}`}
-            id="add-job"
-            onClick={addJob}
-            onFocus={(e) => {
-              // Don't handle focus if it's not the first tabbable element.
-              if (shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) {
-                return;
-              }
-
-              handleFocus(e);
-            }}
-            onKeyDown={(e) => {
-              // Don't handle keydown if it's not the first tabbable element.
-              if (shownJobIndex > 0 || shownJobIndex !== data.jobs.length - 1) {
-                return;
-              }
-
-              handleKeyboard(e);
-            }}
-            modifiers={[
-              'Button_paddingBlock_none',
-              'Button_paddingInline_small',
-            ]}
-          >
-            <img alt="Add" height="25px" src={addSrc} width="25px" />
-          </Button>
-          {/* You can't delete the only job. There's always at least one job. */}
-          {data.jobs.length > 1 && (
-            <button
-              aria-label={`Delete Job ${shownJobIndex + 1}`}
-              className="section--delete-item"
-              id="delete-job"
-              type="button"
-              onClick={() => functions.deleteJob(shownJobIndex)}
-            >
-              <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
-            </button>
-          )}
-        </header>
+        <SectionItemHeader
+          addItem={addJob}
+          deleteItem={deleteJob}
+          handleFocus={handleFocus}
+          handleKeyDown={handleKeyboard}
+          itemName="Job"
+          itemNumber={shownJobIndex + 1}
+          itemsNumber={data.jobs.length}
+          showNextItem={showNextJob}
+          showPreviousItem={showPreviousJob}
+          updateScreenReaderAnnouncement={updateScreenReaderAnnouncement}
+        />
         <Job
           data={data.jobs[shownJobIndex]}
           functions={getJobFunctions(shownJobIndex)}
