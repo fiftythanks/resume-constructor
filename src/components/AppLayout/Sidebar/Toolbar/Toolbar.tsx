@@ -170,7 +170,7 @@ export default function Toolbar({
           onFocus={handleFocus}
         />
         <AppbarIconButton
-          // FIXME: add `aria-controls`!
+          aria-controls="resume-preview-dialog"
           aria-label="Open Preview"
           className="Toolbar-Item Toolbar-Item_preview"
           iconSrc={previewSrc}
@@ -185,6 +185,7 @@ export default function Toolbar({
         <Preview
           activeSectionIds={activeSectionIds}
           data={data}
+          id="resume-preview-dialog"
           isShown={isPreviewModalShown}
           onClose={closePreviewModal}
         />
