@@ -30,11 +30,43 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ## 2. Core Fixes & Stability
 
-### Focus Management Continuity
+### Focus Management Continuity (Completed)
 
-- **Current Issue:** When navigating between records ("Show Previous" or "Show Next") or deleting an active item in Education, Experience and Projects, browser focus blurs to `document.body`.
-- **Planned Fix:** Implement programmatic focus retention using React refs to return focus to the newly activated card or the primary add action.
-- **Sources:** `src/pages/Education/Education.tsx:88`, `src/pages/Experience/Experience.tsx:88`
+- **Status:** Resolved in commit `25b0825` (`feat(components): extract SectionItemHeader`).
+- **Resolution Summary:** Extracted the reusable `SectionItemHeader` component across Education, Experience and Projects forms. Implemented programmatic focus retention using React refs (`localHeaderRef`) guarded by `isConnected` checks to return focus to the newly activated card or the primary add action upon item deletion and boundary navigation, eliminating focus drops to `document.body`.
+- **Sources:** `src/components/SectionItemHeader/SectionItemHeader.tsx:104–134`
+
+### DOM Attachment & `isConnected` Guards
+
+- **Current Issue:** Multiple event listeners, layout queries and focus handlers query or focus DOM elements without verifying `node.isConnected`. Calling `.focus()` or querying styles on unmounted or detached elements causes silent focus drops to `document.body`, incorrect layout computations or runtime exceptions.
+- **Planned Fix:** Guard all focus restoration, computed style lookups and canvas pipelines with `node.isConnected` checks. Ensure captured focus targets and tabpanel roots remain attached to the document before executing focus actions.
+- **Affected Locations:**
+  - `src/hooks/useLastComponentBeforeTabpanel.ts:87, 110`: Refocusing captured `relatedTarget` without verifying `lastComponent.current.isConnected` risks dropping focus to `document.body` if the element was detached or re-rendered.
+  - `src/components/Preview/Preview.tsx:133, 186, 199`: `useLayoutEffect` reads `getComputedStyle(popupRef.current)` without checking DOM attachment; asynchronous PDF rendering pipeline mutates `canvasNode` dimensions and style properties and invokes `page.render()` without verifying `canvasNode.isConnected`.
+  - `src/components/AppLayout/Sidebar/Toolbar/Toolbar.tsx:65, 118`: Toolbar arrow navigation and preview modal close handler invoke `.focus()` without checking whether target buttons remain connected.
+  - `src/components/AppLayout/Sidebar/Sidebar.tsx:105`: Sidebar toggle keyup handler invokes `.focus()` without verifying `navbarToggle.current.isConnected`.
+  - `src/App/App.tsx:211`: `focusSection` computes tabbable elements and invokes `.focus()` without checking `isConnected` on the section container or the first tabbable target.
+
+### Ref-Based Focus Management Migration
+
+- **Current Issue:** Extensive use of `document.getElementById(...)!.focus()` throughout navigation, deletion and form action handlers completely bypasses React refs and introduces brittle non-null assertions (`!`). Furthermore, form action dispatchers trigger synchronous focus calls immediately after React state updates before reconciliation completes, targeting pre-update or missing DOM nodes.
+- **Planned Fix:** Migrate all direct DOM lookups to idiomatic React refs. Replace non-null assertions with safe optional chaining and connection checks. Defer focus transitions following state additions until after React reconciliation.
+- **Affected Locations:**
+  - `src/components/AddSections/AddSections.tsx:70–76`: Uses `document.getElementById(...)!.focus()` with non-null assertions to navigate between add buttons instead of managing button refs.
+  - `src/components/AppLayout/Sidebar/Navbar/Navbar.tsx:152–162, 205–216, 283–312, 338–356, 358–383, 403–413, 425–427`: Navbar reordering, deletion and arrow navigation handlers bypass `tabRefs` with raw `document.getElementById(...)!.focus()` calls and non-null assertions across tabs, delete triggers and action buttons.
+  - `src/components/BulletPoints/BulletPoints.tsx:200–214`: List item deletion uses raw DOM lookups with non-null assertions to focus sibling delete buttons or add buttons.
+  - `src/pages/Education/Education.tsx:51`: `addDegree` invokes `document.getElementById('university-name')?.focus()` synchronously after state dispatch, bypassing refs without waiting for reconciliation.
+  - `src/pages/Experience/Experience.tsx:51`: `addJob` invokes `document.getElementById('company-name')?.focus()` synchronously after state dispatch, bypassing refs without waiting for reconciliation.
+  - `src/pages/Projects/Projects.tsx:53`: `addProject` invokes `document.getElementById('project-name')?.focus()` synchronously after state dispatch, bypassing refs without waiting for reconciliation.
+
+### Dialog Lifecycle & Portal Hardening
+
+- **Current Issue:** Native `<dialog>` methods `showModal()` and `close()` in `Popup` are called unconditionally inside `useEffect` upon `isShown` changes without checking `node.isConnected` or the dialog's current `open` state, risking native `DOMException: InvalidStateError`. Additionally, `Popup` queries `'popup-root'` using `document.getElementById` with an unsafe non-null assertion `!` during ref initialisation, risking crashes if the container has not mounted.
+- **Planned Fix:** Verify `node.isConnected` and `node.open` before invoking `showModal()` or `close()`. Manage the portal root container through React refs or validated mounting hooks rather than raw non-null assertions.
+- **Affected Locations:**
+  - `src/components/Popup/Popup.tsx:46`: `rootRef` initialised via `document.getElementById('popup-root')!` with unsafe non-null assertion.
+  - `src/components/Popup/Popup.tsx:52–58`: Direct `showModal()` and `close()` invocations in `useEffect` without checking `node.isConnected` or `node.open`.
+  - `src/components/Preview/Preview.tsx:238`: Close button invokes `popupRef.current.close()` without checking `node.isConnected` or `node.open`.
 
 ### Document Rendering Parity & Bug Fixes
 

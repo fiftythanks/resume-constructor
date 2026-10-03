@@ -62,6 +62,7 @@ export default function Toolbar({
    * 3. "Preview".
    */
   function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    // TODO: Verify `node.isConnected` and avoid non-null assertions `!` when moving focus between toolbar items.
     if (e.key === 'ArrowLeft') {
       switch (e.target) {
         case deleteAllBtn.current:
@@ -114,6 +115,7 @@ export default function Toolbar({
   function closePreviewModal() {
     setIsPreviewModalShown(false);
 
+    // TODO: Verify `previewBtn.current.isConnected` before calling `.focus()` to prevent focus drops if the toolbar has unmounted.
     if (previewBtn.current !== null) {
       previewBtn.current.focus();
     }

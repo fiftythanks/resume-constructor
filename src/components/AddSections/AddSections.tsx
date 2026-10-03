@@ -67,6 +67,7 @@ export default function AddSections({
            * add-button), focus on the next add-button; otherwise, focus on the
            * previous one.
            */
+          // FIXME: Replace `document.getElementById(...)!.focus()` with React refs and verify `node.isConnected` to prevent unhandled unmount errors.
           if (nextAddableSectionIds[i] !== undefined) {
             document.getElementById(`add-${nextAddableSectionIds[i]}`)!.focus();
           } else {

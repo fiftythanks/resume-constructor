@@ -84,6 +84,7 @@ function useLastComponentBeforeTabpanel(sectionId: SectionId): ReadonlyDeep<{
   const captureLastComponentBeforeTabpanel: HandleFocus = (e) => {
     if (!isRelevantFocusEvent<typeof sectionId>(e)) return;
 
+    // TODO: Verify whether `e.relatedTarget` remains attached to the DOM (`isConnected`) across re-renders before capturing.
     lastComponent.current = e.relatedTarget;
   };
 
@@ -106,6 +107,7 @@ function useLastComponentBeforeTabpanel(sectionId: SectionId): ReadonlyDeep<{
     }
 
     e.preventDefault();
+    // TODO: Verify `lastComponent.current.isConnected` prior to calling `.focus()` to prevent focus drops when the captured element has unmounted.
     lastComponent.current.focus();
   };
 
