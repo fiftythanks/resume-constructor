@@ -42,6 +42,7 @@ const A4_ASPECT_RATIO = 595.28 / 841.89;
 export interface PreviewProps {
   activeSectionIds: ReadonlyDeep<SectionId[]>;
   data: ReadonlyDeep<ResumeData>;
+  id?: string;
   isShown: boolean;
   onClose: ReadonlyDeep<() => void>;
 }
@@ -52,6 +53,7 @@ export interface PreviewProps {
 export default function Preview({
   activeSectionIds,
   data,
+  id = 'resume-preview-dialog',
   isShown,
   onClose,
 }: PreviewProps) {
@@ -226,7 +228,7 @@ export default function Preview({
     <Popup
       block="Preview"
       externalRef={popupRef}
-      id="preview-modal"
+      id={id}
       isShown={isShown}
       title="Preview"
       onClose={onClose}

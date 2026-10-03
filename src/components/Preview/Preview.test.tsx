@@ -121,7 +121,7 @@ describe('Preview', () => {
   }
 
   function renderPreview(
-    props?: PreviewProps,
+    props?: Partial<PreviewProps>,
     Component: typeof Preview = Preview,
   ) {
     // `Preview` is portalled into an element with an ID "popup-root".
@@ -136,6 +136,15 @@ describe('Preview', () => {
     const popup = await screen.findByRole('dialog', { name: 'Preview' });
 
     expect(popup).toBeInTheDocument();
+    expect(popup).toHaveAttribute('id', 'resume-preview-dialog');
+  });
+
+  it('should support a custom dialog id via the `id` prop', async () => {
+    renderPreview({ id: 'custom-dialog-id' });
+
+    const popup = await screen.findByRole('dialog', { name: 'Preview' });
+
+    expect(popup).toHaveAttribute('id', 'custom-dialog-id');
   });
 
   describe('Download buttons', () => {
