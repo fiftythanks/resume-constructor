@@ -306,6 +306,14 @@ describe('Toolbar', () => {
         expect(btn).toBeInTheDocument();
       });
 
+      it('should control the resume preview dialog', () => {
+        renderToolbar();
+
+        const btn = screen.getByRole('button', { name: 'Open Preview' });
+
+        expect(btn).toHaveAttribute('aria-controls', 'resume-preview-dialog');
+      });
+
       it('should show the preview dialog on click', async () => {
         renderToolbar();
         const user = userEvent.setup();
@@ -318,9 +326,10 @@ describe('Toolbar', () => {
 
         await user.click(btn);
 
-        expect(
-          screen.getByRole('dialog', { name: 'Preview' }),
-        ).toBeInTheDocument();
+        const dialog = screen.getByRole('dialog', { name: 'Preview' });
+
+        expect(dialog).toBeInTheDocument();
+        expect(dialog).toHaveAttribute('id', 'resume-preview-dialog');
       });
     });
   });
