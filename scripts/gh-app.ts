@@ -188,6 +188,62 @@ export async function createPullRequest({
   return pr;
 }
 
+export async function getPrReviews(prNumber: number): Promise<{
+  comments: Array<{ body: string; line: number; path: string; user: string }>;
+  reviews: Array<{ body: string; state: string; user: string }>;
+}> {
+  const { owner, repo } = loadEnv();
+  const token = await getInstallationToken();
+
+  const reviewsRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/reviews`,
+    {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${token}`,
+        'User-Agent': 'Resume-Constructor-Agent',
+      },
+    },
+  );
+
+  const commentsRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/comments`,
+    {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${token}`,
+        'User-Agent': 'Resume-Constructor-Agent',
+      },
+    },
+  );
+
+  const reviewsData = (await reviewsRes.json()) as Array<{
+    body: string;
+    state: string;
+    user: { login: string };
+  }>;
+  const commentsData = (await commentsRes.json()) as Array<{
+    body: string;
+    line: number;
+    path: string;
+    user: { login: string };
+  }>;
+
+  return {
+    comments: commentsData.map((c) => ({
+      body: c.body,
+      line: c.line,
+      path: c.path,
+      user: c.user?.login,
+    })),
+    reviews: reviewsData.map((r) => ({
+      body: r.body,
+      state: r.state,
+      user: r.user?.login,
+    })),
+  };
+}
+
 async function main(): Promise<void> {
   const isDirectRun =
     process.argv[1] !== undefined &&
@@ -217,12 +273,26 @@ async function main(): Promise<void> {
       await pushBranch();
       const pr = await createPullRequest({ body, title });
       console.log(`\nSuccessfully created PR: ${pr.html_url}`);
+    } else if (command === 'reviews') {
+      const prNum = parseInt(args[1] || '28', 10);
+      const data = await getPrReviews(prNum);
+      console.log(`\n--- Reviews for PR #${prNum} ---`);
+      if (data.reviews.length === 0) console.log('No reviews yet.');
+      for (const r of data.reviews) {
+        console.log(`[${r.state}] @${r.user}: ${r.body}`);
+      }
+      console.log(`\n--- Inline Comments for PR #${prNum} ---`);
+      if (data.comments.length === 0) console.log('No inline comments yet.');
+      for (const c of data.comments) {
+        console.log(`@${c.user} on ${c.path}:${c.line} -> "${c.body}"`);
+      }
     } else {
       console.log(`
 Usage:
   bun run scripts/gh-app.ts token           # Verify and print token prefix
   bun run scripts/gh-app.ts push [branch]   # Push branch over HTTPS using App token
   bun run scripts/gh-app.ts pr --title "..." --body "..." # Push & open PR
+  bun run scripts/gh-app.ts reviews [pr#]   # Fetch review comments and status
       `);
     }
   } catch (err) {
@@ -232,5 +302,6 @@ Usage:
 }
 
 void main();
+
 
 
