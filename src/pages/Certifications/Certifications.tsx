@@ -20,8 +20,10 @@ export default function Certifications({
   functions,
   ref,
 }: CertificationsProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('certifications');
+  const {
+    captureLastComponentBeforeTabpanel,
+    focusLastComponentBeforeTabpanel,
+  } = useLastComponentBeforeTabpanel('certifications');
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target as {
@@ -53,8 +55,8 @@ export default function Certifications({
               placeholder="List any relevant certifications, e.g., AWS Certified Cloud Practitioner, Google IT Support Professional Certificate."
               value={data.certificates}
               onChange={handleInputChange}
-              onFocus={(e) => handleFocus(e)}
-              onKeyDown={(e) => handleKeyboard(e)}
+              onFocus={(e) => captureLastComponentBeforeTabpanel(e)}
+              onKeyDown={(e) => focusLastComponentBeforeTabpanel(e)}
             />
           </li>
           <li className="section--list-item">

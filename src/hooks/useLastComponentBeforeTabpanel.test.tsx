@@ -27,8 +27,12 @@ describe('useLastComponentBeforeTabpanel', () => {
           />
           <input
             type="text"
-            onFocus={(e) => result.current.handleFocus(e)}
-            onKeyDown={(e) => result.current.handleKeyboard(e)}
+            onFocus={(e) =>
+              result.current.captureLastComponentBeforeTabpanel(e)
+            }
+            onKeyDown={(e) =>
+              result.current.focusLastComponentBeforeTabpanel(e)
+            }
           />
           <button aria-label="Relevant Button" id="preview" type="button" />
         </>,
@@ -68,8 +72,12 @@ describe('useLastComponentBeforeTabpanel', () => {
           <button id="irrelevant-button" type="button" />
           <input
             type="text"
-            onFocus={(e) => result.current.handleFocus(e)}
-            onKeyDown={(e) => result.current.handleKeyboard(e)}
+            onFocus={(e) =>
+              result.current.captureLastComponentBeforeTabpanel(e)
+            }
+            onKeyDown={(e) =>
+              result.current.focusLastComponentBeforeTabpanel(e)
+            }
           />
           <button aria-label="Relevant Button" id={id} type="button" />
         </>,
@@ -114,8 +122,12 @@ describe('useLastComponentBeforeTabpanel', () => {
           />
           <input
             type="text"
-            onFocus={(e) => result.current.handleFocus(e)}
-            onKeyDown={(e) => result.current.handleKeyboard(e)}
+            onFocus={(e) =>
+              result.current.captureLastComponentBeforeTabpanel(e)
+            }
+            onKeyDown={(e) =>
+              result.current.focusLastComponentBeforeTabpanel(e)
+            }
           />
         </>,
       );

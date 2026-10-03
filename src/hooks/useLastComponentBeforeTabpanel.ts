@@ -4,7 +4,7 @@ import type { FocusEvent, KeyboardEvent } from 'react';
 import possibleSectionIds from '@/utils/possibleSectionIds';
 
 import type { SectionId } from '@/types/resumeData';
-import type { OverrideProperties } from 'type-fest';
+import type { OverrideProperties, ReadonlyDeep } from 'type-fest';
 
 export interface RelevantLastComponent<
   Section extends SectionId,
@@ -56,19 +56,32 @@ export interface RelevantKeyboardEvent extends KeyboardEvent {
 export type HandleFocus = (e: FocusEvent<HTMLElement>) => void;
 export type HandleKeyboard = (e: KeyboardEvent) => void;
 
-export type UseLastComponentBeforeTabpanel = <Section extends SectionId>(
-  sectionId: Section,
-) => {
-  handleFocus: HandleFocus;
-  handleKeyboard: HandleKeyboard;
-};
-
-const useLastComponentBeforeTabpanel: UseLastComponentBeforeTabpanel = (
-  sectionId,
-) => {
+/**
+ * FIXME: Captures the component only when the focus moves to the first tabbable
+ * element, while the logic is actually that it doesn't matter where focus moves
+ * inside the tabpanel as soon as it moves into the tabpanel.
+ */
+/**
+ * FIXME: Doesn't capture the navbar toggle button or anything at all on the
+ * navbar side.
+ */
+/**
+ * Captures the last component that had focus before it moved to the tabpanel.
+ * Returns to that component when `Shift+Tab` is pressed while focused on the
+ * first tabbable element of the tabpanel.
+ *
+ * @returns captureLastComponentBeforeTabpanel Function that must be passed to
+ * the first tabbable component as a "focus" event handler.
+ * @returns focusLastComponentBeforeTabpanel Function that must be passed to
+ * the first tabbable component as a "keydown" event handler.
+ */
+function useLastComponentBeforeTabpanel(sectionId: SectionId): ReadonlyDeep<{
+  captureLastComponentBeforeTabpanel: HandleFocus;
+  focusLastComponentBeforeTabpanel: HandleKeyboard;
+}> {
   const lastComponent = useRef<RelevantLastComponent<typeof sectionId>>(null);
 
-  const handleFocus: HandleFocus = (e) => {
+  const captureLastComponentBeforeTabpanel: HandleFocus = (e) => {
     if (!isRelevantFocusEvent<typeof sectionId>(e)) return;
 
     lastComponent.current = e.relatedTarget;
@@ -82,7 +95,7 @@ const useLastComponentBeforeTabpanel: UseLastComponentBeforeTabpanel = (
     );
   }
 
-  const handleKeyboard: HandleKeyboard = (e) => {
+  const focusLastComponentBeforeTabpanel: HandleKeyboard = (e) => {
     if (
       !isRelevantKeyboardEvent(e) ||
       lastComponent.current === null ||
@@ -96,7 +109,10 @@ const useLastComponentBeforeTabpanel: UseLastComponentBeforeTabpanel = (
     lastComponent.current.focus();
   };
 
-  return { handleFocus, handleKeyboard };
-};
+  return {
+    captureLastComponentBeforeTabpanel,
+    focusLastComponentBeforeTabpanel,
+  };
+}
 
 export default useLastComponentBeforeTabpanel;

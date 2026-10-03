@@ -18,8 +18,10 @@ export interface PersonalProps {
  * The Personal Details section form.
  */
 export default function Personal({ data, functions, ref }: PersonalProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('personal');
+  const {
+    captureLastComponentBeforeTabpanel,
+    focusLastComponentBeforeTabpanel,
+  } = useLastComponentBeforeTabpanel('personal');
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -55,8 +57,8 @@ export default function Personal({ data, functions, ref }: PersonalProps) {
               type="text"
               value={data.fullName}
               onChange={handleInputChange}
-              onFocus={(e) => handleFocus(e)}
-              onKeyDown={(e) => handleKeyboard(e)}
+              onFocus={(e) => captureLastComponentBeforeTabpanel(e)}
+              onKeyDown={(e) => focusLastComponentBeforeTabpanel(e)}
             />
           </li>
           <li className="section--list-item">

@@ -44,8 +44,10 @@ export default function Education({
   ref,
   updateScreenReaderAnnouncement,
 }: EducationProps) {
-  const { handleFocus, handleKeyboard } =
-    useLastComponentBeforeTabpanel('education');
+  const {
+    focusLastComponentBeforeTabpanel,
+    captureLastComponentBeforeTabpanel,
+  } = useLastComponentBeforeTabpanel('education');
 
   const shownDegreeIndex = data.shownDegreeIndex;
 
@@ -96,8 +98,8 @@ export default function Education({
                   className="section--item-navigation-button"
                   id="show-previous-degree"
                   onClick={() => functions.showDegree(shownDegreeIndex - 1)}
-                  onFocus={(e) => handleFocus(e)}
-                  onKeyDown={(e) => handleKeyboard(e)}
+                  onFocus={(e) => captureLastComponentBeforeTabpanel(e)}
+                  onKeyDown={(e) => focusLastComponentBeforeTabpanel(e)}
                   modifiers={[
                     'Button_paddingBlock_none',
                     'Button_paddingInline_small',
@@ -120,13 +122,13 @@ export default function Education({
                     // Don't handle focus if it's not the first tabbable element.
                     if (shownDegreeIndex > 0) return;
 
-                    handleFocus(e);
+                    captureLastComponentBeforeTabpanel(e);
                   }}
                   onKeyDown={(e) => {
                     // Don't handle keydown if it's not the first tabbable element.
                     if (shownDegreeIndex > 0) return;
 
-                    handleKeyboard(e);
+                    focusLastComponentBeforeTabpanel(e);
                   }}
                   modifiers={[
                     'Button_paddingBlock_none',
@@ -156,7 +158,7 @@ export default function Education({
                 return;
               }
 
-              handleFocus(e);
+              captureLastComponentBeforeTabpanel(e);
             }}
             onKeyDown={(e) => {
               // Don't handle keydown if it's not the first tabbable element.
@@ -167,7 +169,7 @@ export default function Education({
                 return;
               }
 
-              handleKeyboard(e);
+              focusLastComponentBeforeTabpanel(e);
             }}
             modifiers={[
               'Button_paddingBlock_none',
