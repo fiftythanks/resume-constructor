@@ -130,6 +130,7 @@ export default function Preview({
    * the browser window is resized.
    */
   useLayoutEffect(() => {
+    // TODO: Verify `popupRef.current.isConnected` before querying computed layout styles to prevent computing styles on detached elements.
     if (!isShown || popupRef.current === null) {
       return;
     }
@@ -182,6 +183,7 @@ export default function Preview({
       }
 
       // Don't proceed if the canvas has disappeared for some reason.
+      // TODO: Verify `canvasNode.isConnected` before mutating dimensions and proceeding with canvas rendering to avoid mutations on detached elements.
       if (canvasNode === null) {
         return;
       }
@@ -194,6 +196,7 @@ export default function Preview({
       canvasNode.style.height = '100%';
 
       try {
+        // FIXME: Guard `canvasNode.getContext('2d')` against null and check `canvasNode.isConnected` instead of using non-null assertion `!`.
         renderTask = page.render({
           canvas: null,
           canvasContext: canvasNode.getContext('2d')!,
@@ -232,6 +235,7 @@ export default function Preview({
         className="Preview-CloseBtn"
         type="button"
         onClick={() => {
+          // TODO: Verify `popupRef.current.isConnected` and `popupRef.current.open` before calling `.close()`.
           if (popupRef.current !== null) popupRef.current.close();
         }}
       >

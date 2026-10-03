@@ -197,6 +197,7 @@ export default function BulletPoints({
                   `Bullet point ${index + 1} was deleted.`,
                 );
 
+                // FIXME: Replace `document.getElementById(...)!.focus()` with React refs and verify `node.isConnected` when deleting bullet points to prevent focus drops on unmounted elements.
                 if (index < data.length - 1) {
                   // TODO: use refs!
                   document
