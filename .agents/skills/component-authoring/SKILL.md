@@ -114,6 +114,7 @@ export default function MyComponent({
    `shorthand-prop` (e.g. `disabled`) -> `unknown` (e.g. `className`, `id`) -> `callback` (e.g. `onClick`) -> `multiline-prop`.
 7. **No Redundant Effects:** Do not introduce `useEffect` for state synchronisation or derived values. Calculate values directly during render.
 8. **Accessible Labeling:** If creating form controls, ensure inputs have an explicit `id` and corresponding `<label htmlFor={id}>`.
+9. **Avoid Type Assertions:** Avoid TypeScript type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) as much as possible. Rely on natural type inference, discriminating unions and runtime type narrowing (`typeof`, `instanceof` or custom type guards). If an assertion cannot be avoided with reasonable effort, document why it was necessary in an explanatory comment directly preceding it.
 
 ---
 

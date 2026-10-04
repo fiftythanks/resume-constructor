@@ -39,6 +39,10 @@
   - No floating promises: `@typescript-eslint/no-floating-promises` is an error. Always `await` or explicitly `void`.
   - Exhaustive switch / union checks: use `neverReached(value)` from `@/utils/neverReached`.
   - Path alias: Use `@/*` pointing to `src/*`.
+  - **Avoid Type Assertions As Much As Possible:**
+    - Type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) bypass TypeScript's type checker and must be avoided as much as possible.
+    - Rely on natural type inference, exhaustive checks, discriminating unions and runtime type narrowing (such as `typeof`, `instanceof`, null/undefined checks or type predicates) instead of forcing types with assertions.
+    - If a type assertion cannot be avoided with reasonable effort, you MUST document why the assertion was necessary in an explanatory comment immediately preceding it.
 - **Modern React 19 Standards & Deprecated Code Removal:**
   - The codebase runs strictly on React 19 (current year 2026).
   - Deprecated React APIs, types and legacy patterns are strictly forbidden:
