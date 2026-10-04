@@ -1,6 +1,8 @@
 // It disallowed using `crypto`, which is well supported.
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
+import { act } from 'react';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
@@ -175,7 +177,7 @@ const DATA: ResumeData = {
       },
       {
         id: crypto.randomUUID(),
-        value: 'Webpack',
+        value: 'webpack',
       },
       {
         id: crypto.randomUUID(),
@@ -192,7 +194,7 @@ function Tabpanel({ sectionId }: { sectionId: SectionId }) {
       id={`${sectionId}-tabpanel`}
       role="tabpanel"
     >
-      <input data-testid="first-tabbable" type="text" />
+      <input aria-label="First field" type="text" />
     </div>
   );
 }
@@ -225,9 +227,6 @@ function getProps(
 }
 
 function renderAppLayout(props?: Partial<AppLayoutProps>) {
-  // Necessary for the dialogs "Preview" and "Add Sections".
-  render(<div id="popup-root" />);
-
   render(<AppLayout {...getProps(props)} />);
 }
 
@@ -240,6 +239,19 @@ function renderAppLayoutWithNavbarExpanded(props?: Partial<AppLayoutProps>) {
 }
 
 describe('AppLayout', () => {
+  let popupRoot: HTMLDivElement;
+
+  beforeEach(() => {
+    popupRoot = document.createElement('div');
+    popupRoot.setAttribute('id', 'popup-root');
+    document.body.appendChild(popupRoot);
+  });
+
+  afterEach(() => {
+    popupRoot.remove();
+    jest.clearAllMocks();
+  });
+
   // Main section
 
   it('should render a main section', () => {
@@ -359,18 +371,16 @@ describe('AppLayout', () => {
     renderAppLayoutWithNavbarExpanded();
 
     const navbar = screen.getByRole('navigation', { name: 'Navigation' });
-    const navbarClassList = navbar.classList;
 
-    expect(navbarClassList).not.toContain('Sidebar-Item_hidden');
+    expect(navbar).not.toHaveClass('Sidebar-Item_hidden');
   });
 
   it("should not render the navbar when it's hidden", () => {
     renderAppLayout();
 
     const navbar = screen.getByRole('navigation', { name: 'Navigation' });
-    const navbarClassList = navbar.classList;
 
-    expect(navbarClassList).toContain('Sidebar-Item_hidden');
+    expect(navbar).toHaveClass('Sidebar-Item_hidden');
   });
 
   describe('Navbar', () => {
@@ -991,13 +1001,17 @@ describe('AppLayout', () => {
           const controlBtn = screen.getByRole('button', {
             name: 'Open Preview',
           });
-          controlBtn.focus();
+          act(() => {
+            controlBtn.focus();
+          });
 
           // Act
           await user.keyboard('{Tab}');
 
           // Assert
-          expect(screen.getByTestId('first-tabbable')).toHaveFocus();
+          expect(
+            screen.getByRole('textbox', { name: 'First field' }),
+          ).toHaveFocus();
         });
       });
     });
