@@ -1,3 +1,6 @@
+import { createRef } from 'react';
+import type { RefObject } from 'react';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
@@ -5,80 +8,93 @@ import Popup from './Popup';
 
 import type { PopupProps } from './Popup';
 
-/**
- * Since `Popup` is portalled to `popup-root`, there must exist an
- * element with such an ID.
- */
-function Container() {
-  return <div id="popup-root" />;
-}
-
-function getProps(overrides?: Partial<PopupProps>): PopupProps {
-  return {
-    children: <div />,
-    id: 'some-id',
-    isShown: true,
-    onClose: () => {},
-    title: 'Some Title',
-    ...overrides,
-  };
-}
-
-// should render a heading with text `title`
-
 describe('Popup', () => {
-  it('should render a heading with text from its `title` prop', () => {
-    render(<Container />);
+  let popupRoot: HTMLDivElement;
+
+  beforeEach(() => {
+    popupRoot = document.createElement('div');
+    popupRoot.setAttribute('id', 'popup-root');
+    document.body.appendChild(popupRoot);
+  });
+
+  afterEach(() => {
+    popupRoot.remove();
+    jest.clearAllMocks();
+  });
+
+  function getProps(overrides?: Partial<PopupProps>): PopupProps {
+    return {
+      children: <p>Dialog content</p>,
+      id: 'test-popup',
+      isShown: true,
+      onClose: jest.fn(),
+      title: 'Some Title',
+      ...overrides,
+    };
+  }
+
+  it('should render a semantic heading and accessible dialog with title text', () => {
     render(<Popup {...getProps()} />);
 
-    const heading = screen.getByRole('heading', { name: 'Some Title' });
+    const heading = screen.getByRole('heading', {
+      level: 2,
+      name: 'Some Title',
+    });
+    const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
     expect(heading).toBeInTheDocument();
-  });
-
-  it('should render with an accessible name from its heading', () => {
-    render(<Container />);
-    render(<Popup {...getProps()} />);
-
-    const popup = screen.getByRole('dialog', { name: 'Some Title' });
-
     expect(popup).toBeInTheDocument();
+    expect(popup).toHaveClass('Popup');
+    expect(heading).toHaveClass('Popup-Title');
   });
 
-  it("shouldn't render if `isShown === false`", () => {
-    render(<Container />);
-    render(<Popup {...getProps({ isShown: false })} />);
+  it('should apply BEM block and modifier classes to dialog and title', () => {
+    render(
+      <Popup
+        {...getProps({
+          block: 'CustomModal',
+          modifiers: ['Popup_size_large'],
+        })}
+      />,
+    );
 
-    const popup = screen.queryByRole('dialog', { name: 'Some Title' });
+    const popup = screen.getByRole('dialog', { name: 'Some Title' });
+    const heading = screen.getByRole('heading', {
+      level: 2,
+      name: 'Some Title',
+    });
 
-    expect(popup).not.toBeInTheDocument();
+    expect(popup).toHaveClass('Popup', 'CustomModal', 'Popup_size_large');
+    expect(heading).toHaveClass('Popup-Title', 'CustomModal-Title');
   });
 
-  it('should call `onClose` on close', () => {
-    const onCloseMock = jest.fn();
-    render(<Container />);
-    render(<Popup {...getProps({ onClose: onCloseMock })} />);
+  it('should call showModal when isShown is true and close when isShown is false', () => {
+    const { rerender } = render(<Popup {...getProps({ isShown: true })} />);
+
+    expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled();
+
+    rerender(<Popup {...getProps({ isShown: false })} />);
+
+    expect(HTMLDialogElement.prototype.close).toHaveBeenCalled();
+  });
+
+  it('should assign the dialog element to externalRef', () => {
+    const externalRef: RefObject<HTMLDialogElement | null> = createRef();
+
+    render(<Popup {...getProps({ externalRef })} />);
+
     const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
-    /**
-     * JSDOM hasn't implemented HTMLDialogElement properly yet, so the `close`
-     * event won't fire when the popup is closed. I had to come up with
-     * a workaround in this test. This is the best thing I could've thought of
-     * at the moment.
-     */
+    expect(externalRef.current).toBe(popup);
+  });
+
+  it('should call onClose callback when the dialog fires a close event', () => {
+    const onCloseMock = jest.fn();
+    render(<Popup {...getProps({ onClose: onCloseMock })} />);
+
+    const popup = screen.getByRole('dialog', { name: 'Some Title' });
     fireEvent(popup, new Event('close'));
 
     expect(onCloseMock).toHaveBeenCalledTimes(1);
-  });
-
-  // TODO: add a test for closing the popup by pressing Escape.
-
-  it('should render a heading with text from the prop `title`', () => {
-    render(<Container />);
-    render(<Popup {...getProps()} />);
-
-    const heading = screen.getByRole('heading', { name: 'Some Title' });
-
-    expect(heading).toBeInTheDocument();
   });
 });
