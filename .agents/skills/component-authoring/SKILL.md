@@ -149,7 +149,10 @@ export default function MyComponent({
    ```
 
 4. **Responsive Strategy:** Use `@container` for internal component layout shifts. Do not use `@media` inside UI components.
-5. **Comment & Typography Standards:**
+5. **SCSS vs CSS Comment Standards:**
+   - **Sass/SCSS-only constructs** (e.g. Sass `$variables`, `@mixin`, `@function` and Sass control directives): Because these constructs are compiled away and do not exist in the final CSS output, comments documenting them must use silent comments (`//`), even when spanning multiple lines. This ensures notes on Sass-specific internals are stripped and never leak into the compiled CSS bundle.
+   - **Native CSS constructs** (e.g. CSS rules, BEM selectors, property declarations, CSS custom properties `--*`, `@keyframes` and `@container` queries): Because these constructs exist directly in the final CSS output, comments documenting them must use standard CSS comments (`/* ... */`) so documentation remains attached to the actual CSS code in the compiled stylesheet.
+6. **Comment & Typography Standards:**
    - Multiline JSDoc blocks (`/** ... */`) with leading asterisks on continuation lines.
    - Traditional British English spelling ("optimise", "initialise", "behaviour", "centre", "colour").
    - Double quotes (`"..."`) for natural language and prose punctuation.
