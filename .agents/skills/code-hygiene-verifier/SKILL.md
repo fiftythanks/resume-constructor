@@ -167,7 +167,8 @@ Whenever creating a component, hook, utility or feature page, its entry point MU
 
 ### J. AAA Test Structure (Arrange, Act and Assert)
 
-Every unit test must follow the Arrange-Act-Assert pattern. Distinct stages must be separated by empty lines. Whenever a test is not clearly divided by empty lines into three distinct stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`).
+- Every unit test must follow the Arrange-Act-Assert pattern. Distinct stages must be separated by empty lines. Whenever a test is not clearly divided by empty lines into three distinct stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`).
+- **Strict Single-Act Principle:** Unit tests must test a single atomic behaviour. Chaining multiple `Act` and `Assert` sequences (`// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`) inside a single unit test is strictly prohibited (the "Multiple Act" / "Eager Test" anti-pattern). Decompose multi-step interactions into separate, atomic test cases. Each unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when checking multiple facets of that same atomic action.
 
 ---
 
