@@ -119,6 +119,7 @@ Every file must strictly adhere to the automated sorting hierarchy:
 ## 6. Testing Philosophy (Jest + React Testing Library)
 
 - **Accessible Queries Only:** Query elements by accessible role (`screen.getByRole('button', { name: /save/i })`), never by test ID or CSS class unless testing an aria-live region.
+- **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`).
 - **User Event Setup:** Always initialise `const user = userEvent.setup()` and `await user.click(...)`.
 - **Strict Hygiene:** Never commit `describe.only` or `it.only` (`no-restricted-properties` lint rule).
 - **Mocking:** Explicitly type mocks with `jest.Mock<ReturnType, Parameters>`.
