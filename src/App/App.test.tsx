@@ -2,6 +2,7 @@ import { act } from 'react';
 
 import {
   ByRoleOptions,
+  fireEvent,
   getAllByRole,
   getByRole,
   render,
@@ -1113,6 +1114,172 @@ describe('App', () => {
         expect(tabs[1]).toHaveAccessibleName(firstName);
         expect(tabs[2]).toHaveAccessibleName(secondName);
         expect(tabs[3]).toHaveAccessibleName(thirdName);
+      });
+    });
+
+    describe('Section navigation buttons', () => {
+      it('should retain focus on the Next Section button when navigating back to the first section via the Previous Section button', async () => {
+        // Arrange
+        const { fillAllBtn, user } =
+          await renderAppWithNavbarAndControlsExpanded();
+
+        await user.click(fillAllBtn);
+
+        const nextSectionBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+        await user.click(nextSectionBtn);
+
+        const previousSectionBtn = screen.getByRole('button', {
+          name: 'Open Previous Section',
+        });
+
+        // Act
+        await user.click(previousSectionBtn);
+
+        // Assert
+        const nextBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+
+        expect(nextBtn).toHaveFocus();
+      });
+
+      it('should retain focus on the Previous Section button when navigating to the final section via the Next Section button', async () => {
+        // Arrange
+        const { addSectionsBtn, user } = await renderAppWithNavbarExpanded();
+
+        await user.click(addSectionsBtn);
+
+        const addLinksBtn = screen.getByRole('button', {
+          name: `Add ${sectionTitles.links}`,
+        });
+        await user.click(addLinksBtn);
+
+        const closeDialogBtn = screen.getByRole('button', {
+          name: 'Close Popup',
+        });
+        await user.click(closeDialogBtn);
+
+        const nextSectionBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+
+        // Act
+        await user.click(nextSectionBtn);
+
+        // Assert
+        const previousBtn = screen.getByRole('button', {
+          name: 'Open Previous Section',
+        });
+
+        expect(previousBtn).toHaveFocus();
+      });
+
+      it('should preserve focus on the Previous Section button when navigating between middle sections where it remains mounted', async () => {
+        // Arrange
+        const { fillAllBtn, user } =
+          await renderAppWithNavbarAndControlsExpanded();
+
+        await user.click(fillAllBtn);
+
+        const nextSectionBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+        await user.click(nextSectionBtn);
+        await user.click(nextSectionBtn);
+
+        const previousSectionBtn = screen.getByRole('button', {
+          name: 'Open Previous Section',
+        });
+
+        // Act
+        await user.click(previousSectionBtn);
+
+        // Assert
+        const remainingPreviousBtn = screen.getByRole('button', {
+          name: 'Open Previous Section',
+        });
+
+        expect(remainingPreviousBtn).toHaveFocus();
+      });
+
+      it('should preserve focus on the Next Section button when navigating between middle sections where it remains mounted', async () => {
+        // Arrange
+        const { fillAllBtn, user } =
+          await renderAppWithNavbarAndControlsExpanded();
+
+        await user.click(fillAllBtn);
+
+        const nextSectionBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+
+        // Act
+        await user.click(nextSectionBtn);
+
+        // Assert
+        const remainingNextBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+
+        expect(remainingNextBtn).toHaveFocus();
+      });
+
+      it('should not move focus to navigation buttons when a section is changed without focusing navigation buttons', async () => {
+        // Arrange
+        const { fillAllBtn, navbar, user } =
+          await renderAppWithNavbarAndControlsExpanded();
+
+        await user.click(fillAllBtn);
+
+        const linksTab = getByRole(navbar, 'tab', {
+          name: sectionTitles.links,
+        });
+
+        // Act
+        await user.click(linksTab);
+
+        // Assert
+        const previousSectionBtn = screen.getByRole('button', {
+          name: 'Open Previous Section',
+        });
+
+        expect(previousSectionBtn).not.toHaveFocus();
+      });
+
+      it('should not retain focus if a pointer interaction occurred outside the navigation buttons', async () => {
+        // Arrange
+        const { fillAllBtn, navbar, user } =
+          await renderAppWithNavbarAndControlsExpanded();
+
+        await user.click(fillAllBtn);
+
+        const nextSectionBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+        await user.click(nextSectionBtn);
+
+        const previousSectionBtn = screen.getByRole('button', {
+          name: 'Open Previous Section',
+        });
+        previousSectionBtn.focus();
+
+        const personalTab = getByRole(navbar, 'tab', {
+          name: sectionTitles.personal,
+        });
+
+        // Act
+        // NOTE: fireEvent.pointerDown is used because JSDOM does not synthesize pointerdown events upon click.
+        fireEvent.pointerDown(personalTab);
+        await user.click(personalTab);
+
+        // Assert
+        const nextBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+
+        expect(nextBtn).not.toHaveFocus();
       });
     });
   });
