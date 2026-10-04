@@ -210,9 +210,14 @@ describe('MyComponent', () => {
 ### Key Test Rules:
 
 1. **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
-2. **Strict Single-Act Principle & Prohibition of Multiple Acts:** Every unit test must test a single, atomic behaviour. Never chain multiple `Act` and `Assert` sequences inside one test (`// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`). If testing multiple actions (e.g. focusing and reverse-tabbing, or navigating, adding and deleting), decompose them into separate, atomic test cases each with its own descriptive title. Each unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when verifying multiple facets of that same atomic action.
+2. **Strict Single-Act Principle & Prohibition of Multiple Acts:** Every unit test must test a single, atomic behaviour. Never chain multiple `Act` and `Assert` sequences inside one test (`// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`). If testing multiple actions (e.g. focusing and reverse-tabbing, or navigating, adding and deleting), decompose them into separate, atomic test cases each with its own descriptive title. Each unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when verifying multiple facets of that same atomic action. Multi-act sequences are reserved exclusively for component-level acceptance user journeys and E2E workflows.
 3. **Accessible Queries:** Query elements strictly by accessible role (`screen.getByRole('button', { name: /action/i })`), never by CSS class or arbitrary test ID.
 4. **User Event:** Always initialise `userEvent.setup()` and await user actions.
+5. **Lucas da Costa Testing Patterns (see `testing-patterns` skill):**
+   - **Tight Assertions:** Never use loose matchers like `expect.any(...)` when an exact element reference is known. Always assert exact spy call counts (`toHaveBeenCalledTimes(n)`) and arguments (`toHaveBeenCalledWith(...)`).
+   - **Specialised DOM Matchers:** Always use `@testing-library/jest-dom` matchers (e.g. `toHaveFocus()`) rather than manual property checks on `document.activeElement`.
+   - **Style Verification:** Verify that components apply their required BEM classes using `toHaveClass(...)`.
+   - **Assertion Guarantees:** Use `expect.hasAssertions()` in asynchronous and event-driven tests.
 
 ### Verification Step:
 
