@@ -146,6 +146,7 @@ All scopes must be **strictly lowercase**.
 3. **Zero Redundant Effects:** Strictly adhere to `eslint-plugin-react-you-might-not-need-an-effect`. Derive state during render or inside event callbacks; never copy props to state or synchronise state via `useEffect`.
 4. **Accessibility First (WCAG 2.2 AA):** All form controls must have explicit `htmlFor` labels. Manage focus with `tabbable`, announce dynamic updates politely via `aria-live="polite"` and ensure full keyboard operable interactions.
 5. **Styling & BEM:** Component styles use React BEM (`BlockName-ElementName_modifierName_modifierValue`). Internal component scaling relies on CSS Container Queries (`@container`), reserving `@media` exclusively for macro-layout shifts in `AppLayout`.
+6. **Avoid Type Assertions:** Avoid TypeScript type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) as much as possible. Rely on natural type inference, proper type declarations and runtime type narrowing (such as `instanceof`, `typeof` or type guards). If an assertion cannot be avoided with reasonable effort, the rationale must be documented with an in-code comment explaining why it was necessary.
 
 ---
 

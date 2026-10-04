@@ -172,6 +172,14 @@ Whenever creating a component, hook, utility or feature page, its entry point MU
 
 ---
 
+### K. Strict Type Safety & Avoiding Type Assertions
+
+- **Avoid Type Assertions:** Type assertions (using `as Type`, `<Type>` and the non-null assertion operator `!`) bypass TypeScript's static analysis and must be avoided as much as possible.
+- **Narrow Instead of Asserting:** Use natural type inference, discriminating unions and runtime type narrowing (`typeof`, `instanceof`, `Array.isArray`, null checks or custom type guards) to let the compiler safely refine types.
+- **Documented Exceptions Only:** If a type assertion cannot be avoided with reasonable effort (e.g. interacting with third-party libraries lacking accurate types or certain delegated DOM event targets), the rationale MUST be documented in an explanatory comment immediately preceding the assertion explaining why it was necessary.
+
+---
+
 ## 3. Full Pre-Push Audit
 
 Before pushing or completing large refactors:
