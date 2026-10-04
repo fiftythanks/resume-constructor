@@ -47,7 +47,7 @@ The document preview has two distinct rendering modes with strict constraints:
 
 ### Yoga Constraints:
 
-- **Flexbox Only:** Yoga does not parse CSS Grid, container queries, or `clamp()` math.
+- **Flexbox Only:** Yoga does not parse CSS Grid, container queries or `clamp()` math.
 - **Static Dimensions:** Use static or percentage-based dimensions for resume document elements. Fluid typography (`clamp()`) is permitted **only** in the outer application shell, never inside the resume document preview.
 - **Universal Primitives:** Keep resume document components strictly decoupled from application shell components. Primitives rendered inside the resume document must remain 100% compliant with Yoga Flexbox rules.
 
@@ -66,7 +66,7 @@ The document preview has two distinct rendering modes with strict constraints:
 
 ## 4. Verification & Testing
 
-- Validate layout behavior in Jest:
+- Validate layout behaviour in Jest:
   ```bash
   bun x jest src/components/AppLayout/AppLayout.test.tsx
   ```

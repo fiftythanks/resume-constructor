@@ -131,10 +131,34 @@ Rule mandates explicit `htmlFor` association:
 
 All documentation, markdown files, commit messages and code comments must adhere to strict typographic rules:
 
-- **Language & Casing:** Traditional British English ("optimise", "initialise", "behaviour", "centre", "colour"), lowercase `webpack`, no Oxford comma.
+- **Language & Casing:** Traditional British English ("optimise", "initialise", "behaviour", "centre", "colour"), lowercase `webpack`.
+- **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma (serial comma) in commit messages, code comments, docstrings or documentation. In lists of three or more items, never place a comma before the coordinating conjunction ("and" or "or").
+  - Correct: `"apples, oranges and bananas"` ✔️
+  - Incorrect: `"apples, oranges, and bananas"` ❌
+  - Correct: `"Education, Experience or Projects"` ✔️
+  - Incorrect: `"Education, Experience, or Projects"` ❌
+  - Always search for `, and` and `, or` across your written text before committing.
 - **Quotation Marks:** In documentation and prose, always use double quotes (`"..."`) for natural language and punctuation references (never single quotes). Single quotes (`'...'`) are reserved for code syntax (TypeScript, JavaScript and SCSS). Backticks (`` `...` ``) are used for code identifiers, symbols and file paths.
 - **Dash Typography:** Spaced em-rules ("—") for parenthetical statements, unspaced en-rules ("–") for numerical or chronological ranges ("1–10", "2020–2024").
 - **Slash Typography:** Forward slashes ("/") must only be surrounded by spaces when separating compound words (e.g. "macro layout / navigation adaptation"). Never use spaces when separating single words or identifiers (e.g. "`Sidebar`/`Navbar`", "Prev/Next/Add/Delete", "true/false").
+
+---
+
+### H. Modern React 19 Standards & Deprecated Code Removal
+
+- The codebase strictly runs on React 19 (current year 2026).
+- Deprecated React APIs, types and legacy patterns are strictly forbidden:
+  - Never use `MutableRef` or `MutableRefObject` (`useRef` returns `RefObject<T>` where `.current` is mutable).
+  - Never use `forwardRef` (`ref` is a standard component prop in React 19).
+  - Never use `defaultProps` (use ES6 default parameter values).
+- Check your work for modern React 19 idioms and deprecated APIs before committing. If uncertain about 2026 React 19 or TypeScript idioms, search web documentation to verify.
+- **Event Parameter Naming:** In all React event handlers and callbacks (`onChange`, `onClick`, `onKeyDown`, `onFocus` etc.), always name the event parameter `e`, never `event`.
+
+---
+
+### I. Starlight TypeDoc Documentation Synchronisation
+
+Whenever creating a component, hook, utility or feature page, its entry point MUST be added to `starlightTypeDoc.entryPoints` in `docs/astro.config.ts`. Automatic discovery is not supported by TypeDoc; explicit registration is mandatory for every export.
 
 ---
 

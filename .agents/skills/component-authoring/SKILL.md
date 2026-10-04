@@ -99,12 +99,21 @@ export default function MyComponent({
 ### Key Rules:
 
 1. **Deep Immutability:** Always type props using `ReadonlyExcept<MyComponentProps, 'ref'>` imported from `@/types/ReadonlyExcept`.
-2. **Import Ordering:** Must follow the `eslint-plugin-perfectionist` groups:
+2. **Modern React 19 Standards & Deprecated Code Removal:**
+   - The codebase strictly runs on React 19.
+   - Deprecated React APIs, types and legacy patterns are strictly forbidden:
+     - Never use `MutableRef` or `MutableRefObject` (`useRef` returns `RefObject<T>` where `.current` is mutable).
+     - Never use `forwardRef` (`ref` is a standard component prop in React 19).
+     - Never use `defaultProps` (use ES6 default parameter values).
+   - Check your work for modern React 19 idioms and deprecated APIs before committing. If uncertain about 2026 React 19 or TypeScript idioms, search web documentation to verify.
+3. **Event Handler Parameter Naming:** In all React event handlers and callbacks (`onChange`, `onClick`, `onKeyDown`, `onFocus` etc.), always name the event parameter `e`, never `event`.
+4. **Documentation Parity & Starlight TypeDoc:** Whenever authoring a new component, hook or utility, register its entry point in `docs/astro.config.ts` under `starlightTypeDoc.entryPoints`.
+5. **Import Ordering:** Must follow the `eslint-plugin-perfectionist` groups:
    `react` -> `builtin` -> `external` -> `hooks` (`@/hooks/.*`) -> `layout` (`@/layout/.*`) -> `pages` (`@/pages/.*`) -> `components` (`@/components/.*`) -> `utils` (`@/utils/.*`) -> relative imports -> `assets` (`@/assets/.*`) -> `style` (`./*.scss`) -> `type` (`import type ...`) -> `unknown`.
-3. **JSX Props Ordering:**
+6. **JSX Props Ordering:**
    `shorthand-prop` (e.g. `disabled`) -> `unknown` (e.g. `className`, `id`) -> `callback` (e.g. `onClick`) -> `multiline-prop`.
-4. **No Redundant Effects:** Do not introduce `useEffect` for state synchronisation or derived values. Calculate values directly during render.
-5. **Accessible Labeling:** If creating form controls, ensure inputs have an explicit `id` and corresponding `<label htmlFor={id}>`.
+7. **No Redundant Effects:** Do not introduce `useEffect` for state synchronisation or derived values. Calculate values directly during render.
+8. **Accessible Labeling:** If creating form controls, ensure inputs have an explicit `id` and corresponding `<label htmlFor={id}>`.
 
 ---
 
@@ -140,7 +149,15 @@ export default function MyComponent({
    ```
 
 4. **Responsive Strategy:** Use `@container` for internal component layout shifts. Do not use `@media` inside UI components.
-5. **Comment & Typography Standards:** Multiline JSDoc blocks (`/** ... */`), traditional British English, strictly no Oxford comma, double quotes (`"..."`) for natural language, spaced em-rules ("—"), unspaced en-rules ("–") for ranges and forward slashes ("/") surrounded by spaces only when separating compound words.
+5. **Comment & Typography Standards:**
+   - Multiline JSDoc blocks (`/** ... */`) with leading asterisks on continuation lines.
+   - Traditional British English spelling ("optimise", "initialise", "behaviour", "centre", "colour").
+   - Double quotes (`"..."`) for natural language and prose punctuation.
+   - Spaced em-rules ("—"), unspaced en-rules ("–") for ranges and forward slashes ("/") surrounded by spaces only when separating compound words.
+   - **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma in code comments, docstrings or commit messages.
+     - Correct: `"apples, oranges and bananas"` ✔️
+     - Incorrect: `"apples, oranges, and bananas"` ❌
+     - Perform a search for `, and` and `, or` across written comments before completing work.
 
 ---
 
