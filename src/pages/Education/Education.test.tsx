@@ -1,15 +1,7 @@
-/**
- * This rule doesn't allow me to use `crypto`, which is already an available
- * feature in Node.
- */
-/* eslint-disable n/no-unsupported-features/node-builtins */
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
-
-import useResumeData from '@/hooks/useResumeData';
 
 import Education from './Education';
 
@@ -21,25 +13,24 @@ import type {
 
 const DATA: EducationType = {
   shownDegreeIndex: 0,
-  //! Must be no less than 3 for this test suite.
   degrees: [
     {
       address: 'some address 1',
       degree: 'some degree 1',
       graduation: 'whenever 1',
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000001',
       uni: 'some university name 1',
       bulletPoints: [
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000002',
           value: 'bullet 1',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000003',
           value: 'bullet 2',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000004',
           value: 'bullet 3',
         },
       ],
@@ -48,19 +39,19 @@ const DATA: EducationType = {
       address: 'some address 2',
       degree: 'some degree 2',
       graduation: 'whenever 2',
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000005',
       uni: 'some university name 2',
       bulletPoints: [
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000006',
           value: 'bullet 1',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000007',
           value: 'bullet 2',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000008',
           value: 'bullet 3',
         },
       ],
@@ -69,19 +60,19 @@ const DATA: EducationType = {
       address: 'some address 3',
       degree: 'some degree 3',
       graduation: 'whenever 3',
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000009',
       uni: 'some university name 3',
       bulletPoints: [
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000010',
           value: 'bullet 1',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000011',
           value: 'bullet 2',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000012',
           value: 'bullet 3',
         },
       ],
@@ -91,7 +82,7 @@ const DATA: EducationType = {
 
 type Field = 'address' | 'degree' | 'graduation' | 'uni';
 
-const FUNCTIONS: ReturnType<typeof useResumeData>['educationFunctions'] = {
+const FUNCTIONS: EducationProps['functions'] = {
   addBulletPoint(_degreeIndex: number) {},
   addDegree() {},
   deleteBulletPoint(_degreeIndex: number, _bulletIndex: number) {},
@@ -113,8 +104,16 @@ function getProps(overrides?: Partial<EducationProps>): EducationProps {
 }
 
 describe('Education', () => {
-  // `Education` gets its accessible name from this element.
-  render(<div aria-label="Education" id="education" />);
+  beforeEach(() => {
+    const labelledElement = document.createElement('div');
+    labelledElement.id = 'education';
+    labelledElement.setAttribute('aria-label', 'Education');
+    document.body.appendChild(labelledElement);
+  });
+
+  afterEach(() => {
+    document.getElementById('education')?.remove();
+  });
 
   it('should render as a tabpanel with an accessible name derived from an element with an ID "education"', () => {
     render(<Education {...getProps()} />);
@@ -158,7 +157,7 @@ describe('Education', () => {
       it('should call `showDegree(shownDegreeIndex - 1)` when the button is clicked', async () => {
         // Arrange
         const data = structuredClone({ ...DATA, shownDegreeIndex: 1 });
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = jest.fn<void, [number]>();
         const functions = cloneDeep({ ...FUNCTIONS, showDegree: mockFn });
 
         render(<Education {...getProps({ data, functions })} />);
@@ -198,7 +197,7 @@ describe('Education', () => {
 
       it('should call `showDegree(shownDegreeIndex + 1)` when the button is clicked', async () => {
         // Arrange
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = jest.fn<void, [number]>();
         const functions = cloneDeep({ ...FUNCTIONS, showDegree: mockFn });
         const props = getProps({ functions });
 
@@ -267,9 +266,9 @@ describe('Education', () => {
       expect(btn).not.toBeInTheDocument();
     });
 
-    it('should call `deleteDegree(shownDegreeIndex)` when the button is called', async () => {
+    it('should call `deleteDegree(shownDegreeIndex)` when the button is clicked', async () => {
       // Arrange
-      const mockFn = jest.fn((_index: number) => {});
+      const mockFn = jest.fn<void, [number]>();
       const functions = cloneDeep({ ...FUNCTIONS, deleteDegree: mockFn });
 
       render(<Education {...getProps({ functions })} />);
@@ -289,111 +288,45 @@ describe('Education', () => {
   });
 
   describe('Shown degree', () => {
-    // TODO: should render a degree. (At the moment, the way `Education` is structured, it's hard to come up with a proper way to write this test. The component needs a refactor.)
-
     describe('Data', () => {
       const degreeIndex = DATA.shownDegreeIndex;
       const { address, degree, graduation, uni } = DATA.degrees[degreeIndex];
+      const { bulletPoints } = DATA.degrees[degreeIndex];
 
-      beforeEach(() => {
+      it.each([
+        ['University Name', uni],
+        ['Degree', degree],
+        ['Graduation', graduation],
+        ['Address', address],
+      ] as const)('should have the correct %s', (fieldName, expectedValue) => {
         render(<Education {...getProps()} />);
+        const input = screen.getByRole('textbox', { name: fieldName });
+
+        expect(input).toHaveValue(expectedValue);
       });
 
-      it('should have the correct university name', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'University Name',
-        });
-
-        expect(input.value).toBe(uni);
-      });
-
-      it('should have the correct degree', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Degree',
-        });
-
-        expect(input.value).toBe(degree);
-      });
-
-      it('should have the correct graduation', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Graduation',
-        });
-
-        expect(input.value).toBe(graduation);
-      });
-
-      it('should have the correct address', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Address',
-        });
-
-        expect(input.value).toBe(address);
-      });
-
-      describe('bullet points', () => {
-        const { bulletPoints } = DATA.degrees[degreeIndex];
-
-        describe('bullet point 1', () => {
-          it('should have the correct value', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
-              name: 'Bullet point 1',
-            });
-
-            expect(input.value).toBe(bulletPoints[0].value);
+      it.each([
+        [1, bulletPoints[0]],
+        [2, bulletPoints[1]],
+        [3, bulletPoints[2]],
+      ] as const)(
+        'should have the correct value and ID for bullet point %i',
+        (index, expected) => {
+          render(<Education {...getProps()} />);
+          const input = screen.getByRole('textbox', {
+            name: `Bullet point ${index}`,
           });
 
-          it('should have the correct ID', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
-              name: 'Bullet point 1',
-            });
-
-            expect(input.id).toBe(bulletPoints[0].id);
-          });
-        });
-
-        describe('bullet point 2', () => {
-          it('should have the correct value', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
-              name: 'Bullet point 2',
-            });
-
-            expect(input.value).toBe(bulletPoints[1].value);
-          });
-
-          it('should have the correct ID', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
-              name: 'Bullet point 2',
-            });
-
-            expect(input.id).toBe(bulletPoints[1].id);
-          });
-        });
-
-        describe('bullet point 3', () => {
-          it('should have the correct value', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
-              name: 'Bullet point 3',
-            });
-
-            expect(input.value).toBe(bulletPoints[2].value);
-          });
-
-          it('should have the correct ID', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
-              name: 'Bullet point 3',
-            });
-
-            expect(input.id).toBe(bulletPoints[2].id);
-          });
-        });
-      });
+          expect(input).toHaveValue(expected.value);
+          expect(input).toHaveAttribute('id', expected.id);
+        },
+      );
     });
 
     describe('Functions', () => {
       it('should call `addBulletPoint(degreeIndex)` when a bullet point is added via the corresponding control', async () => {
         // Arrange
-        const mockFn = jest.fn((_bulletIndex: number) => {});
+        const mockFn = jest.fn<void, [number]>();
         const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
         render(<Education {...getProps({ functions })} />);
@@ -413,10 +346,11 @@ describe('Education', () => {
 
       it('should call `deleteBulletPoint(degreeIndex, itemIndex)` when a bullet point is deleted via the corresponding control', async () => {
         // Arrange
-        const implementation = (_bulletIndex: number, _itemIndex: number) => {};
-        const mockFn = jest.fn(implementation);
-        const functions = cloneDeep(FUNCTIONS);
-        functions.deleteBulletPoint = mockFn;
+        const mockFn = jest.fn<void, [number, number]>();
+        const functions = cloneDeep({
+          ...FUNCTIONS,
+          deleteBulletPoint: mockFn,
+        });
 
         render(<Education {...getProps({ functions })} />);
         const user = userEvent.setup();
@@ -435,10 +369,7 @@ describe('Education', () => {
 
       it('should call `editBulletPoint(degreeIndex, itemIndex, value)` when a bullet point is edited via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
-          (_degreeIndex: number, _itemIndex: number, _value: string) => {},
-        );
-
+        const mockFn = jest.fn<void, [number, number, string]>();
         const functions = cloneDeep({
           ...FUNCTIONS,
           editBulletPoint: mockFn,
@@ -455,7 +386,6 @@ describe('Education', () => {
 
         // Assert
         expect(mockFn).toHaveBeenCalledTimes(1);
-
         expect(mockFn).toHaveBeenCalledWith(
           DATA.shownDegreeIndex,
           0,
@@ -465,10 +395,7 @@ describe('Education', () => {
 
       it('should call `editDegree(degreeIndex, field, value)` when a text field of a degree is changed via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
-          (_degreeIndex: number, _field: Field, _value: string) => {},
-        );
-
+        const mockFn = jest.fn<void, [number, Field, string]>();
         const functions = cloneDeep({
           ...FUNCTIONS,
           editDegree: mockFn,
@@ -485,7 +412,6 @@ describe('Education', () => {
 
         // Assert
         expect(mockFn).toHaveBeenCalledTimes(1);
-
         expect(mockFn).toHaveBeenCalledWith(
           DATA.shownDegreeIndex,
           'degree',
@@ -493,15 +419,9 @@ describe('Education', () => {
         );
       });
 
-      // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
-
-      /**
-       * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
-       * the test's name should be changed.
-       */
-      it('should call `updateScreenReaderAnnouncement` when an important change is made to a degree via its controls or text inputs (not DnD-related)', async () => {
+      it('should call `updateScreenReaderAnnouncement` when an important change is made to a degree via its controls or text inputs', async () => {
         // Arrange
-        const mockFn = jest.fn((_announcement: string) => {});
+        const mockFn = jest.fn<void, [string]>();
         const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
         render(<Education {...props} />);
@@ -521,11 +441,14 @@ describe('Education', () => {
   });
 
   it('should pass the section element to `ref.current`', () => {
+    // Arrange
     const ref = { current: null };
-    render(<Education {...getProps({ ref })} />);
 
+    // Act
+    render(<Education {...getProps({ ref })} />);
     const education = screen.getByRole('tabpanel');
 
+    // Assert
     expect(ref.current).toBe(education);
   });
 });
