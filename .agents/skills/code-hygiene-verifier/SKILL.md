@@ -162,6 +162,12 @@ Whenever creating a component, hook, utility or feature page, its entry point MU
 
 ---
 
+### J. AAA Test Structure (Arrange, Act and Assert)
+
+Every unit test must follow the Arrange-Act-Assert pattern. Distinct stages must be separated by empty lines. Whenever a test is not clearly divided by empty lines into three distinct stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`).
+
+---
+
 ## 3. Full Pre-Push Audit
 
 Before pushing or completing large refactors:

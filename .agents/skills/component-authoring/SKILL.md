@@ -180,23 +180,34 @@ describe('MyComponent', () => {
   });
 
   it('should render with accessible role and name', () => {
+    // ARRANGE & ACT
     render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
 
+    // ASSERT
     const btn = screen.getByRole('button', { name: /action/i });
     expect(btn).toBeInTheDocument();
   });
 
   it('should handle click interactions via userEvent', async () => {
+    // ARRANGE
     const user = userEvent.setup();
     render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
-
     const btn = screen.getByRole('button', { name: /action/i });
+
+    // ACT
     await user.click(btn);
 
+    // ASSERT
     expect(handleClickMock).toHaveBeenCalledTimes(1);
   });
 });
 ```
+
+### Key Test Rules:
+
+1. **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`).
+2. **Accessible Queries:** Query elements strictly by accessible role (`screen.getByRole('button', { name: /action/i })`), never by CSS class or arbitrary test ID.
+3. **User Event:** Always initialise `userEvent.setup()` and await user actions.
 
 ### Verification Step:
 
