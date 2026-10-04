@@ -181,7 +181,7 @@ const DATA: ResumeData = {
       },
       {
         id: crypto.randomUUID(),
-        value: 'Webpack',
+        value: 'webpack',
       },
       {
         id: crypto.randomUUID(),
@@ -196,31 +196,45 @@ function getProps(overrides?: Partial<ToolbarProps>): ToolbarProps {
     activeSectionIds: structuredClone(possibleSectionIds),
     className: 'Toolbar',
     data: cloneDeep(DATA),
-    deleteAll() {},
-    fillAll() {},
+    deleteAll: jest.fn(),
+    fillAll: jest.fn(),
     ...overrides,
   };
 }
 
 function renderToolbar(props?: Partial<ToolbarProps>) {
-  render(<div id="popup-root" />);
   render(<Toolbar {...getProps(props)} />);
 }
 
 describe('Toolbar', () => {
-  it('should render a toolbar', () => {
+  let popupRoot: HTMLDivElement;
+
+  beforeEach(() => {
+    popupRoot = document.createElement('div');
+    popupRoot.setAttribute('id', 'popup-root');
+    document.body.appendChild(popupRoot);
+  });
+
+  afterEach(() => {
+    popupRoot.remove();
+    jest.clearAllMocks();
+  });
+
+  it('should render a toolbar with default BEM class', () => {
     renderToolbar();
 
     const toolbar = screen.getByRole('toolbar');
 
     expect(toolbar).toBeInTheDocument();
+    expect(toolbar).toHaveClass('Toolbar');
   });
 
-  it("should use the `className` prop in the toolbar's class", () => {
+  it('should apply custom className alongside BEM block class', () => {
     renderToolbar({ className: 'ToolbarClass' });
+
     const toolbar = screen.getByRole('toolbar');
 
-    expect(toolbar).toHaveClass('ToolbarClass');
+    expect(toolbar).toHaveClass('Toolbar', 'ToolbarClass');
   });
 
   const deletableSectionIds: SectionIdsDeletable = possibleSectionIds.toSpliced(
@@ -240,12 +254,13 @@ describe('Toolbar', () => {
 
   describe('Buttons', () => {
     describe('"Clear All" button', () => {
-      it('should render with an accessible name "Clear All"', () => {
+      it('should render with an accessible name "Clear All" and BEM classes', () => {
         renderToolbar();
 
         const btn = screen.getByRole('button', { name: 'Clear All' });
 
         expect(btn).toBeInTheDocument();
+        expect(btn).toHaveClass('Toolbar-Item', 'Toolbar-Item_deleteAll');
       });
 
       it('should control deletable section tabs and tabpanels', () => {
@@ -269,12 +284,13 @@ describe('Toolbar', () => {
     });
 
     describe('"Fill All" button', () => {
-      it('should render with an accessible name "Fill All"', () => {
+      it('should render with an accessible name "Fill All" and BEM classes', () => {
         renderToolbar();
 
         const btn = screen.getByRole('button', { name: 'Fill All' });
 
         expect(btn).toBeInTheDocument();
+        expect(btn).toHaveClass('Toolbar-Item', 'Toolbar-Item_fillAll');
       });
 
       it('should control deletable section tabs and tabpanels', () => {
@@ -298,12 +314,13 @@ describe('Toolbar', () => {
     });
 
     describe('"Open Preview" button', () => {
-      it('should render with an accessible name "Open Preview"', () => {
+      it('should render with an accessible name "Open Preview" and BEM classes', () => {
         renderToolbar();
 
         const btn = screen.getByRole('button', { name: 'Open Preview' });
 
         expect(btn).toBeInTheDocument();
+        expect(btn).toHaveClass('Toolbar-Item', 'Toolbar-Item_preview');
       });
 
       it('should show the preview dialog on click', async () => {

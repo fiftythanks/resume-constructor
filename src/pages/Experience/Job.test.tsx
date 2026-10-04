@@ -1,9 +1,3 @@
-/**
- * This rule doesn't allow me to use `crypto`, which is already an available
- * feature in Node.
- */
-/* eslint-disable n/no-unsupported-features/node-builtins */
-
 import { getByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
@@ -15,227 +9,122 @@ import type { JobFunctions } from './Experience';
 import type { JobProps } from './Job';
 import type { ItemWithId, Job as JobData } from '@/types/resumeData';
 
-// all functions
-
 const DATA: JobData = {
   address: 'some address',
   companyName: 'some name',
   duration: 'some duration',
-  id: crypto.randomUUID(),
+  id: '00000000-0000-0000-0000-000000000001',
   jobTitle: 'some title',
-
-  //! Must be no less than 3 for this test suite.
   bulletPoints: [
     {
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000002',
       value: 'Bullet point 1',
     },
     {
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000003',
       value: 'Bullet point 2',
     },
     {
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000004',
       value: 'Bullet point 3',
     },
   ],
 };
 
+type Field = 'address' | 'companyName' | 'duration' | 'jobTitle';
+
 const FUNCTIONS: JobFunctions = {
   addBulletPoint() {},
   deleteBulletPoint(_itemIndex: number) {},
+  edit(_field: Field, _value: string) {},
   editBulletPoint(_itemIndex: number, _value: string) {},
   updateBulletPoints(_value: ItemWithId[]) {},
-
-  edit(
-    _field: 'address' | 'companyName' | 'duration' | 'jobTitle',
-    _value: string,
-  ) {},
 };
 
 function getProps(overrides?: Partial<JobProps>): JobProps {
   return {
-    // TODO: data and functions should be clones of DATA and FUNCITONS, not literally them... I guess `Project.test` has the same problem. Refactor.
-    data: DATA,
-    functions: FUNCTIONS,
+    data: structuredClone(DATA),
+    functions: cloneDeep(FUNCTIONS),
     updateScreenReaderAnnouncement(_announcement: string) {},
     ...overrides,
   };
 }
 
 describe('Job', () => {
-  describe('Company Name', () => {
-    const name = 'Company Name';
+  describe('Fields', () => {
+    it.each([
+      ['Company Name', 'Google', DATA.companyName],
+      ['Job Title', 'Senior Frontend Engineer', DATA.jobTitle],
+      ['Duration', 'Feb 2021 – Present', DATA.duration],
+      ['Address', 'Mountain View, CA', DATA.address],
+    ] as const)(
+      'should render %s text input with placeholder and value',
+      (name, placeholder, expectedValue) => {
+        // Arrange & Act
+        render(<Job {...getProps()} />);
+        const input = screen.getByRole('textbox', { name });
 
-    it('should render a text input for Company Name', () => {
-      render(<Job {...getProps()} />);
+        // Assert
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveAttribute('placeholder', placeholder);
+        expect(input).toHaveValue(expectedValue);
+      },
+    );
 
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
+    it.each([
+      ['Company Name', 'companyName', `${DATA.companyName}s`],
+      ['Job Title', 'jobTitle', `${DATA.jobTitle}s`],
+      ['Duration', 'duration', `${DATA.duration}s`],
+      ['Address', 'address', `${DATA.address}s`],
+    ] as const)(
+      'should call `edit(field, value)` when %s input is edited',
+      async (name, fieldName, expectedValue) => {
+        // Arrange
+        const editMock = jest.fn<void, [Field, string]>();
+        const functions = cloneDeep({ ...FUNCTIONS, edit: editMock });
+        render(<Job {...getProps({ functions })} />);
+        const user = userEvent.setup();
+        const input = screen.getByRole('textbox', { name });
+        input.focus();
 
-      expect(input).toBeInTheDocument();
-    });
+        // Act
+        await user.keyboard('s');
 
-    it('should have a placeholder "Google" for Company Name', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.placeholder).toBe('Google');
-    });
-
-    it('should have the correct value from `data` for Company Name', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.value).toBe(DATA.companyName);
-    });
-  });
-
-  describe('Job Title', () => {
-    const name = 'Job Title';
-
-    it('should render a text input for Job Title', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input).toBeInTheDocument();
-    });
-
-    it('should have a placeholder "Senior Frontend Engineer" for Job Title', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.placeholder).toBe('Senior Frontend Engineer');
-    });
-
-    it('should have the correct value from `data` for Job Title', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.value).toBe(DATA.jobTitle);
-    });
-  });
-
-  describe('Duration', () => {
-    const name = 'Duration';
-
-    it('should render a text input for Duration', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input).toBeInTheDocument();
-    });
-
-    it('should have a placeholder "Feb 2021 – Present" for Duration', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.placeholder).toBe('Feb 2021 – Present');
-    });
-
-    it('should have the correct value from `data` for Duration', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.value).toBe(DATA.duration);
-    });
-  });
-
-  describe('Address', () => {
-    const name = 'Address';
-
-    it('should render a text input for Address', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input).toBeInTheDocument();
-    });
-
-    it('should have a placeholder "Mountain View, CA" for Address', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.placeholder).toBe('Mountain View, CA');
-    });
-
-    it('should have the correct value from `data` for Address', () => {
-      render(<Job {...getProps()} />);
-
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-
-      expect(input.value).toBe(DATA.address);
-    });
-  });
-
-  it('should call `edit(field, value)` when fields are changed via the corresponding text inputs', async () => {
-    type Fields = [
-      { fieldName: 'companyName'; name: 'Company Name' },
-      { fieldName: 'jobTitle'; name: 'Job Title' },
-      { fieldName: 'duration'; name: 'Duration' },
-      { fieldName: 'address'; name: 'Address' },
-    ];
-
-    const fields: Fields = [
-      { fieldName: 'companyName', name: 'Company Name' },
-      { fieldName: 'jobTitle', name: 'Job Title' },
-      { fieldName: 'duration', name: 'Duration' },
-      { fieldName: 'address', name: 'Address' },
-    ];
-
-    type Field = 'address' | 'companyName' | 'duration' | 'jobTitle';
-    const editMockImplementation = (_field: Field, _value: string) => {};
-    const { rerender } = render(<Job {...getProps()} />);
-
-    for (const { fieldName, name } of fields) {
-      const editMock = jest.fn(editMockImplementation);
-      const functions = cloneDeep(FUNCTIONS);
-      functions.edit = editMock;
-      const props = getProps({ functions });
-      rerender(<Job {...props} />);
-      const user = userEvent.setup();
-      const input: HTMLInputElement = screen.getByRole('textbox', { name });
-      input.focus();
-
-      await user.keyboard('s');
-
-      expect(editMock).toHaveBeenCalledTimes(1);
-      expect(editMock).toHaveBeenCalledWith(fieldName, `${DATA[fieldName]}s`);
-    }
+        // Assert
+        expect(editMock).toHaveBeenCalledTimes(1);
+        expect(editMock).toHaveBeenCalledWith(fieldName, expectedValue);
+      },
+    );
   });
 
   describe('Bullet points', () => {
     it('should render bullet points with an accessible name "Bullet Points"', () => {
+      // Arrange & Act
       render(<Job {...getProps()} />);
-
       const bullets = screen.getByRole('group', { name: 'Bullet Points' });
 
+      // Assert
       expect(bullets).toBeInTheDocument();
     });
 
     it('should have the correct data from `data`', () => {
+      // Arrange & Act
       render(<Job {...getProps()} />);
       const bullets = screen.getByRole('group', { name: 'Bullet Points' });
 
+      // Assert
       DATA.bulletPoints.forEach((bullet, i) => {
         const { id, value } = bullet;
         const name = `Bullet point ${i + 1}`;
-        const input: HTMLInputElement = getByRole(bullets, 'textbox', { name });
+        const input = getByRole(bullets, 'textbox', { name });
 
-        expect(input.id).toBe(id);
-        expect(input.value).toBe(value);
+        expect(input).toHaveAttribute('id', id);
+        expect(input).toHaveValue(value);
       });
     });
 
-    it('should have placeholders "Led a team of 10 developers in the successful design, development, and delivery of a scalable and high-performance SaaS platform, resulting in a 30% increase in user engagement and a 20% reduction in response time.", "Architected and implemented a microservices-based architecture using Node.js and Docker, resulting in a more flexible and maintainable system and enabling seamless integration with third-party services.", "Core responsibility #3. Pretend this is where they stop reading. First 3 things should be the most impressive" for the first 3 bullet points', () => {
+    it('should have placeholders for the first 3 bullet points', () => {
+      // Arrange & Act
       render(<Job {...getProps()} />);
 
       const placeholders = [
@@ -244,81 +133,81 @@ describe('Job', () => {
         'Core responsibility #3. Pretend this is where they stop reading. First 3 things should be the most impressive',
       ];
 
-      for (let i = 0; i < 3; i++) {
-        const name = `Bullet point ${i + 1}`;
-        const input: HTMLInputElement = screen.getByRole('textbox', { name });
+      // Assert
+      placeholders.forEach((placeholder, index) => {
+        const name = `Bullet point ${index + 1}`;
+        const input = screen.getByRole('textbox', { name });
 
-        expect(input.placeholder).toBe(placeholders[i]);
-      }
+        expect(input).toHaveAttribute('placeholder', placeholder);
+      });
     });
 
-    /**
-     * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
-     * the test's name should be changed.
-     */
-    it('should call `updateScreenReaderAnnouncement` when an important change is made to the bullet points via the corresponding controls (not DnD related)', async () => {
-      const implementation = (_announcement: string) => {};
-      const mockFn = jest.fn(implementation);
+    it('should call `updateScreenReaderAnnouncement` when an important change is made to the bullet points via the corresponding controls', async () => {
+      // Arrange
+      const mockFn = jest.fn<void, [string]>();
       const props = getProps({ updateScreenReaderAnnouncement: mockFn });
       render(<Job {...props} />);
       const user = userEvent.setup();
-      const name = 'Delete bullet point 1';
-      const deleteBtn = screen.getByRole('button', { name });
+      const deleteBtn = screen.getByRole('button', {
+        name: 'Delete bullet point 1',
+      });
 
+      // Act
       await user.click(deleteBtn);
 
+      // Assert
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('should call `addBulletPoint` when a bullet point is added', async () => {
+      // Arrange
       const mockFn = jest.fn();
-      const functions = cloneDeep(FUNCTIONS);
-      functions.addBulletPoint = mockFn;
-      const props = getProps({ functions });
-      render(<Job {...props} />);
+      const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
+      render(<Job {...getProps({ functions })} />);
       const user = userEvent.setup();
-      const name = 'Add bullet point';
-      const addBtn = screen.getByRole('button', { name });
+      const addBtn = screen.getByRole('button', { name: 'Add bullet point' });
 
+      // Act
       await user.click(addBtn);
 
+      // Assert
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('should call `deleteBulletPoint` when a bullet point is deleted', async () => {
-      const mockFn = jest.fn((_index: number) => {});
-      const functions = cloneDeep(FUNCTIONS);
-      functions.deleteBulletPoint = mockFn;
-      const props = getProps({ functions });
-      render(<Job {...props} />);
+      // Arrange
+      const mockFn = jest.fn<void, [number]>();
+      const functions = cloneDeep({ ...FUNCTIONS, deleteBulletPoint: mockFn });
+      render(<Job {...getProps({ functions })} />);
       const user = userEvent.setup();
-      const name = 'Delete bullet point 1';
-      const deleteBtn = screen.getByRole('button', { name });
+      const deleteBtn = screen.getByRole('button', {
+        name: 'Delete bullet point 1',
+      });
 
+      // Act
       await user.click(deleteBtn);
 
+      // Assert
       expect(mockFn).toHaveBeenCalledTimes(1);
       expect(mockFn).toHaveBeenCalledWith(0);
     });
 
-    it("should call `editBulletPoint` when a bullet point is edited via it's corresponding text input", async () => {
-      const mockFn = jest.fn((_index: number, _value: string) => {});
-      const functions = cloneDeep(FUNCTIONS);
-      functions.editBulletPoint = mockFn;
-      const props = getProps({ functions });
-      render(<Job {...props} />);
+    it('should call `editBulletPoint` when a bullet point is edited via its corresponding text input', async () => {
+      // Arrange
+      const mockFn = jest.fn<void, [number, string]>();
+      const functions = cloneDeep({ ...FUNCTIONS, editBulletPoint: mockFn });
+      render(<Job {...getProps({ functions })} />);
       const user = userEvent.setup();
-      const name = 'Bullet point 1';
-      const input = screen.getByRole('textbox', { name });
+      const input = screen.getByRole('textbox', { name: 'Bullet point 1' });
       input.focus();
 
+      // Act
       await user.keyboard('s');
 
+      // Assert
       expect(mockFn).toHaveBeenCalledTimes(1);
       const { value: initialValue } = DATA.bulletPoints[0];
       expect(mockFn).toHaveBeenCalledWith(0, `${initialValue}s`);
     });
-
-    // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
   });
 });

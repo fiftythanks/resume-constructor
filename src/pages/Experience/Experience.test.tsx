@@ -1,15 +1,7 @@
-/**
- * This rule doesn't allow me to use `crypto`, which is already an available
- * feature in Node.
- */
-/* eslint-disable n/no-unsupported-features/node-builtins */
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
-
-import useResumeData from '@/hooks/useResumeData';
 
 import Experience from './Experience';
 
@@ -21,26 +13,24 @@ import type {
 
 const DATA: ExperienceType = {
   shownJobIndex: 0,
-
-  //! Must be no less than 3 for this test suite.
   jobs: [
     {
       address: 'some address 1',
       companyName: 'some name 1',
       duration: 'some duration 1',
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000001',
       jobTitle: 'some title 1',
       bulletPoints: [
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000002',
           value: 'Bullet point 1',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000003',
           value: 'Bullet point 2',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000004',
           value: 'Bullet point 3',
         },
       ],
@@ -49,19 +39,19 @@ const DATA: ExperienceType = {
       address: 'some address 2',
       companyName: 'some name 2',
       duration: 'some duration 2',
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000005',
       jobTitle: 'some title 2',
       bulletPoints: [
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000006',
           value: 'Bullet point 1',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000007',
           value: 'Bullet point 2',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000008',
           value: 'Bullet point 3',
         },
       ],
@@ -70,19 +60,19 @@ const DATA: ExperienceType = {
       address: 'some address 3',
       companyName: 'some name 3',
       duration: 'some duration 3',
-      id: crypto.randomUUID(),
+      id: '00000000-0000-0000-0000-000000000009',
       jobTitle: 'some title 3',
       bulletPoints: [
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000010',
           value: 'Bullet point 1',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000011',
           value: 'Bullet point 2',
         },
         {
-          id: crypto.randomUUID(),
+          id: '00000000-0000-0000-0000-000000000012',
           value: 'Bullet point 3',
         },
       ],
@@ -92,14 +82,14 @@ const DATA: ExperienceType = {
 
 type Field = 'address' | 'companyName' | 'duration' | 'jobTitle';
 
-const FUNCTIONS: ReturnType<typeof useResumeData>['experienceFunctions'] = {
-  addJob() {},
-  deleteJob(_index: number) {},
-  showJob(_newShownJobIndex: number) {},
-  editJob(_index: number, _field: Field, _value: string) {},
+const FUNCTIONS: ExperienceProps['functions'] = {
   addBulletPoint(_jobIndex: number) {},
-  editBulletPoint(_jobIndex: number, _itemIndex: number, _value: string) {},
+  addJob() {},
   deleteBulletPoint(_jobIndex: number, _itemIndex: number) {},
+  deleteJob(_index: number) {},
+  editBulletPoint(_jobIndex: number, _itemIndex: number, _value: string) {},
+  editJob(_index: number, _field: Field, _value: string) {},
+  showJob(_newShownJobIndex: number) {},
   updateBulletPoints(_jobIndex: number, _value: ItemWithId[]) {},
 };
 
@@ -108,14 +98,22 @@ function getProps(overrides?: Partial<ExperienceProps>): ExperienceProps {
     data: structuredClone(DATA),
     ref: { current: null },
     functions: cloneDeep(FUNCTIONS),
-    updateScreenReaderAnnouncement(_announcement) {},
+    updateScreenReaderAnnouncement(_announcement: string) {},
     ...overrides,
   };
 }
 
 describe('Experience', () => {
-  // `Experience` gets its accessible name from this element.
-  render(<div aria-label="Experience" id="experience" />);
+  beforeEach(() => {
+    const labelledElement = document.createElement('div');
+    labelledElement.id = 'experience';
+    labelledElement.setAttribute('aria-label', 'Experience');
+    document.body.appendChild(labelledElement);
+  });
+
+  afterEach(() => {
+    document.getElementById('experience')?.remove();
+  });
 
   it('should render as a tabpanel with an accessible name derived from an element with an ID "experience"', () => {
     render(<Experience {...getProps()} />);
@@ -155,7 +153,7 @@ describe('Experience', () => {
       it('should call `showJob(shownJobIndex - 1)` when the button is clicked', async () => {
         // Arrange
         const data = structuredClone({ ...DATA, shownJobIndex: 1 });
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = jest.fn<void, [number]>();
         const functions = cloneDeep({ ...FUNCTIONS, showJob: mockFn });
 
         render(<Experience {...getProps({ data, functions })} />);
@@ -192,7 +190,7 @@ describe('Experience', () => {
 
       it('should call `showJob(shownJobIndex + 1)` when the button is clicked', async () => {
         // Arrange
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = jest.fn<void, [number]>();
         const functions = cloneDeep({ ...FUNCTIONS, showJob: mockFn });
         const props = getProps({ functions });
 
@@ -260,9 +258,9 @@ describe('Experience', () => {
       expect(btn).not.toBeInTheDocument();
     });
 
-    it('should call `deleteJob(shownJobIndex)` when the button is called', async () => {
+    it('should call `deleteJob(shownJobIndex)` when the button is clicked', async () => {
       // Arrange
-      const mockFn = jest.fn((_index: number) => {});
+      const mockFn = jest.fn<void, [number]>();
       const functions = cloneDeep({ ...FUNCTIONS, deleteJob: mockFn });
 
       render(<Experience {...getProps({ functions })} />);
@@ -280,103 +278,45 @@ describe('Experience', () => {
   });
 
   describe('Shown job', () => {
-    // TODO: should render a job. (At the moment, the way `Experience` is structured, it's hard to come up with a proper way to write this test. The component needs a refactor.)
-
     describe('Data', () => {
       const job = DATA.jobs[DATA.shownJobIndex];
       const { address, companyName, duration, jobTitle } = job;
+      const { bulletPoints } = job;
 
-      beforeEach(() => {
+      it.each([
+        ['Address', address],
+        ['Company Name', companyName],
+        ['Duration', duration],
+        ['Job Title', jobTitle],
+      ] as const)('should have the correct %s', (fieldName, expectedValue) => {
         render(<Experience {...getProps()} />);
+        const input = screen.getByRole('textbox', { name: fieldName });
+
+        expect(input).toHaveValue(expectedValue);
       });
 
-      it('should have the correct address', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Address',
-        });
-
-        expect(input.value).toBe(address);
-      });
-
-      it('should have the correct company name', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Company Name',
-        });
-
-        expect(input.value).toBe(companyName);
-      });
-
-      it('should have the correct duration', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Duration',
-        });
-
-        expect(input.value).toBe(duration);
-      });
-
-      it('should have the correct job title', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Job Title',
-        });
-
-        expect(input.value).toBe(jobTitle);
-      });
-
-      describe('bullet points', () => {
-        const { bulletPoints } = job;
-
-        function getInput(name: string): HTMLInputElement {
-          return screen.getByRole('textbox', { name });
-        }
-
-        describe('bullet point 1', () => {
-          it('should have the correct value', () => {
-            const input = getInput('Bullet point 1');
-
-            expect(input.value).toBe(bulletPoints[0].value);
+      it.each([
+        [1, bulletPoints[0]],
+        [2, bulletPoints[1]],
+        [3, bulletPoints[2]],
+      ] as const)(
+        'should have the correct value and ID for bullet point %i',
+        (index, expected) => {
+          render(<Experience {...getProps()} />);
+          const input = screen.getByRole('textbox', {
+            name: `Bullet point ${index}`,
           });
 
-          it('should have the correct ID', () => {
-            const input = getInput('Bullet point 1');
-
-            expect(input.id).toBe(bulletPoints[0].id);
-          });
-        });
-
-        describe('bullet point 2', () => {
-          it('should have the correct value', () => {
-            const input = getInput('Bullet point 2');
-
-            expect(input.value).toBe(bulletPoints[1].value);
-          });
-
-          it('should have the correct ID', () => {
-            const input = getInput('Bullet point 2');
-
-            expect(input.id).toBe(bulletPoints[1].id);
-          });
-        });
-
-        describe('bullet point 3', () => {
-          it('should have the correct value', () => {
-            const input = getInput('Bullet point 3');
-
-            expect(input.value).toBe(bulletPoints[2].value);
-          });
-
-          it('should have the correct ID', () => {
-            const input = getInput('Bullet point 3');
-
-            expect(input.id).toBe(bulletPoints[2].id);
-          });
-        });
-      });
+          expect(input).toHaveValue(expected.value);
+          expect(input).toHaveAttribute('id', expected.id);
+        },
+      );
     });
 
     describe('Functions', () => {
       it('should call `addBulletPoint(jobIndex)` when a bullet point is added via the corresponding control', async () => {
         // Arrange
-        const mockFn = jest.fn((_bulletIndex: number) => {});
+        const mockFn = jest.fn<void, [number]>();
         const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
         render(<Experience {...getProps({ functions })} />);
@@ -395,10 +335,11 @@ describe('Experience', () => {
 
       it('should call `deleteBulletPoint(jobIndex, itemIndex)` when a bullet point is deleted via the corresponding control', async () => {
         // Arrange
-        const implementation = (_bulletIndex: number, _itemIndex: number) => {};
-        const mockFn = jest.fn(implementation);
-        const functions = cloneDeep(FUNCTIONS);
-        functions.deleteBulletPoint = mockFn;
+        const mockFn = jest.fn<void, [number, number]>();
+        const functions = cloneDeep({
+          ...FUNCTIONS,
+          deleteBulletPoint: mockFn,
+        });
 
         render(<Experience {...getProps({ functions })} />);
         const user = userEvent.setup();
@@ -416,10 +357,7 @@ describe('Experience', () => {
 
       it('should call `editBulletPoint(jobIndex, itemIndex, value)` when a bullet point is edited via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
-          (_jobIndex: number, _itemIndex: number, _value: string) => {},
-        );
-
+        const mockFn = jest.fn<void, [number, number, string]>();
         const functions = cloneDeep({
           ...FUNCTIONS,
           editBulletPoint: mockFn,
@@ -436,7 +374,6 @@ describe('Experience', () => {
 
         // Assert
         expect(mockFn).toHaveBeenCalledTimes(1);
-
         expect(mockFn).toHaveBeenCalledWith(
           DATA.shownJobIndex,
           0,
@@ -446,10 +383,7 @@ describe('Experience', () => {
 
       it('should call `editJob(jobIndex, field, value)` when a text field of a job is changed via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
-          (_jobIndex: number, _field: Field, _value: string) => {},
-        );
-
+        const mockFn = jest.fn<void, [number, Field, string]>();
         const functions = cloneDeep({
           ...FUNCTIONS,
           editJob: mockFn,
@@ -467,7 +401,6 @@ describe('Experience', () => {
 
         // Assert
         expect(mockFn).toHaveBeenCalledTimes(1);
-
         expect(mockFn).toHaveBeenCalledWith(
           DATA.shownJobIndex,
           'jobTitle',
@@ -475,15 +408,9 @@ describe('Experience', () => {
         );
       });
 
-      // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
-
-      /**
-       * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
-       * the test's name should be changed.
-       */
-      it('should call `updateScreenReaderAnnouncement` when an important change is made to the job via its controls or text inputs (not DnD-related)', async () => {
+      it('should call `updateScreenReaderAnnouncement` when an important change is made to the job via its controls or text inputs', async () => {
         // Arrange
-        const mockFn = jest.fn((_announcement: string) => {});
+        const mockFn = jest.fn<void, [string]>();
         const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
         render(<Experience {...props} />);
@@ -502,11 +429,14 @@ describe('Experience', () => {
   });
 
   it('should pass the section element to `ref.current`', () => {
+    // Arrange
     const ref = { current: null };
-    render(<Experience {...getProps({ ref })} />);
 
+    // Act
+    render(<Experience {...getProps({ ref })} />);
     const experience = screen.getByRole('tabpanel');
 
+    // Assert
     expect(ref.current).toBe(experience);
   });
 });

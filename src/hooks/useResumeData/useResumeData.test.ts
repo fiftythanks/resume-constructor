@@ -3,15 +3,14 @@ import { act, renderHook } from '@testing-library/react';
 import getDefaultData from './getDefaultData';
 import useResumeData from './useResumeData';
 
-import type { WritableDraft } from 'immer';
-import type { ReadonlyDeep } from 'type-fest';
-
-import {
+import type {
   ItemWithId,
   ResumeData,
   ResumeDataWithOptionalIds,
   ResumeDataWithoutIds,
 } from '@/types/resumeData';
+import type { WritableDraft } from 'immer';
+import type { ReadonlyDeep } from 'type-fest';
 
 function stripOfIds(data: ReadonlyDeep<ResumeData>): ResumeDataWithoutIds {
   const newData: ResumeDataWithOptionalIds = structuredClone(
@@ -59,18 +58,25 @@ function stripOfIds(data: ReadonlyDeep<ResumeData>): ResumeDataWithoutIds {
 
 describe('useResumeData', () => {
   describe('clear', () => {
-    it('should clear passed sections', async () => {
+    it('should clear passed sections', () => {
+      // Arrange
       const { result } = renderHook(() => useResumeData());
-
-      await act(async () => {
+      act(() => {
         result.current.certificationsFunctions.updateCertifications(
           'certificates',
           'just some value',
         );
+      });
+      expect(result.current.data.certifications.certificates).toBe(
+        'just some value',
+      );
 
+      // Act
+      act(() => {
         result.current.clear('certifications');
       });
 
+      // Assert
       expect(result.current.data.certifications).toEqual(
         getDefaultData('certifications'),
       );
@@ -78,25 +84,26 @@ describe('useResumeData', () => {
   });
 
   describe('clearAll', () => {
-    it('should clear all sections', async () => {
+    it('should clear all sections', () => {
+      // Arrange
       const { result } = renderHook(() => useResumeData());
-
-      await act(async () => {
-        // Fills a section with random data.
+      act(() => {
         result.current.personalFunctions.updatePersonal(
           'address',
           'some string',
         );
-
-        // Fills a section with random data.
         result.current.certificationsFunctions.updateCertifications(
           'skills',
           'some string',
         );
+      });
 
+      // Act
+      act(() => {
         result.current.clearAll();
       });
 
+      // Assert
       expect(stripOfIds(result.current.data)).toEqual(
         stripOfIds(getDefaultData()),
       );
@@ -257,37 +264,19 @@ describe('useResumeData', () => {
     });
 
     describe('showDegree', () => {
-      it('should change shown degree index', async () => {
+      it('should change shown degree index', () => {
         const { result } = renderHook(() => useResumeData());
 
-        if (result.current.data.education.degrees.length <= 1) {
-          while (result.current.data.education.degrees.length <= 1) {
-            await act(async () => {
-              result.current.educationFunctions.addDegree();
-            });
-          }
-        }
+        act(() => {
+          result.current.educationFunctions.addDegree();
+        });
+        expect(result.current.data.education.shownDegreeIndex).toBe(1);
 
-        const { shownDegreeIndex: initialShownDegreeIndex } =
-          result.current.data.education;
+        act(() => {
+          result.current.educationFunctions.showDegree(0);
+        });
 
-        if (initialShownDegreeIndex === 0) {
-          await act(async () => {
-            result.current.educationFunctions.showDegree(1);
-          });
-
-          // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
-          expect(result.current.data.education.shownDegreeIndex).toBe(1);
-        } else {
-          await act(async () => {
-            result.current.educationFunctions.showDegree(0);
-          });
-
-          // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
-          expect(result.current.data.education.shownDegreeIndex).toBe(0);
-        }
+        expect(result.current.data.education.shownDegreeIndex).toBe(0);
       });
     });
 
@@ -606,37 +595,19 @@ describe('useResumeData', () => {
     });
 
     describe('showJob', () => {
-      it('should change shown job index', async () => {
+      it('should change shown job index', () => {
         const { result } = renderHook(() => useResumeData());
 
-        if (result.current.data.experience.jobs.length <= 1) {
-          while (result.current.data.experience.jobs.length <= 1) {
-            await act(async () => {
-              result.current.experienceFunctions.addJob();
-            });
-          }
-        }
+        act(() => {
+          result.current.experienceFunctions.addJob();
+        });
+        expect(result.current.data.experience.shownJobIndex).toBe(1);
 
-        const { shownJobIndex: initialShownJobIndex } =
-          result.current.data.experience;
+        act(() => {
+          result.current.experienceFunctions.showJob(0);
+        });
 
-        if (initialShownJobIndex === 0) {
-          await act(async () => {
-            result.current.experienceFunctions.showJob(1);
-          });
-
-          // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
-          expect(result.current.data.experience.shownJobIndex).toBe(1);
-        } else {
-          await act(async () => {
-            result.current.experienceFunctions.showJob(0);
-          });
-
-          // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
-          expect(result.current.data.experience.shownJobIndex).toBe(0);
-        }
+        expect(result.current.data.experience.shownJobIndex).toBe(0);
       });
     });
 
@@ -1017,37 +988,19 @@ describe('useResumeData', () => {
     });
 
     describe('showProject', () => {
-      it('should change shown project index', async () => {
+      it('should change shown project index', () => {
         const { result } = renderHook(() => useResumeData());
 
-        if (result.current.data.projects.projects.length <= 1) {
-          while (result.current.data.projects.projects.length <= 1) {
-            await act(async () => {
-              result.current.projectsFunctions.addProject();
-            });
-          }
-        }
+        act(() => {
+          result.current.projectsFunctions.addProject();
+        });
+        expect(result.current.data.projects.shownProjectIndex).toBe(1);
 
-        const { shownProjectIndex: initialShownProjectIndex } =
-          result.current.data.projects;
+        act(() => {
+          result.current.projectsFunctions.showProject(0);
+        });
 
-        if (initialShownProjectIndex === 0) {
-          await act(async () => {
-            result.current.projectsFunctions.showProject(1);
-          });
-
-          // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
-          expect(result.current.data.projects.shownProjectIndex).toBe(1);
-        } else {
-          await act(async () => {
-            result.current.projectsFunctions.showProject(0);
-          });
-
-          // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
-          expect(result.current.data.projects.shownProjectIndex).toBe(0);
-        }
+        expect(result.current.data.projects.shownProjectIndex).toBe(0);
       });
     });
 

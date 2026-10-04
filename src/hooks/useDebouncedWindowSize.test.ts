@@ -2,53 +2,83 @@ import { act, renderHook } from '@testing-library/react';
 
 import useDebouncedWindowSize from './useDebouncedWindowSize';
 
-jest.useFakeTimers();
-
 describe('useDebouncedWindowSize', () => {
   const initialInnerHeight = window.innerHeight;
   const initialInnerWidth = window.innerWidth;
   const initialOuterHeight = window.outerHeight;
   const initialOuterWidth = window.outerWidth;
 
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+    jest.useRealTimers();
+    jest.restoreAllMocks();
+  });
+
   it('should return the initial window size on mount', () => {
     const { result } = renderHook(() => useDebouncedWindowSize());
 
-    expect(result.current.innerHeight).toBe(initialInnerHeight);
-    expect(result.current.innerWidth).toBe(initialInnerWidth);
-    expect(result.current.outerHeight).toBe(initialOuterHeight);
-    expect(result.current.outerWidth).toBe(initialOuterWidth);
+    expect(result.current).toEqual({
+      innerHeight: initialInnerHeight,
+      innerWidth: initialInnerWidth,
+      outerHeight: initialOuterHeight,
+      outerWidth: initialOuterWidth,
+    });
   });
 
-  it('should update the window size after a debounced resize', async () => {
+  it('should not update window size immediately before debounce interval elapses', () => {
     const { result } = renderHook(() => useDebouncedWindowSize());
 
-    await act(async () => {
-      Object.defineProperty(window, innerWidth, {
-        writable: true,
-        value: 1024,
-      });
-
-      window.dispatchEvent(new Event('resize'));
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 1024,
+      writable: true,
     });
 
-    // The state shouldn't have been called yet because of the debounce.
-    expect(result.current.innerWidth).toBe(initialInnerWidth);
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+      jest.advanceTimersByTime(500);
+    });
 
-    await act(async () => {
-      jest.runAllTimers();
+    expect(result.current.innerWidth).toBe(initialInnerWidth);
+  });
+
+  it('should update window size after the debounce delay elapses', () => {
+    const { result } = renderHook(() => useDebouncedWindowSize());
+
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 1024,
+      writable: true,
+    });
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+      jest.advanceTimersByTime(1000);
     });
 
     expect(result.current.innerWidth).toBe(1024);
   });
 
-  it('should clean up the event listener on unmount', async () => {
-    const spy = jest.spyOn(window, 'removeEventListener');
+  it('should clean up the exact resize listener on unmount', () => {
+    const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
+    const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
+
     const { unmount } = renderHook(() => useDebouncedWindowSize());
 
-    await act(async () => {
-      unmount();
-    });
+    const resizeHandler = addEventListenerSpy.mock.calls.find(
+      (call) => call[0] === 'resize',
+    )?.[1];
 
-    expect(spy).toHaveBeenCalledWith('resize', expect.any(Function));
+    unmount();
+
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(1);
+    expect(removeEventListenerSpy).toHaveBeenCalledWith(
+      'resize',
+      resizeHandler,
+    );
   });
 });

@@ -1,29 +1,27 @@
 import React, { useCallback, useState } from 'react';
 
 import * as renderer from '@react-pdf/renderer';
-import { render, renderHook, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import cloneDeep from 'lodash/cloneDeep';
 import * as pdfjsLib from 'pdfjs-dist/webpack';
-
-import useAppState from '@/hooks/useAppState';
 import '@testing-library/jest-dom';
 
-import useResumeData from '@/hooks/useResumeData';
+import getFilledData from '@/hooks/useResumeData/getFilledData';
 
 import Preview from './Preview';
 
 import type { PreviewProps } from './Preview';
+import type { SectionId } from '@/types/resumeData';
 import type { DocumentProps, UsePDFInstance } from '@react-pdf/renderer';
 
-// TODO: this test suite is a disaster. Refactor this rubbish heavily.
+const INITIAL_ACTIVE_SECTION_IDS: SectionId[] = [
+  'personal',
+  'education',
+  'experience',
+];
 
-/**
- * Testing plan:
- * TODO: to be finished as soon as I figure out how the component works.
- * Download buttons
- * - [ ] If loading, should not render.
- * - [ ] If error, should throw.
- */
+const INITIAL_DATA = getFilledData();
 
 /**
  * Changes the implementation of `usePDF` to alter document loading status.
@@ -31,8 +29,8 @@ import type { DocumentProps, UsePDFInstance } from '@react-pdf/renderer';
  * @returns A restore function to get back to the default implementation.
  */
 function mockInstanceStatusTemporary({
-  loading = false,
   error = null,
+  loading = false,
 }: {
   error?: null | string;
   loading?: boolean;
@@ -42,10 +40,10 @@ function mockInstanceStatusTemporary({
   ).getMockImplementation();
 
   const usePDFTemporary = () => {
-    const [document, _] = useState<UsePDFInstance>({
-      loading,
-      error,
+    const [document] = useState<UsePDFInstance>({
       blob: null,
+      error,
+      loading,
       url: 'blob:mock-pdf-url',
     });
 
@@ -59,13 +57,11 @@ function mockInstanceStatusTemporary({
 
   (renderer.usePDF as jest.Mock).mockImplementation(usePDFTemporary);
 
-  function restore() {
+  return function restore() {
     (renderer.usePDF as jest.Mock).mockImplementation(
       usePDFDefaultImplementation,
     );
-  }
-
-  return restore;
+  };
 }
 
 /**
@@ -79,10 +75,14 @@ function mockWithNumPagesTemporary(numPages: number) {
     pdfjsLib.getDocument as jest.Mock
   ).getMockImplementation();
 
+  const originalResult = defaultImplementation
+    ? defaultImplementation('url')
+    : null;
+
   const temporaryImplementation = () => ({
     promise: {
+      getPage: originalResult?.promise?.getPage ?? jest.fn(),
       numPages,
-      getPage: pdfjsLib.getDocument('url').promise.getPage,
     },
   });
 
@@ -90,49 +90,44 @@ function mockWithNumPagesTemporary(numPages: number) {
     temporaryImplementation,
   );
 
-  function restore() {
+  return function restore() {
     (pdfjsLib.getDocument as jest.Mock).mockImplementation(
       defaultImplementation,
     );
-  }
-
-  return restore;
+  };
 }
 
-// TODO: add `activeSectionIds` and `data` tests by changing the mocks in such a way that the props become testable.
+function getProps(overrides?: Partial<PreviewProps>): PreviewProps {
+  return {
+    activeSectionIds: structuredClone(INITIAL_ACTIVE_SECTION_IDS),
+    data: cloneDeep(INITIAL_DATA),
+    isShown: true,
+    onClose: () => {},
+    ...overrides,
+  };
+}
+
 describe('Preview', () => {
-  /**
-   * Since to test this component, we can safely use the same data and state, I
-   * decided to do just that. The following logic creates `appState` and
-   * fills the resume with enough data necessary for testing `Preview`.
-   */
-  const { result: resumeDataResult } = renderHook(() => useResumeData());
-  const { result: appStateResult } = renderHook(() => useAppState());
-  const { activeSectionIds } = appStateResult.current;
+  beforeEach(() => {
+    const popupRoot = document.createElement('div');
+    popupRoot.id = 'popup-root';
+    document.body.appendChild(popupRoot);
 
-  function getProps(overrides?: Partial<PreviewProps>): PreviewProps {
-    return {
-      activeSectionIds: structuredClone(activeSectionIds),
-      data: structuredClone(resumeDataResult.current.data),
-      isShown: true,
-      onClose: () => {},
-      ...overrides,
-    };
-  }
+    jest
+      .spyOn(HTMLCanvasElement.prototype, 'getContext')
+      .mockReturnValue({} as CanvasRenderingContext2D);
+  });
 
-  function renderPreview(
-    props?: PreviewProps,
-    Component: typeof Preview = Preview,
-  ) {
-    // `Preview` is portalled into an element with an ID "popup-root".
-    render(<div id="popup-root" />);
-    render(<Component {...getProps(props)} />);
-  }
+  afterEach(() => {
+    document.getElementById('popup-root')?.remove();
+    jest.restoreAllMocks();
+  });
 
-  // Tests
   it('should render with an accessible name "Preview"', async () => {
-    renderPreview();
+    // Arrange & Act
+    render(<Preview {...getProps()} />);
 
+    // Assert
     const popup = await screen.findByRole('dialog', { name: 'Preview' });
 
     expect(popup).toBeInTheDocument();
@@ -140,8 +135,10 @@ describe('Preview', () => {
 
   describe('Download buttons', () => {
     it('should render two download buttons with text "Download"', async () => {
-      renderPreview();
+      // Arrange & Act
+      render(<Preview {...getProps()} />);
 
+      // Assert
       const downloadBtns = await screen.findAllByRole('button', {
         name: 'Download',
       });
@@ -152,38 +149,43 @@ describe('Preview', () => {
 
   describe('Close Popup Button', () => {
     it('should render with an accessible name "Close Popup"', async () => {
-      renderPreview();
+      // Arrange & Act
+      render(<Preview {...getProps()} />);
 
+      // Assert
       const btn = await screen.findByRole('button', { name: 'Close Popup' });
 
       expect(btn).toBeInTheDocument();
     });
 
     it('should call `onClose` when clicked', async () => {
+      // Arrange
       const mockFn = jest.fn();
-      renderPreview(getProps({ onClose: mockFn }));
+      render(<Preview {...getProps({ onClose: mockFn })} />);
       const user = userEvent.setup();
       const btn = await screen.findByRole('button', { name: 'Close Popup' });
 
-      const closeSpy = jest
+      jest
         .spyOn(HTMLDialogElement.prototype, 'close')
         .mockImplementation(function (this: HTMLDialogElement) {
           this.dispatchEvent(new Event('close'));
         });
 
+      // Act
       await user.click(btn);
 
+      // Assert
       expect(mockFn).toHaveBeenCalledTimes(1);
-
-      closeSpy.mockRestore();
     });
   });
 
   describe('Navigation Buttons', () => {
     describe('Next Page', () => {
       it('should render two buttons "Next Page"', async () => {
-        renderPreview();
+        // Arrange & Act
+        render(<Preview {...getProps()} />);
 
+        // Assert
         const btns = await screen.findAllByRole('button', {
           name: 'Next Page',
         });
@@ -194,22 +196,27 @@ describe('Preview', () => {
       });
 
       it('should not render "Next Page" buttons when the opened page is the last page', async () => {
+        // Arrange
         const restoreMock = mockWithNumPagesTemporary(1);
-        renderPreview();
 
-        await expect(
-          screen.findAllByRole('button', {
-            name: 'Next Page',
-          }),
-        ).rejects.toThrow();
+        try {
+          render(<Preview {...getProps()} />);
 
-        // Cleanup
-        restoreMock();
+          // Act: wait for document controls to settle
+          await screen.findAllByRole('button', { name: 'Download' });
+
+          // Assert
+          expect(
+            screen.queryByRole('button', { name: 'Next Page' }),
+          ).not.toBeInTheDocument();
+        } finally {
+          restoreMock();
+        }
       });
 
       it('should increment `openedPageIndex` on click', async () => {
         // Arrange
-        renderPreview();
+        render(<Preview {...getProps()} />);
         const user = userEvent.setup();
 
         const btns = await screen.findAllByRole('button', {
@@ -221,8 +228,8 @@ describe('Preview', () => {
 
         // Assert
         /**
-         * Since there are only three pages (as we defined in our mock),
-         * the buttons must not render after two clicks.
+         * Since there are only three pages (as defined in our mock), the
+         * buttons must not render after two clicks.
          */
         expect(btns[0]).not.toBeInTheDocument();
         expect(btns[1]).not.toBeInTheDocument();
@@ -231,24 +238,30 @@ describe('Preview', () => {
 
     describe('Previous Page', () => {
       it('should not render "Previous Page" buttons when the opened page is the first page', async () => {
-        renderPreview();
+        // Arrange & Act
+        render(<Preview {...getProps()} />);
 
-        await expect(
-          screen.findAllByRole('button', { name: 'Previous Page' }),
-        ).rejects.toThrow();
+        // Wait for document controls to settle
+        await screen.findAllByRole('button', { name: 'Download' });
+
+        // Assert
+        expect(
+          screen.queryByRole('button', { name: 'Previous Page' }),
+        ).not.toBeInTheDocument();
       });
 
       it('should render two buttons "Previous Page"', async () => {
         // Arrange
-        renderPreview();
+        render(<Preview {...getProps()} />);
         const user = userEvent.setup();
 
-        const name = 'Next Page';
-        const nextPageBtn = (await screen.findAllByRole('button', { name }))[0];
+        const nextPageBtn = (
+          await screen.findAllByRole('button', { name: 'Next Page' })
+        )[0];
 
         /**
-         * This is necessary because "Previous Page" buttons won't render when
-         * the first page is opened.
+         * Navigating forwards is necessary because "Previous Page" buttons do
+         * not render when the first page is opened.
          */
         await user.click(nextPageBtn);
 
@@ -265,16 +278,14 @@ describe('Preview', () => {
 
       it('should decrement `openedPageIndex` on click', async () => {
         // Arrange
-        renderPreview();
+        render(<Preview {...getProps()} />);
         const user = userEvent.setup();
 
-        const name = 'Next Page';
-        const nextPageBtn = (await screen.findAllByRole('button', { name }))[0];
+        const nextPageBtn = (
+          await screen.findAllByRole('button', { name: 'Next Page' })
+        )[0];
 
-        /**
-         * Increments `openedPageIndex` to 2, causing "Previous Page" buttons'
-         * render.
-         */
+        // Increment `openedPageIndex` to 2
         await user.click(nextPageBtn);
 
         const previousPageBtns = await screen.findAllByRole('button', {
@@ -284,10 +295,7 @@ describe('Preview', () => {
         // Act
         await user.click(previousPageBtns[0]);
 
-        /**
-         * Since `openedPageIndex` has been decremented by the click, the
-         * "Previous Page" buttons should not render now.
-         */
+        // Assert
         expect(previousPageBtns[0]).not.toBeInTheDocument();
         expect(previousPageBtns[1]).not.toBeInTheDocument();
       });
@@ -297,40 +305,40 @@ describe('Preview', () => {
   describe('Document', () => {
     it('should render "Loading..." while the document is loading', async () => {
       // Arrange
-
-      // Mock instance loading status
       const restoreMock = mockInstanceStatusTemporary({ loading: true });
 
-      renderPreview();
+      try {
+        render(<Preview {...getProps()} />);
 
-      // Act
-      const paragraph = await screen.findByText('Loading...');
+        // Act
+        const paragraph = await screen.findByText('Loading...');
 
-      // Assert
-      expect(paragraph).toBeInTheDocument();
-
-      // Cleanup
-      restoreMock();
+        // Assert
+        expect(paragraph).toBeInTheDocument();
+      } finally {
+        restoreMock();
+      }
     });
 
-    it('should render "Something went wrong. Try reloading the page." when an error occurs during document loading.', async () => {
+    it('should render error message when an error occurs during document loading', async () => {
       // Arrange
+      const restoreMock = mockInstanceStatusTemporary({
+        error: 'Some error',
+      });
 
-      // Mock instance loading status
-      const restoreMock = mockInstanceStatusTemporary({ error: 'Some error' });
+      try {
+        render(<Preview {...getProps()} />);
 
-      renderPreview();
+        // Act
+        const paragraph = await screen.findByText(
+          'Something went wrong. Try reloading the page.',
+        );
 
-      // Act
-      const paragraph = await screen.findByText(
-        'Something went wrong. Try reloading the page.',
-      );
-
-      // Assert
-      expect(paragraph).toBeInTheDocument();
-
-      // Cleanup
-      restoreMock();
+        // Assert
+        expect(paragraph).toBeInTheDocument();
+      } finally {
+        restoreMock();
+      }
     });
   });
 });

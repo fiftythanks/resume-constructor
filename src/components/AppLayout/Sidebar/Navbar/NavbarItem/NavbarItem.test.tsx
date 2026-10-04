@@ -1,3 +1,5 @@
+import { createRef } from 'react';
+
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -13,177 +15,176 @@ function getProps(overrides?: Partial<NavbarItemProps>): NavbarItemProps {
     isDraggable: true,
     isEditorMode: false,
     isSelected: false,
+    onDeleteSection: jest.fn(),
+    onSelectSection: jest.fn(),
     sectionId: 'certifications',
     sectionTitle: 'Certifications',
     tabIndex: 0,
-    onDeleteSection: jest.fn(),
-    onSelectSection: jest.fn(),
     ...overrides,
   };
 }
 
 describe('NavbarItem', () => {
   describe('tab', () => {
-    it('should render with an accessible name from the `sectionTitle` prop', () => {
+    it('should render with accessible name from `sectionTitle` and BEM class', () => {
       const props = getProps();
       render(<NavbarItem {...props} />);
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
 
       expect(tab).toBeInTheDocument();
+      expect(tab).toHaveClass('NavbarItem-Button');
     });
 
-    it('should call `onSelectSection` on click when `isEditorMode === false', async () => {
+    it('should call `onSelectSection` on click when `isEditorMode === false`', async () => {
       const user = userEvent.setup();
-      const props = getProps();
-      render(<NavbarItem {...props} />);
+      const onSelectSectionMock = jest.fn();
+      render(
+        <NavbarItem
+          {...getProps({
+            isEditorMode: false,
+            onSelectSection: onSelectSectionMock,
+          })}
+        />,
+      );
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = screen.getByRole('tab', { name: 'Certifications' });
       await user.click(tab);
 
-      expect(props.onSelectSection).toHaveBeenCalledTimes(1);
+      expect(onSelectSectionMock).toHaveBeenCalledTimes(1);
     });
 
-    it('should not call `onSelectSection` on click when `isEditorMode === true', async () => {
+    it('should not call `onSelectSection` on click when `isEditorMode === true`', async () => {
       const user = userEvent.setup();
-      const props = getProps({ isEditorMode: true });
-      render(<NavbarItem {...props} />);
+      const onSelectSectionMock = jest.fn();
+      render(
+        <NavbarItem
+          {...getProps({
+            isEditorMode: true,
+            onSelectSection: onSelectSectionMock,
+          })}
+        />,
+      );
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = screen.getByRole('tab', { name: 'Certifications' });
       await user.click(tab);
 
-      expect(props.onSelectSection).not.toHaveBeenCalled();
+      expect(onSelectSectionMock).not.toHaveBeenCalled();
     });
 
-    it('should be enabled when `isEditorMode === false`', () => {
-      const props = getProps({ isEditorMode: false });
-      render(<NavbarItem {...props} />);
+    it.each([
+      { ariaDisabled: 'false', isEditorMode: false },
+      { ariaDisabled: 'true', isEditorMode: true },
+    ])(
+      'should set aria-disabled="$ariaDisabled" when isEditorMode is $isEditorMode',
+      ({ ariaDisabled, isEditorMode }) => {
+        render(<NavbarItem {...getProps({ isEditorMode })} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+        const tab = screen.getByRole('tab', { name: 'Certifications' });
 
-      expect(tab.ariaDisabled).toBe('false');
+        expect(tab).toHaveAttribute('aria-disabled', ariaDisabled);
+      },
+    );
+
+    it('should set aria-selected="true" and add selected modifier when isSelected is true', () => {
+      const { container } = render(
+        <NavbarItem {...getProps({ isSelected: true })} />,
+      );
+
+      const tab = screen.getByRole('tab', { name: 'Certifications' });
+      const li = container.querySelector('.NavbarItem')!;
+
+      expect(tab).toHaveAttribute('aria-selected', 'true');
+      expect(li).toHaveClass('NavbarItem_selected');
     });
 
-    it('should be disabled when `isEditorMode === true`', () => {
-      const props = getProps({ isEditorMode: true });
-      render(<NavbarItem {...props} />);
+    it('should set aria-selected="false" and omit selected modifier when isSelected is false', () => {
+      const { container } = render(
+        <NavbarItem {...getProps({ isSelected: false })} />,
+      );
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = screen.getByRole('tab', { name: 'Certifications' });
+      const li = container.querySelector('.NavbarItem')!;
 
-      expect(tab.ariaDisabled).toBe('true');
+      expect(tab).toHaveAttribute('aria-selected', 'false');
+      expect(li).not.toHaveClass('NavbarItem_selected');
     });
 
-    it('should be selected when `isSelected === true`', () => {
-      const props = getProps({ isSelected: true });
-      render(<NavbarItem {...props} />);
+    it('should assign DOM tab element to ref', () => {
+      const ref = createRef<HTMLButtonElement | null>();
+      render(<NavbarItem {...getProps({ ref })} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = screen.getByRole('tab', { name: 'Certifications' });
 
-      expect(tab.ariaSelected).toBe('true');
-    });
-
-    it('should not be selected when `isSelected === false`', () => {
-      const props = getProps({ isSelected: false });
-      render(<NavbarItem {...props} />);
-
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
-
-      expect(tab.ariaSelected).toBe('false');
+      expect(ref.current).toBe(tab);
     });
   });
 
   describe('icon', () => {
-    it('should render with an accessible name from the `alt` prop', () => {
+    it('should render icon with accessible alt text and src', () => {
       const props = getProps();
       render(<NavbarItem {...props} />);
 
       const icon = screen.getByRole('img', { name: props.alt });
 
       expect(icon).toBeInTheDocument();
-    });
-
-    it('should render the correct icon', () => {
-      const props = getProps();
-      render(<NavbarItem {...props} />);
-
-      const icon: HTMLImageElement = screen.getByRole('img', {
-        name: props.alt,
-      });
-
-      const endsWithIconSrc = new RegExp(`${props.iconSrc}$`);
-      expect(icon.src).toMatch(endsWithIconSrc);
-    });
-
-    it('should be a correct icon specified with the `iconSrc` prop', () => {
-      const props = getProps();
-      render(<NavbarItem {...props} />);
-      const icon = screen.getByRole('img', { name: props.alt });
-
-      const src = icon.getAttribute('src');
-
-      expect(src).toBe(props.iconSrc);
+      expect(icon).toHaveAttribute('src', props.iconSrc);
     });
   });
 
   describe('delete button', () => {
-    describe('render conditions', () => {
-      it('should render when `isEditorMode === true && isDraggable === true`', () => {
-        const props = getProps({ isEditorMode: true });
-        render(<NavbarItem {...props} />);
+    it('should render delete button with BEM classes when draggable and in editor mode', () => {
+      render(
+        <NavbarItem {...getProps({ isDraggable: true, isEditorMode: true })} />,
+      );
 
-        const button = screen.getByRole('button', {
-          name: `Delete ${props.sectionTitle}`,
-        });
-
-        expect(button).toBeInTheDocument();
+      const button = screen.getByRole('button', {
+        name: 'Delete Certifications',
       });
 
-      it('should not render when `isEditorMode === false && isDraggable === true`', () => {
-        const props = getProps();
-        render(<NavbarItem {...props} />);
-
-        const btn = screen.queryByRole('button', {
-          name: `Delete ${props.sectionTitle}`,
-        });
-
-        expect(btn).not.toBeInTheDocument();
-      });
-
-      it('should not render when `isEditorMode === true && isDraggable === false`', () => {
-        const props = getProps({ isEditorMode: true, isDraggable: false });
-        render(<NavbarItem {...props} />);
-
-        const btn = screen.queryByRole('button', {
-          name: `Delete ${props.sectionTitle}`,
-        });
-
-        expect(btn).not.toBeInTheDocument();
-      });
-
-      it('should not render when `isEditorMode === false && isDraggable === false`', () => {
-        const props = getProps({ isDraggable: false });
-        render(<NavbarItem {...props} />);
-
-        const btn = screen.queryByRole('button', {
-          name: `Delete ${props.sectionTitle}`,
-        });
-
-        expect(btn).not.toBeInTheDocument();
-      });
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveClass(
+        'NavbarItem-ControlBtn',
+        'NavbarItem-ControlBtn_delete',
+      );
     });
+
+    it.each([
+      { isDraggable: true, isEditorMode: false },
+      { isDraggable: false, isEditorMode: true },
+      { isDraggable: false, isEditorMode: false },
+    ])(
+      'should not render delete button when isDraggable=$isDraggable and isEditorMode=$isEditorMode',
+      ({ isDraggable, isEditorMode }) => {
+        render(<NavbarItem {...getProps({ isDraggable, isEditorMode })} />);
+
+        const button = screen.queryByRole('button', {
+          name: 'Delete Certifications',
+        });
+
+        expect(button).not.toBeInTheDocument();
+      },
+    );
 
     it('should call `onDeleteSection` on click', async () => {
       const user = userEvent.setup();
-      const props = getProps({ isEditorMode: true });
-      render(<NavbarItem {...props} />);
+      const onDeleteSectionMock = jest.fn();
+      render(
+        <NavbarItem
+          {...getProps({
+            isEditorMode: true,
+            onDeleteSection: onDeleteSectionMock,
+          })}
+        />,
+      );
 
       const deleteBtn = screen.getByRole('button', {
-        name: `Delete ${props.sectionTitle}`,
+        name: 'Delete Certifications',
       });
 
       await user.click(deleteBtn);
 
-      expect(props.onDeleteSection).toHaveBeenCalledTimes(1);
+      expect(onDeleteSectionMock).toHaveBeenCalledTimes(1);
     });
   });
 });
