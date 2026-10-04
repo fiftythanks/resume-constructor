@@ -10,6 +10,7 @@
   - Strict separation: UI primitives (`src/components/`) decoupled from feature pages (`src/pages/`) and business logic (`src/hooks/`).
   - Accessibility-first (WCAG 2.2 AA): Keyboard operability, screen reader live announcements (`aria-live="polite"`) and focus management via `tabbable`.
   - Rendering parity: `@react-pdf/renderer` (Yoga engine Flexbox rules only) vs Live Preview DOM vs canvas fallback.
+  - Documentation parity & Starlight TypeDoc: Whenever a component, hook, utility or feature page is created, its entry point MUST be added to `starlightTypeDoc.entryPoints` in `docs/astro.config.ts`. Automatic discovery is not supported by TypeDoc; explicit registration is mandatory for every export.
 
 ---
 
@@ -38,6 +39,15 @@
   - No floating promises: `@typescript-eslint/no-floating-promises` is an error. Always `await` or explicitly `void`.
   - Exhaustive switch / union checks: use `neverReached(value)` from `@/utils/neverReached`.
   - Path alias: Use `@/*` pointing to `src/*`.
+- **Modern React 19 Standards & Deprecated Code Removal:**
+  - The codebase runs strictly on React 19 (current year 2026).
+  - Deprecated React APIs, types and legacy patterns are strictly forbidden:
+    - Never use `MutableRef` or `MutableRefObject` (in React 19, `useRef` returns `RefObject<T>` whose `.current` property is mutable).
+    - Never use `forwardRef` (in React 19, `ref` is a standard component prop).
+    - Never use `defaultProps` (use ES6 default parameter values instead).
+  - Agents MUST audit their changes for modern React 19 idioms and deprecated APIs before committing. If uncertain about 2026 React 19 or TypeScript idioms, agents MUST search web documentation before proceeding.
+- **Event Handler Parameter Naming:**
+  - In all React event handlers and callback functions (`onChange`, `onClick`, `onKeyDown`, `onFocus` etc.), the event parameter MUST always be named `e`, never `event`.
 - **Deep Immutability Pattern:**
   - Component props MUST use `ReadonlyExcept<Props, 'ref'>` imported from `@/types/ReadonlyExcept`.
   - Deep immutability is enforced across component boundaries.
@@ -47,10 +57,16 @@
   - State mutations: Use `immer` / `use-immer` for nested state updates.
 - **Form Controls & A11y:**
   - All form controls MUST have explicit labels: `jsx-a11y/label-has-associated-control` enforces `asserts: 'htmlFor'`. Never rely on implicit wrapping alone.
-- **Comment Standards:**
+- **Comment Standards & Typography:**
   - All multiline comments MUST use JSDoc-style block comments (`/** ... */`) with leading asterisks on continuation lines, never consecutive single-line (`//`) comments.
   - Single-line comments (`//`) are strictly reserved for standalone, single-line remarks. Consecutive single-line comments are permitted only when representing distinct annotations (e.g. separate `// TODO:` or `// DILEMMA:` entries).
-  - Comment and documentation typography must strictly adhere to project standards: traditional British English, no Oxford comma, double quotes (`"..."`) for natural language, spaced em-rules ("—"), unspaced en-rules ("–") and forward slashes ("/") surrounded by spaces only when separating compound words.
+  - Comment, commit message and documentation typography must strictly adhere to project standards: traditional British English, double quotes (`"..."`) for natural language, spaced em-rules ("—"), unspaced en-rules ("–") and forward slashes ("/") surrounded by spaces only when separating compound words.
+  - **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma (serial comma) under any circumstances in commit messages, code comments, docstrings or documentation. In lists of three or more items, never place a comma before the coordinating conjunction ("and" or "or").
+    - Correct: `"apples, oranges and bananas"` ✔️
+    - Incorrect: `"apples, oranges, and bananas"` ❌
+    - Correct: `"Education, Experience or Projects"` ✔️
+    - Incorrect: `"Education, Experience, or Projects"` ❌
+    - Always perform a dedicated search for `, and` and `, or` across your written text before committing.
 
 ---
 
@@ -114,7 +130,7 @@ Every file must strictly adhere to the automated sorting hierarchy:
 
 Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
 
-- **Atomic Commits:** Commit every logical change independently and atomically. Always create a git commit immediately upon accomplishing and verifying each task.
+- **Atomic Feature Integrity:** Every commit MUST be complete in itself and fully functional. A commit must contain the code change, its comprehensive tests, related refactors and documentation updates together so that every individual commit builds cleanly (`bun x tsc --noEmit`), passes all tests (`bun run test:ci`) and preserves git bisectability. Incomplete commits that introduce broken intermediate states, lack tests or defer related refactors are strictly forbidden.
 - **Commit Format:** `<tag>(<scope>): <subject>` (or `<tag>: <subject>` for broad chores or docs).
 - **Subject Length:** First line MUST NOT exceed 50 characters (`<= 50`).
 - **Separation:** Exactly one blank line between the subject and body.
@@ -138,8 +154,12 @@ Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
 Before finishing any task or concluding a turn:
 
 1. Run `bun x tsc --noEmit` to verify type safety.
-2. Run `bun x eslint <modified-files>` to ensure zero lint errors and perfectionist order compliance.
-3. Run `bun x stylelint <modified-scss-files>` if styles were changed.
-4. Run `bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests`.
-5. If errors occur, diagnose using: `[Error Source] -> [Attempted Fix] -> [Result]`.
-6. Once all verification checks pass cleanly, create an atomic git commit for the completed change following the commit conventions in section 7 before concluding the task.
+2. Check for modern React 19 standards: verify zero deprecated APIs or types (no `MutableRefObject`, no `forwardRef`, no `defaultProps`). Search web documentation if unsure.
+3. Verify event handler parameter naming: ensure all event parameters are named `e`, never `event`.
+4. If a component, hook, utility or page was created, verify its entry point is registered in `docs/astro.config.ts`.
+5. Run `bun x eslint <modified-files> --fix` to ensure zero lint errors and perfectionist order compliance.
+6. Run `bun x stylelint <modified-scss-files> --fix` if styles were changed.
+7. Run `bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests`.
+8. **Prose & Typography Audit:** Scan all added comments, docstrings and commit messages for Oxford commas (search for `, and` / `, or`) and remove them. Verify traditional British English and double quotes.
+9. If errors occur, diagnose using: `[Error Source] -> [Attempted Fix] -> [Result]`.
+10. Once all verification checks pass cleanly, create an atomic git commit for the completed change following the commit conventions in section 7 before concluding the task.
