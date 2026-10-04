@@ -5,15 +5,19 @@ import type { ItemWithId } from '@/types/resumeData';
 describe('joinSkills()', () => {
   it('should transform an array of skill objects into a single, comma-separated string', () => {
     const skills: ItemWithId[] = [
-      { value: 'string', id: '5-5-5-5-5' },
-      { value: 'another string', id: '5-5-5-5-5' },
-      { value: 'third', id: '5-5-5-5-5' },
+      { id: '1-1-1-1-1', value: 'string' },
+      { id: '2-2-2-2-2', value: 'another string' },
+      { id: '3-3-3-3-3', value: 'third' },
     ];
 
-    expect(joinSkills(skills)).toBe('string, another string, third');
+    const result = joinSkills(skills);
+
+    expect(result).toBe('string, another string, third');
   });
 
   it('should return an empty string when provided with an empty array', () => {
-    expect(joinSkills([])).toBe('');
+    const result = joinSkills([]);
+
+    expect(result).toBe('');
   });
 });
