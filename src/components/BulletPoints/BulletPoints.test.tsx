@@ -27,29 +27,31 @@ const ITEMS: ItemWithId[] = [
 
 function getProps(overrides?: Partial<BulletPointsProps>): BulletPointsProps {
   return {
-    addItem: () => {},
+    addItem: jest.fn(),
     data: structuredClone(ITEMS),
-    deleteItem(_itemIndex: number) {},
-    editItem(_itemIndex: number, _value: string) {},
+    deleteItem: jest.fn(),
+    editItem: jest.fn(),
     legend: 'Some Legend',
     name: 'some-name',
     placeholder1: 'Placeholder 1',
     placeholder2: 'Placeholder 2',
     placeholder3: 'Placeholder 3',
-    updateData(_newData: ItemWithId[]) {},
-    updateScreenReaderAnnouncement(_announcement: string) {},
-
+    updateData: jest.fn(),
+    updateScreenReaderAnnouncement: jest.fn(),
     ...overrides,
   };
 }
 
 describe('BulletPoints', () => {
-  it('should render as a group with an accessible name from the `legend` prop', () => {
+  it('should render as a group with an accessible name and BEM classes', () => {
     render(<BulletPoints {...getProps()} />);
 
     const group = screen.getByRole('group', { name: 'Some Legend' });
+    const list = screen.getByRole('list');
 
     expect(group).toBeInTheDocument();
+    expect(group).toHaveClass('BulletPoints');
+    expect(list).toHaveClass('BulletPoints-List');
   });
 
   it('should render bullet points for each item in `data`', () => {
@@ -61,16 +63,16 @@ describe('BulletPoints', () => {
       });
 
       expect(inputField).toBeInTheDocument();
-      expect(inputField.id).toBe(id);
+      expect(inputField).toHaveAttribute('id', id);
     });
   });
 
-  it('should have no more bullet points than there are items', () => {
+  it('should render the exact number of listitems matching the items in data', () => {
     render(<BulletPoints {...getProps()} />);
 
-    const bulletPoints = screen.getByTestId('bullet-points');
+    const listitems = screen.getAllByRole('listitem');
 
-    expect(bulletPoints.children).toHaveLength(ITEMS.length);
+    expect(listitems).toHaveLength(ITEMS.length);
   });
 
   it('should call `handleFocusOnFirstElement` when the first bullet point drag handle is focused', () => {
@@ -103,15 +105,15 @@ describe('BulletPoints', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  it('should render the first three bullet points with placeholders from props `placeholder1`, `placeholder2` and `placeholder3` correspondingly', () => {
+  it('should render the first three bullet points with placeholders from props', () => {
     render(<BulletPoints {...getProps()} />);
 
     for (let i = 0; i < ITEMS.length; i++) {
-      const inputField: HTMLInputElement = screen.getByRole('textbox', {
+      const inputField = screen.getByRole('textbox', {
         name: `Bullet point ${i + 1}`,
       });
 
-      expect(inputField.placeholder).toBe(`Placeholder ${i + 1}`);
+      expect(inputField).toHaveAttribute('placeholder', `Placeholder ${i + 1}`);
     }
   });
 
@@ -119,16 +121,16 @@ describe('BulletPoints', () => {
     render(<BulletPoints {...getProps()} />);
 
     ITEMS.forEach(({ value }, i) => {
-      const inputField: HTMLInputElement = screen.getByRole('textbox', {
+      const inputField = screen.getByRole('textbox', {
         name: `Bullet point ${i + 1}`,
       });
 
-      expect(inputField.value).toBe(value);
+      expect(inputField).toHaveValue(value);
     });
   });
 
   it('should call `editItem` when a bullet point value is changed', async () => {
-    const editItemMock = jest.fn((_itemIndex: number, _value: string) => {});
+    const editItemMock = jest.fn();
     render(<BulletPoints {...getProps({ editItem: editItemMock })} />);
     const user = userEvent.setup();
 
@@ -142,7 +144,7 @@ describe('BulletPoints', () => {
     expect(editItemMock).toHaveBeenCalledWith(0, 'value 1s');
   });
 
-  it('should render drag handles with accessible names "Drag bullet point [index + 1]" for each bullet point', () => {
+  it('should render drag handles with accessible names for each bullet point', () => {
     render(<BulletPoints {...getProps()} />);
 
     for (let i = 0; i < ITEMS.length; i++) {
@@ -154,7 +156,7 @@ describe('BulletPoints', () => {
     }
   });
 
-  it('should announce "Picked up draggable item [index + 1]" to screen readers when the drag handle of a bullet point [index + 1] is clicked for the first time (in other words, on drag start)', async () => {
+  it('should announce drag start to screen readers when drag handle is pressed with Space', async () => {
     render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
@@ -170,9 +172,7 @@ describe('BulletPoints', () => {
     expect(a11yElement).toBeInTheDocument();
   });
 
-  // TODO: figure out how to test drag over. As far as I understand, it is impossible to do by the means of unit testing, at least in Jest.
-
-  it('should announce "Dragging was cancelled. Draggable item [index + 1] was put to its initial position." to screen readers when Escape is pressed during dragging', async () => {
+  it('should announce drag cancellation when Escape is pressed during dragging', async () => {
     render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
@@ -191,7 +191,7 @@ describe('BulletPoints', () => {
     expect(a11yElement).toBeInTheDocument();
   });
 
-  it('should announce "Draggable item [index + 1] was dropped over droppable area [droppableIndex + 1]" to screen readers when the dragged bullet point [index + 1] is dropped over droppable area [droppableIndex + 1]', async () => {
+  it('should announce drop when Space is pressed a second time', async () => {
     render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
@@ -210,7 +210,7 @@ describe('BulletPoints', () => {
     expect(a11yElement).toBeInTheDocument();
   });
 
-  it('should provide a screen reader instruction "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."', async () => {
+  it('should provide instructions for keyboard drag-and-drop via aria-describedby', async () => {
     render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
@@ -233,7 +233,7 @@ describe('BulletPoints', () => {
     );
   });
 
-  it('should render delete buttons with accessible names "Delete bullet point [index + 1]" for each bullet point', () => {
+  it('should render delete buttons with accessible names for each bullet point', () => {
     render(<BulletPoints {...getProps()} />);
 
     for (let i = 0; i < ITEMS.length; i++) {
@@ -246,7 +246,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `deleteItem` with a correct index when a delete button is pressed', async () => {
-    const deleteItemMock = jest.fn((_itemIndex: number) => {});
+    const deleteItemMock = jest.fn();
     render(<BulletPoints {...getProps({ deleteItem: deleteItemMock })} />);
     const user = userEvent.setup();
 
@@ -260,10 +260,8 @@ describe('BulletPoints', () => {
     expect(deleteItemMock).toHaveBeenCalledWith(0);
   });
 
-  it('should announce "Bullet point [index + 1] was deleted." to screen readers when a delete button is clicked', async () => {
-    const updateScreenReaderAnnouncementMock = jest.fn(
-      (_announcement: string) => {},
-    );
+  it('should announce deletion to screen readers when a delete button is clicked', async () => {
+    const updateScreenReaderAnnouncementMock = jest.fn();
 
     render(
       <BulletPoints
@@ -282,31 +280,33 @@ describe('BulletPoints', () => {
     await user.click(deleteBtn);
 
     expect(updateScreenReaderAnnouncementMock).toHaveBeenCalledTimes(1);
-
     expect(updateScreenReaderAnnouncementMock).toHaveBeenCalledWith(
       'Bullet point 1 was deleted.',
     );
   });
 
-  it("should render an add-button with an accessible name 'Add bullet point' if `itemName` isn't provided", () => {
-    render(<BulletPoints {...getProps()} />);
+  it.each([
+    {
+      expected: 'Add bullet point',
+      itemName: undefined,
+    },
+    {
+      expected: 'Add skill',
+      itemName: 'skill',
+    },
+  ])(
+    'should render add-button with accessible name "$expected" when itemName is $itemName',
+    ({ expected, itemName }) => {
+      render(<BulletPoints {...getProps({ itemName })} />);
 
-    const addBtn = screen.getByRole('button', {
-      name: 'Add bullet point',
-    });
+      const addBtn = screen.getByRole('button', {
+        name: expected,
+      });
 
-    expect(addBtn).toBeInTheDocument();
-  });
-
-  it('should render an add-button with an accessible name "Add [itemName]" if `itemName` is provided', () => {
-    render(<BulletPoints {...getProps({ itemName: 'something' })} />);
-
-    const addBtn = screen.getByRole('button', {
-      name: 'Add something',
-    });
-
-    expect(addBtn).toBeInTheDocument();
-  });
+      expect(addBtn).toBeInTheDocument();
+      expect(addBtn).toHaveClass('BulletPoints-Add');
+    },
+  );
 
   it('should call `addItem` when the add-button is clicked', async () => {
     const addItemMock = jest.fn();
@@ -355,7 +355,7 @@ describe('BulletPoints', () => {
     });
 
     const addBtn = screen.getByRole('button', {
-      name: `Add bullet point`,
+      name: 'Add bullet point',
     });
 
     deleteBtn.focus();
@@ -365,11 +365,9 @@ describe('BulletPoints', () => {
     expect(addBtn).toHaveFocus();
   });
 
-  it("should focus the previous bullet point's delete button if the last bullet point (that is not the only one) is deleted", async () => {
+  it("should focus the previous bullet point's delete button if the last bullet point is deleted", async () => {
     render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
-
-    // There are three bullet points.
 
     const secondBulletPointDeleteBtn = screen.getByRole('button', {
       name: 'Delete bullet point 2',
