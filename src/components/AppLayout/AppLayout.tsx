@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { KeyboardEvent, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { FocusEvent, KeyboardEvent, ReactNode } from 'react';
 
 import { clsx } from 'clsx';
 
@@ -53,8 +53,75 @@ export default function AppLayout({
 }: AppLayoutProps) {
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
 
+  const navBtnsRef = useRef<HTMLDivElement | null>(null);
+  const previousBtnRef = useRef<HTMLButtonElement | null>(null);
+  const nextBtnRef = useRef<HTMLButtonElement | null>(null);
+  const wasFocusedInsideRef = useRef(false);
+
   const canAddSections = activeSectionIds.length < possibleSectionIds.length;
   const openedSectionIndex = activeSectionIds.indexOf(openedSectionId);
+
+  /**
+   * Tracks pointer interactions outside the navigation buttons container to
+   * clear focus retention state when focus is deliberately moved elsewhere.
+   */
+  useEffect(() => {
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.target instanceof Node && !navBtnsRef.current?.contains(e.target)) {
+        wasFocusedInsideRef.current = false;
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, []);
+
+  /**
+   * Retains focus on an available navigation button when an active button
+   * unmounts during boundary navigation (e.g. navigating to the first section
+   * where the "Previous" button disappears or navigating to the final section
+   * where the "Next" button disappears).
+   */
+  useEffect(() => {
+    if (!wasFocusedInsideRef.current) {
+      return;
+    }
+
+    if (!navBtnsRef.current?.isConnected) {
+      return;
+    }
+
+    const isFocusStillInside = navBtnsRef.current.contains(
+      document.activeElement,
+    );
+
+    if (!isFocusStillInside) {
+      const target = previousBtnRef.current ?? nextBtnRef.current;
+
+      if (target?.isConnected) {
+        target.focus();
+      } else {
+        wasFocusedInsideRef.current = false;
+      }
+    }
+  });
+
+  const handleFocusCapture = () => {
+    wasFocusedInsideRef.current = true;
+  };
+
+  const handleBlurCapture = (e: FocusEvent<HTMLElement>) => {
+    if (
+      e.relatedTarget instanceof Node &&
+      e.relatedTarget !== document.body &&
+      !navBtnsRef.current?.contains(e.relatedTarget)
+    ) {
+      wasFocusedInsideRef.current = false;
+    }
+  };
 
   // Keyboard navigation.
   /**
@@ -123,13 +190,20 @@ export default function AppLayout({
         <h1 className="AppLayout-Title">{sectionTitles[openedSectionId]}</h1>
         <div className="AppLayout-SectionWrapper">
           {children}
-          <div className="AppLayout-NavBtns">
+          <div
+            className="AppLayout-NavBtns"
+            ref={navBtnsRef}
+            onBlurCapture={handleBlurCapture}
+            onFocusCapture={handleFocusCapture}
+          >
             {openedSectionIndex > 0 && (
               <Button
                 aria-label="Open Previous Section"
                 className="AppLayout-NavBtn"
                 id="previous-section"
+                key="previous-section"
                 modifiers={['Button_width_medium']}
+                ref={previousBtnRef}
                 onClick={() =>
                   openSection(activeSectionIds[openedSectionIndex - 1])
                 }
@@ -143,7 +217,9 @@ export default function AppLayout({
                   aria-label="Open Next Section"
                   className="AppLayout-NavBtn"
                   id="next-section"
+                  key="next-section"
                   modifiers={['Button_width_medium']}
+                  ref={nextBtnRef}
                   onClick={() =>
                     openSection(activeSectionIds[openedSectionIndex + 1])
                   }
