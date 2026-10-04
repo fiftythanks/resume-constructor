@@ -30,18 +30,7 @@ function getProps(overrides?: Partial<NavbarProps>): NavbarProps {
   return cloneDeep({ ...PROPS, ...overrides });
 }
 
-function PopupContainer() {
-  return <div id="popup-root" />;
-}
-
-function NavbarToggle() {
-  return <div aria-label="Navigation" id="toggle-navbar" />;
-}
-
 function renderComponents(navbarProps?: NavbarProps) {
-  render(<PopupContainer />);
-  render(<NavbarToggle />);
-
   if (navbarProps === undefined) {
     render(<Navbar {...getProps()} />);
   } else {
@@ -58,21 +47,40 @@ function getDeleteBtn(sectionId: SectionId) {
 }
 
 describe('Navbar', () => {
+  let popupRoot: HTMLDivElement;
+  let navbarToggle: HTMLDivElement;
+
+  beforeEach(() => {
+    popupRoot = document.createElement('div');
+    popupRoot.setAttribute('id', 'popup-root');
+    document.body.appendChild(popupRoot);
+
+    navbarToggle = document.createElement('div');
+    navbarToggle.setAttribute('id', 'toggle-navbar');
+    navbarToggle.setAttribute('aria-label', 'Navigation');
+    document.body.appendChild(navbarToggle);
+  });
+
+  afterEach(() => {
+    popupRoot.remove();
+    navbarToggle.remove();
+    jest.clearAllMocks();
+  });
+
   it('should render a navigation with an accessible name derived from an element with an ID "toggle-navbar"', () => {
     renderComponents();
 
     const nav = screen.getByRole('navigation', { name: 'Navigation' });
 
     expect(nav).toBeInTheDocument();
+    expect(nav).toHaveClass('Navbar');
   });
 
-  it('should use the prop `className` in its class', () => {
-    renderComponents(getProps({ className: 'bluh-bluh' }));
+  it('should apply custom className alongside BEM block class', () => {
+    renderComponents(getProps({ className: 'custom-class' }));
     const nav = screen.getByRole('navigation', { name: 'Navigation' });
 
-    const classList = nav.classList;
-
-    expect(classList).toContain('bluh-bluh');
+    expect(nav).toHaveClass('Navbar', 'custom-class');
   });
 
   describe('"Resume Sections" tablist', () => {
@@ -252,7 +260,7 @@ describe('Navbar', () => {
         expect(deleteEducationBtn).toHaveFocus();
       });
 
-      it("should foucs the previous deletable section's tab if the deleted section isn't the only deletable section and is the last deletable section", async () => {
+      it("should focus the previous deletable section's tab if the deleted section isn't the only deletable section and is the last deletable section", async () => {
         // Arrange
         const props = getProps({
           activeSectionIds: ['personal', 'skills', 'education'],
