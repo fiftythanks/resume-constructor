@@ -1,46 +1,60 @@
 import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
+import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
 
 import Links from './Links';
 
 import type { LinksProps } from './Links';
 
+type LinkField = 'github' | 'linkedin' | 'telegram' | 'website';
+type LinkType = 'link' | 'text';
+
+const DATA: LinksProps['data'] = {
+  github: {
+    link: 'https://github.com/johndoe/',
+    text: 'github.com/johndoe',
+  },
+  linkedin: {
+    link: 'https://linkedin.com/johndoe/',
+    text: 'linkedin.com/johndoe',
+  },
+  telegram: {
+    link: 'https://t.me/johndoe/',
+    text: '@johndoe',
+  },
+  website: {
+    link: 'https://johndoe.com/',
+    text: 'johndoe.com',
+  },
+};
+
+const FUNCTIONS: LinksProps['functions'] = {
+  updateLinks(_field: LinkField, _type: LinkType, _value: string) {},
+};
+
 function getProps(overrides?: Partial<LinksProps>): LinksProps {
   return {
-    data: {
-      github: {
-        link: '',
-        text: '',
-      },
-      linkedin: {
-        link: '',
-        text: '',
-      },
-      telegram: {
-        link: '',
-        text: '',
-      },
-      website: {
-        link: '',
-        text: '',
-      },
-    },
+    data: structuredClone(DATA),
     ref: { current: null },
-    functions: {
-      updateLinks(
-        _field: 'github' | 'linkedin' | 'telegram' | 'website',
-        _type: 'link' | 'text',
-        _value: string,
-      ) {},
-    },
+    functions: cloneDeep(FUNCTIONS),
     ...overrides,
   };
 }
 
 describe('Links', () => {
+  beforeEach(() => {
+    const labelledElement = document.createElement('div');
+    labelledElement.id = 'links';
+    labelledElement.setAttribute('aria-label', 'Links');
+    document.body.appendChild(labelledElement);
+  });
+
+  afterEach(() => {
+    document.getElementById('links')?.remove();
+  });
+
   it('should render as a tabpanel with an accessible name derived from an element with an ID "links"', () => {
-    render(<div aria-label="Links" id="links" />);
     render(<Links {...getProps()} />);
 
     const links = screen.getByRole('tabpanel', { name: 'Links' });
@@ -51,495 +65,101 @@ describe('Links', () => {
   it('should pass the section element to `ref.current`', () => {
     // Arrange
     const ref = { current: null };
-    const props = getProps({ ref });
-
-    render(<div aria-label="Links" id="links" />);
-    render(<Links {...props} />);
 
     // Act
+    render(<Links {...getProps({ ref })} />);
     const links = screen.getByRole('tabpanel');
 
     // Assert
     expect(ref.current).toBe(links);
   });
 
-  describe('Website', () => {
-    describe('Text', () => {
-      it("should render a text input for Website link's text", () => {
-        render(<div aria-label="Links" id="links" />);
+  describe('Link inputs', () => {
+    const testCases = [
+      ['Website (text)', 'website', 'text', 'johndoe.com', DATA.website.text],
+      [
+        'Website (link)',
+        'website',
+        'link',
+        'https://johndoe.com/',
+        DATA.website.link,
+      ],
+      [
+        'GitHub (text)',
+        'github',
+        'text',
+        'github.com/johndoe',
+        DATA.github.text,
+      ],
+      [
+        'GitHub (link)',
+        'github',
+        'link',
+        'https://github.com/johndoe/',
+        DATA.github.link,
+      ],
+      [
+        'LinkedIn (text)',
+        'linkedin',
+        'text',
+        'linkedin.com/johndoe',
+        DATA.linkedin.text,
+      ],
+      [
+        'LinkedIn (link)',
+        'linkedin',
+        'link',
+        'https://linkedin.com/johndoe/',
+        DATA.linkedin.link,
+      ],
+      ['Telegram (text)', 'telegram', 'text', '@johndoe', DATA.telegram.text],
+      [
+        'Telegram (link)',
+        'telegram',
+        'link',
+        'https://t.me/johndoe/',
+        DATA.telegram.link,
+      ],
+    ] as const;
+
+    it.each(testCases)(
+      'should render %s input with placeholder and value',
+      (name, _field, _type, placeholder, expectedValue) => {
+        // Arrange & Act
         render(<Links {...getProps()} />);
+        const input = screen.getByRole('textbox', { name });
 
-        const input = screen.getByRole('textbox', { name: 'Website (text)' });
-
+        // Assert
         expect(input).toBeInTheDocument();
-      });
+        expect(input).toHaveAttribute('placeholder', placeholder);
+        expect(input).toHaveValue(expectedValue);
+      },
+    );
 
-      it("should have the correct value from `data` for Website link's text", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Website (text)',
-        });
-
-        expect(input.value).toBe(props.data.website.text);
-      });
-
-      it("should have a placeholder 'johndoe.com' for Website link's text", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Website (text)',
-        });
-
-        expect(input.placeholder).toBe('johndoe.com');
-      });
-
-      it("should call `updateLinks` when Website link's text is changed via the corresponding text input", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
-        );
-
+    it.each(testCases)(
+      'should call `updateLinks(field, type, value)` when %s is edited',
+      async (name, field, type, _placeholder, expectedValue) => {
+        // Arrange
+        const updateLinksMock = jest.fn<void, [LinkField, LinkType, string]>();
         render(
           <Links
             {...getProps({ functions: { updateLinks: updateLinksMock } })}
           />,
         );
-
         const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Website (text)' });
+        const input = screen.getByRole('textbox', { name });
 
+        // Act
         await user.type(input, 's');
 
+        // Assert
         expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('URL', () => {
-      it("should render a text input for Website link's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input = screen.getByRole('textbox', { name: 'Website (link)' });
-
-        expect(input).toBeInTheDocument();
-      });
-
-      it("should have the correct value from `data` for Website link's URL", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Website (link)',
-        });
-
-        expect(input.value).toBe(props.data.website.link);
-      });
-
-      it("should have a placeholder 'https://johndoe.com/' for Website link's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Website (link)',
-        });
-
-        expect(input.placeholder).toBe('https://johndoe.com/');
-      });
-
-      it("should call `updateLinks` when Website link's URL is changed via the corresponding text input", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
+        expect(updateLinksMock).toHaveBeenCalledWith(
+          field,
+          type,
+          `${expectedValue}s`,
         );
-
-        render(
-          <Links
-            {...getProps({ functions: { updateLinks: updateLinksMock } })}
-          />,
-        );
-
-        const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Website (link)' });
-
-        await user.type(input, 's');
-
-        expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-
-  describe('GitHub', () => {
-    describe('Text', () => {
-      it("should render a text input for GitHub link's text", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input = screen.getByRole('textbox', { name: 'GitHub (text)' });
-
-        expect(input).toBeInTheDocument();
-      });
-
-      it("should have the correct value from `data` for GitHub's text", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'GitHub (text)',
-        });
-
-        expect(input.value).toBe(props.data.github.text);
-      });
-
-      it("should have a placeholder 'github.com/johndoe' for GitHub's text", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'GitHub (text)',
-        });
-
-        expect(input.placeholder).toBe('github.com/johndoe');
-      });
-
-      it("should call `updateLinks` when GitHub link's text is changed via the corresponding text input", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
-        );
-
-        render(
-          <Links
-            {...getProps({ functions: { updateLinks: updateLinksMock } })}
-          />,
-        );
-
-        const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'GitHub (text)' });
-
-        await user.type(input, 's');
-
-        expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('URL', () => {
-      it("should render a text input for GitHub link's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input = screen.getByRole('textbox', { name: 'GitHub (link)' });
-
-        expect(input).toBeInTheDocument();
-      });
-
-      it("should have the correct value from `data` for GitHub's URL", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'GitHub (link)',
-        });
-
-        expect(input.value).toBe(props.data.github.link);
-      });
-
-      it("should have a placeholder 'https://github.com/johndoe/' for GitHub's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'GitHub (link)',
-        });
-
-        expect(input.placeholder).toBe('https://github.com/johndoe/');
-      });
-
-      it("should call `updateLinks` when GitHub link's URL is changed via the corresponding text input", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
-        );
-
-        render(
-          <Links
-            {...getProps({ functions: { updateLinks: updateLinksMock } })}
-          />,
-        );
-
-        const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'GitHub (link)' });
-
-        await user.type(input, 's');
-
-        expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-
-  describe('LinkedIn', () => {
-    describe('Text', () => {
-      it("should render a text input for LinkedIn link's text", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input = screen.getByRole('textbox', { name: 'LinkedIn (text)' });
-
-        expect(input).toBeInTheDocument();
-      });
-
-      it("should have the correct value from `data` for LinkedIn link's text", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'LinkedIn (text)',
-        });
-
-        expect(input.value).toBe(props.data.linkedin.text);
-      });
-
-      it("should have a placeholder 'linkedin.com/johndoe' for LinkedIn link's text", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'LinkedIn (text)',
-        });
-
-        expect(input.placeholder).toBe('linkedin.com/johndoe');
-      });
-
-      it("should call `updateLinks` when LinkedIn link's text is changed via the corresponding text input", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
-        );
-
-        render(
-          <Links
-            {...getProps({ functions: { updateLinks: updateLinksMock } })}
-          />,
-        );
-
-        const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'LinkedIn (text)' });
-
-        await user.type(input, 's');
-
-        expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('URL', () => {
-      it("should render a text input for LinkedIn link's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input = screen.getByRole('textbox', { name: 'LinkedIn (link)' });
-
-        expect(input).toBeInTheDocument();
-      });
-
-      it("should have the correct value from `data` for LinkedIn link's URL", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'LinkedIn (link)',
-        });
-
-        expect(input.value).toBe(props.data.linkedin.link);
-      });
-
-      it("should have a placeholder 'https://linkedin.com/johndoe/' for LinkedIn link's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'LinkedIn (link)',
-        });
-
-        expect(input.placeholder).toBe('https://linkedin.com/johndoe/');
-      });
-
-      it("should call `updateLinks` when LinkedIn link's URL is changed", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
-        );
-
-        render(
-          <Links
-            {...getProps({ functions: { updateLinks: updateLinksMock } })}
-          />,
-        );
-
-        const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'LinkedIn (link)' });
-
-        await user.type(input, 's');
-
-        expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-
-  describe('Telegram', () => {
-    describe('Text', () => {
-      it("should render a text input for Telegram link's text", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input = screen.getByRole('textbox', { name: 'Telegram (text)' });
-
-        expect(input).toBeInTheDocument();
-      });
-
-      it("should have the correct value from `data` for Telegram link's text", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Telegram (text)',
-        });
-
-        expect(input.value).toBe(props.data.telegram.text);
-      });
-
-      it("should have a placeholder '@johndoe' for Telegram link's text", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Telegram (text)',
-        });
-
-        expect(input.placeholder).toBe('@johndoe');
-      });
-
-      it("should call `updateLinks` when Telegram link's text is changed via the corresponding text input", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
-        );
-
-        render(
-          <Links
-            {...getProps({ functions: { updateLinks: updateLinksMock } })}
-          />,
-        );
-
-        const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Telegram (text)' });
-
-        await user.type(input, 's');
-
-        expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('URL', () => {
-      it("should render a text input for Telegram link's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input = screen.getByRole('textbox', { name: 'Telegram (link)' });
-
-        expect(input).toBeInTheDocument();
-      });
-
-      it("should have the correct value from `data` for Telegram link's URL", () => {
-        const props = getProps();
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...props} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Telegram (link)',
-        });
-
-        expect(input.value).toBe(props.data.telegram.link);
-      });
-
-      it("should have a placeholder 'https://t.me/johndoe/' for Telegram link's URL", () => {
-        render(<div aria-label="Links" id="links" />);
-        render(<Links {...getProps()} />);
-
-        const input: HTMLInputElement = screen.getByRole('textbox', {
-          name: 'Telegram (link)',
-        });
-
-        expect(input.placeholder).toBe('https://t.me/johndoe/');
-      });
-
-      it("should call `updateLinks` when Telegram link's URL is changed via the corresponding text input", async () => {
-        render(<div aria-label="Links" id="links" />);
-
-        const updateLinksMock = jest.fn(
-          (
-            _field: 'github' | 'linkedin' | 'telegram' | 'website',
-            _type: 'link' | 'text',
-            _value: string,
-          ) => {},
-        );
-
-        render(
-          <Links
-            {...getProps({ functions: { updateLinks: updateLinksMock } })}
-          />,
-        );
-
-        const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Telegram (link)' });
-
-        await user.type(input, 's');
-
-        expect(updateLinksMock).toHaveBeenCalledTimes(1);
-      });
-    });
+      },
+    );
   });
 });
