@@ -84,6 +84,9 @@
 - **Responsive Strategy:**
   - Internal component scaling MUST use CSS Container Queries (`@container`).
   - `@media` queries are reserved exclusively for macro-layout changes in `AppLayout`.
+- **SCSS vs CSS Comment Standards:**
+  - **Sass/SCSS-only constructs** (e.g. Sass `$variables`, `@mixin`, `@function` and Sass control directives): Because these constructs are compiled away and do not exist in the final CSS output, comments documenting them MUST use silent comments (`//`), even when spanning multiple lines. This ensures notes on Sass-specific internals are stripped and never leak into the compiled CSS bundle.
+  - **Native CSS constructs** (e.g. CSS rules, BEM selectors, property declarations, CSS custom properties `--*`, `@keyframes` and `@container` queries): Because these constructs exist directly in the final CSS output, comments documenting them MUST use standard CSS comments (`/* ... */`) so documentation remains attached to the actual CSS code in the compiled stylesheet.
 
 ---
 

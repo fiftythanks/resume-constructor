@@ -119,10 +119,13 @@ Rule mandates explicit `htmlFor` association:
 
 ---
 
-### F. SCSS Stylelint Rules
+### F. SCSS Stylelint & Comment Rules
 
 - **Concentric Order:** Properties must be sorted: Positioning (`position`, `top`) -> Box Model (`display`, `width`, `margin`, `padding`, `border`) -> Typography (`font`, `color`, `text-align`) -> Visual (`background`, `opacity`) -> Misc (`cursor`, `transition`).
 - **Max Nesting Depth 3:** Flatten SCSS selectors that exceed 3 levels of nesting.
+- **SCSS vs CSS Comments:**
+  - For Sass/SCSS-only constructs (Sass `$variables`, `@mixin`, `@function` and control directives): Use silent comments (`//`), even when multi-line, so they are not emitted into the compiled CSS bundle.
+  - For native CSS constructs (rules, selectors, properties, `--*` custom properties, `@keyframes` and `@container` queries): Use standard CSS comments (`/* ... */`) so documentation remains in the compiled CSS stylesheet.
 - **Auto-fix:** Run `bun x stylelint "src/**/*.scss" --fix`.
 
 ---
