@@ -11,6 +11,7 @@ import {
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
+import { resetLastComponentBeforeTabpanel } from '@/hooks/useLastComponentBeforeTabpanel';
 import getFilledData from '@/hooks/useResumeData/getFilledData';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
@@ -67,6 +68,10 @@ async function renderAppWithNavbarAndControlsExpanded() {
 }
 
 describe('App', () => {
+  beforeEach(() => {
+    resetLastComponentBeforeTabpanel();
+  });
+
   it('should announce to screen readers when a bullet point is deleted', async () => {
     // Arrange
     const result = await renderAppWithNavbarExpanded();
@@ -1280,6 +1285,39 @@ describe('App', () => {
         });
 
         expect(nextBtn).not.toHaveFocus();
+      });
+
+      it('should focus the active section tab on Shift + Tab when focus originated from the navbar and sections were switched', async () => {
+        // Arrange
+        const { fillAllBtn, navbar, user } =
+          await renderAppWithNavbarAndControlsExpanded();
+
+        await user.click(fillAllBtn);
+
+        const personalTab = getByRole(navbar, 'tab', {
+          name: sectionTitles.personal,
+        });
+        personalTab.focus();
+
+        await user.tab();
+
+        const nextSectionBtn = screen.getByRole('button', {
+          name: 'Open Next Section',
+        });
+        await user.click(nextSectionBtn);
+
+        const firstTabbableLinks = screen.getByLabelText('Website (text)');
+        firstTabbableLinks.focus();
+
+        // Act
+        await user.tab({ shift: true });
+
+        // Assert
+        const linksTab = getByRole(navbar, 'tab', {
+          name: sectionTitles.links,
+        });
+
+        expect(linksTab).toHaveFocus();
       });
     });
   });

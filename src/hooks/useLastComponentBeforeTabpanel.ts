@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import type { FocusEvent, KeyboardEvent } from 'react';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
@@ -6,18 +5,32 @@ import possibleSectionIds from '@/utils/possibleSectionIds';
 import type { SectionId } from '@/types/resumeData';
 import type { OverrideProperties, ReadonlyDeep } from 'type-fest';
 
+export type ToolbarButtonId =
+  | 'delete-all'
+  | 'fill-all'
+  | 'preview'
+  | 'toolbar-toggle';
+
 export interface RelevantLastComponent<
-  Section extends SectionId,
+  Section extends SectionId = SectionId,
 > extends HTMLButtonElement {
-  id: 'delete-all' | 'fill-all' | 'preview' | 'toolbar-toggle' | Section;
+  id: Section | ToolbarButtonId;
 }
 
-function isRelevantLastComponent<Section extends SectionId>(
+/**
+ * Type assertion is required because `possibleSectionIds` is typed as `SectionIds`
+ * (`SectionId[]`) and `Array.prototype.includes` restricts its argument to `SectionId`.
+ */
+function isSectionId(id: string): id is SectionId {
+  return possibleSectionIds.includes(id as SectionId);
+}
+
+function isRelevantLastComponent<Section extends SectionId = SectionId>(
   component: Element | null,
 ): component is RelevantLastComponent<Section> {
   return (
     component instanceof HTMLButtonElement &&
-    (possibleSectionIds.includes(component.id as SectionId) ||
+    (isSectionId(component.id) ||
       component.id === 'preview' ||
       component.id === 'delete-all' ||
       component.id === 'fill-all' ||
@@ -26,7 +39,7 @@ function isRelevantLastComponent<Section extends SectionId>(
 }
 
 export interface RelevantFocusEvent<
-  Section extends SectionId,
+  Section extends SectionId = SectionId,
 > extends FocusEvent<RelevantLastComponent<Section>> {
   nativeEvent: OverrideProperties<
     FocusEvent<RelevantLastComponent<Section>>['nativeEvent'],
@@ -35,7 +48,7 @@ export interface RelevantFocusEvent<
   relatedTarget: RelevantLastComponent<Section>;
 }
 
-function isRelevantFocusEvent<Section extends SectionId>(
+function isRelevantFocusEvent<Section extends SectionId = SectionId>(
   e: FocusEvent<HTMLElement>,
 ): e is RelevantFocusEvent<Section> {
   return (
@@ -56,20 +69,40 @@ export interface RelevantKeyboardEvent extends KeyboardEvent {
 export type HandleFocus = (e: FocusEvent<HTMLElement>) => void;
 export type HandleKeyboard = (e: KeyboardEvent) => void;
 
+let lastComponent: null | RelevantLastComponent = null;
+
 /**
- * FIXME: Captures the component only when the focus moves to the first tabbable
- * element, while the logic is actually that it doesn't matter where focus moves
- * inside the tabpanel as soon as it moves into the tabpanel.
+ * Resets the tracked last component before the tabpanel.
+ * Provided for test cleanup to ensure isolation across test cases.
  */
+export function resetLastComponentBeforeTabpanel(): void {
+  lastComponent = null;
+}
+
 /**
- * FIXME: Doesn't capture the navbar toggle button or anything at all on the
- * navbar side.
+ * Determines whether focus movement represents internal navigation within the
+ * active section wrapper, tabpanel or navigation controls.
  */
+function isInternalNavigation(element: Element | null): boolean {
+  if (!element) {
+    return false;
+  }
+
+  return (
+    element.closest('.AppLayout-SectionWrapper') !== null ||
+    element.closest('[role="tabpanel"]') !== null ||
+    element.closest('.section') !== null ||
+    element.closest('.AppLayout-NavBtns') !== null
+  );
+}
+
 /**
  * Captures the last component that had focus before it moved to the tabpanel.
- * Returns to that component when `Shift+Tab` is pressed while focused on the
+ * Returns to that component (or the currently active section tab if focus
+ * originated from the navbar) when "Shift+Tab" is pressed while focused on the
  * first tabbable element of the tabpanel.
  *
+ * @param sectionId The identifier of the section whose tabpanel is controlled.
  * @returns captureLastComponentBeforeTabpanel Function that must be passed to
  * the first tabbable component as a "focus" event handler.
  * @returns focusLastComponentBeforeTabpanel Function that must be passed to
@@ -79,13 +112,19 @@ function useLastComponentBeforeTabpanel(sectionId: SectionId): ReadonlyDeep<{
   captureLastComponentBeforeTabpanel: HandleFocus;
   focusLastComponentBeforeTabpanel: HandleKeyboard;
 }> {
-  const lastComponent = useRef<RelevantLastComponent<typeof sectionId>>(null);
-
   const captureLastComponentBeforeTabpanel: HandleFocus = (e) => {
-    if (!isRelevantFocusEvent<typeof sectionId>(e)) return;
+    if (isRelevantFocusEvent(e)) {
+      if (e.relatedTarget.isConnected) {
+        lastComponent = e.relatedTarget;
+      }
+      return;
+    }
 
-    // TODO: Verify whether `e.relatedTarget` remains attached to the DOM (`isConnected`) across re-renders before capturing.
-    lastComponent.current = e.relatedTarget;
+    if (isInternalNavigation(e.relatedTarget)) {
+      return;
+    }
+
+    lastComponent = null;
   };
 
   function isRelevantKeyboardEvent(
@@ -97,18 +136,19 @@ function useLastComponentBeforeTabpanel(sectionId: SectionId): ReadonlyDeep<{
   }
 
   const focusLastComponentBeforeTabpanel: HandleKeyboard = (e) => {
-    if (
-      !isRelevantKeyboardEvent(e) ||
-      lastComponent.current === null ||
-      // NOTE: We aren't interested in other elements here because the tab with this ID is the only element that needs this handling; the rest handle focus naturally, without such interventions. But I decided to keep track of the rest of relevant elements in any case; who knows where it's going to be useful.
-      lastComponent.current.id !== sectionId
-    ) {
+    if (!isRelevantKeyboardEvent(e) || lastComponent === null) {
       return;
     }
 
-    e.preventDefault();
-    // TODO: Verify `lastComponent.current.isConnected` prior to calling `.focus()` to prevent focus drops when the captured element has unmounted.
-    lastComponent.current.focus();
+    if (isSectionId(lastComponent.id)) {
+      const activeTab = document.getElementById(sectionId);
+
+      if (activeTab && activeTab.isConnected) {
+        e.preventDefault();
+        activeTab.focus();
+      }
+      return;
+    }
   };
 
   return {
