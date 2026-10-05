@@ -3,9 +3,9 @@
 @layer blocks {
   .AppLayout {
     /**
-   * `--title-height` is 2.75rem because the title is 1.75rem, and it seems that
-   * 0.5ram block padding is the best choice here, at least to my eye.
-   */
+     * `--title-height` is 2.75rem because the title is 1.75rem, and it seems that
+     * 0.5ram block padding is the best choice here, at least to my eye.
+     */
     --title-height: 2.75rem;
     --row-gap: 1rem;
     --column-gap: 1rem;
@@ -13,8 +13,11 @@
     --block-padding: 1rem;
     // TODO: Replace `$appbar-block-size` with this custom property everywhere.
     --appbar-block-size: #{v.$appbar-block-size};
-    // TODO: Replace `$appbar-icon-button-size` with this custom property everywhere.
-    --appbar-item-size: #{v.$appbar-icon-button-size};
+    /**
+     * TODO: Pick one (either `--appbar-item-size` or `--appbar-icon-button-size`)
+     * and stick with it.
+     */
+    --appbar-item-size: var(--appbar-icon-button-size);
 
     display: grid;
     grid-template-areas:
