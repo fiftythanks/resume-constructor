@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, RefObject } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
 
@@ -8,6 +8,7 @@ import type { ReadonlyDeep } from 'type-fest';
 
 export interface ProjectProps {
   data: ReadonlyDeep<Project>;
+  firstFormFieldRef: RefObject<HTMLInputElement | null>;
   functions: ReadonlyDeep<ProjectFunctions>;
   updateScreenReaderAnnouncement: ReadonlyDeep<(announcement: string) => void>;
 }
@@ -18,6 +19,7 @@ export interface ProjectProps {
  */
 export default function Project({
   data,
+  firstFormFieldRef,
   functions,
   updateScreenReaderAnnouncement,
 }: ProjectProps) {
@@ -51,6 +53,7 @@ export default function Project({
             id="project-name"
             name="projectName"
             placeholder="TravelPlanner"
+            ref={firstFormFieldRef}
             type="text"
             value={data.projectName}
             onChange={handleTextChange}

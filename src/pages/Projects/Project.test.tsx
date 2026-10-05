@@ -4,9 +4,11 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
+import type { RefObject } from 'react';
+
 import { getByRole, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 
 import Project from './Project';
 
@@ -15,6 +17,8 @@ import type { ItemWithId } from '@/types/resumeData';
 
 function getProps(overrides?: Partial<ProjectProps>): ProjectProps {
   return {
+    firstFormFieldRef: { current: null },
+    updateScreenReaderAnnouncement(_announcement: string) {},
     data: {
       //! Must be no less than 3 for this test suite.
       bulletPoints: [
@@ -31,22 +35,18 @@ function getProps(overrides?: Partial<ProjectProps>): ProjectProps {
           value: 'Bullet point 3',
         },
       ],
-
       code: {
         link: 'Code link URL',
         text: 'Code link text',
       },
-
       demo: {
         link: 'Demo link URL',
         text: 'Demo link text',
       },
-
       id: crypto.randomUUID(),
       projectName: 'Project Name',
       stack: 'The best stack',
     },
-
     functions: {
       addBulletPoint() {},
       deleteBulletPoint(_itemIndex: number) {},
@@ -61,13 +61,24 @@ function getProps(overrides?: Partial<ProjectProps>): ProjectProps {
       editText(_field: 'projectName' | 'stack', _value: string) {},
       updateBulletPoints(_value: ItemWithId[]) {},
     },
-
-    updateScreenReaderAnnouncement(_announcement: string) {},
     ...overrides,
   };
 }
 
 describe('Project', () => {
+  it('should assign the Project Name input field to `firstFormFieldRef.current`', () => {
+    const firstFormFieldRef: RefObject<HTMLInputElement | null> = {
+      current: null,
+    };
+    render(<Project {...getProps({ firstFormFieldRef })} />);
+
+    const projectNameField = screen.getByRole('textbox', {
+      name: 'Project Name',
+    });
+
+    expect(firstFormFieldRef.current).toBe(projectNameField);
+  });
+
   describe('Project Name', () => {
     it('should render a text input for Project Name', () => {
       render(<Project {...getProps()} />);

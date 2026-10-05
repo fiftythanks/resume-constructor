@@ -3,10 +3,12 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
+import { RefObject } from 'react';
+
 import { getByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
+import cloneDeep from 'lodash/cloneDeep';
 
 import Degree from './Degree';
 
@@ -50,6 +52,7 @@ const FUNCTIONS: DegreeFunctions = {
 function getProps(overrides?: Partial<DegreeProps>): DegreeProps {
   return {
     data: structuredClone(DATA),
+    firstFormFieldRef: { current: null },
     functions: cloneDeep(FUNCTIONS),
     updateScreenReaderAnnouncement(_announcement: string) {},
     ...overrides,
@@ -61,6 +64,19 @@ function getInput(name: string): HTMLInputElement {
 }
 
 describe('Degree', () => {
+  it('should assign the University Name input field to `firstFormFieldRef.current`', () => {
+    const firstFormFieldRef: RefObject<HTMLInputElement | null> = {
+      current: null,
+    };
+    render(<Degree {...getProps({ firstFormFieldRef })} />);
+
+    const universityNameField = screen.getByRole('textbox', {
+      name: 'University Name',
+    });
+
+    expect(firstFormFieldRef.current).toBe(universityNameField);
+  });
+
   describe('Fields', () => {
     describe('University Name', () => {
       it('should render a text input for University Name', () => {
