@@ -12,8 +12,11 @@
   --block-padding: 1rem;
   // TODO: Replace `$appbar-block-size` with this custom property everywhere.
   --appbar-block-size: #{v.$appbar-block-size};
-  // TODO: Replace `$appbar-icon-button-size` with this custom property everywhere.
-  --appbar-item-size: #{v.$appbar-icon-button-size};
+  /**
+   * TODO: Pick one (either `--appbar-item-size` or `--appbar-icon-button-size`)
+   * and stick with it.
+   */
+  --appbar-item-size: var(--appbar-icon-button-size);
 
   display: grid;
   grid-template-areas:
