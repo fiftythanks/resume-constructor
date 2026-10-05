@@ -218,6 +218,7 @@ describe('MyComponent', () => {
    - **Specialised DOM Matchers:** Always use `@testing-library/jest-dom` matchers (e.g. `toHaveFocus()`) rather than manual property checks on `document.activeElement`.
    - **Style Verification:** Verify that components apply their required BEM classes using `toHaveClass(...)`.
    - **Assertion Guarantees:** Use `expect.hasAssertions()` in asynchronous and event-driven tests.
+   - **Component-Level Acceptance Scope:** Only author acceptance tests for complex stateful organisms, flow gates or compound widgets that represent a distinct user capability. Never author acceptance tests for presentational or leaf components, and never create dummy stateful wrappers inside test files to mimic external state machines.
 
 ### Verification Step:
 
