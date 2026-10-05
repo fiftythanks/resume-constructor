@@ -138,6 +138,7 @@ describe('App', () => {
     expect(appLayout).toBeInTheDocument();
   });
 
+  // TODO: WTH? PARAMETRISE!!!
   describe("Tabbing to tabpanels' first tabbable elements", () => {
     it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.personal} tab`, async () => {
       // Arrange
@@ -354,6 +355,140 @@ describe('App', () => {
       // Assert
       expect(firstTabbable).toHaveFocus();
     });
+  });
+
+  describe('Focus retention', () => {
+    const cases = [
+      {
+        itemName: 'Job',
+        sectionTitle: sectionTitles.experience,
+      },
+      {
+        itemName: 'Project',
+        sectionTitle: sectionTitles.projects,
+      },
+      {
+        itemName: 'Degree',
+        sectionTitle: sectionTitles.education,
+      },
+    ];
+
+    it.each(cases)(
+      'should retain focus on the Add button when deleting an item down to one in $sectionTitle',
+      async ({ itemName, sectionTitle }) => {
+        const result = await renderAppWithNavbarExpanded();
+        const { addSectionsBtn, navbar, user } = result;
+
+        await user.click(addSectionsBtn);
+
+        const addSectionBtn = screen.getByRole('button', {
+          name: `Add ${sectionTitle}`,
+        });
+        await user.click(addSectionBtn);
+
+        const closeDialogBtn = screen.getByRole('button', {
+          name: 'Close Popup',
+        });
+        await user.click(closeDialogBtn);
+
+        const tab = getByRole(navbar, 'tab', { name: sectionTitle });
+        await user.click(tab);
+
+        const addBtn = screen.getByRole('button', {
+          name: `Add ${itemName} 2`,
+        });
+        await user.click(addBtn);
+        const deleteBtn = screen.getByRole('button', {
+          name: `Delete ${itemName} 2`,
+        });
+
+        await user.click(deleteBtn);
+
+        expect(
+          screen.getByRole('button', { name: `Add ${itemName} 2` }),
+        ).toHaveFocus();
+      },
+    );
+
+    it.each(cases)(
+      'should retain focus on the Previous button when navigating forward to the last item in $sectionTitle',
+      async ({ itemName, sectionTitle }) => {
+        const result = await renderAppWithNavbarExpanded();
+        const { addSectionsBtn, navbar, user } = result;
+
+        await user.click(addSectionsBtn);
+
+        const addSectionBtn = screen.getByRole('button', {
+          name: `Add ${sectionTitle}`,
+        });
+        await user.click(addSectionBtn);
+
+        const closeDialogBtn = screen.getByRole('button', {
+          name: 'Close Popup',
+        });
+        await user.click(closeDialogBtn);
+
+        const tab = getByRole(navbar, 'tab', { name: sectionTitle });
+        await user.click(tab);
+
+        const addBtn = screen.getByRole('button', {
+          name: `Add ${itemName} 2`,
+        });
+        await user.click(addBtn);
+
+        const prevBtn = screen.getByRole('button', {
+          name: `Show Previous ${itemName}`,
+        });
+        await user.click(prevBtn);
+
+        const nextBtn = screen.getByRole('button', {
+          name: `Show Next ${itemName}`,
+        });
+        await user.click(nextBtn);
+
+        expect(
+          screen.getByRole('button', { name: `Show Previous ${itemName}` }),
+        ).toHaveFocus();
+      },
+    );
+
+    it.each(cases)(
+      'should retain focus on the Next button when navigating back to the first item in $sectionTitle',
+      async ({ itemName, sectionTitle }) => {
+        const result = await renderAppWithNavbarExpanded();
+        const { addSectionsBtn, navbar, user } = result;
+
+        await user.click(addSectionsBtn);
+
+        const addSectionBtn = screen.getByRole('button', {
+          name: `Add ${sectionTitle}`,
+        });
+        await user.click(addSectionBtn);
+
+        const closeDialogBtn = screen.getByRole('button', {
+          name: 'Close Popup',
+        });
+        await user.click(closeDialogBtn);
+
+        const tab = getByRole(navbar, 'tab', { name: sectionTitle });
+        await user.click(tab);
+
+        const addBtn = screen.getByRole('button', {
+          name: `Add ${itemName} 2`,
+        });
+        await user.click(addBtn);
+
+        const prevBtn = screen.getByRole('button', {
+          name: `Show Previous ${itemName}`,
+        });
+
+        await user.click(prevBtn);
+
+        expect(
+          screen.getByRole('button', { name: `Show Next ${itemName}` }),
+        ).toHaveFocus();
+      },
+    );
   });
 
   describe('AppLayout', () => {

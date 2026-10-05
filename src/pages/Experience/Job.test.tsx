@@ -4,10 +4,12 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
+import { RefObject } from 'react';
+
 import { getByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
+import cloneDeep from 'lodash/cloneDeep';
 
 import Job from './Job';
 
@@ -57,6 +59,7 @@ function getProps(overrides?: Partial<JobProps>): JobProps {
   return {
     // TODO: data and functions should be clones of DATA and FUNCITONS, not literally them... I guess `Project.test` has the same problem. Refactor.
     data: DATA,
+    firstFormFieldRef: { current: null },
     functions: FUNCTIONS,
     updateScreenReaderAnnouncement(_announcement: string) {},
     ...overrides,
@@ -64,6 +67,19 @@ function getProps(overrides?: Partial<JobProps>): JobProps {
 }
 
 describe('Job', () => {
+  it('should assign the Company Name input field to `firstFormFieldRef.current`', () => {
+    const firstFormFieldRef: RefObject<HTMLInputElement | null> = {
+      current: null,
+    };
+    render(<Job {...getProps({ firstFormFieldRef })} />);
+
+    const companyNameField = screen.getByRole('textbox', {
+      name: 'Company Name',
+    });
+
+    expect(firstFormFieldRef.current).toBe(companyNameField);
+  });
+
   describe('Company Name', () => {
     const name = 'Company Name';
 

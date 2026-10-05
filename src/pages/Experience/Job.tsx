@@ -1,13 +1,14 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, RefObject } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
 
 import type { JobFunctions } from './Experience';
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Job } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 export interface JobProps {
   data: Job;
+  firstFormFieldRef: RefObject<HTMLInputElement | null>;
   functions: JobFunctions;
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
@@ -18,9 +19,10 @@ export interface JobProps {
  */
 export default function Job({
   data,
+  firstFormFieldRef,
   functions,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<JobProps>) {
+}: ReadonlyExcept<JobProps, 'firstFormFieldRef'>) {
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     const { name: field, value } = e.target as {
       name: 'address' | 'companyName' | 'duration' | 'jobTitle';
@@ -42,6 +44,7 @@ export default function Job({
             id="company-name"
             name="companyName"
             placeholder="Google"
+            ref={firstFormFieldRef}
             type="text"
             value={data.companyName}
             onChange={handleInputChange}

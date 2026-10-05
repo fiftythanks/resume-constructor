@@ -1,13 +1,14 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, RefObject } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
 
 import type { DegreeFunctions } from './Education';
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 import type { Degree } from '@/types/resumeData';
-import type { ReadonlyDeep } from 'type-fest';
 
 export interface DegreeProps {
   data: Degree;
+  firstFormFieldRef: RefObject<HTMLInputElement | null>;
   functions: DegreeFunctions;
   updateScreenReaderAnnouncement: (announcement: string) => void;
 }
@@ -18,9 +19,10 @@ export interface DegreeProps {
  */
 export default function Degree({
   data,
+  firstFormFieldRef,
   functions,
   updateScreenReaderAnnouncement,
-}: ReadonlyDeep<DegreeProps>) {
+}: ReadonlyExcept<DegreeProps, 'firstFormFieldRef'>) {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name: field, value } = e.target as {
       name: 'address' | 'degree' | 'graduation' | 'uni';
@@ -42,6 +44,7 @@ export default function Degree({
             id="university-name"
             name="uni"
             placeholder="e.g. University of California, Berkeley"
+            ref={firstFormFieldRef}
             type="text"
             value={data.uni}
             onChange={handleInputChange}
