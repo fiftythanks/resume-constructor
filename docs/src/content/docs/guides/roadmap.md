@@ -30,12 +30,6 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ## 2. Core Fixes & Stability
 
-### Focus Management Continuity (Completed)
-
-- **Status:** Resolved in commit `25b0825` (`feat(components): extract SectionItemHeader`).
-- **Resolution Summary:** Extracted the reusable `SectionItemHeader` component across Education, Experience and Projects forms. Implemented programmatic focus retention using React refs (`localHeaderRef`) guarded by `isConnected` checks to return focus to the newly activated card or the primary add action upon item deletion and boundary navigation, eliminating focus drops to `document.body`.
-- **Sources:** `src/components/SectionItemHeader/SectionItemHeader.tsx:104–134`
-
 ### DOM Attachment & `isConnected` Guards
 
 - **Current Issue:** Multiple event listeners, layout queries and focus handlers query or focus DOM elements without verifying `node.isConnected`. Calling `.focus()` or querying styles on unmounted or detached elements causes silent focus drops to `document.body`, incorrect layout computations or runtime exceptions.
