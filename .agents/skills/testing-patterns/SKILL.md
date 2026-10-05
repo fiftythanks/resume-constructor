@@ -106,12 +106,29 @@ Always use `@testing-library/jest-dom` semantic matchers instead of manually che
 
 ## 7. Component-Level Acceptance Tests & User Stories (Chapter 8, §8.4)
 
-In addition to atomic unit tests verifying individual prop configurations:
+Testing every component with an acceptance test is an anti-pattern. It creates brittle test suites, slows down test execution and burns hours maintaining artificial test harnesses that test dummy mock code rather than application behaviour.
 
-- **Write Component Stories / User Journeys:**
-  Create stateful acceptance tests that simulate a realistic multi-step user lifecycle.
-- **Stateful Test Harness Pattern:**
-  Mount a harness component that manages state and pass callbacks to the component under test. Simulate adding items, navigating back and forth, deleting items and verifying that focus, live announcements and UI elements update seamlessly throughout the user journey.
+Component-level acceptance tests belong strictly where **behaviour, user intent and business risk intersect**.
+
+### The Practical Rule of Thumb: Boundary of User Capability
+
+> **Treat the boundary of your acceptance test as the boundary of a user capability.**
+
+If a user cannot accomplish a distinct, meaningful goal with that specific component in isolation, a component-level acceptance test is the wrong tool. Unit test isolated utility logic, rely on TypeScript for contract correctness, save component acceptance tests for cohesive user interactions and leave full user journeys to genuine end-to-end (E2E) tests.
+
+### When to Write Component-Level Acceptance Tests
+
+- **Complex Feature Containers and Widgets:** Stateful organisms that orchestrate multiple children (e.g. a resume section editor orchestrating item cards and bullet lists).
+- **State Machines and Flow Gates:** Components whose rendering depends strictly on complex local state, permissions or external payloads (e.g. transitioning from loading skeleton to empty state, error state with retry or populated data).
+- **High-Stakes User Interactions:** Anywhere a mistake causes data loss or breaks core functionality (e.g. destructive deletion dialogues, import/export operations).
+- **Compound or Headless Components:** Reusable system primitives containing internal accessibility, keyboard navigation or state orchestration (e.g. custom combobox, menu dropdown or accordion).
+
+### When to Skip Them
+
+- **Presentational and Leaf Components:** Dumb wrappers, layout shells, headers, simple buttons, typography elements and icons (e.g. `SectionItemHeader`, `Button`, `AppbarIconButton`). Visual assertions or static TypeScript types cover these far better.
+- **Trivial Wiring:** Components that merely pass a prop directly down to a child without transforming it.
+- **Components Lacking Local State:** Never invent an ad-hoc dummy state machine (such as a fake stateful wrapper with `useState`) inside a test file to simulate state that lives in an external hook or global store (e.g. `useResumeData`). Test the actual stateful container or write an integration test against the real hook/App layer instead.
+- **Full Pages with Complex Routing:** Do not contort component tests with massive mocks to simulate an entire routed view. That is the job of genuine End-to-End (E2E) tests.
 
 ---
 
