@@ -14,5 +14,9 @@
   --button-bgc-main: hsl(0, 0%, 100%);
 
   /* Other. */
-  --appbar-icon-button-size: 50px;
+  /**
+   * Conventionally, the smallest size you can make a hit target. Just what we
+   * need for the smallest screens (like that of iPhone 5).
+   */
+  --appbar-icon-button-size: 44px;
 }
