@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react';
 import type { FocusEvent, KeyboardEvent, Ref, RefObject } from 'react';
 
+import { clsx } from 'clsx';
+
+/**
+ * FIXME: Looks out of order. Type imports should be below. But ESLint doesn't
+ * let me put it there.
+ */
 import type {
   HandleFocus,
   HandleKeyboard,
@@ -192,76 +198,83 @@ export default function SectionItemHeader({
 
   return (
     <header
-      className="SectionItemHeader"
       data-testid="section-item-header"
       ref={handleHeaderRef}
       onBlurCapture={handleBlurCapture}
       onFocusCapture={handleFocusCapture}
+      className={clsx(
+        'SectionItemHeader',
+        itemsNumber === 1 && 'SectionItemHeader_oneButton',
+        itemsNumber > 1 &&
+          (itemNumber === 1 || itemNumber === itemsNumber) &&
+          'SectionItemHeader_threeButtons',
+        itemsNumber > 2 &&
+          itemNumber !== 1 &&
+          itemNumber !== itemsNumber &&
+          'SectionItemHeader_fourButtons',
+      )}
     >
-      <h2>
+      <h2 className="SectionItemHeader-Title">
         {itemName} {itemNumber}
       </h2>
-      {itemsNumber > 1 && (
-        <div className="SectionItemHeader-Navigation">
-          {itemNumber > 1 && (
-            <Button
-              aria-label={`Show Previous ${itemName}`}
-              id={`show-previous-${itemName.toLowerCase()}`}
-              key="show-previous"
-              ref={previousBtnRef}
-              onClick={handlePrevious}
-              onFocus={handleFocus}
-              onKeyDown={handleKeyDown}
-              modifiers={[
-                'Button_paddingBlock_none',
-                'Button_paddingInline_small',
-              ]}
-            >
-              <img alt="Previous" height="25px" src={prevSrc} width="25px" />
-            </Button>
-          )}
-          {itemNumber < itemsNumber && (
-            <Button
-              aria-label={`Show Next ${itemName}`}
-              id={`show-next-${itemName.toLowerCase()}`}
-              key="show-next"
-              ref={nextBtnRef}
-              onClick={handleNext}
-              onFocus={handleNextFocus}
-              onKeyDown={handleNextKeyDown}
-              modifiers={[
-                'Button_paddingBlock_none',
-                'Button_paddingInline_small',
-              ]}
-            >
-              <img alt="Next" height="25px" src={nextSrc} width="25px" />
-            </Button>
-          )}
-        </div>
-      )}
-      <Button
-        aria-label={`Add ${itemName} ${itemsNumber + 1}`}
-        id={`add-${itemName.toLowerCase()}`}
-        modifiers={['Button_paddingBlock_none', 'Button_paddingInline_small']}
-        ref={addBtnRef}
-        onClick={handleAdd}
-        onFocus={handleAddFocus}
-        onKeyDown={handleAddKeyDown}
-      >
-        <img alt="Add" height="25px" src={addSrc} width="25px" />
-      </Button>
-      {itemsNumber > 1 && (
-        <button
-          aria-label={`Delete ${itemName} ${itemNumber}`}
-          className="SectionItemHeader-DeleteBtn"
-          id={`delete-${itemName.toLowerCase()}`}
-          ref={deleteBtnRef}
-          type="button"
-          onClick={handleDelete}
+      <div className="SectionItemHeader-BtnsWrapper">
+        {itemNumber > 1 && (
+          <Button
+            aria-label={`Show Previous ${itemName}`}
+            id={`show-previous-${itemName.toLowerCase()}`}
+            key="show-previous"
+            modifiers={['Button_shape_square', 'Button_size_smallest']}
+            ref={previousBtnRef}
+            onClick={handlePrevious}
+            onFocus={handleFocus}
+            onKeyDown={handleKeyDown}
+          >
+            <img alt="Previous" height="25px" src={prevSrc} width="25px" />
+          </Button>
+        )}
+        {itemNumber < itemsNumber && (
+          <Button
+            aria-label={`Show Next ${itemName}`}
+            id={`show-next-${itemName.toLowerCase()}`}
+            key="show-next"
+            modifiers={['Button_shape_square', 'Button_size_smallest']}
+            ref={nextBtnRef}
+            onClick={handleNext}
+            onFocus={handleNextFocus}
+            onKeyDown={handleNextKeyDown}
+          >
+            <img alt="Next" height="25px" src={nextSrc} width="25px" />
+          </Button>
+        )}
+        <Button
+          aria-label={`Add ${itemName} ${itemsNumber + 1}`}
+          id={`add-${itemName.toLowerCase()}`}
+          modifiers={['Button_shape_square', 'Button_size_smallest']}
+          ref={addBtnRef}
+          onClick={handleAdd}
+          onFocus={handleAddFocus}
+          onKeyDown={handleAddKeyDown}
         >
-          <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
-        </button>
-      )}
+          <img alt="Add" height="25px" src={addSrc} width="25px" />
+        </Button>
+        {itemsNumber > 1 && (
+          <Button
+            aria-label={`Delete ${itemName} ${itemNumber}`}
+            className="SectionItemHeader-Button SectionItemHeader-Button_pushToEnd"
+            id={`delete-${itemName.toLowerCase()}`}
+            ref={deleteBtnRef}
+            type="button"
+            onClick={handleDelete}
+            modifiers={[
+              'Button_shape_square',
+              'Button_size_smallest',
+              'Button_background_none',
+            ]}
+          >
+            <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
+          </Button>
+        )}
+      </div>
     </header>
   );
 }

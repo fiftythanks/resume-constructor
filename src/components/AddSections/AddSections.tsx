@@ -85,7 +85,7 @@ export default function AddSections({
           <Button
             aria-label={`Add ${sectionTitles[sectionId]}`}
             id={`add-${sectionId}`}
-            modifiers={['Button_width_full']}
+            modifiers={['Button_size_smallest', 'Button_width_wide']}
             onClick={handleClick}
           >
             {sectionTitles[sectionId]}
@@ -109,7 +109,7 @@ export default function AddSections({
           <Button
             aria-label="Add All Sections"
             id="add-all-sections"
-            modifiers={['Button_width_full']}
+            modifiers={['Button_size_smallest', 'Button_width_wide']}
             onClick={() => {
               addSections([...possibleSectionIds]);
               closePopup();
@@ -120,6 +120,7 @@ export default function AddSections({
         </li>
       </ul>
       {/* (1) */}
+      {/* TODO: Make it `Button`. */}
       <button
         className="AddSections-CloseBtn"
         type="button"

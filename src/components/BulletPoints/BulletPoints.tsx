@@ -279,7 +279,7 @@ export default function BulletPoints({
         aria-label={`Add ${itemName}`}
         className="BulletPoints-Add"
         id={`add-${name}`}
-        modifiers={['Button_paddingInline_large']}
+        modifiers={['Button_size_smallest', 'Button_width_medium']}
         // TODO: add a screen reader announcement "A new bullet point was added".
         onClick={addItem}
       >

@@ -24,9 +24,12 @@
       margin-bottom: -0.75rem;
     }
 
-    &--item-navigation {
+    &--list {
       display: flex;
-      gap: 0.5rem;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 0 var(--inner-padding-inline);
+      list-style-type: none;
     }
 
     &--delete-item {

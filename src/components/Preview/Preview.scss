@@ -2,12 +2,12 @@
 
 @layer blocks {
   .Preview {
-    padding-inline: 2rem;
+    padding-inline: var(--inner-padding-inline);
 
     &-CloseBtn {
       position: absolute;
       top: 1rem;
-      right: 0.5rem;
+      right: var(--inner-padding-inline);
       border: 0;
       background: none;
       width: 2rem;
@@ -78,9 +78,9 @@
     :is(span, br) {
       position: absolute;
       transform-origin: 0 0;
+      cursor: text;
       white-space: pre;
       color: transparent;
-      cursor: text;
       user-select: text;
     }
 

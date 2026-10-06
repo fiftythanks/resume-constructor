@@ -1,9 +1,5 @@
 @use 'sass:math';
 
-// Global Sass variables
-
-// DILEMMA: The hell do I need these Sass variables for? Why not custom properties?
-$button-width-main: 10rem;
 $appbar-block-size: calc(var(--appbar-icon-button-size) + 2 * 1rem);
 
 /**

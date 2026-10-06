@@ -348,7 +348,9 @@ export default function Preview({
                 }
 
                 return (
-                  <Button modifiers={['Button_paddingInline_medium']}>
+                  <Button
+                    modifiers={['Button_size_smallest', 'Button_width_medium']}
+                  >
                     Download
                   </Button>
                 );
@@ -419,7 +421,9 @@ export default function Preview({
                 }
 
                 return (
-                  <Button modifiers={['Button_paddingInline_medium']}>
+                  <Button
+                    modifiers={['Button_size_smallest', 'Button_width_medium']}
+                  >
                     Download
                   </Button>
                 );

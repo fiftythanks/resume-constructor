@@ -135,9 +135,15 @@ export default function Sidebar({
         selectSection={selectSection}
         toggleEditorMode={toggleEditorMode}
       />
-      {/* The toggle precedes the toolbar despite being to the right of it
-          because this provides native tabbing fully aligned
-          with what's needed for good keyboard experience */}
+      {/**
+       * The toggle precedes the toolbar despite being to the right of it
+       * because this provides native tabbing fully aligned
+       * with what's needed for good keyboard experience
+       */}
+      {/**
+       * TODO: Make the button change its icon depending on its state, just as
+       * the navbar toggle button does.
+       */}
       <AppbarIconButton
         aria-controls="toolbar"
         aria-expanded={isToolbarExpanded}
