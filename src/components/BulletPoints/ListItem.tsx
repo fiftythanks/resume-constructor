@@ -5,6 +5,8 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { clsx } from 'clsx';
 
+import Button from '../Button';
+
 import deleteSrc from '@/assets/icons/delete.svg';
 import dragSrc from '@/assets/icons/drag.svg';
 
@@ -61,32 +63,40 @@ export default function ListItem({
     isDragging && 'BulletPoints-ListItem_dragged',
   ]);
 
+  const dragHandle = {
+    handleFocus: (e: FocusEvent<HTMLButtonElement, Element>) => {
+      if (handleFocusOnFirstElement === undefined) return;
+
+      handleFocusOnFirstElement(e);
+    },
+    listeners: {
+      ...listeners,
+      onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {
+        if (handleKeyDownOnFirstElement !== undefined) {
+          handleKeyDownOnFirstElement(e);
+        }
+
+        listeners?.onKeyDown?.(e);
+      },
+    },
+  };
+
   return (
     <li className={listItemClassName} ref={setNodeRef} style={style}>
-      <button
+      <Button
         aria-label={`Drag bullet point ${index + 1}`}
-        className="BulletPoints-Button BulletPoints-Button_dragHandle"
-        ref={(node) => setActivatorNodeRef(node)}
-        type="button"
-        onFocus={(e) => {
-          if (handleFocusOnFirstElement === undefined) return;
-
-          handleFocusOnFirstElement(e);
-        }}
+        ref={setActivatorNodeRef}
+        onFocus={dragHandle.handleFocus}
         {...attributes}
-        {...{
-          ...listeners,
-          onKeyDown: (e) => {
-            if (handleKeyDownOnFirstElement !== undefined) {
-              handleKeyDownOnFirstElement(e);
-            }
-
-            listeners?.onKeyDown?.(e);
-          },
-        }}
+        {...dragHandle.listeners}
+        modifiers={[
+          'Button_shape_square',
+          'Button_size_smallest',
+          'Button_background_none',
+        ]}
       >
         <img alt="Drag" height="25px" src={dragSrc} width="25px" />
-      </button>
+      </Button>
       <input
         aria-label={`Bullet point ${index + 1}`}
         className="BulletPoints-Field"
@@ -97,15 +107,19 @@ export default function ListItem({
         value={value}
         onChange={edit}
       />
-      <button
+      <Button
         aria-label={`Delete bullet point ${index + 1}`}
         className="BulletPoints-Button BulletPoints-Button_delete"
         id={`delete-${name}`}
-        type="button"
         onClick={deleteItem}
+        modifiers={[
+          'Button_shape_square',
+          'Button_size_smallest',
+          'Button_background_none',
+        ]}
       >
         <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
-      </button>
+      </Button>
     </li>
   );
 }

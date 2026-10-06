@@ -155,6 +155,7 @@ export default function AppLayout({
       onKeyDown={handleKeyDown}
       className={clsx(
         'AppLayout',
+        'AppLayout_paddingInline_none',
         isNavbarExpanded && 'AppLayout_navbarExpanded',
       )}
     >
@@ -202,7 +203,7 @@ export default function AppLayout({
                 className="AppLayout-NavBtn"
                 id="previous-section"
                 key="previous-section"
-                modifiers={['Button_width_medium']}
+                modifiers={['Button_size_smallest', 'Button_width_medium']}
                 ref={previousBtnRef}
                 onClick={() =>
                   openSection(activeSectionIds[openedSectionIndex - 1])
@@ -218,7 +219,7 @@ export default function AppLayout({
                   className="AppLayout-NavBtn"
                   id="next-section"
                   key="next-section"
-                  modifiers={['Button_width_medium']}
+                  modifiers={['Button_size_smallest', 'Button_width_medium']}
                   ref={nextBtnRef}
                   onClick={() =>
                     openSection(activeSectionIds[openedSectionIndex + 1])

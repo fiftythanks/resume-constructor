@@ -1,22 +1,43 @@
-@use '@/styles/utils/placeholders';
+@use '@/styles/utils/functions' as fn;
 
 .SectionItemHeader {
-  display: flex;
-  gap: 1rem;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-column-gap: var(--inner-padding-inline);
+  place-items: center start;
+  width: 100%;
 
-  &-Navigation {
-    display: flex;
-    gap: 0.5rem;
+  &_oneButton {
+    grid-template-areas: 'title buttons';
+    grid-template-columns: max-content auto;
   }
 
-  &-DeleteBtn {
-    margin-left: auto;
-    border: 0;
-    background: none;
-    padding-right: 0;
+  &_threeButtons {
+    grid-template-areas: 'title buttons buttons buttons';
+    grid-template-columns: max-content repeat(3, auto);
+  }
 
-    &:hover {
-      cursor: pointer;
+  &_fourButtons {
+    grid-template-areas: 'title buttons buttons buttons buttons';
+    grid-template-columns: max-content repeat(4, auto);
+  }
+
+  &-Title {
+    grid-area: title;
+    justify-self: start;
+    padding-inline-start: var(--inner-padding-inline);
+  }
+
+  &-BtnsWrapper {
+    display: flex;
+    grid-area: buttons;
+    align-items: center;
+    width: 100%;
+  }
+
+  &-Button {
+    &_pushToEnd {
+      margin-left: auto;
     }
   }
 }

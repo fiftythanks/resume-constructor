@@ -1,33 +1,26 @@
 @use '@/styles/utils/variables' as vars;
 
 .AddSections {
-  &-List {
-    $gap: 1.5rem;
-    $padding-inline: 1rem;
-    $boundary: 2 * vars.$button-width-main + $gap + 2 * $padding-inline;
+  padding: var(--outer-padding-block) var(--inner-padding-inline);
 
+  &-List {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: $gap;
+    gap: 0.5rem;
     align-items: center;
-    padding-inline: $padding-inline;
+    padding: 0;
     list-style-type: none;
-
-    @media (min-width: $boundary) {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
   }
 
   &-ListItem {
-    width: vars.$button-width-main;
+    // Nothing.
   }
 
   &-CloseBtn {
     position: absolute;
-    top: 1rem;
-    right: 0.5rem;
+    top: var(--outer-padding-block);
+    right: var(--inner-padding-inline);
     border: 0;
     background: none;
     width: 2rem;

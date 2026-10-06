@@ -1,0 +1,128 @@
+@use 'sass:math';
+@use 'sass:meta';
+@use 'sass:list';
+@use 'sass:string';
+
+/// Determines whether an arbitrary Sass value is a valid CSS length unit.
+///
+/// Validates absolute units via Sass unit compatibility, and checks dynamic
+/// relative units against a strict whitelist.
+///
+/// @param {*} $value - The value to test.
+///
+/// @return {Boolean} `true` if the value is a length, otherwise `false`.
+@function is-length($value) {
+  @if meta.type-of($value) != 'number' {
+    @return false;
+  }
+
+  // Covers absolute lengths Sass can resolve: px, cm, mm, in, pt, pc
+  @if math.compatible($value, 1px) {
+    @return true;
+  }
+
+  // Covers relative lengths that cannot be resolved at build time
+  $relative-units: (
+    'em',
+    'rem',
+    'vw',
+    'vh',
+    'vmin',
+    'vmax',
+    'ch',
+    'ex',
+    'cqw',
+    'cqh',
+    'cqi',
+    'cqb'
+  );
+
+  @return list.index($relative-units, math.unit($value)) != null;
+}
+
+/// Converts any absolute length or unitless value to rem.
+/// @param {Number} $value - Absolute length (px, pt, cm, in) or unitless pixels.
+/// @param {Number} $base [16px] - Root font size reference.
+/// @return {Number} Converted value in rem.
+@function rem($value, $base: 16px) {
+  @if meta.type-of($value) != 'number' {
+    @error 'Expected a number, received #{meta.type-of($value)} (#{$value}).';
+  }
+
+  // Allow already converted rem values to pass straight through.
+  @if math.unit($value) == 'rem' {
+    @return $value;
+  }
+
+  // Handle unitless numbers by treating them as pixels.
+  @if math.is-unitless($value) {
+    $value: $value * 1px;
+  }
+
+  // Check if the value can be converted to pixels (px, cm, mm, in, pt, pc).
+  @if not math.compatible($value, 1px) {
+    @error 'Cannot convert dynamic/relative unit "#{math.unit($value)}" to rem at build time.';
+  }
+
+  @if not math.compatible($base, 1px) {
+    @error 'Base root size must be an absolute length (e.g. 16px).';
+  }
+
+  // Strip units via division and append rem.
+  $px-value: math.div($value, 1px);
+  $px-base: math.div($base, 1px);
+
+  @return math.div($px-value, $px-base) * 1rem;
+}
+
+/// Calculates the per-side margin or offset extension required to meet
+/// accessible hit target thresholds (e.g. WCAG 2.5.5 / 2.5.8).
+///
+/// Divides the deficit by two for symmetrical layout spacing. Resolves
+/// absolute dimensions at compile time, or defers dynamic relative lengths
+/// (rem, em, vw, etc.) to runtime CSS via `max()` and `calc()`.
+///
+/// @param {Number} $visible-length - Current element dimension (width or
+///   height). Must be a valid length unit.
+/// @param {Number} $target-min [44px] - Minimum hit target threshold in
+///   absolute physical pixels.
+///
+/// @return {Number|String} Symmetrical offset in `px` at build time (returns
+///   `0px` if `$visible-length >= $target-min`), otherwise an unquoted CSS
+///   `max()` expression.
+///
+/// @throw Throws an error if `$visible-length` is not a valid length unit.
+///
+/// @example scss - Absolute length below threshold
+///   .btn {
+///     // (44px - 24px) / 2 = 10px
+///     margin-block: min-hit-target-extension(24px);
+///   }
+///
+/// @example scss - Absolute length meeting or exceeding threshold
+///   .btn {
+///     margin-block: min-hit-target-extension(48px); // Returns: 0px
+///   }
+///
+/// @example scss - Dynamic relative length deferred to runtime
+///   .btn {
+///     // Output: max(0px, calc((44px - 1.5rem) / 2))
+///     margin-block: min-hit-target-extension(1.5rem);
+///   }
+@function min-hit-target-extension($visible-length, $target-min: 44px) {
+  @if not is-length($visible-length) {
+    @error 'Expected a valid length unit. Received: #{$visible-length}';
+  }
+
+  // 1. If absolute length, resolve at build time
+  @if math.compatible($visible-length, 1px) {
+    @if $visible-length >=$target-min {
+      @return 0;
+    }
+
+    @return math.div($target-min - $visible-length, 2);
+  }
+
+  // 2. If relative or dynamic, defer to native CSS runtime
+  @return string.unquote('max(0px, (#{$target-min} - #{$visible-length}) / 2)');
+}

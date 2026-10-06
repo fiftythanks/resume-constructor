@@ -263,7 +263,9 @@ export default function Preview({
                 // TODO: don't throw. Just log the error and return `null`.
                 if (error) throw error;
                 return (
-                  <Button modifiers={['Button_paddingInline_medium']}>
+                  <Button
+                    modifiers={['Button_size_smallest', 'Button_width_medium']}
+                  >
                     Download
                   </Button>
                 );
@@ -313,7 +315,9 @@ export default function Preview({
                 if (error) throw error;
 
                 return (
-                  <Button modifiers={['Button_paddingInline_medium']}>
+                  <Button
+                    modifiers={['Button_size_smallest', 'Button_width_medium']}
+                  >
                     Download
                   </Button>
                 );

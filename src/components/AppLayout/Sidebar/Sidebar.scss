@@ -3,13 +3,14 @@
    * Internal gap for the `Navbar` (the tablist in it, to be precise) and
    * `Toolbar` components.
    */
-  --navbar-toolbar-gap: 0.75rem;
+  --navbar-toolbar-gap: var(--inner-padding-inline);
+
   /**
    * Gap separating the navbar- and toolbar-toggle buttons from the navbar and
    * toolbar themselves, as well as the control buttons inside the navbar from
    * the navbar's tablist.
    */
-  --sidebar-gap: 1rem;
+  --sidebar-gap: var(--navbar-toolbar-gap);
 
   display: flex;
   position: relative;
@@ -25,7 +26,7 @@
     &_navbar {
       position: absolute;
       bottom: calc(100% + var(--sidebar-gap));
-      left: 0;
+      left: var(--inner-padding-inline);
     }
 
     &_navbarToggle {
@@ -34,7 +35,10 @@
 
     &_toolbar {
       position: absolute;
-      right: calc(var(--appbar-item-size) + var(--sidebar-gap));
+      right: calc(
+        var(--appbar-item-size) + var(--sidebar-gap) +
+          var(--inner-padding-inline)
+      );
       bottom: 0;
     }
   }

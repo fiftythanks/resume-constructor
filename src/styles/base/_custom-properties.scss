@@ -19,4 +19,28 @@
    * need for the smallest screens (like that of iPhone 5).
    */
   --appbar-icon-button-size: 44px;
+
+  /**
+   * Inline-padding offsetting the top-level element's children from its edges.
+   *
+   * The main purpose is the ease of adding padding between the screen edges and
+   * elements inside the top-level element that takes the entire viewport width.
+   */
+  --outer-padding-inline: 0;
+
+  /* The same as `--outer-padding-inline`, but in the block direction. */
+  --outer-padding-block: 0.5rem;
+
+  /**
+   * Inline padding separating elements from screen edges used for the smallest
+   * screens (e.g. iPhone 5).
+   *
+   * Since for the smallest screens, we use invisible hit target extensions,
+   * to make the buttons align with the initial design and not get too far away
+   * from the screen edges, the outer inline padding is set to 0 by default
+   * (smallest-width-/mobile-first). This custom property is applied to each
+   * block that needs the inline padding, such as `BulletPoints` and all the
+   * input fields in sections.
+   */
+  --inner-padding-inline: 0.5rem;
 }

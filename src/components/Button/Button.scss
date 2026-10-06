@@ -1,11 +1,35 @@
+@use '@/styles/utils/functions' as fn;
+
 .Button {
+  --btn-height: auto;
+  --btn-width: auto;
+  /* Need the units for hit-target-extension calculations. */
+  /* stylelint-disable-next-line length-zero-no-unit */
+  --btn-extension-y: 0px;
+  /* stylelint-disable-next-line length-zero-no-unit */
+  --btn-extension-x: 0px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 0;
   border-radius: 5px;
   background-color: var(--button-bgc-main);
-  padding: 0.25rem;
+  width: var(--btn-width);
+  height: var(--btn-height);
 
-  &:hover {
-    cursor: pointer;
+  &_width {
+    &_medium {
+      min-width: 6rem;
+    }
+
+    &_wide {
+      width: 16ch;
+    }
+
+    &_full {
+      width: 100%;
+    }
   }
 
   &_paddingInline {
@@ -32,13 +56,51 @@
     }
   }
 
-  &_width {
-    &_medium {
-      min-width: 6rem;
+  &_background {
+    &_none {
+      background: none;
     }
+  }
 
-    &_full {
-      width: 100%;
+  &_shape {
+    &_square {
+      aspect-ratio: 1 / 1;
+    }
+  }
+
+  &_size {
+    /* For buttons that have at least one dimension shorter than 44 px. */
+    &_smallest {
+      $height-rectangle: fn.rem(32px);
+      $height-square: fn.rem(34px);
+
+      --btn-height: #{$height-rectangle};
+      --btn-extension-y: #{fn.min-hit-target-extension($height-rectangle)};
+
+      &.Button_shape_square {
+        --btn-height: #{$height-square};
+        --btn-width: #{$height-square};
+        --btn-extension-x: #{fn.min-hit-target-extension($height-square)};
+        --btn-extension-y: #{fn.min-hit-target-extension($height-square)};
+      }
+    }
+  }
+
+  @media (pointer: coarse) {
+    position: relative;
+    margin-block: var(--btn-extension-y);
+    margin-inline: var(--btn-extension-x);
+
+    &::after {
+      position: absolute;
+      inset: calc(-1 * var(--btn-extension-y)) calc(-1 * var(--btn-extension-x));
+      content: '';
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      cursor: pointer;
     }
   }
 }

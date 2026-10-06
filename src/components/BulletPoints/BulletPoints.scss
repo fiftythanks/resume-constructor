@@ -15,7 +15,7 @@
 
   &-Legend {
     margin-bottom: $gap;
-    padding: 0;
+    padding: 0 var(--inner-padding-inline);
     font-size: 1.25rem;
     font-weight: 700;
 
@@ -34,7 +34,6 @@
 
   &-ListItem {
     display: flex;
-    gap: 1rem;
     touch-action: none;
 
     &_dragged {
@@ -55,16 +54,6 @@
     @extend %field;
 
     width: 100%;
-  }
-
-  &-Button {
-    border: 0;
-    background: none;
-    padding-inline: 0;
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   &-Add {
