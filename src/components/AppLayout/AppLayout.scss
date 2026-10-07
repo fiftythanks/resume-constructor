@@ -34,6 +34,7 @@
     &-Sidebar {
       grid-area: sidebar;
       place-self: center;
+      /* TODO: This should not be defined here, it isn't an external rule. */
       padding-inline: var(--inner-padding-inline);
     }
 
@@ -47,11 +48,11 @@
       grid-row: main;
       grid-column: main;
 
-      &_navbarExpanded {
-        grid-template-areas:
-          'title title'
-          '.     content';
-      }
+      /* &_navbarExpanded { */
+      /*   grid-template-areas: */
+      /*     'title title' */
+      /*     '.     content'; */
+      /* } */
     }
 
     &-Title {

@@ -53,4 +53,30 @@ describe('AppbarIconButton', () => {
 
     expect(props.onClick).toHaveBeenCalledTimes(1);
   });
+
+  it('should apply the large icon modifier class when `largeIcon` is true', () => {
+    // Arrange
+    const props = getProps({ largeIcon: true });
+
+    // Act
+    render(<AppbarIconButton {...props} />);
+
+    // Assert
+    const icon = screen.getByRole('img');
+
+    expect(icon).toHaveClass('AppbarIconButton-Icon_large');
+  });
+
+  it('should not apply the large icon modifier class by default', () => {
+    // Arrange
+    const props = getProps();
+
+    // Act
+    render(<AppbarIconButton {...props} />);
+
+    // Assert
+    const icon = screen.getByRole('img');
+
+    expect(icon).not.toHaveClass('AppbarIconButton-Icon_large');
+  });
 });

@@ -11,10 +11,6 @@
     min-height: var(--appbar-icon-button-size);
     user-select: none;
 
-    &:hover {
-      cursor: pointer;
-    }
-
     &_active {
       background-color: var(--opened-section-color);
     }
@@ -22,6 +18,16 @@
     &-Icon {
       width: 25px;
       height: auto;
+
+      &_large {
+        width: 35px;
+      }
+    }
+
+    @media (pointer: fine) and (hover: hover) {
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 }

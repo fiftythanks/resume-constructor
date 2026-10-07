@@ -2,6 +2,8 @@
 
 @layer blocks {
   .section {
+    container-type: inline-size;
+    container-name: section;
     width: 100%;
 
     &--form {

@@ -76,6 +76,7 @@ export interface NavbarProps {
   className?: string;
   deleteSections: ReadonlyDeep<UseAppStateReturn['deleteSections']>;
   editorMode: boolean;
+  hidden?: boolean;
   reorderSections: ReadonlyDeep<UseAppStateReturn['reorderSections']>;
   resetScreenReaderAnnouncement: ReadonlyDeep<() => void>;
   selectedSectionId: SectionId;
@@ -100,6 +101,7 @@ export default function Navbar({
   selectedSectionId,
   selectSection,
   toggleEditorMode,
+  hidden = false,
 }: NavbarProps) {
   // For the "Add Sections" popup
   const [isAddSectionsPopupShown, setIsAddSectionsPopupShown] = useState(false);
@@ -245,16 +247,16 @@ export default function Navbar({
     );
   });
 
-  const editorClassName = clsx([
+  const editorClassName = clsx(
     'Navbar-Control',
     canAddSections && 'Navbar-Control_onTop',
     editorMode && 'Navbar-Control_editing',
-  ]);
+  );
 
-  const draggableItemsWrapperClassName = clsx([
+  const draggableItemsWrapperClassName = clsx(
     'Navbar-DraggableItemsWrapper',
     activeSectionIds.length === 1 && 'Navbar-DraggableItemsWrapper_hidden',
-  ]);
+  );
 
   // Keyboard navigation
   function isSectionId(string: string): string is SectionId {
@@ -435,7 +437,7 @@ export default function Navbar({
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <nav
         aria-labelledby="toggle-navbar"
-        className={clsx(['Navbar', className])}
+        className={clsx('Navbar', className, hidden && 'Navbar_hidden')}
         id="navbar"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
