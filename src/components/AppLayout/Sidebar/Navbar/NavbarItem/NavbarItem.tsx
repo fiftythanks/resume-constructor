@@ -119,6 +119,7 @@ export default function NavbarItem({
           <img
             alt="Delete"
             className="NavbarItem-ControlBtnIcon"
+            draggable={false}
             height="12px"
             src={deleteBtnIconSrc}
             width="12px"

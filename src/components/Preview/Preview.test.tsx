@@ -168,6 +168,14 @@ describe('Preview', () => {
       expect(btn).toBeInTheDocument();
     });
 
+    it('should disable image dragging on the close button icon', async () => {
+      renderPreview();
+
+      const icon = await screen.findByAltText('Close Popup');
+
+      expect(icon).toHaveAttribute('draggable', 'false');
+    });
+
     it('should call `onClose` when clicked', async () => {
       const mockFn = jest.fn();
       renderPreview(getProps({ onClose: mockFn }));

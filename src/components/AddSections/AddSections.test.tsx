@@ -235,6 +235,15 @@ describe('AddSections', () => {
     expect(closeBtn).toBeInTheDocument();
   });
 
+  it('should disable image dragging on the close button icon', () => {
+    render(<Container />);
+    render(<AddSections {...getProps()} />);
+
+    const icon = screen.getByAltText('Close Popup');
+
+    expect(icon).toHaveAttribute('draggable', 'false');
+  });
+
   it('should call `onClose` when the close button is clicked', async () => {
     const onCloseMock = jest.fn();
     render(<Container />);

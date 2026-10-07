@@ -128,6 +128,7 @@ export default function AddSections({
         <img
           alt="Close Popup"
           className="AddSections-CloseIcon"
+          draggable={false}
           height="32px"
           src={closeSrc}
           width="32px"
