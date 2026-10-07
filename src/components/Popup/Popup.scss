@@ -1,19 +1,21 @@
-.Popup {
-  &:open {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    flex-direction: column;
-    gap: 1.5rem;
-    border: 0;
-    background-color: var(--main-color);
-    min-width: 100vw;
-    min-height: 100vh;
-  }
+@layer blocks {
+  .Popup {
+    &:open {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      flex-direction: column;
+      gap: 1.5rem;
+      border: 0;
+      background-color: var(--main-color);
+      min-width: 100vw;
+      min-height: 100vh;
+    }
 
-  &-Title {
-    align-self: center;
-    color: var(--text-color);
+    &-Title {
+      align-self: center;
+      color: var(--text-color);
+    }
   }
 }

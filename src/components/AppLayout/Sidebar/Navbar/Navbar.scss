@@ -1,36 +1,38 @@
-.Navbar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sidebar-gap);
-  align-items: center;
-
-  &-Items,
-  &-ControlButtons {
+@layer {
+  .Navbar {
     display: flex;
     flex-direction: column;
-    gap: var(--navbar-toolbar-gap);
+    gap: var(--sidebar-gap);
     align-items: center;
-    border-radius: 10px;
-    padding: 0;
-    list-style-type: none;
-  }
 
-  &-DraggableItemsWrapper {
-    &_hidden {
-      display: none;
+    &-Items,
+    &-ControlButtons {
+      display: flex;
+      flex-direction: column;
+      gap: var(--navbar-toolbar-gap);
+      align-items: center;
+      border-radius: 10px;
+      padding: 0;
+      list-style-type: none;
     }
-  }
 
-  &-DraggableItems {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    list-style-type: none;
-  }
+    &-DraggableItemsWrapper {
+      &_hidden {
+        display: none;
+      }
+    }
 
-  &-Control {
-    &_editing {
-      background-color: var(--opened-section-color);
+    &-DraggableItems {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      list-style-type: none;
+    }
+
+    &-Control {
+      &_editing {
+        background-color: var(--opened-section-color);
+      }
     }
   }
 }
