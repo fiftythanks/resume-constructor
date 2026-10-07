@@ -1,41 +1,43 @@
-.Sidebar {
-  /**
+@layer {
+  .Sidebar {
+    /**
    * Internal gap for the `Navbar` (the tablist in it, to be precise) and
    * `Toolbar` components.
    */
-  --navbar-toolbar-gap: 0.75rem;
-  /**
+    --navbar-toolbar-gap: 0.75rem;
+    /**
    * Gap separating the navbar- and toolbar-toggle buttons from the navbar and
    * toolbar themselves, as well as the control buttons inside the navbar from
    * the navbar's tablist.
    */
-  --sidebar-gap: 1rem;
+    --sidebar-gap: 1rem;
 
-  display: flex;
-  position: relative;
-  width: 100%;
-  height: var(--appbar-item-size);
-  container-type: size;
+    display: flex;
+    position: relative;
+    container-type: size;
+    width: 100%;
+    height: var(--appbar-item-size);
 
-  &-Item {
-    &_hidden {
-      display: none;
-    }
+    &-Item {
+      &_hidden {
+        display: none;
+      }
 
-    &_navbar {
-      position: absolute;
-      bottom: calc(100% + var(--sidebar-gap));
-      left: 0;
-    }
+      &_navbar {
+        position: absolute;
+        bottom: calc(100% + var(--sidebar-gap));
+        left: 0;
+      }
 
-    &_navbarToggle {
-      margin-right: auto;
-    }
+      &_navbarToggle {
+        margin-right: auto;
+      }
 
-    &_toolbar {
-      position: absolute;
-      right: calc(var(--appbar-item-size) + var(--sidebar-gap));
-      bottom: 0;
+      &_toolbar {
+        position: absolute;
+        right: calc(var(--appbar-item-size) + var(--sidebar-gap));
+        bottom: 0;
+      }
     }
   }
 }
