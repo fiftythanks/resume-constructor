@@ -145,5 +145,13 @@ describe('ListItem', () => {
 
       expect(deleteItemMock).toHaveBeenCalledTimes(1);
     });
+
+    it('should disable image dragging on the delete button icon', () => {
+      render(<ListItem {...getProps()} />);
+
+      const icon = screen.getByAltText('Delete');
+
+      expect(icon).toHaveAttribute('draggable', 'false');
+    });
   });
 });

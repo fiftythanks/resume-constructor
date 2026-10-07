@@ -241,7 +241,13 @@ export default function Preview({
           if (popupRef.current !== null) popupRef.current.close();
         }}
       >
-        <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
+        <img
+          alt="Close Popup"
+          draggable={false}
+          height="32px"
+          src={closeSrc}
+          width="32px"
+        />
       </button>
       {document === undefined ||
       !areFontsLoaded ||

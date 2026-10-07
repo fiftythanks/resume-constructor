@@ -217,7 +217,13 @@ export default function SectionItemHeader({
                 'Button_paddingInline_small',
               ]}
             >
-              <img alt="Previous" height="25px" src={prevSrc} width="25px" />
+              <img
+                alt="Previous"
+                draggable={false}
+                height="25px"
+                src={prevSrc}
+                width="25px"
+              />
             </Button>
           )}
           {itemNumber < itemsNumber && (
@@ -234,7 +240,13 @@ export default function SectionItemHeader({
                 'Button_paddingInline_small',
               ]}
             >
-              <img alt="Next" height="25px" src={nextSrc} width="25px" />
+              <img
+                alt="Next"
+                draggable={false}
+                height="25px"
+                src={nextSrc}
+                width="25px"
+              />
             </Button>
           )}
         </div>
@@ -248,7 +260,13 @@ export default function SectionItemHeader({
         onFocus={handleAddFocus}
         onKeyDown={handleAddKeyDown}
       >
-        <img alt="Add" height="25px" src={addSrc} width="25px" />
+        <img
+          alt="Add"
+          draggable={false}
+          height="25px"
+          src={addSrc}
+          width="25px"
+        />
       </Button>
       {itemsNumber > 1 && (
         <button
@@ -259,7 +277,13 @@ export default function SectionItemHeader({
           type="button"
           onClick={handleDelete}
         >
-          <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
+          <img
+            alt="Delete"
+            draggable={false}
+            height="25px"
+            src={deleteSrc}
+            width="25px"
+          />
         </button>
       )}
     </header>

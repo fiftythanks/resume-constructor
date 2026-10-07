@@ -123,6 +123,15 @@ describe('NavbarItem', () => {
 
       expect(src).toBe(props.iconSrc);
     });
+
+    it('should disable image dragging on the icon', () => {
+      const props = getProps();
+      render(<NavbarItem {...props} />);
+
+      const icon = screen.getByRole('img', { name: props.alt });
+
+      expect(icon).toHaveAttribute('draggable', 'false');
+    });
   });
 
   describe('delete button', () => {
@@ -184,6 +193,15 @@ describe('NavbarItem', () => {
       await user.click(deleteBtn);
 
       expect(props.onDeleteSection).toHaveBeenCalledTimes(1);
+    });
+
+    it('should disable image dragging on the delete button icon', () => {
+      const props = getProps({ isEditorMode: true });
+      render(<NavbarItem {...props} />);
+
+      const icon = screen.getByAltText('Delete');
+
+      expect(icon).toHaveAttribute('draggable', 'false');
     });
   });
 });

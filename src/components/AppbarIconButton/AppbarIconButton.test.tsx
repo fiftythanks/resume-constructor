@@ -43,6 +43,15 @@ describe('AppbarIconButton', () => {
     expect(icon).toHaveAttribute('src', props.iconSrc);
   });
 
+  it('should disable image dragging on the icon', () => {
+    const props = getProps();
+    render(<AppbarIconButton {...props} />);
+
+    const icon = screen.getByAltText(props.alt!);
+
+    expect(icon).toHaveAttribute('draggable', 'false');
+  });
+
   it('should call `onClick` on a click event', async () => {
     const props = getProps();
     const user = userEvent.setup();

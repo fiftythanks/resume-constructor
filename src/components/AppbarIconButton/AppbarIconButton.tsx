@@ -48,6 +48,7 @@ export default function AppbarIconButton({
       <img
         alt={alt}
         className="AppbarIconButton-Icon"
+        draggable={false}
         height="25px"
         src={iconSrc}
         width="25px"

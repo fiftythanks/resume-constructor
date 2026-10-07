@@ -197,6 +197,27 @@ describe('SectionItemHeader', () => {
       expect(callbackRef).toHaveBeenCalledTimes(1);
       expect(callbackRef).toHaveBeenCalledWith(header);
     });
+
+    it('should disable image dragging on all button icons', () => {
+      render(
+        <SectionItemHeader
+          {...getMockSectionItemHeaderProps({
+            itemNumber: 2,
+            itemsNumber: 3,
+          })}
+        />,
+      );
+
+      const prevIcon = screen.getByAltText('Previous');
+      const nextIcon = screen.getByAltText('Next');
+      const addIcon = screen.getByAltText('Add');
+      const deleteIcon = screen.getByAltText('Delete');
+
+      expect(prevIcon).toHaveAttribute('draggable', 'false');
+      expect(nextIcon).toHaveAttribute('draggable', 'false');
+      expect(addIcon).toHaveAttribute('draggable', 'false');
+      expect(deleteIcon).toHaveAttribute('draggable', 'false');
+    });
   });
 
   describe('User Interactions & Live Announcements', () => {

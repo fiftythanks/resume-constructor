@@ -104,7 +104,13 @@ export default function ListItem({
         type="button"
         onClick={deleteItem}
       >
-        <img alt="Delete" height="25px" src={deleteSrc} width="25px" />
+        <img
+          alt="Delete"
+          draggable={false}
+          height="25px"
+          src={deleteSrc}
+          width="25px"
+        />
       </button>
     </li>
   );
