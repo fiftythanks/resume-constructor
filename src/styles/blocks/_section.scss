@@ -1,6 +1,8 @@
 @use '@/styles/utils/placeholders';
 
 .section {
+  container-type: inline-size;
+  container-name: section;
   width: 100%;
 
   &--form {

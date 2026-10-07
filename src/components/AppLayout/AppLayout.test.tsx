@@ -353,26 +353,6 @@ describe('AppLayout', () => {
     });
   });
 
-  // Navbar
-
-  it("should render the navbar when it's expanded", () => {
-    renderAppLayoutWithNavbarExpanded();
-
-    const navbar = screen.getByRole('navigation', { name: 'Navigation' });
-    const navbarClassList = navbar.classList;
-
-    expect(navbarClassList).not.toContain('Sidebar-Item_hidden');
-  });
-
-  it("should not render the navbar when it's hidden", () => {
-    renderAppLayout();
-
-    const navbar = screen.getByRole('navigation', { name: 'Navigation' });
-    const navbarClassList = navbar.classList;
-
-    expect(navbarClassList).toContain('Sidebar-Item_hidden');
-  });
-
   describe('Navbar', () => {
     it('should contain tabs for all active sections', () => {
       // Arrange

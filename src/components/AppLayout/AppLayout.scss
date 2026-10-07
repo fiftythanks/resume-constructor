@@ -46,11 +46,11 @@
     grid-row: main;
     grid-column: main;
 
-    &_navbarExpanded {
-      grid-template-areas:
-        'title title'
-        '.     content';
-    }
+    /* &_navbarExpanded { */
+    /*   grid-template-areas: */
+    /*     'title title' */
+    /*     '.     content'; */
+    /* } */
   }
 
   &-Title {

@@ -10,10 +10,9 @@ import possibleSectionIds from '@/utils/possibleSectionIds';
 
 import deleteSrc from '@/assets/icons/clear.svg';
 import fillSrc from '@/assets/icons/fill.svg';
+import previewSrc from '@/assets/icons/preview.svg';
 
 import './Toolbar.scss';
-
-import previewSrc from '@/assets/icons/preview.svg';
 
 import type {
   ResumeData,

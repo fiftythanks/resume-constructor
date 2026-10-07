@@ -13,7 +13,6 @@
   --sidebar-gap: var(--navbar-toolbar-gap);
 
   display: flex;
-  position: relative;
   width: 100%;
   height: var(--appbar-item-size);
   container-type: size;
@@ -25,8 +24,12 @@
 
     &_navbar {
       position: absolute;
-      bottom: calc(100% + var(--sidebar-gap));
-      left: var(--inner-padding-inline);
+      top: 0;
+      bottom: calc(
+        var(--outer-padding-block) + var(--appbar-icon-button-size) +
+          var(--sidebar-gap)
+      );
+      left: 0;
     }
 
     &_navbarToggle {
@@ -39,7 +42,7 @@
         var(--appbar-item-size) + var(--sidebar-gap) +
           var(--inner-padding-inline)
       );
-      bottom: 0;
+      bottom: var(--outer-padding-block);
     }
   }
 }

@@ -75,6 +75,32 @@ describe('Navbar', () => {
     expect(classList).toContain('bluh-bluh');
   });
 
+  it('should apply the hidden modifier class when `hidden` is true', () => {
+    // Arrange
+    const props = getProps({ hidden: true });
+
+    // Act
+    renderComponents(props);
+
+    // Assert
+    const nav = screen.getByRole('navigation', { name: 'Navigation' });
+
+    expect(nav).toHaveClass('Navbar_hidden');
+  });
+
+  it('should not apply the hidden modifier class when `hidden` is false', () => {
+    // Arrange
+    const props = getProps({ hidden: false });
+
+    // Act
+    renderComponents(props);
+
+    // Assert
+    const nav = screen.getByRole('navigation', { name: 'Navigation' });
+
+    expect(nav).not.toHaveClass('Navbar_hidden');
+  });
+
   describe('"Resume Sections" tablist', () => {
     /**
      * For `aria-orientation`, there's no need in testing it directly since
