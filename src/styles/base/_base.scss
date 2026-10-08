@@ -5,20 +5,18 @@
 
 /**
  * This file contains all application-wide styles that do not fit in
- * other categories.
+ * other categories. 
  */
 
-@layer base {
-  body {
-    background-color: var(--main-color);
-    width: 100vw;
-    height: 100dvh;
-    overflow: hidden;
-    color: var(--text-color);
-  }
+body {
+  background-color: var(--main-color);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  color: var(--text-color);
+}
 
-  #root {
-    width: 100%;
-    height: 100%;
-  }
+#root {
+  width: 100%;
+  height: 100%;
 }

@@ -1,81 +1,79 @@
 @use '@/styles/utils/variables' as v;
 
-@layer blocks {
-  .AppLayout {
-    /**
+.AppLayout {
+  /**
    * `--title-height` is 2.75rem because the title is 1.75rem, and it seems that
    * 0.5ram block padding is the best choice here, at least to my eye.
    */
-    --title-height: 2.75rem;
-    --row-gap: 1rem;
-    --column-gap: 1rem;
-    --inline-padding: 1rem;
-    --block-padding: 1rem;
-    // TODO: Replace `$appbar-block-size` with this custom property everywhere.
-    --appbar-block-size: #{v.$appbar-block-size};
-    // TODO: Replace `$appbar-icon-button-size` with this custom property everywhere.
-    --appbar-item-size: #{v.$appbar-icon-button-size};
+  --title-height: 2.75rem;
+  --row-gap: 1rem;
+  --column-gap: 1rem;
+  --inline-padding: 1rem;
+  --block-padding: 1rem;
+  // TODO: Replace `$appbar-block-size` with this custom property everywhere.
+  --appbar-block-size: #{v.$appbar-block-size};
+  // TODO: Replace `$appbar-icon-button-size` with this custom property everywhere.
+  --appbar-item-size: #{v.$appbar-icon-button-size};
 
+  display: grid;
+  grid-template-areas:
+    'main    main'
+    'main    main'
+    'sidebar sidebar';
+  grid-template-rows: min-content 1fr min-content;
+  grid-template-columns: var(--appbar-item-size) 1fr;
+  grid-row-gap: var(--row-gap);
+  grid-column-gap: var(--column-gap);
+  padding-block: var(--block-padding);
+  padding-inline: var(--inline-padding);
+  width: 100%;
+  height: 100%;
+
+  &-Sidebar {
+    grid-area: sidebar;
+    place-self: center;
+  }
+
+  &-Main {
     display: grid;
     grid-template-areas:
-      'main    main'
-      'main    main'
-      'sidebar sidebar';
-    grid-template-rows: min-content 1fr min-content;
-    grid-template-columns: var(--appbar-item-size) 1fr;
-    grid-row-gap: var(--row-gap);
-    grid-column-gap: var(--column-gap);
-    padding-block: var(--block-padding);
-    padding-inline: var(--inline-padding);
-    width: 100%;
-    height: 100%;
+      'title   title'
+      'content content';
+    grid-template-rows: subgrid;
+    grid-template-columns: subgrid;
+    grid-row: main;
+    grid-column: main;
 
-    &-Sidebar {
-      grid-area: sidebar;
-      place-self: center;
-    }
-
-    &-Main {
-      display: grid;
+    &_navbarExpanded {
       grid-template-areas:
-        'title   title'
-        'content content';
-      grid-template-rows: subgrid;
-      grid-template-columns: subgrid;
-      grid-row: main;
-      grid-column: main;
-
-      &_navbarExpanded {
-        grid-template-areas:
-          'title title'
-          '.     content';
-      }
+        'title title'
+        '.     content';
     }
+  }
 
-    &-Title {
-      grid-area: title;
-      place-self: center;
-      font-size: 1.75rem;
-    }
+  &-Title {
+    grid-area: title;
+    place-self: center;
+    font-size: 1.75rem;
+  }
 
-    &-SectionWrapper {
-      grid-area: content;
-      overflow-y: auto;
-    }
+  &-SectionWrapper {
+    grid-area: content;
+    overflow-y: auto;
+  }
 
-    &-NavBtns {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: flex-end;
-      margin-top: 3rem;
-    }
+  &-NavBtns {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 3rem;
+  }
 
-    @media screen and (width >= 350px) {
-      --inline-padding: 1rem;
+  @media screen and (width >= 350px) {
+    --inline-padding: 1rem;
 
-      &_navbarExpanded {
-        --inline-padding: 0.5rem;
-      }
+    &_navbarExpanded {
+      --inline-padding: 0.5rem;
     }
   }
 }

@@ -1,6 +1,4 @@
-@layer {
-  .Toolbar {
-    display: flex;
-    gap: var(--navbar-toolbar-gap);
-  }
+.Toolbar {
+  display: flex;
+  gap: var(--navbar-toolbar-gap);
 }
