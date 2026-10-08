@@ -1,46 +1,44 @@
-@layer blocks {
-  .Button {
-    border: 0;
-    border-radius: 5px;
-    background-color: var(--button-bgc-main);
-    padding: 0.25rem;
+.Button {
+  border: 0;
+  border-radius: 5px;
+  background-color: var(--button-bgc-main);
+  padding: 0.25rem;
 
-    &:hover {
-      cursor: pointer;
+  &:hover {
+    cursor: pointer;
+  }
+
+  &_paddingInline {
+    &_none {
+      padding-inline: 0;
     }
 
-    &_paddingInline {
-      &_none {
-        padding-inline: 0;
-      }
-
-      &_small {
-        padding-inline: 0.35rem;
-      }
-
-      &_medium {
-        padding-inline: 1rem;
-      }
-
-      &_large {
-        padding-inline: 2rem;
-      }
+    &_small {
+      padding-inline: 0.35rem;
     }
 
-    &_paddingBlock {
-      &_none {
-        padding-block: 0;
-      }
+    &_medium {
+      padding-inline: 1rem;
     }
 
-    &_width {
-      &_medium {
-        min-width: 6rem;
-      }
+    &_large {
+      padding-inline: 2rem;
+    }
+  }
 
-      &_full {
-        width: 100%;
-      }
+  &_paddingBlock {
+    &_none {
+      padding-block: 0;
+    }
+  }
+
+  &_width {
+    &_medium {
+      min-width: 6rem;
+    }
+
+    &_full {
+      width: 100%;
     }
   }
 }

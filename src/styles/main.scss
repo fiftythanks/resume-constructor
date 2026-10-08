@@ -3,4 +3,18 @@
 @forward 'base';
 @forward 'blocks';
 
-@layer reset, base, blocks, helpers;
+/**
+ * TABLE OF CONTENTS
+ * 
+ * BASE
+ * Fonts.....................Global font styles.
+ * Reset.....................A CSS reset.
+ * Base......................Global styles.
+ * Typography................Global typography styles.
+ * Custom-properties.........Global CSS custom properties.
+ * Helpers...................Global CSS helper classes.
+ * 
+ * BLOCKS
+ * appbar-item...............A global BEM block.
+ * section...................A global BEM block.
+ */

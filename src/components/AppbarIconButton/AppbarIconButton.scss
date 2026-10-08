@@ -1,29 +1,27 @@
 @use '@/styles/utils/variables' as v;
 
-@layer blocks {
-  .AppbarIconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 5px;
-    background-color: var(--secondary-color);
-    padding: 0;
-    min-width: v.$appbar-icon-button-size;
-    min-height: v.$appbar-icon-button-size;
-    user-select: none;
+.AppbarIconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 5px;
+  background-color: var(--secondary-color);
+  padding: 0;
+  min-width: v.$appbar-icon-button-size;
+  min-height: v.$appbar-icon-button-size;
+  user-select: none;
 
-    &:hover {
-      cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
+  }
 
-    &_active {
-      background-color: var(--opened-section-color);
-    }
+  &_active {
+    background-color: var(--opened-section-color);
+  }
 
-    &-Icon {
-      width: 25px;
-      height: auto;
-    }
+  &-Icon {
+    width: 25px;
+    height: auto;
   }
 }
