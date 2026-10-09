@@ -1,44 +1,46 @@
-.Button {
-  border: 0;
-  border-radius: 5px;
-  background-color: var(--button-bgc-main);
-  padding: 0.25rem;
+@layer blocks {
+  .Button {
+    border: 0;
+    border-radius: 5px;
+    background-color: var(--button-bgc-main);
+    padding: 0.25rem;
 
-  &:hover {
-    cursor: pointer;
-  }
-
-  &_paddingInline {
-    &_none {
-      padding-inline: 0;
+    &:hover {
+      cursor: pointer;
     }
 
-    &_small {
-      padding-inline: 0.35rem;
+    &_paddingInline {
+      &_none {
+        padding-inline: 0;
+      }
+
+      &_small {
+        padding-inline: 0.35rem;
+      }
+
+      &_medium {
+        padding-inline: 1rem;
+      }
+
+      &_large {
+        padding-inline: 2rem;
+      }
     }
 
-    &_medium {
-      padding-inline: 1rem;
+    &_paddingBlock {
+      &_none {
+        padding-block: 0;
+      }
     }
 
-    &_large {
-      padding-inline: 2rem;
-    }
-  }
+    &_width {
+      &_medium {
+        min-width: 6rem;
+      }
 
-  &_paddingBlock {
-    &_none {
-      padding-block: 0;
-    }
-  }
-
-  &_width {
-    &_medium {
-      min-width: 6rem;
-    }
-
-    &_full {
-      width: 100%;
+      &_full {
+        width: 100%;
+      }
     }
   }
 }

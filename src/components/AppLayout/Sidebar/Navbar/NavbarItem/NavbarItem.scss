@@ -44,19 +44,20 @@
   }
 }
 
-.NavbarItem {
-  display: flex;
-  position: relative;
-  gap: 0.5rem;
-  align-items: center;
-  touch-action: none;
-  padding: 0;
-  min-width: v.$appbar-icon-button-size;
-  min-height: v.$appbar-icon-button-size;
-  user-select: none;
+@layer blocks {
+  .NavbarItem {
+    display: flex;
+    position: relative;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0;
+    min-width: v.$appbar-icon-button-size;
+    min-height: v.$appbar-icon-button-size;
+    touch-action: none;
+    user-select: none;
 
-  &_dragged {
-    /**
+    &_dragged {
+      /**
      * `z-index` must be 1 to make the dragged item display on
      * top of all other elements.
      * 
@@ -65,61 +66,62 @@
      * context is already created by `dnd-kit` when dragging takes
      * place.
      */
-    z-index: 1;
-  }
-
-  &-Button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 5px;
-    background-color: var(--secondary-color);
-    padding: 0;
-    width: v.$appbar-icon-button-size;
-    min-width: v.$appbar-icon-button-size;
-    height: 100%;
-    min-height: v.$appbar-icon-button-size;
-
-    &:hover {
-      cursor: pointer;
+      z-index: 1;
     }
 
-    &_active {
-      background-color: var(--opened-section-color);
-    }
-
-    /* Shake animation showing that the item is draggable. */
-    &_dragMe {
-      animation: shake-lr 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite
-        both;
-    }
-  }
-
-  &-ControlBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    background: none;
-
-    &:hover {
-      cursor: pointer;
-    }
-
-    &_disabled {
-      display: none;
-    }
-
-    &_delete {
-      position: absolute;
-      top: -3px;
-      right: -3px;
-      border-radius: 15px;
-      background-color: hsl(351, 71.3%, 49.2%);
+    &-Button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 5px;
+      background-color: var(--secondary-color);
       padding: 0;
-      width: 15px;
-      height: 15px;
+      width: v.$appbar-icon-button-size;
+      min-width: v.$appbar-icon-button-size;
+      height: 100%;
+      min-height: v.$appbar-icon-button-size;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      &_active {
+        background-color: var(--opened-section-color);
+      }
+
+      /* Shake animation showing that the item is draggable. */
+      &_dragMe {
+        animation: shake-lr 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+          infinite both;
+      }
+    }
+
+    &-ControlBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      background: none;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      &_disabled {
+        display: none;
+      }
+
+      &_delete {
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        border-radius: 15px;
+        background-color: hsl(351, 71.3%, 49.2%);
+        padding: 0;
+        width: 15px;
+        height: 15px;
+      }
     }
   }
 }
