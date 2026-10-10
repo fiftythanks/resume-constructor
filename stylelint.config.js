@@ -4,6 +4,13 @@ const config = {
     'stylelint-config-sass-guidelines',
     'stylelint-config-concentric-order',
   ],
+  ignoreFiles: [
+    'dist/**',
+    '**/dist/**',
+    '**/.astro/**',
+    'node_modules/**',
+    '**/node_modules/**',
+  ],
   rules: {
     // These rules conflict with Prettier
     '@stylistic/function-parentheses-space-inside': null,
