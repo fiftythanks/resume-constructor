@@ -8,8 +8,7 @@ import {
 } from 'react';
 
 import { Font, PDFDownloadLink, usePDF } from '@react-pdf/renderer';
-// FIXME: fix the types issue. `pdfjs-dist` comes with proper types. You should figure out how to use them.
-import * as pdfjsLib from 'pdfjs-dist/webpack';
+import * as pdfjsLib from 'pdfjs-dist';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
@@ -31,7 +30,7 @@ import type { ReadonlyDeep } from 'type-fest';
 // FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
 
 // Setting worker path to worker bundle.
-pdfjsLib.GlobalWorkerOptions.workerSrc = '../../dist/pdf.worker.bundle.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs-dist/build/pdf.worker.min.mjs';
 
 /**
  * It's how the aspect ratio is defined in the `react-pdf` library.
@@ -155,6 +154,7 @@ export default function Preview({
 
   // And this one is for rendering the document with `pdf.js`.
   useEffect(() => {
+    // TODO: Document why you need to check `instance.block`.
     if (instance.blob === null || canvasNode === null) return;
 
     let isCancelled = false;
@@ -164,8 +164,13 @@ export default function Preview({
       let pdf: PDFDocumentProxy;
       let page: PDFPageProxy;
 
+      if (instance.url === null) {
+        console.error('Instance URL is `null`.');
+        return;
+      }
+
       try {
-        pdf = await pdfjsLib.getDocument(instance.url).promise;
+        pdf = await pdfjsLib.getDocument({ url: instance.url }).promise;
 
         if (isCancelled) return;
 

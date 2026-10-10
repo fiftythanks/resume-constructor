@@ -27,8 +27,8 @@
   - Prettier: `bun x prettier --write <path>`
   - Type-check: `bun x tsc --noEmit`
 - **Build & Dev:**
-  - Dev server: `bun start` (`webpack serve --config webpack.dev.cjs`)
-  - Production build: `bun run build` (`webpack --config webpack.prod.cjs`)
+  - Dev server: `bun start` (`webpack serve --config webpack.dev.ts`)
+  - Production build: `bun run build` (`webpack --config webpack.prod.ts`)
 
 ---
 

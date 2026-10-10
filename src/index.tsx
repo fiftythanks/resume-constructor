@@ -1,8 +1,10 @@
 import { StrictMode } from 'react';
 
-import { Container, createRoot } from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 
 import App from './App';
+
+import type { Container } from 'react-dom/client';
 
 import './styles/main.scss';
 

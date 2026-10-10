@@ -31,7 +31,7 @@ HTMLDialogElement.prototype.showModal = jest.fn(function () {
   this.open = true;
 });
 
-jest.mock('pdfjs-dist/webpack', () => {
+jest.mock('pdfjs-dist', () => {
   const render = () => ({
     cancel() {},
     promise: new Promise<void>((resolve) => resolve()),

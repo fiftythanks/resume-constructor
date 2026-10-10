@@ -4,7 +4,7 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { ResumeData, SectionId } from '@/types/resumeData';
+import type { ResumeData, SectionId } from '@/types/resumeData';
 
 const DUMMY_ID = crypto.randomUUID();
 
