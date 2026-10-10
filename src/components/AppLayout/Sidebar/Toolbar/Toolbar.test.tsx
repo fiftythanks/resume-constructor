@@ -3,7 +3,7 @@
 
 import { act } from 'react';
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
 import '@testing-library/jest-dom';
@@ -306,6 +306,14 @@ describe('Toolbar', () => {
         expect(btn).toBeInTheDocument();
       });
 
+      it('should be disabled', () => {
+        renderToolbar();
+
+        const btn = screen.getByRole('button', { name: 'Open Preview' });
+
+        expect(btn).toBeDisabled();
+      });
+
       it('should control the resume preview dialog', () => {
         renderToolbar();
 
@@ -314,22 +322,17 @@ describe('Toolbar', () => {
         expect(btn).toHaveAttribute('aria-controls', 'resume-preview-dialog');
       });
 
-      it('should show the preview dialog on click', async () => {
+      it('should not show the preview dialog on click when disabled', async () => {
         renderToolbar();
         const user = userEvent.setup();
 
         const btn = screen.getByRole('button', { name: 'Open Preview' });
 
+        await user.click(btn);
+
         expect(
           screen.queryByRole('dialog', { name: 'Preview' }),
         ).not.toBeInTheDocument();
-
-        await user.click(btn);
-
-        const dialog = screen.getByRole('dialog', { name: 'Preview' });
-
-        expect(dialog).toBeInTheDocument();
-        expect(dialog).toHaveAttribute('id', 'resume-preview-dialog');
       });
     });
   });
@@ -366,17 +369,14 @@ describe('Toolbar', () => {
         expect(clearAllBtn).toHaveFocus();
       });
 
-      it('should focus "Fill All" if "Open Preview" is focused', async () => {
+      it('should focus "Fill All" if "Open Preview" is focused', () => {
         renderToolbar();
-        const user = userEvent.setup();
 
         const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
         const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
 
-        act(() => {
-          previewBtn.focus();
-        });
-        await user.keyboard('{ArrowLeft}');
+        // fireEvent is used because the button is disabled, which causes userEvent to suppress keyboard events.
+        fireEvent.keyDown(previewBtn, { key: 'ArrowLeft' });
 
         expect(fillAllBtn).toHaveFocus();
       });
@@ -413,17 +413,14 @@ describe('Toolbar', () => {
         expect(previewBtn).toHaveFocus();
       });
 
-      it('should focus the leftmost button ("Clear All") if "Open Preview" is focused', async () => {
+      it('should focus the leftmost button ("Clear All") if "Open Preview" is focused', () => {
         renderToolbar();
-        const user = userEvent.setup();
 
         const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
         const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
 
-        act(() => {
-          previewBtn.focus();
-        });
-        await user.keyboard('{ArrowRight}');
+        // fireEvent is used because the button is disabled, which causes userEvent to suppress keyboard events.
+        fireEvent.keyDown(previewBtn, { key: 'ArrowRight' });
 
         expect(clearAllBtn).toHaveFocus();
       });
@@ -458,15 +455,15 @@ describe('Toolbar', () => {
       expect(previewBtn).toHaveAttribute('tabindex', '-1');
     });
 
-    it('should update tabIndex to 0 on "Open Preview" when it is focused', async () => {
+    it('should update tabIndex to 0 on "Open Preview" when it is focused', () => {
       renderToolbar();
-      const user = userEvent.setup();
 
       const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
       const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
       const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
 
-      await user.click(previewBtn);
+      // fireEvent is used because the button is disabled, which causes userEvent to suppress pointer and focus events.
+      fireEvent.focusIn(previewBtn);
 
       expect(previewBtn).toHaveAttribute('tabindex', '0');
       expect(clearAllBtn).toHaveAttribute('tabindex', '-1');

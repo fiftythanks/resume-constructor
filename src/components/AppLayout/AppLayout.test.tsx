@@ -1,6 +1,8 @@
 // It disallowed using `crypto`, which is well supported.
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
+import { act } from 'react';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
@@ -989,9 +991,11 @@ describe('AppLayout', () => {
           await user.click(toggleToolbarBtn);
 
           const controlBtn = screen.getByRole('button', {
-            name: 'Open Preview',
+            name: 'Clear All',
           });
-          controlBtn.focus();
+          act(() => {
+            controlBtn.focus();
+          });
 
           // Act
           await user.keyboard('{Tab}');

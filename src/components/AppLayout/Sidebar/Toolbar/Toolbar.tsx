@@ -171,7 +171,9 @@ export default function Toolbar({
           onClick={fillAll}
           onFocus={handleFocus}
         />
+        {/* Temporarily disabled while the resume preview feature is undergoing redesign. */}
         <AppbarIconButton
+          disabled
           aria-controls="resume-preview-dialog"
           aria-label="Open Preview"
           className="Toolbar-Item Toolbar-Item_preview"
