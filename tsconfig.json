@@ -17,6 +17,7 @@
     "allowUnusedLabels": false,
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
+    "sourceMap": true,
     "paths": {
       "@/*": ["./src/*"]
     }
@@ -29,13 +30,12 @@
     "jest.config.ts",
     "jest.setup.tsx",
     "playwright.config.ts",
-    "postcss.config.ts",
     "prettier.config.js",
     "src",
     "scripts",
     "stylelint.config.js",
-    "webpack.common.cjs",
-    "webpack.dev.cjs",
-    "webpack.prod.cjs"
+    "webpack.common.ts",
+    "webpack.dev.ts",
+    "webpack.prod.ts"
   ]
 }

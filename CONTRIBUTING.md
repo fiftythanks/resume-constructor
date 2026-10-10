@@ -123,7 +123,7 @@ All scopes must be **strictly lowercase**.
 
 #### Domain D: Infrastructure, Tooling & Build System
 
-- `webpack`: webpack configuration files (`webpack.*.cjs`)
+- `webpack`: webpack configuration files (`webpack.*.ts`)
 - `husky`: Git pre-commit and pre-push hooks (`.husky/`)
 - `ci`: Continuous Integration workflows (`.github/workflows/`)
 - `e2e`: Playwright test suites and configs (`e2e/`, `playwright.config.ts`)

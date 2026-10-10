@@ -1,6 +1,6 @@
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { ResumeDataFilled } from '@/types/resumeData';
+import type { ResumeDataFilled } from '@/types/resumeData';
 
 export default function getFilledData() {
   const filledData: ResumeDataFilled = {

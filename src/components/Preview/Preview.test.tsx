@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import * as renderer from '@react-pdf/renderer';
 import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as pdfjsLib from 'pdfjs-dist/webpack';
+import * as pdfjsLib from 'pdfjs-dist';
 
 import useAppState from '@/hooks/useAppState';
 import '@testing-library/jest-dom';
@@ -68,32 +68,53 @@ function mockInstanceStatusTemporary({
   return restore;
 }
 
+interface MockPdfDocumentTask {
+  promise: {
+    getPage: () => {
+      getViewport: () => { height: number; width: number };
+      render: () => { cancel: () => void; promise: Promise<void> };
+    };
+    numPages: number;
+  };
+}
+
 /**
- * Changes the implementation of `getDocument` from mocked `pdfjs-dist/webpack`
+ * Changes the implementation of `getDocument` from mocked `pdfjs-dist`
  * to have a different `numPages` value.
  *
  * @returns A restore function to get back to the default implementation.
  */
 function mockWithNumPagesTemporary(numPages: number) {
-  const defaultImplementation = (
-    pdfjsLib.getDocument as jest.Mock
-  ).getMockImplementation();
+  // Mocked in `jest.setup.tsx` with a synchronous stub structure for JSDOM canvas testing.
+  const getDocumentMock =
+    pdfjsLib.getDocument as unknown as jest.Mock<MockPdfDocumentTask>;
+  const defaultImplementation = getDocumentMock.getMockImplementation();
 
-  const temporaryImplementation = () => ({
-    promise: {
-      numPages,
-      getPage: pdfjsLib.getDocument('url').promise.getPage,
-    },
-  });
+  const temporaryImplementation = () => {
+    const defaultResult = defaultImplementation?.() ?? {
+      promise: {
+        getPage: () => ({
+          getViewport: () => ({ height: 250, width: 250 }),
+          render: () => ({ cancel() {}, promise: Promise.resolve() }),
+        }),
+        numPages: 3,
+      },
+    };
 
-  (pdfjsLib.getDocument as jest.Mock).mockImplementation(
-    temporaryImplementation,
-  );
+    return {
+      promise: {
+        getPage: defaultResult.promise.getPage,
+        numPages,
+      },
+    };
+  };
+
+  getDocumentMock.mockImplementation(temporaryImplementation);
 
   function restore() {
-    (pdfjsLib.getDocument as jest.Mock).mockImplementation(
-      defaultImplementation,
-    );
+    if (defaultImplementation !== undefined) {
+      getDocumentMock.mockImplementation(defaultImplementation);
+    }
   }
 
   return restore;

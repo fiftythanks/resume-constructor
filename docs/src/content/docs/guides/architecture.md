@@ -141,7 +141,7 @@ resume-constructor/
 │   ├── styles/               # Global SCSS, custom properties, BEM base
 │   ├── types/                # TypeScript domain interfaces and utility types
 │   └── utils/                # Pure helper functions (capitalize, neverReached)
-├── webpack.common.cjs        # Shared webpack 5 build configuration
-├── webpack.dev.cjs           # Development server configuration
-└── webpack.prod.cjs          # Production optimization pipeline
+├── webpack.common.ts         # Shared webpack 5 build configuration
+├── webpack.dev.ts            # Development server configuration
+└── webpack.prod.ts           # Production optimization pipeline
 ```
