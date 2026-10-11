@@ -51,14 +51,23 @@ const config: Configuration = {
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'static/icons/[name][contenthash][ext]',
+        },
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'static/fonts/[name][contenthash][ext]',
+        },
       },
       {
         test: /pdf\.worker(\.min)?\.m?js$/,
         type: 'asset/resource',
+        generator: {
+          filename: 'static/pdfjs-dist/[name][contenthash][ext]',
+        },
       },
       {
         test: /\.m?(t|j)s$/,
@@ -85,6 +94,11 @@ const config: Configuration = {
         },
       },
     ],
+    generator: {
+      asset: {
+        filename: 'static/[path][name][contenthash][ext]',
+      },
+    },
   },
 };
 
