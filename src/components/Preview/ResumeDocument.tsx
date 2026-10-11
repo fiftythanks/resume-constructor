@@ -15,12 +15,6 @@ import type { ReadonlyDeep } from 'type-fest';
 
 // TODO: centralise link items in the Links section.
 const styles = StyleSheet.create({
-  page: {
-    fontFamily: 'EBGaramond',
-    fontSize: 12,
-    paddingHorizontal: '1.25cm',
-    paddingVertical: '1cm',
-  },
   fullName: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -30,7 +24,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.05,
   },
   jobTitle: {
-    marginTop: '-4pt',
+    marginTop: -4,
   },
   links: {
     display: 'flex',
@@ -45,9 +39,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 3,
   },
+  page: {
+    fontFamily: 'EBGaramond',
+    fontSize: 12,
+    paddingHorizontal: '1.25cm',
+    paddingVertical: '1cm',
+  },
   section: {
-    borderTopWidth: 0.8,
     borderTopColor: 'black',
+    borderTopWidth: 0.8,
     paddingVertical: 5,
   },
 });
