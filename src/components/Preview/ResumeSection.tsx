@@ -52,6 +52,10 @@ const styles = StyleSheet.create({
   },
 });
 
+// ============================================================================
+// PROPS
+// ============================================================================
+
 interface BaseProps {
   style?: ViewProps['style'];
 }
@@ -81,23 +85,12 @@ interface SkillsProps {
   sectionName: 'skills';
 }
 
-/**
- * Not for export. If you need to export `ResumeSectionProps`, create another
- * type without `ReadonlyDeep`.
- *
- * The union looks so awkward with all these `ReadonlyDeep`, and it's
- * intentional. The thing is, if you "ReadonlyDeep" the entire union, you can't
- * later access `data.certificates` etc. as intended - TypeScript won't be able
- * to infer the correct type.
- */
-type ResumeSectionProps = BaseProps &
-  (
-    | ReadonlyDeep<CertificationsProps>
-    | ReadonlyDeep<EducationProps>
-    | ReadonlyDeep<ExperienceProps>
-    | ReadonlyDeep<ProjectsProps>
-    | ReadonlyDeep<SkillsProps>
-  );
+type SectionSpecificProps =
+  | CertificationsProps
+  | EducationProps
+  | ExperienceProps
+  | ProjectsProps
+  | SkillsProps;
 
 // DILEMMA: Why is it named `sectionName` here, whereas it's `sectionId` absolutely everywhere else? It shouldn't be like that, should it?
 /**
@@ -108,7 +101,7 @@ export default function ResumeSection({
   data,
   sectionName,
   style,
-}: ResumeSectionProps) {
+}: BaseProps & ReadonlyDeep<SectionSpecificProps>) {
   // Not using it by default for all sections and fields isn't the most user-friendly approach.
   // TODO: examine where you need conditional rendering and where you don't.
   switch (sectionName) {
