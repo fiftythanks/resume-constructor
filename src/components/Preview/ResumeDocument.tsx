@@ -61,7 +61,7 @@ interface ResumeDocumentProps {
 // TODO: examine where you need conditional rendering and where you don't. Refactor accordingly.
 // FIXME: if there is more than one page, components get squizzed and the second page doesn't appear.
 /**
- * The entire document that is to be rendered.
+ * The entire PDF document template rendered by `@react-pdf/renderer`.
  */
 export default function ResumeDocument({
   activeSectionIds,
