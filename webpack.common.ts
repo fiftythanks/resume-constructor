@@ -15,6 +15,9 @@ const config: Configuration = {
     css: true,
     futureDefaults: true,
   },
+  node: {
+    global: true,
+  },
   entry: {
     html: path.resolve(__dirname, 'src/index.html'),
   },
