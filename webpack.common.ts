@@ -57,7 +57,12 @@ const config: Configuration = {
         type: 'asset/resource',
       },
       {
+        test: /pdf\.worker(\.min)?\.m?js$/,
+        type: 'asset/resource',
+      },
+      {
         test: /\.m?(t|j)s$/,
+        exclude: /pdf\.worker(\.min)?\.m?js$/,
         resolve: {
           fullySpecified: false,
         },
