@@ -1,3 +1,6 @@
+import { Fragment } from 'react';
+import type { ReactElement } from 'react';
+
 import {
   Document,
   Link,
@@ -7,13 +10,14 @@ import {
   View,
 } from '@react-pdf/renderer';
 
+import neverReached from '@/utils/neverReached';
+
 import Icon from './Icon';
 import ResumeSection from './ResumeSection';
 
 import type { Links, ResumeData, SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
-// TODO: centralise link items in the Links section.
 const styles = StyleSheet.create({
   fullName: {
     fontSize: 24,
@@ -57,9 +61,6 @@ interface ResumeDocumentProps {
   data: ResumeData;
 }
 
-// Using it by default for all sections and fields adds redundancy.
-// TODO: examine where you need conditional rendering and where you don't. Refactor accordingly.
-// FIXME: if there is more than one page, components get squizzed and the second page doesn't appear.
 /**
  * The entire PDF document template rendered by `@react-pdf/renderer`.
  */
@@ -67,196 +68,166 @@ export default function ResumeDocument({
   activeSectionIds,
   data,
 }: ReadonlyDeep<ResumeDocumentProps>) {
+  const hasLinksSection = activeSectionIds.includes('links');
+
+  // ==========================================================================
+  // CONTACT ELEMENTS
+  // ==========================================================================
+
+  const contactElements: ReactElement[] = [];
+
+  // Email
+  if (!hasLinksSection && data.personal.email !== '') {
+    contactElements.push(
+      <Link
+        href={`mailto:${data.personal.email}`}
+        key="email"
+        src={`mailto:${data.personal.email}`}
+      >
+        {data.personal.email}
+      </Link>,
+    );
+  }
+
+  // Phone number.
+  if (data.personal.phone !== '') {
+    contactElements.push(<Text key="phone">{data.personal.phone}</Text>);
+  }
+
+  // Home address.
+  if (data.personal.address !== '') {
+    contactElements.push(<Text key="address">{data.personal.address}</Text>);
+  }
+
+  // ==========================================================================
+  // CUSTOM LINKS
+  // ==========================================================================
+
+  const activeCustomLinks = Object.entries(data.links).filter(
+    ([_, item]) => item.text !== '',
+  );
+  const hasVisibleLinks =
+    hasLinksSection &&
+    (data.personal.email !== '' || activeCustomLinks.length > 0);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View
-          render={() => (
-            <>
-              <Text
-                style={styles.fullName}
-                // TODO: why are all `render` props passed `false` if the corresponding string value is empty? Does it work correctly? Should I pass `undefined` instead? Figure this out and refactor, if necessary.
-                render={() =>
-                  data.personal.fullName !== '' && `${data.personal.fullName}`
-                }
-              />
-              <View
-                style={styles.headerInfo}
-                render={() => (
-                  <>
-                    <Text
-                      style={styles.jobTitle}
-                      render={() =>
-                        data.personal.jobTitle !== '' &&
-                        `${data.personal.jobTitle}`
-                      }
-                    />
-                    <Text
-                      render={() =>
-                        (data.personal.phone !== '' ||
-                          data.personal.address !== '') && (
-                          <>
-                            {/* FIXME: it shouldn't be the `activeSectionIds` check, since you can add a section and leave it empty. It should be a check of whether there are links present. */}
-                            {!activeSectionIds.includes('links') &&
-                              data.personal.email !== '' && (
-                                <>
-                                  <Link
-                                    href={`mailto:${data.personal.email}`}
-                                    src={`mailto:${data.personal.email}`}
-                                    wrap={false}
-                                  >
-                                    {data.personal.email}
-                                  </Link>
-                                  {'  |  '}
-                                </>
-                              )}
+        <View>
+          {data.personal.fullName !== '' && (
+            <Text style={styles.fullName}>{data.personal.fullName}</Text>
+          )}
 
-                            {data.personal.phone !== '' && (
-                              <>
-                                {data.personal.phone}
-                                {data.personal.address !== '' && '  |  '}
-                              </>
-                            )}
-                            {data.personal.address !== '' &&
-                              data.personal.address}
-                          </>
-                        )
-                      }
-                    />
+          <View style={styles.headerInfo}>
+            {data.personal.jobTitle !== '' && (
+              <Text style={styles.jobTitle}>{data.personal.jobTitle}</Text>
+            )}
 
-                    <View
-                      style={styles.links}
-                      render={() =>
-                        // FIXME: it shouldn't be the `activeSectionIds` check, since you can add a section and leave it empty. It should be a check of whether there are links present.
-                        // TODO: change the Telegram link to a generic link in case something else needs to be added.
-                        activeSectionIds.includes('links') && (
-                          <>
-                            <View
-                              style={styles.linksItem}
-                              render={() =>
-                                data.personal.email !== '' && (
-                                  <>
-                                    <Icon
-                                      style={styles.linksIcon}
-                                      type="email"
-                                    />
-                                    <Text
-                                      render={() => (
-                                        <Link
-                                          href={`mailto:${data.personal.email}`}
-                                          src={`mailto:${data.personal.email}`}
-                                          wrap={false}
-                                        >
-                                          {data.personal.email}
-                                        </Link>
-                                      )}
-                                    />
-                                  </>
-                                )
-                              }
-                            />
-                            {Object.entries(data.links).map(([type, item]) => (
-                              <View
-                                key={type}
-                                style={styles.linksItem}
-                                render={() =>
-                                  item.text !== '' && (
-                                    <>
-                                      <Icon
-                                        style={styles.linksIcon}
-                                        type={type as keyof Links}
-                                      />
-                                      <Text
-                                        render={() => (
-                                          <Link
-                                            href={item.link}
-                                            src={item.link}
-                                            wrap={false}
-                                          >
-                                            {item.text}
-                                          </Link>
-                                        )}
-                                      />
-                                    </>
-                                  )
-                                }
-                              />
-                            ))}
-                          </>
-                        )
-                      }
-                    />
-                  </>
+            {contactElements.length > 0 && (
+              <Text>
+                {contactElements.map((element, index) => (
+                  <Fragment key={index}>
+                    {index > 0 && '  |  '}
+                    {element}
+                  </Fragment>
+                ))}
+              </Text>
+            )}
+
+            {hasVisibleLinks && (
+              <View style={styles.links}>
+                {data.personal.email !== '' && (
+                  <View style={styles.linksItem}>
+                    <Icon style={styles.linksIcon} type="email" />
+                    <Link
+                      href={`mailto:${data.personal.email}`}
+                      src={`mailto:${data.personal.email}`}
+                    >
+                      {data.personal.email}
+                    </Link>
+                  </View>
                 )}
-              />
-            </>
-          )}
-        />
-        <View
-          style={styles.section}
-          render={() =>
-            data.personal.summary !== '' && <Text>{data.personal.summary}</Text>
+
+                {activeCustomLinks.map(([type, item]) => (
+                  <View key={type} style={styles.linksItem}>
+                    <Icon style={styles.linksIcon} type={type as keyof Links} />
+                    <Link href={item.link} src={item.link}>
+                      {item.text}
+                    </Link>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+
+        {data.personal.summary !== '' && (
+          <View style={styles.section}>
+            <Text>{data.personal.summary}</Text>
+          </View>
+        )}
+
+        {activeSectionIds.map((sectionId) => {
+          switch (sectionId) {
+            case 'certifications':
+              return (
+                <ResumeSection
+                  data={data.certifications}
+                  key="certifications"
+                  sectionName="certifications"
+                  style={styles.section}
+                />
+              );
+
+            case 'education':
+              return (
+                <ResumeSection
+                  data={data.education}
+                  key="education"
+                  sectionName="education"
+                  style={styles.section}
+                />
+              );
+
+            case 'experience':
+              return (
+                <ResumeSection
+                  data={data.experience}
+                  key="experience"
+                  sectionName="experience"
+                  style={styles.section}
+                />
+              );
+
+            case 'links':
+              return null;
+
+            case 'personal':
+              return null;
+
+            case 'projects':
+              return (
+                <ResumeSection
+                  data={data.projects}
+                  key="projects"
+                  sectionName="projects"
+                  style={styles.section}
+                />
+              );
+            case 'skills':
+              return (
+                <ResumeSection
+                  data={data.skills}
+                  key="skills"
+                  sectionName="skills"
+                  style={styles.section}
+                />
+              );
+
+            default:
+              neverReached(sectionId);
           }
-        />
-        <View
-          render={() => (
-            <>
-              {activeSectionIds.map((sectionId) => {
-                /**
-                 * A simpler version didn't work because TypeScript couldn't
-                 * infer types properly.
-                 */
-                switch (sectionId) {
-                  case 'certifications':
-                    return (
-                      <ResumeSection
-                        data={data.certifications}
-                        key="certifications"
-                        sectionName="certifications"
-                        style={styles.section}
-                      />
-                    );
-                  case 'education':
-                    return (
-                      <ResumeSection
-                        data={data.education}
-                        key="education"
-                        sectionName="education"
-                        style={styles.section}
-                      />
-                    );
-                  case 'experience':
-                    return (
-                      <ResumeSection
-                        data={data.experience}
-                        key="experience"
-                        sectionName="experience"
-                        style={styles.section}
-                      />
-                    );
-                  case 'projects':
-                    return (
-                      <ResumeSection
-                        data={data.projects}
-                        key="projects"
-                        sectionName="projects"
-                        style={styles.section}
-                      />
-                    );
-                  case 'skills':
-                    return (
-                      <ResumeSection
-                        data={data.skills}
-                        key="skills"
-                        sectionName="skills"
-                        style={styles.section}
-                      />
-                    );
-                }
-              })}
-            </>
-          )}
-        />
+        })}
       </Page>
     </Document>
   );
