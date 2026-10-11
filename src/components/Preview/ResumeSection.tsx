@@ -12,54 +12,43 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: 'bold',
   },
-
   bulletPoint: {
+    alignItems: 'baseline',
     display: 'flex',
     flexDirection: 'row',
     gap: 5,
-
-    // TODO: it was `first baseline` but `alignItems` can't be `first baseline`, so I changed it to `baseline`. Now it has to be checked if something's broken.
-    alignItems: 'baseline',
   },
-
-  italic: {
-    fontStyle: 'italic',
-  },
-
-  jobHeader: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  rightJobHeaderPart: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-  },
-
-  job: {
+  degree: {
     marginTop: 5,
   },
-
-  project: {
-    marginTop: 5,
-  },
-
   degreeHeader: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-
+  italic: {
+    fontStyle: 'italic',
+  },
+  job: {
+    marginTop: 5,
+  },
+  jobHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  project: {
+    marginTop: 5,
+  },
   rightDegreeHeaderPart: {
+    alignItems: 'flex-end',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-end',
   },
-
-  degree: {
-    marginTop: 5,
+  rightJobHeaderPart: {
+    alignItems: 'flex-end',
+    display: 'flex',
+    flexDirection: 'column',
   },
 });
 
