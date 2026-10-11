@@ -12,6 +12,12 @@ const config = merge<Configuration>(common, {
   devServer: {
     server: 'https',
     static: './dist',
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
   },
 });
 
