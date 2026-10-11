@@ -92,13 +92,13 @@ type SectionSpecificProps =
   | ProjectsProps
   | SkillsProps;
 
-// DILEMMA: Why is it named `sectionName` here, whereas it's `sectionId` absolutely everywhere else? It shouldn't be like that, should it?
 /**
- * A resume Section (Personal Details, Education etc.) for insertion
+ * A resume Section (Personal Details, Education, Experience etc.) for insertion
  * directly into the rendered document.
  */
 export default function ResumeSection({
   data,
+  // DILEMMA: Why is it named `sectionName` here, whereas it's `sectionId` absolutely everywhere else? It shouldn't be like that, should it?
   sectionName,
   style,
 }: BaseProps & ReadonlyDeep<SectionSpecificProps>) {
