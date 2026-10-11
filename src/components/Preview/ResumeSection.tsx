@@ -110,30 +110,22 @@ export default function ResumeSection({
         <>
           <Text style={styles.bold}>CERTIFICATES, SKILLS & INTERESTS</Text>
           <View style={style}>
-            <Text
-              render={() => {
-                return (
-                  <>
-                    <Text style={styles.bold}>Certificates:</Text>{' '}
-                    {data.certificates}
-                  </>
-                );
-              }}
-            />
-            <Text
-              render={() => (
-                <>
-                  <Text style={styles.bold}>Skills:</Text> {data.skills}
-                </>
-              )}
-            />
-            <Text
-              render={() => (
-                <>
-                  <Text style={styles.bold}>Interests:</Text> {data.interests}
-                </>
-              )}
-            />
+            {data.certificates !== '' && (
+              <Text>
+                <Text style={styles.bold}>Certificates:</Text>{' '}
+                {data.certificates}
+              </Text>
+            )}
+            {data.skills !== '' && (
+              <Text>
+                <Text style={styles.bold}>Skills:</Text> {data.skills}
+              </Text>
+            )}
+            {data.interests !== '' && (
+              <Text>
+                <Text style={styles.bold}>Interests:</Text> {data.interests}
+              </Text>
+            )}
           </View>
         </>
       );
@@ -142,54 +134,40 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>EDUCATION</Text>
-          <View
-            style={style}
-            render={() => (
-              <>
-                {data.degrees.map((degree, i) => (
-                  <View
-                    key={degree.id}
-                    style={i > 0 ? styles.degree : undefined}
-                  >
-                    <View style={styles.degreeHeader}>
-                      <View>
-                        <Text
-                          render={() => `${degree.uni}`}
-                          style={styles.bold}
-                        />
-                        <Text
-                          render={() => `${degree.degree}`}
-                          style={styles.italic}
-                        />
-                      </View>
-                      <View style={styles.rightDegreeHeaderPart}>
-                        <Text
-                          render={() => `${degree.graduation}`}
-                          style={styles.bold}
-                        />
-                        <Text
-                          render={() => `${degree.address}`}
-                          style={styles.italic}
-                        />
-                      </View>
-                    </View>
-                    <View
-                      render={() => (
-                        <>
-                          {degree.bulletPoints.map((item) => (
-                            <View key={item.id} style={styles.bulletPoint}>
-                              <Text>•</Text>
-                              <Text render={() => `${item.value}`} />
-                            </View>
-                          ))}
-                        </>
-                      )}
-                    />
+          <View style={style}>
+            {data.degrees.map((degree, i) => (
+              <View
+                key={degree.id}
+                style={i > 0 ? styles.degree : undefined}
+                wrap={false}
+              >
+                <View style={styles.degreeHeader}>
+                  <View>
+                    {degree.uni !== '' && (
+                      <Text style={styles.bold}>{degree.uni}</Text>
+                    )}
+                    {degree.degree !== '' && (
+                      <Text style={styles.italic}>{degree.degree}</Text>
+                    )}
+                  </View>
+                  <View style={styles.rightDegreeHeaderPart}>
+                    {degree.graduation !== '' && (
+                      <Text style={styles.bold}>{degree.graduation}</Text>
+                    )}
+                    {degree.address !== '' && (
+                      <Text style={styles.italic}>{degree.address}</Text>
+                    )}
+                  </View>
+                </View>
+                {degree.bulletPoints.map((item) => (
+                  <View key={item.id} style={styles.bulletPoint}>
+                    <Text>•</Text>
+                    <Text>{item.value}</Text>
                   </View>
                 ))}
-              </>
-            )}
-          />
+              </View>
+            ))}
+          </View>
         </>
       );
     }
@@ -197,51 +175,40 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>WORK EXPERIENCE</Text>
-          <View
-            style={style}
-            render={() => (
-              <>
-                {data.jobs.map((job, i) => (
-                  <View key={job.id} style={i > 0 ? styles.job : undefined}>
-                    <View style={styles.jobHeader}>
-                      <View>
-                        <Text
-                          render={() => `${job.companyName}`}
-                          style={styles.bold}
-                        />
-                        <Text
-                          render={() => `${job.jobTitle}`}
-                          style={styles.italic}
-                        />
-                      </View>
-                      <View style={styles.rightJobHeaderPart}>
-                        <Text
-                          render={() => `${job.duration}`}
-                          style={styles.bold}
-                        />
-                        <Text
-                          render={() => `${job.address}`}
-                          style={styles.italic}
-                        />
-                      </View>
-                    </View>
-                    <View
-                      render={() => (
-                        <>
-                          {job.bulletPoints.map((item) => (
-                            <View key={item.id} style={styles.bulletPoint}>
-                              <Text>•</Text>
-                              <Text render={() => `${item.value}`} />
-                            </View>
-                          ))}
-                        </>
-                      )}
-                    />
+          <View style={style}>
+            {data.jobs.map((job, i) => (
+              <View
+                key={job.id}
+                style={i > 0 ? styles.job : undefined}
+                wrap={false}
+              >
+                <View style={styles.jobHeader}>
+                  <View>
+                    {job.companyName !== '' && (
+                      <Text style={styles.bold}>{job.companyName}</Text>
+                    )}
+                    {job.jobTitle !== '' && (
+                      <Text style={styles.italic}>{job.jobTitle}</Text>
+                    )}
+                  </View>
+                  <View style={styles.rightJobHeaderPart}>
+                    {job.duration !== '' && (
+                      <Text style={styles.bold}>{job.duration}</Text>
+                    )}
+                    {job.address !== '' && (
+                      <Text style={styles.italic}>{job.address}</Text>
+                    )}
+                  </View>
+                </View>
+                {job.bulletPoints.map((item) => (
+                  <View key={item.id} style={styles.bulletPoint}>
+                    <Text>•</Text>
+                    <Text>{item.value}</Text>
                   </View>
                 ))}
-              </>
-            )}
-          />
+              </View>
+            ))}
+          </View>
         </>
       );
     }
@@ -249,59 +216,45 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>PROJECTS</Text>
-          <View
-            style={style}
-            render={() => (
-              <>
-                {data.projects.map((project, i) => (
-                  <View
-                    key={project.id}
-                    style={i > 0 ? styles.project : undefined}
-                    render={() => (
-                      <>
-                        <Text
-                          render={() => (
-                            <>
-                              <Text
-                                render={() => `${project.projectName}`}
-                                style={styles.bold}
-                              />
-                              {` — ${project.stack}.`}
-                            </>
-                          )}
-                        />
-                        {project.bulletPoints.map((item) => (
-                          <View key={item.id} style={styles.bulletPoint}>
-                            <Text>•</Text>
-                            <Text render={() => `${item.value}`} />
-                          </View>
-                        ))}
-                        <Text
-                          render={() => (
-                            <>
-                              <Link
-                                href={project.code.link}
-                                src={project.code.link}
-                              >
-                                {project.code.text}
-                              </Link>
-                              {'  |  '}
-                              <Link
-                                href={project.demo.link}
-                                src={project.demo.link}
-                              >
-                                {project.demo.text}
-                              </Link>
-                            </>
-                          )}
-                        />
-                      </>
-                    )}
-                  />
+          <View style={style}>
+            {data.projects.map((project, i) => (
+              <View
+                key={project.id}
+                style={i > 0 ? styles.project : undefined}
+                wrap={false}
+              >
+                <Text>
+                  {project.projectName !== '' && (
+                    <Text style={styles.bold}>{project.projectName}</Text>
+                  )}
+                  {project.stack !== '' && ` — ${project.stack}.`}
+                </Text>
+                {project.bulletPoints.map((item) => (
+                  <View key={item.id} style={styles.bulletPoint}>
+                    <Text>•</Text>
+                    <Text>{item.value}</Text>
+                  </View>
                 ))}
-              </>
-            )}
-          />
+                {(project.code.text !== '' || project.demo.text !== '') && (
+                  <Text>
+                    {project.code.text !== '' && (
+                      <Link href={project.code.link} src={project.code.link}>
+                        {project.code.text}
+                      </Link>
+                    )}
+                    {project.code.text !== '' &&
+                      project.demo.text !== '' &&
+                      '  |  '}
+                    {project.demo.text !== '' && (
+                      <Link href={project.demo.link} src={project.demo.link}>
+                        {project.demo.text}
+                      </Link>
+                    )}
+                  </Text>
+                )}
+              </View>
+            ))}
+          </View>
         </>
       );
     }
@@ -309,47 +262,29 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>TECHNICAL SKILLS</Text>
-          <View
-            style={style}
-            render={() => (
-              <>
-                {data.languages && (
-                  <Text
-                    render={() => (
-                      <>
-                        <Text style={styles.bold}>Languages:</Text>
-                        {` ${joinSkills(data.languages)}.`}
-                      </>
-                    )}
-                  />
-                )}
-                {data.frameworks && (
-                  <Text
-                    render={() => (
-                      <>
-                        <Text style={styles.bold}>
-                          Frameworks, Libraries & Databases:
-                        </Text>
-                        {` ${joinSkills(data.frameworks)}.`}
-                      </>
-                    )}
-                  />
-                )}
-                {data.tools && (
-                  <Text
-                    render={() => (
-                      <>
-                        <Text style={styles.bold}>
-                          Tools & Other Technologies:
-                        </Text>
-                        {` ${joinSkills(data.tools)}.`}
-                      </>
-                    )}
-                  />
-                )}
-              </>
+          <View style={style}>
+            {data.languages.length > 0 && joinSkills(data.languages) !== '' && (
+              <Text>
+                <Text style={styles.bold}>Languages:</Text>
+                {` ${joinSkills(data.languages)}.`}
+              </Text>
             )}
-          />
+            {data.frameworks.length > 0 &&
+              joinSkills(data.frameworks) !== '' && (
+                <Text>
+                  <Text style={styles.bold}>
+                    Frameworks, Libraries & Databases:
+                  </Text>
+                  {` ${joinSkills(data.frameworks)}.`}
+                </Text>
+              )}
+            {data.tools.length > 0 && joinSkills(data.tools) !== '' && (
+              <Text>
+                <Text style={styles.bold}>Tools & Other Technologies:</Text>
+                {` ${joinSkills(data.tools)}.`}
+              </Text>
+            )}
+          </View>
         </>
       );
     }
