@@ -32,14 +32,14 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
 - **Architecture:** Strict separation of concerns (UI Kit vs Business Logic) combined with component colocation (tests, styles and logic kept together) for high maintainability.
 - **Build System:** **Custom webpack 5 configuration** written in TypeScript (`webpack.common.ts`, `webpack.dev.ts` and `webpack.prod.ts`) leveraging native HTML (`experiments.html`) and native CSS (`experiments.css`) processing with zero external HTML/CSS loader overhead, preserving CSS layer precedence and extracting stylesheets natively.
 - **Strict Type Safety:** TypeScript application source code (`strict: true`, no implicit `any`, no unreachable code) enforcing deep immutability across component boundaries via `ReadonlyExcept` and `type-fest`'s `ReadonlyDeep`.
-- **Testing Strategy:** Over 560 automated unit and integration tests (11,700+ lines of Jest and React Testing Library specs, accounting for over 60% of the codebase size), querying elements strictly by accessible roles and simulating user interactions.
+- **Testing Strategy:** Over 600 automated unit and integration tests (12,000+ lines of Jest and React Testing Library specs, accounting for over 60% of the codebase size), querying elements strictly by accessible roles and simulating user interactions.
   - **E2E & Automated Audits (Playwright):** Dockerised smoke and visual regression test suites verifying core user flows (data population, canvas rendering, PDF blob download) and automated `@axe-core/playwright` accessibility audits.
 - **Inclusive Design (A11y):** Built targeting WCAG 2.2 AA standards. All features, including complex interactions like drag & drop, are fully keyboard-navigable with focus management via `tabbable`, dynamic announcements via `aria-live="polite"` and explicit `htmlFor` form labeling.
 - **Rich Interactive Experience:** Implemented an accessible Drag & Drop interface using `@dnd-kit` for intuitive reordering of resume sections and list items:
   - **Visual Feedback:** Edit-mode shake indicator communicating draggable state.
   - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
   - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
-- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF.
+- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal, with an aligned invisible DOM text layer overlay (`pdfjsLib.TextLayer`) enabling text selection and copying. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF.
 
 ---
 

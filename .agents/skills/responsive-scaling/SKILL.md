@@ -40,10 +40,11 @@ This skill guides responsive adaptations, macro-layout rules and rendering engin
 
 ## 2. Rendering Engine Parity & PDF Constraints
 
-The document preview has two distinct rendering modes with strict constraints:
+The document preview architecture comprises three distinct rendering modes:
 
-1. **DOM Live Preview (Pure JSX):** Fast, non-blocking preview for live editing.
-2. **React-PDF Generation (`@react-pdf/renderer`):** Powered by the **Yoga layout engine**.
+1. **DOM Live Preview (Pure JSX):** Fast, non-blocking DOM preview for live interactive editing.
+2. **React-PDF Generation (`@react-pdf/renderer`):** Document compilation powered by the **Yoga layout engine** generating binary PDF blobs with preloaded fonts.
+3. **On-Demand Canvas & Interactive Text Layer (`pdfjs-dist`):** High-DPI canvas rasterisation inside the native `<dialog>` preview modal with an aligned, invisible `pdfjsLib.TextLayer` DOM overlay enabling text selection and copying.
 
 ### Yoga Constraints:
 

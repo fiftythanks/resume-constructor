@@ -21,7 +21,7 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ### Pure JSX Live Preview (Desktop/Tablet) & Real PDF Parity
 
-- **Main-Thread Performance:** Implement a pure DOM-based JSX live preview exclusively for wider viewports to provide instant typing feedback. Running the existing `@react-pdf/renderer` compilation and `pdfjs-dist` canvas rasterization dynamically during interactive typing would cause disastrous performance degradation; the pure JSX DOM engine eliminates canvas rasterization overhead.
+- **Main-Thread Performance:** Implement a pure DOM-based JSX live preview exclusively for wider viewports to provide instant typing feedback. Running the existing `@react-pdf/renderer` compilation and `pdfjs-dist` canvas rasterisation dynamically during interactive typing would cause disastrous performance degradation; the pure JSX DOM engine eliminates canvas rasterisation overhead.
 - **Engine Parity via Universal Primitives:** Enforce strict Yoga-compliant Flexbox rules across shared layout primitives to guarantee pixel-level parity between DOM preview and exported PDF.
 - **Pre-Download Real PDF Verification:** Retain the full `@react-pdf/renderer` and `pdfjs-dist` canvas modal pipeline as the final pre-download inspection step with an engine toggle ("Switch to Real PDF") within the desktop preview pane to verify exact vector pagination on demand.
 - **Effect Pruning:** Replace `useDebouncedWindowSize` and synchronous resize listeners with modern `@container` queries and `ResizeObserver`.
@@ -36,7 +36,7 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 - **Planned Fix:** Guard all focus restoration, computed style lookups and canvas pipelines with `node.isConnected` checks. Ensure captured focus targets and tabpanel roots remain attached to the document before executing focus actions.
 - **Affected Locations:**
   - `src/hooks/useLastComponentBeforeTabpanel.ts:87, 110`: Refocusing captured `relatedTarget` without verifying `lastComponent.current.isConnected` risks dropping focus to `document.body` if the element was detached or re-rendered.
-  - `src/components/Preview/Preview.tsx:133, 186, 199`: `useLayoutEffect` reads `getComputedStyle(popupRef.current)` without checking DOM attachment; asynchronous PDF rendering pipeline mutates `canvasNode` dimensions and style properties and invokes `page.render()` without verifying `canvasNode.isConnected`.
+  - `src/components/Preview/Preview.tsx`: Asynchronous PDF rendering and text layer pipelines are now guarded with `canvasNode.isConnected` and `textLayerNode.isConnected` checks; remaining work involves replacing legacy window resize listeners with container queries.
   - `src/components/AppLayout/Sidebar/Toolbar/Toolbar.tsx:65, 118`: Toolbar arrow navigation and preview modal close handler invoke `.focus()` without checking whether target buttons remain connected.
   - `src/components/AppLayout/Sidebar/Sidebar.tsx:105`: Sidebar toggle keyup handler invokes `.focus()` without verifying `navbarToggle.current.isConnected`.
   - `src/App/App.tsx:211`: `focusSection` computes tabbable elements and invokes `.focus()` without checking `isConnected` on the section container or the first tabbable target.
@@ -60,16 +60,17 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 - **Affected Locations:**
   - `src/components/Popup/Popup.tsx:46`: `rootRef` initialised via `document.getElementById('popup-root')!` with unsafe non-null assertion.
   - `src/components/Popup/Popup.tsx:52–58`: Direct `showModal()` and `close()` invocations in `useEffect` without checking `node.isConnected` or `node.open`.
-  - `src/components/Preview/Preview.tsx:238`: Close button invokes `popupRef.current.close()` without checking `node.isConnected` or `node.open`.
+  - `src/components/Preview/Preview.tsx`: Handled via controlled `onClose` callback in `Preview`; legacy direct DOM calls removed.
 
-### Document Rendering Parity & Bug Fixes
+### Document Rendering Parity & Rebuild (Completed)
 
-- **Link Presence Checks:** Replace `activeSectionIds` checks in `ResumeDocument` with content-based checks so empty sections do not render orphaned delimiters.
-- **Single Contact Item Display:** Fix header layout bug where email fails to display when no custom links are present.
-- **Multi-Page Page Breaks:** Fix squashing bug in `@react-pdf/renderer` when content exceeds one page, ensuring second and subsequent pages break cleanly.
-- **PDF Blob Race Condition:** Resolve `ERR_FILE_NOT_FOUND` blob URL errors during rapid bullet point additions.
-- **Toolbar Accessibility:** Ensure toolbar triggers possess explicit `aria-controls` referencing their target dialogs.
-- **Sources:** `src/components/Preview/ResumeDocument.tsx:62, 99`, `src/components/Preview/Preview.tsx:31`
+- **Interactive Text Layer:** Mounted an invisible DOM text layer overlay (`pdfjsLib.TextLayer`) directly above the high-DPI canvas to enable selectable, searchable text with `--scale-factor` synchronisation.
+- **Personalised Resume Filename:** Formatted downloadable PDF file names using `getResumePdfFileName` to sanitise the applicant's name and produce files like `"john_doe_resume.pdf"`.
+- **Link Presence Checks:** Replaced `activeSectionIds` checks in `ResumeDocument` with content-based checks so empty sections do not render orphaned delimiters.
+- **Single Contact Item Display:** Resolved header layout bug where email failed to display when no custom links were present.
+- **Multi-Page Page Breaks:** Hardened card wrapping with `wrap={false}` in `@react-pdf/renderer`, ensuring multi-page documents break cleanly.
+- **PDF Blob Race Condition:** Eliminated `ERR_FILE_NOT_FOUND` blob URL errors during rapid updates via task cancellation and worker asset caching.
+- **Sources:** `src/components/Preview/ResumeDocument.tsx`, `src/components/Preview/Preview.tsx`, `src/components/Preview/getResumePdfFileName.ts`
 
 ---
 
