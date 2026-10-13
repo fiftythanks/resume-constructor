@@ -16,6 +16,7 @@ import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 import Button from '@/components/Button';
 import Popup from '@/components/Popup';
 
+import getResumePdfFileName from './getResumePdfFileName';
 import ResumeDocument from './ResumeDocument';
 
 import closeSrc from '@/assets/icons/cross.svg';
@@ -297,6 +298,11 @@ export default function Preview({
     textLayerNode,
   ]);
 
+  const fileName = useMemo(
+    () => getResumePdfFileName(data.personal.fullName),
+    [data.personal.fullName],
+  );
+
   return (
     <Popup
       block="Preview"
@@ -332,7 +338,7 @@ export default function Preview({
                 Previous Page
               </Button>
             )}
-            <PDFDownloadLink document={document} fileName="resume.pdf">
+            <PDFDownloadLink document={document} fileName={fileName}>
               {({ error, loading }) => {
                 if (loading) return null;
 
@@ -403,7 +409,7 @@ export default function Preview({
                 Previous Page
               </Button>
             )}
-            <PDFDownloadLink document={document} fileName="resume.pdf">
+            <PDFDownloadLink document={document} fileName={fileName}>
               {({ error, loading }) => {
                 if (loading) return null;
 
