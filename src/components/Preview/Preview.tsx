@@ -9,6 +9,7 @@ import {
 
 import { Font, PDFDownloadLink, usePDF } from '@react-pdf/renderer';
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
@@ -19,35 +20,32 @@ import ResumeDocument from './ResumeDocument';
 
 import closeSrc from '@/assets/icons/cross.svg';
 
-import './Preview.scss';
-
 import type { ResumeData, SectionId } from '@/types/resumeData';
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from 'pdfjs-dist';
 import type { ReadonlyDeep } from 'type-fest';
 
-// TODO: clean up in the component.
-// TODO: announce the document (or error/loading) to screen readers.
-// FIXME: when I add a bullet point (at least in Education), this error throws, `pdf.mjs:10835  GET blob:http://localhost:8080/c7c3ed6c-cc3f-44c8-98be-a9bdc83909c8 net::ERR_FILE_NOT_FOUND`.
+import './Preview.scss';
 
-// Setting worker path to worker bundle.
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs-dist/build/pdf.worker.min.mjs';
+// Set path to the compiled worker asset.
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
 
 /**
- * It's how the aspect ratio is defined in the `react-pdf` library.
+ * Aspect ratio defined in `@react-pdf/renderer` for standard A4 page size.
  * https://github.com/diegomura/react-pdf/blob/ee5c96b80326ba4441b71be4c7a85ba9f61d4174/packages/layout/src/page/getSize.ts
  */
 const A4_ASPECT_RATIO = 595.28 / 841.89;
 
 export interface PreviewProps {
-  activeSectionIds: ReadonlyDeep<SectionId[]>;
-  data: ReadonlyDeep<ResumeData>;
+  activeSectionIds: SectionId[];
+  data: ResumeData;
   id?: string;
   isShown: boolean;
-  onClose: ReadonlyDeep<() => void>;
+  onClose: () => void;
 }
 
 /**
- * A resume preview dialog that renders the PDF document on a canvas.
+ * A resume preview dialog that renders the PDF document on an HTML canvas
+ * with an interactive invisible text layer overlay for text selection and copying.
  */
 export default function Preview({
   activeSectionIds,
@@ -55,39 +53,46 @@ export default function Preview({
   id = 'resume-preview-dialog',
   isShown,
   onClose,
-}: PreviewProps) {
-  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+}: ReadonlyDeep<PreviewProps>) {
+  const [instance, updateInstance] = usePDF();
+  const [canvasSize, setCanvasSize] = useState({ height: 0, width: 0 });
   const [canvasNode, setCanvasNode] = useState<HTMLCanvasElement | null>(null);
+  const [textLayerNode, setTextLayerNode] = useState<HTMLDivElement | null>(
+    null,
+  );
   const [numPages, setNumPages] = useState(0);
   const popupRef = useRef<HTMLDialogElement | null>(null);
   const { innerWidth: viewportWidth } = useDebouncedWindowSize();
 
-  // 1-based indices. (Not my choice, it's how the API works.)
+  // 1-based page indices matching PDF.js page conventions.
   const [openedPageIndex, setOpenedPageIndex] = useState(1);
 
-  const canvasCallbackRef = useCallback((node: HTMLCanvasElement) => {
+  const canvasCallbackRef = useCallback((node: HTMLCanvasElement | null) => {
     setCanvasNode(node);
+  }, []);
+  const textLayerCallbackRef = useCallback((node: HTMLDivElement | null) => {
+    setTextLayerNode(node);
   }, []);
 
   /**
-   * If we don't load fonts manually, the first time resume is rendered, its
-   * content will use incorrect fonts.
+   * If fonts are not loaded manually prior to rendering the document,
+   * initial document generation will fall back to unstyled glyphs.
    */
   const [areFontsLoaded, setAreFontsLoaded] = useState(false);
 
   useEffect(() => {
+    let isCancelled = false;
+
     const normal = Font.load({
       fontFamily: 'EBGaramond',
       fontStyle: 'normal',
       fontWeight: 'normal',
     });
-
     const normalBold = Font.load({
       fontFamily: 'EBGaramond',
       fontStyle: 'normal',
       fontWeight: 'bold',
     });
-
     const italic = Font.load({
       fontFamily: 'EBGaramond',
       fontStyle: 'italic',
@@ -95,103 +100,118 @@ export default function Preview({
     });
 
     Promise.all([normal, normalBold, italic])
-      .then(() => setAreFontsLoaded(true))
-      .catch((e) => {
+      .then(() => {
+        if (!isCancelled) {
+          setAreFontsLoaded(true);
+        }
+      })
+      .catch((e: unknown) => {
         console.error(e);
 
-        // Setting to true so we still get a PDF, at least with wrong fonts.
-        setAreFontsLoaded(true);
+        if (!isCancelled) {
+          // Setting to true so we still get a PDF, at least with fallback fonts.
+          setAreFontsLoaded(true);
+        }
       });
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
-  // Initialised with an empty instance (`instance.url === null`).
-  const [instance, updateInstance] = usePDF();
-
-  // DILEMMA: Messy... Is there a way to make it cleaner?
   // Prevent `usePDF` from creating a new PDF on every re-render.
   const document = useMemo(() => {
-    // Don't define `document` until fonts are loaded.
     if (!areFontsLoaded) {
-      return undefined;
+      return;
     }
 
     return <ResumeDocument activeSectionIds={activeSectionIds} data={data} />;
   }, [activeSectionIds, areFontsLoaded, data]);
 
-  // As soon as `document` is defined, create the PDF instance.
   useEffect(() => {
-    if (document === undefined) return;
-
-    updateInstance(document);
+    if (document !== undefined) {
+      // Synchronises the external React-PDF worker compiler with updated document contents.
+      updateInstance(document);
+    }
   }, [document, updateInstance]);
 
-  // DILEMMA: Does the canvas need debouncing? It was needed when there was an actual embedded PDF, but now? Canvas can itself resize properly, you just need to apply CSS, right?
   /**
-   * This one is for changing the size of the canvas to always keep it A4 when
-   * the browser window is resized.
+   * Calculates the size of the canvas to preserve the A4 paper aspect ratio
+   * in portrait mode as the viewport is resized.
    */
   useLayoutEffect(() => {
-    // TODO: Verify `popupRef.current.isConnected` before querying computed layout styles to prevent computing styles on detached elements.
     if (!isShown || popupRef.current === null) {
       return;
     }
 
-    // Inline padding of the modal. Defined in `Preview.scss`.
     const paddingInline = parseFloat(
       getComputedStyle(popupRef.current).paddingInline,
     );
 
     const width = viewportWidth - 2 * paddingInline;
 
-    // DILEMMA: Why is it a state? Does it need to be a state?
-    /**
-     * Width is calculated automatically. It simply takes up as much space as
-     * it can. This is desired. This line calculates what height the canvas
-     * should be to preserve the A4 paper aspect ratio in portrait mode.
-     */
-    setCanvasSize({ width, height: width / A4_ASPECT_RATIO });
+    setCanvasSize({ height: width / A4_ASPECT_RATIO, width });
   }, [isShown, viewportWidth]);
 
-  // And this one is for rendering the document with `pdf.js`.
+  // Renders the document with PDF.js on canvas with transparent text layer overlay.
   useEffect(() => {
-    // TODO: Document why you need to check `instance.block`.
-    if (instance.blob === null || canvasNode === null) return;
+    const blob = instance.blob;
+    if (blob === null || canvasNode === null) return;
 
     let isCancelled = false;
     let renderTask: null | RenderTask = null;
+    let textLayerInstance: null | pdfjsLib.TextLayer = null;
 
-    async function loadAndRender() {
+    async function loadAndRender(targetBlob: Blob) {
       let pdf: PDFDocumentProxy;
       let page: PDFPageProxy;
 
-      if (instance.url === null) {
-        console.error('Instance URL is `null`.');
-        return;
-      }
+      // ======================================================================
+      // PDF PAGE PROXY
+      // ======================================================================
 
+      // `pdf` initialisation.
       try {
-        pdf = await pdfjsLib.getDocument({ url: instance.url }).promise;
+        const buffer = await targetBlob.arrayBuffer();
+
+        if (isCancelled) return;
+
+        const loadingTask = pdfjsLib.getDocument({
+          data: new Uint8Array(buffer),
+        });
+        pdf = await loadingTask.promise;
 
         if (isCancelled) return;
 
         setNumPages(pdf.numPages);
-      } catch (e) {
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === 'RenderingCancelledException') {
+          return;
+        }
+
         console.error(e);
         return;
       }
 
+      // `page` initialisation.
       try {
         page = await pdf.getPage(openedPageIndex);
 
         if (isCancelled) return;
-      } catch (e) {
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === 'RenderingCancelledException') {
+          return;
+        }
+
         console.error(e);
         return;
       }
 
-      // Don't proceed if the canvas has disappeared for some reason.
-      // TODO: Verify `canvasNode.isConnected` before mutating dimensions and proceeding with canvas rendering to avoid mutations on detached elements.
-      if (canvasNode === null) {
+      // ======================================================================
+      // PDF DOCUMENT RENDER
+      // ======================================================================
+
+      if (canvasNode === null || !canvasNode.isConnected) {
         return;
       }
 
@@ -202,32 +222,80 @@ export default function Preview({
       canvasNode.style.width = '100%';
       canvasNode.style.height = '100%';
 
+      const canvasContext = canvasNode.getContext('2d');
+      if (canvasContext === null) return;
+
       try {
-        // FIXME: Guard `canvasNode.getContext('2d')` against null and check `canvasNode.isConnected` instead of using non-null assertion `!`.
         renderTask = page.render({
-          canvas: null,
-          canvasContext: canvasNode.getContext('2d')!,
+          canvas: canvasNode,
           viewport,
         });
 
         await renderTask.promise;
-      } catch (e) {
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === 'RenderingCancelledException') {
+          return;
+        }
+
+        console.error(e);
+      }
+
+      // ======================================================================
+      // TEXT LAYER RENDER
+      // ======================================================================
+
+      if (isCancelled || textLayerNode === null || !textLayerNode.isConnected) {
+        return;
+      }
+
+      try {
+        textLayerNode.replaceChildren();
+
+        const textContent = await page.getTextContent();
+        if (isCancelled) return;
+
+        const unscaledViewport = page.getViewport({ scale: 1.0 });
+        const displayScale =
+          canvasSize.width > 0
+            ? canvasSize.width / unscaledViewport.width
+            : 1.0;
+
+        textLayerNode.style.setProperty('--scale-factor', `${displayScale}`);
+
+        textLayerInstance = new pdfjsLib.TextLayer({
+          container: textLayerNode,
+          textContentSource: textContent,
+          viewport: page.getViewport({ scale: displayScale }),
+        });
+
+        await textLayerInstance.render();
+      } catch (e: unknown) {
+        if (
+          e instanceof Error &&
+          (e.name === 'RenderingCancelledException' ||
+            e.name === 'AbortException')
+        ) {
+          return;
+        }
+
         console.error(e);
       }
     }
 
-    void loadAndRender();
+    void loadAndRender(blob);
 
     return () => {
       isCancelled = true;
-
-      if (renderTask === null) {
-        return;
-      }
-
-      renderTask.cancel();
+      renderTask?.cancel();
+      textLayerInstance?.cancel();
     };
-  }, [canvasNode, instance.blob, instance.url, openedPageIndex]);
+  }, [
+    canvasNode,
+    canvasSize.width,
+    instance.blob,
+    openedPageIndex,
+    textLayerNode,
+  ]);
 
   return (
     <Popup
@@ -239,11 +307,12 @@ export default function Preview({
       onClose={onClose}
     >
       <button
+        aria-label="Close Popup"
         className="Preview-CloseBtn"
         type="button"
         onClick={() => {
-          // TODO: Verify `popupRef.current.isConnected` and `popupRef.current.open` before calling `.close()`.
-          if (popupRef.current !== null) popupRef.current.close();
+          popupRef.current?.close();
+          onClose();
         }}
       >
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
@@ -255,18 +324,23 @@ export default function Preview({
           <div className="Preview-ActionBtns">
             {openedPageIndex > 1 && (
               <Button
-                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
                 className="Preview-ActionBtn"
-                onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
+                onClick={() =>
+                  setOpenedPageIndex((prev) => Math.max(1, prev - 1))
+                }
               >
                 Previous Page
               </Button>
             )}
-            <PDFDownloadLink document={document} fileName="Resume.pdf">
-              {({ loading, error }) => {
+            <PDFDownloadLink document={document} fileName="resume.pdf">
+              {({ error, loading }) => {
                 if (loading) return null;
-                // TODO: don't throw. Just log the error and return `null`.
-                if (error) throw error;
+
+                if (error !== null) {
+                  console.error(error);
+                  return null;
+                }
+
                 return (
                   <Button modifiers={['Button_paddingInline_medium']}>
                     Download
@@ -276,46 +350,67 @@ export default function Preview({
             </PDFDownloadLink>
             {numPages > openedPageIndex && (
               <Button
-                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
                 className="Preview-ActionBtn"
-                onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
+                onClick={() =>
+                  setOpenedPageIndex((prev) => Math.min(numPages, prev + 1))
+                }
               >
                 Next Page
               </Button>
             )}
           </div>
           <div className="Preview-CanvasContainer">
-            {/* FIXME: What if both `loading` and `error` are `true`? What if they are true, yet the document has loaded? */}
             {instance.loading && (
               <p className="Preview-PdfTextAlt">Loading...</p>
             )}
-
-            {instance.error && (
+            {instance.error !== null && (
               <p className="Preview-PdfTextAlt">
                 Something went wrong. Try reloading the page.
               </p>
             )}
-
-            <div style={{ width: canvasSize.width, height: canvasSize.height }}>
-              <canvas data-testid="preview-canvas" ref={canvasCallbackRef} />
+            <div
+              className="Preview-PageWrapper"
+              style={{
+                height: canvasSize.height,
+                position: 'relative',
+                width: canvasSize.width,
+              }}
+            >
+              <canvas
+                aria-label="Resume page canvas"
+                className="Preview-Canvas"
+                data-testid="preview-canvas"
+                ref={canvasCallbackRef}
+                role="img"
+              />
+              <div
+                aria-label="Text selection layer"
+                className="Preview-TextLayer textLayer"
+                data-testid="preview-text-layer"
+                ref={textLayerCallbackRef}
+                role="region"
+              />
             </div>
           </div>
           <div className="Preview-ActionBtns">
             {openedPageIndex > 1 && (
               <Button
-                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
                 className="Preview-ActionBtn"
-                onClick={() => setOpenedPageIndex(openedPageIndex - 1)}
+                onClick={() =>
+                  setOpenedPageIndex((prev) => Math.max(1, prev - 1))
+                }
               >
                 Previous Page
               </Button>
             )}
-            <PDFDownloadLink document={document} fileName="Resume.pdf">
-              {({ loading, error }) => {
-                // DILEMMA: Does it render nothing in this case, or does it render an anchor tag anyway?
+            <PDFDownloadLink document={document} fileName="resume.pdf">
+              {({ error, loading }) => {
                 if (loading) return null;
-                // TODO: don't throw. Just log the error and return `null`.
-                if (error) throw error;
+
+                if (error !== null) {
+                  console.error(error);
+                  return null;
+                }
 
                 return (
                   <Button modifiers={['Button_paddingInline_medium']}>
@@ -326,9 +421,10 @@ export default function Preview({
             </PDFDownloadLink>
             {numPages > openedPageIndex && (
               <Button
-                // FIXME: there's no such class. There's only `Preview-ActionBtns`, but will this class apply to `Button` when it's in the `Preview`'s stylesheet? Figure out and fix.
                 className="Preview-ActionBtn"
-                onClick={() => setOpenedPageIndex(openedPageIndex + 1)}
+                onClick={() =>
+                  setOpenedPageIndex((prev) => Math.min(numPages, prev + 1))
+                }
               >
                 Next Page
               </Button>

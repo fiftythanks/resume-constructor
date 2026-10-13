@@ -1,132 +1,88 @@
-import React, { useCallback, useState } from 'react';
-
 import * as renderer from '@react-pdf/renderer';
 import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as pdfjsLib from 'pdfjs-dist';
-
-import useAppState from '@/hooks/useAppState';
 import '@testing-library/jest-dom';
 
+import useAppState from '@/hooks/useAppState';
 import useResumeData from '@/hooks/useResumeData';
 
 import Preview from './Preview';
 
 import type { PreviewProps } from './Preview';
-import type { DocumentProps, UsePDFInstance } from '@react-pdf/renderer';
 
-// TODO: this test suite is a disaster. Refactor this rubbish heavily.
-
-/**
- * Testing plan:
- * TODO: to be finished as soon as I figure out how the component works.
- * Download buttons
- * - [ ] If loading, should not render.
- * - [ ] If error, should throw.
- */
+interface MockInstanceOptions {
+  error?: null | string;
+  loading?: boolean;
+}
 
 /**
- * Changes the implementation of `usePDF` to alter document loading status.
+ * Changes the implementation of `usePDF` to alter document loading or error status.
  *
  * @returns A restore function to get back to the default implementation.
  */
 function mockInstanceStatusTemporary({
-  loading = false,
   error = null,
-}: {
-  error?: null | string;
-  loading?: boolean;
-}) {
-  const usePDFDefaultImplementation = (
+  loading = false,
+}: MockInstanceOptions = {}) {
+  const defaultImplementation = (
     renderer.usePDF as jest.Mock
   ).getMockImplementation();
 
-  const usePDFTemporary = () => {
-    const [document, _] = useState<UsePDFInstance>({
-      loading,
+  (renderer.usePDF as jest.Mock).mockReturnValue([
+    {
+      blob: new Blob(['mock-pdf-content'], { type: 'application/pdf' }),
       error,
-      blob: null,
+      loading,
       url: 'blob:mock-pdf-url',
-    });
+    },
+    jest.fn(),
+  ]);
 
-    const setDocumentMock = useCallback(
-      (_newDocument: React.ReactElement<DocumentProps>) => {},
-      [],
-    );
-
-    return [document, setDocumentMock];
-  };
-
-  (renderer.usePDF as jest.Mock).mockImplementation(usePDFTemporary);
-
-  function restore() {
-    (renderer.usePDF as jest.Mock).mockImplementation(
-      usePDFDefaultImplementation,
-    );
-  }
-
-  return restore;
-}
-
-interface MockPdfDocumentTask {
-  promise: {
-    getPage: () => {
-      getViewport: () => { height: number; width: number };
-      render: () => { cancel: () => void; promise: Promise<void> };
-    };
-    numPages: number;
+  return function restore() {
+    (renderer.usePDF as jest.Mock).mockImplementation(defaultImplementation);
   };
 }
 
 /**
- * Changes the implementation of `getDocument` from mocked `pdfjs-dist`
- * to have a different `numPages` value.
+ * Mocks `pdfjsLib.getDocument` with a temporary total number of pages.
  *
- * @returns A restore function to get back to the default implementation.
+ * @returns A restore function to revert to the default implementation.
  */
-function mockWithNumPagesTemporary(numPages: number) {
-  // Mocked in `jest.setup.tsx` with a synchronous stub structure for JSDOM canvas testing.
-  const getDocumentMock =
-    pdfjsLib.getDocument as unknown as jest.Mock<MockPdfDocumentTask>;
+function mockNumPagesTemporary(numPages: number) {
+  const getDocumentMock = pdfjsLib.getDocument as unknown as jest.Mock;
   const defaultImplementation = getDocumentMock.getMockImplementation();
 
-  const temporaryImplementation = () => {
-    const defaultResult = defaultImplementation?.() ?? {
-      promise: {
-        getPage: () => ({
-          getViewport: () => ({ height: 250, width: 250 }),
-          render: () => ({ cancel() {}, promise: Promise.resolve() }),
+  getDocumentMock.mockImplementation(() => ({
+    promise: Promise.resolve({
+      getPage: () =>
+        Promise.resolve({
+          getTextContent: () => Promise.resolve({ items: [], styles: {} }),
+          getViewport: () => ({
+            height: 250,
+            rawDims: {
+              pageHeight: 841.89,
+              pageWidth: 595.28,
+              pageX: 0,
+              pageY: 0,
+            },
+            width: 250,
+          }),
+          render: () => ({
+            cancel() {},
+            promise: Promise.resolve(),
+          }),
         }),
-        numPages: 3,
-      },
-    };
+      numPages,
+    }),
+  }));
 
-    return {
-      promise: {
-        getPage: defaultResult.promise.getPage,
-        numPages,
-      },
-    };
+  return function restore() {
+    getDocumentMock.mockImplementation(defaultImplementation);
   };
-
-  getDocumentMock.mockImplementation(temporaryImplementation);
-
-  function restore() {
-    if (defaultImplementation !== undefined) {
-      getDocumentMock.mockImplementation(defaultImplementation);
-    }
-  }
-
-  return restore;
 }
 
-// TODO: add `activeSectionIds` and `data` tests by changing the mocks in such a way that the props become testable.
 describe('Preview', () => {
-  /**
-   * Since to test this component, we can safely use the same data and state, I
-   * decided to do just that. The following logic creates `appState` and
-   * fills the resume with enough data necessary for testing `Preview`.
-   */
   const { result: resumeDataResult } = renderHook(() => useResumeData());
   const { result: appStateResult } = renderHook(() => useAppState());
   const { activeSectionIds } = appStateResult.current;
@@ -141,226 +97,251 @@ describe('Preview', () => {
     };
   }
 
-  function renderPreview(
-    props?: Partial<PreviewProps>,
-    Component: typeof Preview = Preview,
-  ) {
-    // `Preview` is portalled into an element with an ID "popup-root".
+  function renderPreview(props?: Partial<PreviewProps>) {
     render(<div id="popup-root" />);
-    render(<Component {...getProps(props)} />);
+    render(<Preview {...getProps(props)} />);
   }
 
-  // Tests
-  it('should render with an accessible name "Preview"', async () => {
-    renderPreview();
+  describe('Modal dialog and accessibility', () => {
+    it('should render dialog with accessible name "Preview"', async () => {
+      // ARRANGE & ACT
+      renderPreview();
 
-    const popup = await screen.findByRole('dialog', { name: 'Preview' });
+      const popup = await screen.findByRole('dialog', { name: 'Preview' });
 
-    expect(popup).toBeInTheDocument();
-    expect(popup).toHaveAttribute('id', 'resume-preview-dialog');
+      // ASSERT
+      expect(popup).toBeInTheDocument();
+      expect(popup).toHaveAttribute('id', 'resume-preview-dialog');
+      expect(popup).toHaveClass('Popup', 'Preview');
+    });
+
+    it('should support a custom dialog id via the "id" prop', async () => {
+      // ARRANGE & ACT
+      renderPreview({ id: 'custom-dialog-id' });
+
+      const popup = await screen.findByRole('dialog', { name: 'Preview' });
+
+      // ASSERT
+      expect(popup).toHaveAttribute('id', 'custom-dialog-id');
+    });
   });
 
-  it('should support a custom dialog id via the `id` prop', async () => {
-    renderPreview({ id: 'custom-dialog-id' });
+  describe('Close button', () => {
+    it('should render with an accessible name "Close Popup"', async () => {
+      // ARRANGE & ACT
+      renderPreview();
 
-    const popup = await screen.findByRole('dialog', { name: 'Preview' });
+      const btn = await screen.findByRole('button', { name: 'Close Popup' });
 
-    expect(popup).toHaveAttribute('id', 'custom-dialog-id');
+      // ASSERT
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveClass('Preview-CloseBtn');
+    });
+
+    it('should call "onClose" when clicked', async () => {
+      // ARRANGE
+      const onCloseMock = jest.fn();
+      renderPreview({ onClose: onCloseMock });
+      const user = userEvent.setup();
+      const btn = await screen.findByRole('button', { name: 'Close Popup' });
+
+      // ACT
+      await user.click(btn);
+
+      // ASSERT
+      expect(onCloseMock).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Download buttons', () => {
-    it('should render two download buttons with text "Download"', async () => {
+    it('should render two download buttons with accessible name "Download"', async () => {
+      // ARRANGE & ACT
       renderPreview();
 
       const downloadBtns = await screen.findAllByRole('button', {
         name: 'Download',
       });
 
+      // ASSERT
       expect(downloadBtns).toHaveLength(2);
+      expect(downloadBtns[0]).toBeInTheDocument();
+      expect(downloadBtns[1]).toBeInTheDocument();
     });
   });
 
-  describe('Close Popup Button', () => {
-    it('should render with an accessible name "Close Popup"', async () => {
-      renderPreview();
-
-      const btn = await screen.findByRole('button', { name: 'Close Popup' });
-
-      expect(btn).toBeInTheDocument();
-    });
-
-    it('should call `onClose` when clicked', async () => {
-      const mockFn = jest.fn();
-      renderPreview(getProps({ onClose: mockFn }));
-      const user = userEvent.setup();
-      const btn = await screen.findByRole('button', { name: 'Close Popup' });
-
-      const closeSpy = jest
-        .spyOn(HTMLDialogElement.prototype, 'close')
-        .mockImplementation(function (this: HTMLDialogElement) {
-          this.dispatchEvent(new Event('close'));
-        });
-
-      await user.click(btn);
-
-      expect(mockFn).toHaveBeenCalledTimes(1);
-
-      closeSpy.mockRestore();
-    });
-  });
-
-  describe('Navigation Buttons', () => {
-    describe('Next Page', () => {
-      it('should render two buttons "Next Page"', async () => {
+  describe('Navigation buttons', () => {
+    describe('"Next Page" button', () => {
+      it('should render two "Next Page" buttons on initial page load', async () => {
+        // ARRANGE & ACT
         renderPreview();
 
         const btns = await screen.findAllByRole('button', {
           name: 'Next Page',
         });
 
+        // ASSERT
         expect(btns).toHaveLength(2);
         expect(btns[0]).toBeInTheDocument();
         expect(btns[1]).toBeInTheDocument();
       });
 
-      it('should not render "Next Page" buttons when the opened page is the last page', async () => {
-        const restoreMock = mockWithNumPagesTemporary(1);
+      it('should not render "Next Page" buttons when document has only one page', async () => {
+        // ARRANGE
+        const restore = mockNumPagesTemporary(1);
+
+        // ACT
         renderPreview();
+        await screen.findByRole('dialog', { name: 'Preview' });
 
-        await expect(
-          screen.findAllByRole('button', {
-            name: 'Next Page',
-          }),
-        ).rejects.toThrow();
+        // ASSERT
+        expect(
+          screen.queryByRole('button', { name: 'Next Page' }),
+        ).not.toBeInTheDocument();
 
-        // Cleanup
-        restoreMock();
+        // CLEANUP
+        restore();
       });
 
-      it('should increment `openedPageIndex` on click', async () => {
-        // Arrange
+      it('should render "Previous Page" buttons after clicking "Next Page"', async () => {
+        // ARRANGE
         renderPreview();
         const user = userEvent.setup();
-
-        const btns = await screen.findAllByRole('button', {
+        const nextBtns = await screen.findAllByRole('button', {
           name: 'Next Page',
         });
 
-        // Act
-        await user.dblClick(btns[0]);
+        // ACT
+        await user.click(nextBtns[0]);
 
-        // Assert
-        /**
-         * Since there are only three pages (as we defined in our mock),
-         * the buttons must not render after two clicks.
-         */
-        expect(btns[0]).not.toBeInTheDocument();
-        expect(btns[1]).not.toBeInTheDocument();
+        // ASSERT
+        const previousBtns = await screen.findAllByRole('button', {
+          name: 'Previous Page',
+        });
+        expect(previousBtns).toHaveLength(2);
+      });
+
+      it('should not render "Next Page" buttons when advancing to the final page', async () => {
+        // ARRANGE
+        renderPreview();
+        const user = userEvent.setup();
+        const firstNextBtns = await screen.findAllByRole('button', {
+          name: 'Next Page',
+        });
+        await user.click(firstNextBtns[0]);
+        const secondNextBtns = await screen.findAllByRole('button', {
+          name: 'Next Page',
+        });
+
+        // ACT
+        await user.click(secondNextBtns[0]);
+
+        // ASSERT
+        expect(
+          screen.queryByRole('button', { name: 'Next Page' }),
+        ).not.toBeInTheDocument();
       });
     });
 
-    describe('Previous Page', () => {
-      it('should not render "Previous Page" buttons when the opened page is the first page', async () => {
+    describe('"Previous Page" button', () => {
+      it('should not render "Previous Page" buttons on the first page', async () => {
+        // ARRANGE & ACT
         renderPreview();
+        await screen.findByRole('dialog', { name: 'Preview' });
 
-        await expect(
-          screen.findAllByRole('button', { name: 'Previous Page' }),
-        ).rejects.toThrow();
+        // ASSERT
+        expect(
+          screen.queryByRole('button', { name: 'Previous Page' }),
+        ).not.toBeInTheDocument();
       });
 
-      it('should render two buttons "Previous Page"', async () => {
-        // Arrange
+      it('should hide "Previous Page" buttons after returning to the first page', async () => {
+        // ARRANGE
         renderPreview();
         const user = userEvent.setup();
-
-        const name = 'Next Page';
-        const nextPageBtn = (await screen.findAllByRole('button', { name }))[0];
-
-        /**
-         * This is necessary because "Previous Page" buttons won't render when
-         * the first page is opened.
-         */
-        await user.click(nextPageBtn);
-
-        // Act
-        const previousPageBtns = await screen.findAllByRole('button', {
+        const nextBtns = await screen.findAllByRole('button', {
+          name: 'Next Page',
+        });
+        await user.click(nextBtns[0]);
+        const previousBtns = await screen.findAllByRole('button', {
           name: 'Previous Page',
         });
 
-        // Assert
-        expect(previousPageBtns).toHaveLength(2);
-        expect(previousPageBtns[0]).toBeInTheDocument();
-        expect(previousPageBtns[1]).toBeInTheDocument();
-      });
+        // ACT
+        await user.click(previousBtns[0]);
 
-      it('should decrement `openedPageIndex` on click', async () => {
-        // Arrange
-        renderPreview();
-        const user = userEvent.setup();
-
-        const name = 'Next Page';
-        const nextPageBtn = (await screen.findAllByRole('button', { name }))[0];
-
-        /**
-         * Increments `openedPageIndex` to 2, causing "Previous Page" buttons'
-         * render.
-         */
-        await user.click(nextPageBtn);
-
-        const previousPageBtns = await screen.findAllByRole('button', {
-          name: 'Previous Page',
-        });
-
-        // Act
-        await user.click(previousPageBtns[0]);
-
-        /**
-         * Since `openedPageIndex` has been decremented by the click, the
-         * "Previous Page" buttons should not render now.
-         */
-        expect(previousPageBtns[0]).not.toBeInTheDocument();
-        expect(previousPageBtns[1]).not.toBeInTheDocument();
+        // ASSERT
+        expect(
+          screen.queryByRole('button', { name: 'Previous Page' }),
+        ).not.toBeInTheDocument();
       });
     });
   });
 
-  describe('Document', () => {
-    it('should render "Loading..." while the document is loading', async () => {
-      // Arrange
-
-      // Mock instance loading status
-      const restoreMock = mockInstanceStatusTemporary({ loading: true });
-
+  describe('Canvas and text layer rendering', () => {
+    it('should render the resume page canvas', async () => {
+      // ARRANGE & ACT
       renderPreview();
 
-      // Act
-      const paragraph = await screen.findByText('Loading...');
+      const canvas = await screen.findByRole('img', {
+        name: 'Resume page canvas',
+      });
 
-      // Assert
-      expect(paragraph).toBeInTheDocument();
-
-      // Cleanup
-      restoreMock();
+      // ASSERT
+      expect(canvas).toBeInTheDocument();
+      expect(canvas).toHaveClass('Preview-Canvas');
     });
 
-    it('should render "Something went wrong. Try reloading the page." when an error occurs during document loading.', async () => {
-      // Arrange
-
-      // Mock instance loading status
-      const restoreMock = mockInstanceStatusTemporary({ error: 'Some error' });
-
+    it('should render the transparent text selection layer', async () => {
+      // ARRANGE & ACT
       renderPreview();
 
-      // Act
-      const paragraph = await screen.findByText(
+      const textLayer = await screen.findByRole('region', {
+        name: 'Text selection layer',
+      });
+
+      // ASSERT
+      expect(textLayer).toBeInTheDocument();
+      expect(textLayer).toHaveClass('Preview-TextLayer', 'textLayer');
+    });
+  });
+
+  describe('Loading and error states', () => {
+    it('should render loading indicator when document is loading', async () => {
+      // ARRANGE
+      const restore = mockInstanceStatusTemporary({ loading: true });
+
+      // ACT
+      renderPreview();
+
+      const loadingText = await screen.findByText('Loading...');
+
+      // ASSERT
+      expect(loadingText).toBeInTheDocument();
+      expect(loadingText).toHaveClass('Preview-PdfTextAlt');
+
+      // CLEANUP
+      restore();
+    });
+
+    it('should render error message when document fails to generate', async () => {
+      // ARRANGE
+      const restore = mockInstanceStatusTemporary({
+        error: 'PDF generation failed',
+      });
+
+      // ACT
+      renderPreview();
+
+      const errorText = await screen.findByText(
         'Something went wrong. Try reloading the page.',
       );
 
-      // Assert
-      expect(paragraph).toBeInTheDocument();
+      // ASSERT
+      expect(errorText).toBeInTheDocument();
+      expect(errorText).toHaveClass('Preview-PdfTextAlt');
 
-      // Cleanup
-      restoreMock();
+      // CLEANUP
+      restore();
     });
   });
 });

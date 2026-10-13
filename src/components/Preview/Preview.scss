@@ -2,7 +2,6 @@
 
 @layer blocks {
   .Preview {
-    /* TODO: think of a better number. */
     padding-inline: 2rem;
 
     &-CloseBtn {
@@ -19,10 +18,6 @@
       }
     }
 
-    &-CanvasContainer {
-      aspect-ratio: vars.$a4-aspect-ratio;
-    }
-
     &-ActionBtns {
       display: flex;
       gap: 1rem;
@@ -30,8 +25,84 @@
       width: 100%;
     }
 
+    &-ActionBtn {
+      min-width: 8rem;
+    }
+
+    &-CanvasContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: vars.$a4-aspect-ratio;
+      width: 100%;
+    }
+
+    &-PageWrapper {
+      position: relative;
+      box-shadow: 0 4px 12px hsl(0deg 0% 0% / 0.15);
+      background-color: hsl(0, 0%, 100%);
+    }
+
+    &-Canvas {
+      display: block;
+      background-color: hsl(0, 0%, 100%);
+      width: 100%;
+      height: 100%;
+    }
+
     &-PdfTextAlt {
       color: hsl(0, 0%, 100%);
+    }
+  }
+
+  .Preview-TextLayer {
+    --user-unit: 1;
+    --total-scale-factor: calc(var(--scale-factor, 1) * var(--user-unit, 1));
+    --scale-round-x: 1px;
+    --scale-round-y: 1px;
+    --min-font-size: 1;
+    --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+    --min-font-size-inv: calc(1 / var(--min-font-size));
+
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+    overflow: clip;
+    text-align: initial;
+    line-height: 1;
+    word-spacing: normal;
+    letter-spacing: normal;
+    pointer-events: auto;
+
+    :is(span, br) {
+      position: absolute;
+      transform-origin: 0 0;
+      white-space: pre;
+      color: transparent;
+      cursor: text;
+      user-select: text;
+    }
+
+    > :not(.markedContent),
+    .markedContent > :not(.markedContent) {
+      transform: rotate(var(--rotate, 0deg)) scaleX(var(--scale-x, 1))
+        scale(var(--min-font-size-inv));
+      z-index: 1;
+      font-size: calc(var(--text-scale-factor) * var(--font-height));
+    }
+
+    .markedContent {
+      display: contents;
+    }
+
+    ::selection {
+      background: color-mix(in srgb, AccentColor, transparent 50%);
+      color: transparent;
+    }
+
+    br::selection {
+      background: transparent;
     }
   }
 }
