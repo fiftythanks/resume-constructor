@@ -63,8 +63,6 @@ export default function useAppState() {
     openedSectionId: 'personal',
   });
 
-  const previousEditorModeRef = useRef(editorMode);
-
   // TODO: rename the properties to `activeSectionIds` and `openedSectionId`.
   const previousSectionsStateRef = useRef({
     previousActiveSectionIds: new Set(sectionsState.activeSectionIds),
@@ -140,29 +138,6 @@ export default function useAppState() {
       setScreenReaderAnnouncement(screenReaderAnnouncement.trimStart());
     }
   }, [sectionsState]);
-
-  // Announce toggling the editor mode to screen readers.
-  // FIXME: fix the issue with chaining state changes.
-  /**
-   * Refactor editor mode announcements out of `useEffect`. Tracking
-   * `editorMode` transitions in an effect causes chained state transitions,
-   * race conditions and potential announcement clobbering when combined with
-   * section mutations. Announcements should be dispatched directly inside the
-   * `toggleEditorMode` callback.
-   */
-  useEffect(() => {
-    if (previousEditorModeRef.current !== editorMode) {
-      if (editorMode) {
-        setScreenReaderAnnouncement('Editor Mode off');
-      } else {
-        setScreenReaderAnnouncement(
-          'Editor Mode on. To move focus to tabs for editing, press Tab while holding Shift. If you collapse the navbar either by pressing Escape or pressing the "Toggle Navbar" button, the editor mode will be turned off automatically.',
-        );
-      }
-
-      previousEditorModeRef.current = editorMode;
-    }
-  }, [editorMode]);
 
   // Screen-reader announcement functions.
 
@@ -319,7 +294,19 @@ export default function useAppState() {
 
   // Toggles the navbar's editor mode.
   const toggleEditorMode = useCallback(() => {
-    setEditorMode((currentMode) => !currentMode);
+    setEditorMode((currentMode) => {
+      const nextMode = !currentMode;
+
+      if (nextMode) {
+        setScreenReaderAnnouncement(
+          'Editor Mode on. To move focus to tabs for editing, press Tab while holding Shift. If you collapse the navbar either by pressing Escape or pressing the "Toggle Navbar" button, the editor mode will be turned off automatically.',
+        );
+      } else {
+        setScreenReaderAnnouncement('Editor Mode off');
+      }
+
+      return nextMode;
+    });
   }, []);
 
   const { activeSectionIds, openedSectionId } = sectionsState;

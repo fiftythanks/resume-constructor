@@ -1,10 +1,8 @@
-import React, { useCallback, useState } from 'react';
-
 import '@testing-library/jest-dom';
 
 import { deserialize, serialize } from 'node:v8';
 
-import type { DocumentProps, UsePDFInstance } from '@react-pdf/renderer';
+import type { UsePDFInstance } from '@react-pdf/renderer';
 
 // TODO: clean up here.
 
@@ -15,6 +13,23 @@ import type { DocumentProps, UsePDFInstance } from '@react-pdf/renderer';
 if (typeof structuredClone !== 'function') {
   global.structuredClone = (value) => {
     return deserialize(serialize(value));
+  };
+}
+
+if (typeof Blob.prototype.arrayBuffer !== 'function') {
+  Blob.prototype.arrayBuffer = async function () {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result instanceof ArrayBuffer) {
+          resolve(reader.result);
+        } else {
+          resolve(new ArrayBuffer(0));
+        }
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsArrayBuffer(this);
+    });
   };
 }
 
@@ -34,12 +49,38 @@ HTMLDialogElement.prototype.showModal = jest.fn(function () {
 jest.mock('pdfjs-dist', () => {
   const render = () => ({
     cancel() {},
-    promise: new Promise<void>((resolve) => resolve()),
+    promise: Promise.resolve(),
   });
 
-  const getViewport = () => ({ height: 250, width: 250 });
+  const getViewport = () => ({
+    height: 250,
+    rawDims: {
+      pageHeight: 841.89,
+      pageWidth: 595.28,
+      pageX: 0,
+      pageY: 0,
+    },
+    width: 250,
+  });
+
+  const getTextContent = () =>
+    Promise.resolve({
+      items: [
+        {
+          dir: 'ltr',
+          fontName: 'g_d0_f1',
+          hasEOL: false,
+          height: 12,
+          str: 'Mock Resume Text',
+          transform: [12, 0, 0, 12, 0, 800],
+          width: 100,
+        },
+      ],
+      styles: {},
+    });
 
   const getPage = () => ({
+    getTextContent,
     getViewport,
     render,
   });
@@ -51,11 +92,19 @@ jest.mock('pdfjs-dist', () => {
     },
   });
 
+  class MockTextLayer {
+    cancel() {}
+    render() {
+      return Promise.resolve();
+    }
+  }
+
   return {
     getDocument: jest.fn(getDocumentImplementation),
     GlobalWorkerOptions: {
       workerSrc: '',
     },
+    TextLayer: MockTextLayer,
   };
 });
 
@@ -65,42 +114,44 @@ jest.mock('pdfjs-dist', () => {
  */
 
 jest.mock('@react-pdf/renderer', () => ({
-  Document: jest.fn(({ ..._props }) => {}),
-  Link: jest.fn(({ ..._props }) => {}),
-  Text: jest.fn(({ ..._props }) => {}),
-  View: jest.fn(({ ..._props }) => {}),
+  Document: jest.fn(({ children, ..._rest }) => children),
   Font: {
     load() {
-      return new Promise((resolve) => setTimeout(() => resolve(true), 0));
+      return Promise.resolve(true);
     },
     register(_data: unknown) {},
   },
+  Link: jest.fn(({ children, href, ..._rest }) => (
+    <a href={href}>{children}</a>
+  )),
+  Page: jest.fn(({ children, ..._rest }) => <div>{children}</div>),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   PDFDownloadLink: jest.fn(({ children, fileName, ...props }) => (
     <a data-testid="mock-pdf-download-link" {...props}>
       {typeof children === 'function'
-        ? children({ loading: false, error: null })
+        ? children({ error: null, loading: false })
         : children}
     </a>
   )),
+  PDFViewer: jest.fn(({ children, ..._rest }) => (
+    <iframe data-testid="mock-pdf-viewer" title="PDF Viewer">
+      {children}
+    </iframe>
+  )),
   StyleSheet: {
-    create(_styles: unknown) {},
+    create: jest.fn((styles: unknown) => styles),
   },
-  usePDF: jest.fn(() => {
-    const [document, _] = useState<UsePDFInstance>({
-      url: 'blob:mock-pdf-url',
-      loading: false,
+  Text: jest.fn(({ children, ..._rest }) => <span>{children}</span>),
+  usePDF: jest.fn((): [UsePDFInstance, jest.Mock] => [
+    {
+      blob: new Blob(['mock-pdf-content'], { type: 'application/pdf' }),
       error: null,
-      blob: new Blob(),
-    });
-
-    const setDocumentMock = useCallback(
-      (_newDocument: React.ReactElement<DocumentProps>) => {},
-      [],
-    );
-
-    return [document, setDocumentMock];
-  }),
+      loading: false,
+      url: 'blob:mock-pdf-url',
+    },
+    jest.fn(),
+  ]),
+  View: jest.fn(({ children, ..._rest }) => <div>{children}</div>),
 }));
 
 /**
