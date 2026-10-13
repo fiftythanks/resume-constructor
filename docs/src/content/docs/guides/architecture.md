@@ -16,7 +16,7 @@ flowchart TD
 
     AppLayout --> Sidebar["Sidebar<br/>(Toolbar, Navbar Tabs)"]
     AppLayout --> FormView["Main: Form Editor<br/>(Personal, Education, Experience...)"]
-    Sidebar --> PreviewModal["Preview Modal<br/>(React-PDF Blob + PDF.js Canvas)"]
+    Sidebar --> PreviewModal["Preview Modal<br/>(React-PDF Blob + PDF.js Canvas & Text Layer)"]
 ```
 
 ---
@@ -135,7 +135,7 @@ resume-constructor/
 │   │   ├── BulletPoints/     # Dynamic sortable accomplishment lists
 │   │   ├── Button/           # Base button primitive
 │   │   ├── Popup/            # Modal dialog wrapper with focus trap
-│   │   └── Preview/          # PDF rendering & canvas rasterization
+│   │   └── Preview/          # PDF rendering, canvas rasterisation and text layer overlay
 │   ├── hooks/                # Custom React hooks (state, layout, a11y)
 │   ├── pages/                # Feature form sections (Personal, Education...)
 │   ├── styles/               # Global SCSS, custom properties, BEM base

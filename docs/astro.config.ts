@@ -75,6 +75,7 @@ export default defineConfig({
             '../src/components/AppLayout/index.tsx',
             '../src/components/BulletPoints/index.tsx',
             '../src/components/Preview/index.tsx',
+            '../src/components/Preview/getResumePdfFileName.ts',
             '../src/pages/Personal/index.tsx',
             '../src/pages/Education/index.tsx',
             '../src/pages/Experience/index.tsx',
