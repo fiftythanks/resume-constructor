@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from 'vitest-browser-react';
 
 import getDefaultData from './getDefaultData';
 import useResumeData from './useResumeData';
@@ -60,7 +60,7 @@ function stripOfIds(data: ReadonlyDeep<ResumeData>): ResumeDataWithoutIds {
 describe('useResumeData', () => {
   describe('clear', () => {
     it('should clear passed sections', async () => {
-      const { result } = renderHook(() => useResumeData());
+      const { act, result } = await renderHook(() => useResumeData());
 
       await act(async () => {
         result.current.certificationsFunctions.updateCertifications(
@@ -79,7 +79,7 @@ describe('useResumeData', () => {
 
   describe('clearAll', () => {
     it('should clear all sections', async () => {
-      const { result } = renderHook(() => useResumeData());
+      const { act, result } = await renderHook(() => useResumeData());
 
       await act(async () => {
         // Fills a section with random data.
@@ -106,7 +106,7 @@ describe('useResumeData', () => {
   describe('certificationsFunctions', () => {
     describe('updateCertifications', () => {
       it('should update Certifications data', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.certificationsFunctions.updateCertifications(
@@ -125,7 +125,7 @@ describe('useResumeData', () => {
   describe('educationFunctions', () => {
     describe('addDegree', () => {
       it('should add degrees', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
         const { length: initialLength } = result.current.data.education.degrees;
 
         await act(async () => {
@@ -138,7 +138,7 @@ describe('useResumeData', () => {
       });
 
       it('should add new degrees to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
         const degreeIds = new Set();
 
         if (result.current.data.education.degrees.length === 0) {
@@ -164,7 +164,7 @@ describe('useResumeData', () => {
       });
 
       it('should add empty degrees', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.educationFunctions.addDegree();
@@ -185,7 +185,7 @@ describe('useResumeData', () => {
 
     describe('deleteDegree', () => {
       it('should delete degrees', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -205,7 +205,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct degrees', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length <= 1) {
           while (result.current.data.education.degrees.length <= 1) {
@@ -234,7 +234,7 @@ describe('useResumeData', () => {
 
     describe('editDegree', () => {
       it('should edit degree data', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -258,7 +258,7 @@ describe('useResumeData', () => {
 
     describe('showDegree', () => {
       it('should change shown degree index', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length <= 1) {
           while (result.current.data.education.degrees.length <= 1) {
@@ -293,7 +293,7 @@ describe('useResumeData', () => {
 
     describe('updateBulletPoints', () => {
       it('should create new bullet points from passed argument', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         const newBulletPoints: ItemWithId[] = [
           {
@@ -321,7 +321,7 @@ describe('useResumeData', () => {
 
     describe('addBulletPoint', () => {
       it('should add bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -343,7 +343,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a new bullet point to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -380,7 +380,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a bullet point with an empty value', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -400,7 +400,7 @@ describe('useResumeData', () => {
 
     describe('deleteBulletPoint', () => {
       it('should delete bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -430,7 +430,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -469,7 +469,7 @@ describe('useResumeData', () => {
 
     describe('editBulletPoint', () => {
       it('should edit bullet points, including their IDs', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.education.degrees.length === 0) {
           await act(async () => {
@@ -499,7 +499,7 @@ describe('useResumeData', () => {
   describe('experienceFunctions', () => {
     describe('addJob', () => {
       it('should add jobs', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
         const { length: initialLength } = result.current.data.experience.jobs;
 
         await act(async () => {
@@ -512,7 +512,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a new job to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length <= 1) {
           while (result.current.data.experience.jobs.length <= 1) {
@@ -538,7 +538,7 @@ describe('useResumeData', () => {
       });
 
       it('should add an empty job', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.experienceFunctions.addJob();
@@ -559,7 +559,7 @@ describe('useResumeData', () => {
 
     describe('deleteJob', () => {
       it('should delete jobs', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -579,7 +579,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct jobs', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length <= 1) {
           while (result.current.data.experience.jobs.length <= 1) {
@@ -607,7 +607,7 @@ describe('useResumeData', () => {
 
     describe('showJob', () => {
       it('should change shown job index', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length <= 1) {
           while (result.current.data.experience.jobs.length <= 1) {
@@ -642,7 +642,7 @@ describe('useResumeData', () => {
 
     describe('addBulletPoint', () => {
       it('should add bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -664,7 +664,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a new bullet point to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -701,7 +701,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a bullet point with an empty value', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -721,7 +721,7 @@ describe('useResumeData', () => {
 
     describe('editJob', () => {
       it('should edit job data', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -745,7 +745,7 @@ describe('useResumeData', () => {
 
     describe('updateBulletPoints', () => {
       it('should create new bullet points from passed argument', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         const newBulletPoints: ItemWithId[] = [
           {
@@ -773,7 +773,7 @@ describe('useResumeData', () => {
 
     describe('deleteBulletPoint', () => {
       it('should delete bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -801,7 +801,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -840,7 +840,7 @@ describe('useResumeData', () => {
 
     describe('editBulletPoint', () => {
       it('should edit bullet points, including their IDs', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.experience.jobs.length === 0) {
           await act(async () => {
@@ -872,7 +872,7 @@ describe('useResumeData', () => {
   describe('linksFunctions', () => {
     describe('updateLinks', () => {
       it('should change Links data', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.linksFunctions.updateLinks(
@@ -890,7 +890,7 @@ describe('useResumeData', () => {
   describe('personalFunctions', () => {
     describe('updatePersonal', () => {
       it('should change Personal data', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.personalFunctions.updatePersonal(
@@ -907,7 +907,7 @@ describe('useResumeData', () => {
   describe('projectsFunctions', () => {
     describe('addProject', () => {
       it('should add projects', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
         const { length: initialLength } = result.current.data.projects.projects;
 
         await act(async () => {
@@ -920,7 +920,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a new project to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length <= 1) {
           while (result.current.data.projects.projects.length <= 1) {
@@ -946,7 +946,7 @@ describe('useResumeData', () => {
       });
 
       it('should add an empty project', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.projectsFunctions.addProject();
@@ -969,7 +969,7 @@ describe('useResumeData', () => {
 
     describe('deleteProject', () => {
       it('should delete projects', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -989,7 +989,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct projects', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length <= 1) {
           while (result.current.data.projects.projects.length <= 1) {
@@ -1018,7 +1018,7 @@ describe('useResumeData', () => {
 
     describe('showProject', () => {
       it('should change shown project index', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length <= 1) {
           while (result.current.data.projects.projects.length <= 1) {
@@ -1053,7 +1053,7 @@ describe('useResumeData', () => {
 
     describe('addBulletPoint', () => {
       it('should add bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1075,7 +1075,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a new bullet point to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1112,7 +1112,7 @@ describe('useResumeData', () => {
       });
 
       it('should add a bullet point with an empty value', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1132,7 +1132,7 @@ describe('useResumeData', () => {
 
     describe('editProjectLink', () => {
       it('should edit project links', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1165,7 +1165,7 @@ describe('useResumeData', () => {
 
     describe('editProjectText', () => {
       it('should edit `projectName` and `stack`', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1189,7 +1189,7 @@ describe('useResumeData', () => {
 
     describe('updateBulletPoints', () => {
       it('should create new bullet points from passed argument', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         const newBulletPoints: ItemWithId[] = [
           {
@@ -1217,7 +1217,7 @@ describe('useResumeData', () => {
 
     describe('deleteBulletPoint', () => {
       it('should delete bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1247,7 +1247,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct bullet points', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1286,7 +1286,7 @@ describe('useResumeData', () => {
 
     describe('editBulletPoint', () => {
       it('should edit bullet points, including their IDs', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.projects.projects.length === 0) {
           await act(async () => {
@@ -1316,7 +1316,7 @@ describe('useResumeData', () => {
   describe('skillsFunctions', () => {
     describe('updateSkills', () => {
       it('should replace Skills fields with passed objects', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         const newFrameworksObject: ItemWithId[] = [
           {
@@ -1340,7 +1340,7 @@ describe('useResumeData', () => {
 
     describe('addLanguage', () => {
       it('should add languages', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
         const { length: initialLength } = result.current.data.skills.languages;
 
         await act(async () => {
@@ -1353,7 +1353,7 @@ describe('useResumeData', () => {
       });
 
       it('should add new languages to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.languages.length <= 1) {
           while (result.current.data.skills.languages.length <= 1) {
@@ -1380,7 +1380,7 @@ describe('useResumeData', () => {
       });
 
       it('should add empty languages', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.skillsFunctions.addLanguage();
@@ -1392,7 +1392,7 @@ describe('useResumeData', () => {
 
     describe('deleteLanguage', () => {
       it('should delete languages', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.languages.length === 0) {
           await act(async () => {
@@ -1412,7 +1412,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct languages', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.languages.length <= 1) {
           while (result.current.data.skills.languages.length <= 1) {
@@ -1437,7 +1437,7 @@ describe('useResumeData', () => {
 
     describe('editLanguage', () => {
       it('should edit language value', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.languages.length === 0) {
           await act(async () => {
@@ -1457,7 +1457,7 @@ describe('useResumeData', () => {
 
     describe('addFramework', () => {
       it('should add frameworks', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
         const { length: initialLength } = result.current.data.skills.frameworks;
 
         await act(async () => {
@@ -1470,7 +1470,7 @@ describe('useResumeData', () => {
       });
 
       it('should add new frameworks to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.frameworks.length <= 1) {
           while (result.current.data.skills.frameworks.length <= 1) {
@@ -1497,7 +1497,7 @@ describe('useResumeData', () => {
       });
 
       it('should add empty frameworks', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.skillsFunctions.addFramework();
@@ -1509,7 +1509,7 @@ describe('useResumeData', () => {
 
     describe('deleteFramework', () => {
       it('should delete frameworks', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.frameworks.length === 0) {
           await act(async () => {
@@ -1529,7 +1529,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct frameworks', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.frameworks.length <= 1) {
           while (result.current.data.skills.frameworks.length <= 1) {
@@ -1554,7 +1554,7 @@ describe('useResumeData', () => {
 
     describe('editFramework', () => {
       it('should edit framework value', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.frameworks.length === 0) {
           await act(async () => {
@@ -1574,7 +1574,7 @@ describe('useResumeData', () => {
 
     describe('addTool', () => {
       it('should add tools', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
         const { length: initialLength } = result.current.data.skills.tools;
 
         await act(async () => {
@@ -1585,7 +1585,7 @@ describe('useResumeData', () => {
       });
 
       it('should add new tools to the end of the list', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.tools.length <= 1) {
           while (result.current.data.skills.tools.length <= 1) {
@@ -1611,7 +1611,7 @@ describe('useResumeData', () => {
       });
 
       it('should add empty tools', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         await act(async () => {
           result.current.skillsFunctions.addTool();
@@ -1623,7 +1623,7 @@ describe('useResumeData', () => {
 
     describe('deleteTool', () => {
       it('should delete tools', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.tools.length === 0) {
           await act(async () => {
@@ -1641,7 +1641,7 @@ describe('useResumeData', () => {
       });
 
       it('should delete correct tools', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.tools.length <= 1) {
           while (result.current.data.skills.tools.length <= 1) {
@@ -1665,7 +1665,7 @@ describe('useResumeData', () => {
 
     describe('editTool', () => {
       it('should edit tool value', async () => {
-        const { result } = renderHook(() => useResumeData());
+        const { act, result } = await renderHook(() => useResumeData());
 
         if (result.current.data.skills.tools.length === 0) {
           await act(async () => {

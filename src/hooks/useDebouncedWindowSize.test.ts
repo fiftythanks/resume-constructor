@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from 'vitest-browser-react';
 
 import useDebouncedWindowSize from './useDebouncedWindowSize';
 
@@ -10,8 +10,8 @@ describe('useDebouncedWindowSize', () => {
   const initialOuterHeight = window.outerHeight;
   const initialOuterWidth = window.outerWidth;
 
-  it('should return the initial window size on mount', () => {
-    const { result } = renderHook(() => useDebouncedWindowSize());
+  it('should return the initial window size on mount', async () => {
+    const { result } = await renderHook(() => useDebouncedWindowSize());
 
     expect(result.current.innerHeight).toBe(initialInnerHeight);
     expect(result.current.innerWidth).toBe(initialInnerWidth);
@@ -20,9 +20,9 @@ describe('useDebouncedWindowSize', () => {
   });
 
   it('should update the window size after a debounced resize', async () => {
-    const { result } = renderHook(() => useDebouncedWindowSize());
+    const { act, result } = await renderHook(() => useDebouncedWindowSize());
 
-    await act(async () => {
+    await act(() => {
       Object.defineProperty(window, 'innerWidth', {
         configurable: true,
         value: 1024,
@@ -35,7 +35,7 @@ describe('useDebouncedWindowSize', () => {
     // The state shouldn't have been called yet because of the debounce.
     expect(result.current.innerWidth).toBe(initialInnerWidth);
 
-    await act(async () => {
+    await act(() => {
       vi.runAllTimers();
     });
 
@@ -44,11 +44,9 @@ describe('useDebouncedWindowSize', () => {
 
   it('should clean up the event listener on unmount', async () => {
     const spy = vi.spyOn(window, 'removeEventListener');
-    const { unmount } = renderHook(() => useDebouncedWindowSize());
+    const { unmount } = await renderHook(() => useDebouncedWindowSize());
 
-    await act(async () => {
-      unmount();
-    });
+    await unmount();
 
     expect(spy).toHaveBeenCalledWith('resize', expect.any(Function));
   });

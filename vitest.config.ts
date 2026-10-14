@@ -7,7 +7,7 @@ export default mergeConfig(
   viteConfig,
   defineConfig({
     optimizeDeps: {
-      include: ['react-dom/client'],
+      include: ['react-dom/client', 'vitest-browser-react'],
     },
     test: {
       browser: {

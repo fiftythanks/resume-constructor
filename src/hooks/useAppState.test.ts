@@ -1,12 +1,11 @@
-/* eslint-disable vitest/no-identical-title */
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from 'vitest-browser-react';
 
-import neverReached from '@/utils/neverReached';
 import possibleSectionIds from '@/utils/possibleSectionIds';
 
 import useAppState from './useAppState';
 
 import type { SectionId } from '@/types/resumeData';
+import type { RenderHookResult } from 'vitest-browser-react';
 
 // TODO: refactor it entirely. It's too hard to read.
 
@@ -34,8 +33,8 @@ function getFirstDeletableSectionId(activeSectionIds: SectionId[]) {
 }
 
 // Returns values reused many times in the following tests
-function init() {
-  const { result } = renderHook(() => useAppState());
+async function init() {
+  const { act, result } = await renderHook(() => useAppState());
 
   const getDeletableSectionId = () =>
     getFirstDeletableSectionId(result.current.activeSectionIds);
@@ -44,6 +43,7 @@ function init() {
     getFirstInactiveSectionId(result.current.activeSectionIds);
 
   return {
+    act,
     getDeletableSectionId,
     getInactiveSectionId,
     result,
@@ -52,14 +52,15 @@ function init() {
 
 describe('useAppState', () => {
   describe('screenReaderAnnouncement', () => {
+    let act: RenderHookResult<ReturnType<typeof useAppState>, unknown>['act'];
     let result: { current: ReturnType<typeof useAppState> };
 
-    beforeEach(() => {
-      ({ result } = renderHook(() => useAppState()));
+    beforeEach(async () => {
+      ({ act, result } = await renderHook(() => useAppState()));
     });
 
     it('should be updated with updateScreenReaderAnnouncement', async () => {
-      await act(async () => {
+      await act(() => {
         result.current.updateScreenReaderAnnouncement(
           'New screen reader announcement',
         );
@@ -71,7 +72,7 @@ describe('useAppState', () => {
     });
 
     it('should be reset with resetScreenReaderAnnouncement', async () => {
-      await act(async () => {
+      await act(() => {
         result.current.updateScreenReaderAnnouncement(
           'Some screen reader announcement',
         );
@@ -84,208 +85,125 @@ describe('useAppState', () => {
   });
 
   describe('addSections, deleteSections, deleteAll', () => {
-    const areAllSectionsActive = init().getInactiveSectionId() === undefined;
+    let act: RenderHookResult<ReturnType<typeof useAppState>, unknown>['act'];
     let getDeletableSectionId: () => SectionId | undefined;
     let getInactiveSectionId: () => SectionId | undefined;
     let result: { current: ReturnType<typeof useAppState> };
 
-    const untestedFunctions: Array<'addSections' | 'deleteSections'> = [
-      'addSections',
-      'deleteSections',
-    ];
+    describe('addSections', () => {
+      let sectionIdToAdd: SectionId;
 
-    // DILEMMA: Is there a way to put the tests inside functions and call functions instead of all this terrible boilerplate?
-    // If all sections are active by default.
-    if (areAllSectionsActive) {
-      // Delete 'deleteSections' from the array, since it's about to be tested.
-      untestedFunctions.pop();
+      beforeEach(async () => {
+        ({ act, getDeletableSectionId, getInactiveSectionId, result } =
+          await init());
 
-      describe('deleteSections', () => {
-        let sectionIdToDelete: SectionId;
+        const inactiveSectionId = getInactiveSectionId();
 
-        beforeEach(() => {
-          ({ getDeletableSectionId, getInactiveSectionId, result } = init());
-
+        if (inactiveSectionId !== undefined) {
+          sectionIdToAdd = inactiveSectionId;
+        } else {
           /**
-           * There's no way that in case where all sections are active by
-           * default there are no deletable sections. It's completely safe to
-           * assume that `deletableSectionId` is of type `SectionId`.
+           * Since all sections are active and all sections can't be
+           * undeletable, `sectionIdToAdd` is definitely defined.
            */
-          sectionIdToDelete = getDeletableSectionId()!;
-        });
+          sectionIdToAdd = getDeletableSectionId()!;
 
-        it('should delete IDs from activeSectionIds', async () => {
-          await act(async () => {
-            result.current.deleteSections([sectionIdToDelete]);
+          await act(() => {
+            result.current.deleteSections([sectionIdToAdd]);
+            result.current.resetScreenReaderAnnouncement();
           });
-
-          expect(result.current.activeSectionIds).not.toContain(
-            sectionIdToDelete,
-          );
-        });
-
-        it('should be announced to screen readers', async () => {
-          await act(async () => {
-            result.current.deleteSections([sectionIdToDelete]);
-          });
-
-          expect(result.current.screenReaderAnnouncement).not.toBe('');
-        });
+        }
       });
-    } else {
-      untestedFunctions.shift();
 
-      describe('addSections', () => {
-        let sectionIdToAdd: SectionId;
+      it('should add IDs to activeSectionIds', async () => {
+        await act(() => {
+          result.current.addSections([sectionIdToAdd]);
+        });
 
-        beforeEach(() => {
-          ({ getInactiveSectionId, result } = init());
+        expect(result.current.activeSectionIds).toContain(sectionIdToAdd);
+      });
 
+      it('should be announced to screen readers', async () => {
+        await act(() => {
+          result.current.resetScreenReaderAnnouncement();
+          result.current.addSections([sectionIdToAdd]);
+        });
+
+        expect(result.current.screenReaderAnnouncement).not.toBe('');
+      });
+    });
+
+    describe('deleteSections', () => {
+      let sectionIdToDelete: SectionId;
+
+      beforeEach(async () => {
+        ({ act, getDeletableSectionId, getInactiveSectionId, result } =
+          await init());
+
+        const deletableSectionId = getDeletableSectionId();
+
+        if (deletableSectionId !== undefined) {
+          sectionIdToDelete = deletableSectionId;
+        } else {
           /**
-           * Since some sections are inactive in this branch, it's safe to
-           * assume that there is at least one inactive section and
-           * `sectionIdToAdd` isn't `undefined`.
+           * Since not all sections are active, `sectionIdToDelete` is
+           * definitely defined.
            */
-          sectionIdToAdd = getInactiveSectionId()!;
-        });
+          sectionIdToDelete = getInactiveSectionId()!;
 
-        it('should add IDs to activeSectionIds', async () => {
-          await act(async () => {
-            result.current.addSections([sectionIdToAdd]);
+          await act(() => {
+            result.current.addSections([sectionIdToDelete]);
+            result.current.resetScreenReaderAnnouncement();
           });
-
-          expect(result.current.activeSectionIds).toContain(sectionIdToAdd);
-        });
-
-        it('should be announced to screen readers', async () => {
-          await act(async () => {
-            result.current.addSections([sectionIdToAdd]);
-          });
-
-          expect(result.current.screenReaderAnnouncement).not.toBe('');
-        });
+        }
       });
-    }
 
-    // Then test the function that's left.
-    switch (untestedFunctions[0]) {
-      // All sections are active.
-      case 'addSections': {
-        describe('addSections', () => {
-          let sectionIdToAdd: SectionId;
-
-          beforeEach(async () => {
-            ({ getDeletableSectionId, result } = init());
-
-            /**
-             * Since all sections are active and all sections can't be
-             * undeletable, `sectionIdToAdd` is definitely defined.
-             */
-            sectionIdToAdd = getDeletableSectionId()!;
-
-            // We can rely on `deleteSections` because it's already been tested.
-            await act(async () => {
-              result.current.deleteSections([sectionIdToAdd]);
-            });
-          });
-
-          it('should add IDs to activeSectionIds', async () => {
-            await act(async () => {
-              result.current.addSections([sectionIdToAdd]);
-            });
-
-            expect(result.current.activeSectionIds).toContain(sectionIdToAdd);
-          });
-
-          it('should be announced to screen readers', async () => {
-            await act(async () => {
-              result.current.resetScreenReaderAnnouncement();
-              result.current.addSections([sectionIdToAdd]);
-            });
-
-            expect(result.current.screenReaderAnnouncement).not.toBe('');
-          });
+      it('should delete IDs from activeSectionIds', async () => {
+        await act(() => {
+          result.current.deleteSections([sectionIdToDelete]);
         });
 
-        break;
-      }
-      // Not all sections are active by default.
-      case 'deleteSections': {
-        let sectionIdToDelete: SectionId | undefined;
+        expect(result.current.activeSectionIds).not.toContain(
+          sectionIdToDelete,
+        );
+      });
 
-        describe('deleteSections', () => {
-          beforeEach(async () => {
-            ({ getDeletableSectionId, getInactiveSectionId, result } = init());
-
-            sectionIdToDelete = getDeletableSectionId();
-
-            if (sectionIdToDelete === undefined) {
-              sectionIdToDelete = getInactiveSectionId();
-
-              /**
-               * Since sections aren't all active, `sectionIdToDelete` is
-               * definitely defined.
-               *
-               * We can rely on `addSections` because it's already been tested.
-               */
-              await act(async () => {
-                result.current.addSections([sectionIdToDelete!]);
-              });
-            }
-          });
-
-          it('should delete IDs from activeSectionIds', async () => {
-            await act(async () => {
-              result.current.deleteSections([sectionIdToDelete!]);
-            });
-
-            expect(result.current.activeSectionIds).not.toContain(
-              sectionIdToDelete,
-            );
-          });
-
-          it('should be announced to screen readers', async () => {
-            await act(async () => {
-              result.current.resetScreenReaderAnnouncement();
-              result.current.deleteSections([sectionIdToDelete!]);
-            });
-
-            expect(result.current.screenReaderAnnouncement).not.toBe('');
-          });
+      it('should be announced to screen readers', async () => {
+        await act(() => {
+          result.current.resetScreenReaderAnnouncement();
+          result.current.deleteSections([sectionIdToDelete]);
         });
 
-        break;
-      }
-      default:
-        neverReached(untestedFunctions[0]);
-    }
+        expect(result.current.screenReaderAnnouncement).not.toBe('');
+      });
+    });
 
     describe('deleteAll', () => {
       beforeEach(async () => {
-        ({ result } = init());
+        ({ act, getInactiveSectionId, result } = await init());
 
-        if (!areAllSectionsActive) {
+        if (getInactiveSectionId() !== undefined) {
           const activeSectionIds = new Set(result.current.activeSectionIds);
 
           const sectionIdsToAdd = possibleSectionIds.filter(
             (sectionId) => !activeSectionIds.has(sectionId),
           );
 
-          await act(async () => {
+          await act(() => {
             result.current.addSections(sectionIdsToAdd);
           });
         }
 
-        await act(async () => {
+        await act(() => {
           result.current.deleteAll();
         });
       });
 
-      it('should delete all sections', async () => {
+      it('should delete all sections', () => {
         expect(result.current.activeSectionIds).toEqual(undeletableSectionIds);
       });
 
-      it('should announce itself to screen readers', async () => {
+      it('should announce itself to screen readers', () => {
         expect(result.current.screenReaderAnnouncement).not.toBe('');
       });
     });
@@ -293,10 +211,10 @@ describe('useAppState', () => {
 
   describe('addAllSections', () => {
     it('should add all sections that are inactive', async () => {
-      const { result } = renderHook(() => useAppState());
+      const { act, result } = await renderHook(() => useAppState());
       expect(result.current.activeSectionIds).toHaveLength(1);
 
-      await act(async () => {
+      await act(() => {
         result.current.addAllSections();
       });
 
@@ -305,18 +223,19 @@ describe('useAppState', () => {
   });
 
   describe('openSection', () => {
+    let act: RenderHookResult<ReturnType<typeof useAppState>, unknown>['act'];
     let getInactiveSectionId: () => SectionId | undefined;
     let result: { current: ReturnType<typeof useAppState> };
 
     beforeEach(async () => {
-      ({ getInactiveSectionId, result } = init());
+      ({ act, getInactiveSectionId, result } = await init());
 
       // To make sure there's a section to open.
       if (result.current.activeSectionIds.length < 2) {
         while (result.current.activeSectionIds.length < 2) {
           const inactiveSectionId = getInactiveSectionId();
 
-          await act(async () => {
+          await act(() => {
             /**
              * It's sure to be defined because there's always more possible
              * sections than two and less than two are active at this moment.
@@ -334,7 +253,7 @@ describe('useAppState', () => {
         if (sectionId !== result.current.openedSectionId) {
           openedSectionId = sectionId;
 
-          await act(async () => {
+          await act(() => {
             result.current.openSection(sectionId);
           });
 
@@ -346,13 +265,13 @@ describe('useAppState', () => {
     });
 
     it('should announce itself to screen readers', async () => {
-      await act(async () => {
+      await act(() => {
         result.current.resetScreenReaderAnnouncement();
       });
 
       for (const sectionId of result.current.activeSectionIds) {
         if (sectionId !== result.current.openedSectionId) {
-          await act(async () => {
+          await act(() => {
             result.current.openSection(sectionId);
           });
 
@@ -365,22 +284,23 @@ describe('useAppState', () => {
   });
 
   describe('toggleEditorMode', () => {
+    let act: RenderHookResult<ReturnType<typeof useAppState>, unknown>['act'];
     let result: { current: ReturnType<typeof useAppState> };
 
-    beforeEach(() => {
-      ({ result } = renderHook(() => useAppState()));
+    beforeEach(async () => {
+      ({ act, result } = await renderHook(() => useAppState()));
     });
 
     it('should toggle editor mode on/off', async () => {
       const initialEditorMode = result.current.editorMode;
 
-      await act(async () => {
+      await act(() => {
         result.current.toggleEditorMode();
       });
 
       expect(result.current.editorMode).toBe(!initialEditorMode);
 
-      await act(async () => {
+      await act(() => {
         result.current.toggleEditorMode();
       });
 
@@ -388,7 +308,7 @@ describe('useAppState', () => {
     });
 
     it('should announce itself to screen readers', async () => {
-      await act(async () => {
+      await act(() => {
         result.current.toggleEditorMode();
       });
 
@@ -398,7 +318,7 @@ describe('useAppState', () => {
 
   describe('reorderSections', () => {
     it('should reorder sections', async () => {
-      const { getInactiveSectionId, result } = init();
+      const { act, getInactiveSectionId, result } = await init();
 
       // If there's less than two sections that can be reordered.
       if (
@@ -411,7 +331,7 @@ describe('useAppState', () => {
         ) {
           const sectionIdToAdd = getInactiveSectionId();
 
-          await act(async () => {
+          await act(() => {
             result.current.addSections([sectionIdToAdd!]);
           });
         }
@@ -428,7 +348,7 @@ describe('useAppState', () => {
         newActiveSectionIds[newActiveSectionIds.length - 1],
       ] = [lastSectionId, secondToLastSectionId];
 
-      await act(async () => {
+      await act(() => {
         result.current.reorderSections(newActiveSectionIds);
       });
 
