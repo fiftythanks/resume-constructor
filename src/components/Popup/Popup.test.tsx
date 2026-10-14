@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import Popup from './Popup';
 
@@ -55,7 +55,7 @@ describe('Popup', () => {
   });
 
   it('should call `onClose` on close', () => {
-    const onCloseMock = jest.fn();
+    const onCloseMock = vi.fn();
     render(<Container />);
     render(<Popup {...getProps({ onClose: onCloseMock })} />);
     const popup = screen.getByRole('dialog', { name: 'Some Title' });

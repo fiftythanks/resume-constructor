@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import NavbarItem from './NavbarItem';
 
@@ -16,8 +16,8 @@ function getProps(overrides?: Partial<NavbarItemProps>): NavbarItemProps {
     sectionId: 'certifications',
     sectionTitle: 'Certifications',
     tabIndex: 0,
-    onDeleteSection: jest.fn(),
-    onSelectSection: jest.fn(),
+    onDeleteSection: vi.fn(),
+    onSelectSection: vi.fn(),
     ...overrides,
   };
 }

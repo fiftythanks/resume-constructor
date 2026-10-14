@@ -6,7 +6,7 @@ import { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 
@@ -257,7 +257,7 @@ describe('Toolbar', () => {
       });
 
       it('should call `deleteAll` when clicked', async () => {
-        const deleteAllMock = jest.fn();
+        const deleteAllMock = vi.fn();
         renderToolbar({ deleteAll: deleteAllMock });
         const user = userEvent.setup();
 
@@ -286,7 +286,7 @@ describe('Toolbar', () => {
       });
 
       it('should call `fillAll` when clicked', async () => {
-        const fillAllMock = jest.fn();
+        const fillAllMock = vi.fn();
         renderToolbar({ fillAll: fillAllMock });
         const user = userEvent.setup();
 

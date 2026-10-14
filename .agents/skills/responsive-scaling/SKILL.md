@@ -67,9 +67,9 @@ The document preview architecture comprises three distinct rendering modes:
 
 ## 4. Verification & Testing
 
-- Validate layout behaviour in Jest:
+- Validate layout behaviour in Vitest:
   ```bash
-  bun x jest src/components/AppLayout/AppLayout.test.tsx
+  bun x vitest run src/components/AppLayout/AppLayout.test.tsx
   ```
 - Run E2E tests in Playwright's deterministic Docker container to prevent font rendering differences across host OS environments:
   ```bash

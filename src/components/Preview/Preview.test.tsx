@@ -2,7 +2,7 @@ import * as renderer from '@react-pdf/renderer';
 import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as pdfjsLib from 'pdfjs-dist';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import useAppState from '@/hooks/useAppState';
 import useResumeData from '@/hooks/useResumeData';
@@ -10,6 +10,7 @@ import useResumeData from '@/hooks/useResumeData';
 import Preview from './Preview';
 
 import type { PreviewProps } from './Preview';
+import type { Mock } from 'vitest';
 
 interface MockInstanceOptions {
   error?: null | string;
@@ -26,21 +27,23 @@ function mockInstanceStatusTemporary({
   loading = false,
 }: MockInstanceOptions = {}) {
   const defaultImplementation = (
-    renderer.usePDF as jest.Mock
+    renderer.usePDF as Mock
   ).getMockImplementation();
 
-  (renderer.usePDF as jest.Mock).mockReturnValue([
+  (renderer.usePDF as Mock).mockReturnValue([
     {
       blob: new Blob(['mock-pdf-content'], { type: 'application/pdf' }),
       error,
       loading,
       url: 'blob:mock-pdf-url',
     },
-    jest.fn(),
+    vi.fn(),
   ]);
 
   return function restore() {
-    (renderer.usePDF as jest.Mock).mockImplementation(defaultImplementation);
+    if (defaultImplementation) {
+      (renderer.usePDF as Mock).mockImplementation(defaultImplementation);
+    }
   };
 }
 
@@ -50,7 +53,7 @@ function mockInstanceStatusTemporary({
  * @returns A restore function to revert to the default implementation.
  */
 function mockNumPagesTemporary(numPages: number) {
-  const getDocumentMock = pdfjsLib.getDocument as unknown as jest.Mock;
+  const getDocumentMock = pdfjsLib.getDocument as unknown as Mock;
   const defaultImplementation = getDocumentMock.getMockImplementation();
 
   getDocumentMock.mockImplementation(() => ({
@@ -78,7 +81,9 @@ function mockNumPagesTemporary(numPages: number) {
   }));
 
   return function restore() {
-    getDocumentMock.mockImplementation(defaultImplementation);
+    if (defaultImplementation) {
+      getDocumentMock.mockImplementation(defaultImplementation);
+    }
   };
 }
 
@@ -140,7 +145,7 @@ describe('Preview', () => {
 
     it('should call "onClose" when clicked', async () => {
       // ARRANGE
-      const onCloseMock = jest.fn();
+      const onCloseMock = vi.fn();
       renderPreview({ onClose: onCloseMock });
       const user = userEvent.setup();
       const btn = await screen.findByRole('button', { name: 'Close Popup' });

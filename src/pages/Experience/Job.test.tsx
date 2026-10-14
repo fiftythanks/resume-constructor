@@ -8,7 +8,7 @@ import { RefObject } from 'react';
 
 import { getByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import cloneDeep from 'lodash/cloneDeep';
 
 import Job from './Job';
@@ -212,7 +212,7 @@ describe('Job', () => {
     const { rerender } = render(<Job {...getProps()} />);
 
     for (const { fieldName, name } of fields) {
-      const editMock = jest.fn(editMockImplementation);
+      const editMock = vi.fn(editMockImplementation);
       const functions = cloneDeep(FUNCTIONS);
       functions.edit = editMock;
       const props = getProps({ functions });
@@ -274,7 +274,7 @@ describe('Job', () => {
      */
     it('should call `updateScreenReaderAnnouncement` when an important change is made to the bullet points via the corresponding controls (not DnD related)', async () => {
       const implementation = (_announcement: string) => {};
-      const mockFn = jest.fn(implementation);
+      const mockFn = vi.fn(implementation);
       const props = getProps({ updateScreenReaderAnnouncement: mockFn });
       render(<Job {...props} />);
       const user = userEvent.setup();
@@ -287,7 +287,7 @@ describe('Job', () => {
     });
 
     it('should call `addBulletPoint` when a bullet point is added', async () => {
-      const mockFn = jest.fn();
+      const mockFn = vi.fn();
       const functions = cloneDeep(FUNCTIONS);
       functions.addBulletPoint = mockFn;
       const props = getProps({ functions });
@@ -302,7 +302,7 @@ describe('Job', () => {
     });
 
     it('should call `deleteBulletPoint` when a bullet point is deleted', async () => {
-      const mockFn = jest.fn((_index: number) => {});
+      const mockFn = vi.fn((_index: number) => {});
       const functions = cloneDeep(FUNCTIONS);
       functions.deleteBulletPoint = mockFn;
       const props = getProps({ functions });
@@ -318,7 +318,7 @@ describe('Job', () => {
     });
 
     it("should call `editBulletPoint` when a bullet point is edited via it's corresponding text input", async () => {
-      const mockFn = jest.fn((_index: number, _value: string) => {});
+      const mockFn = vi.fn((_index: number, _value: string) => {});
       const functions = cloneDeep(FUNCTIONS);
       functions.editBulletPoint = mockFn;
       const props = getProps({ functions });

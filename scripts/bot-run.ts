@@ -34,10 +34,9 @@ function setupWorktree(branchName: string, token: string): string {
     console.log(
       `Creating isolated git worktree at ${WORKTREE_PATH} on branch ${branchName}...`,
     );
-    execSync(
-      `git worktree add ${WORKTREE_PATH} -b ${branchName} FETCH_HEAD`,
-      { stdio: 'inherit' },
-    );
+    execSync(`git worktree add ${WORKTREE_PATH} -b ${branchName} FETCH_HEAD`, {
+      stdio: 'inherit',
+    });
   } else {
     console.log(
       `Reusing existing worktree at ${WORKTREE_PATH}, checking out ${branchName}...`,
@@ -225,7 +224,7 @@ ${inlineContext ? `Inline Comments:\n${inlineContext}\n` : ''}
 Your mission:
 1. Examine the review feedback and modify the codebase in this worktree to address every requested change.
 2. Adhere strictly to GEMINI.md (traditional British English, ReadonlyExcept, accessible queries, zero redundant effects).
-3. Run verification: bun x tsc --noEmit && bun x eslint <modified> --fix && bun x jest --bail --findRelatedTests <modified> --passWithNoTests.
+3. Run verification: bun x tsc --noEmit && bun x eslint <modified> --fix && bun x vitest related --run --bail=1 <modified> --passWithNoTests.
 4. Make atomic, bite-sized git commits following Conventional Commits (<=50 char subject, <=80 char body).
 5. Push the branch to the PR using: bun run scripts/gh-app.ts push
 6. Conclude when all checks pass and changes are pushed.`;
@@ -283,7 +282,7 @@ CRITICAL OPERATIONAL RULES (GEMINI.md):
    - bun x tsc --noEmit
    - bun x eslint <modified-files> --fix
    - bun x stylelint "src/**/*.scss" --fix
-   - bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests
+   - bun x vitest related --run --bail=1 <modified-files> --passWithNoTests
 4. ATOMIC COMMITS & GRANULARITY:
    - Make small, focused, discrete commits (aim for under ~200-300 lines changed per commit).
    - Decompose: component primitive -> unit tests -> page integration -> docs/roadmap.

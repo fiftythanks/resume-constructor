@@ -3,7 +3,7 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import BulletPoints from './BulletPoints';
 
@@ -74,7 +74,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `handleFocusOnFirstElement` when the first bullet point drag handle is focused', () => {
-    const mockFn = jest.fn();
+    const mockFn = vi.fn();
     const props = getProps({ handleFocusOnFirstElement: mockFn });
     render(<BulletPoints {...props} />);
 
@@ -88,7 +88,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `handleKeyDownOnFirstElement` when key is pressed on the first bullet point drag handle', async () => {
-    const mockFn = jest.fn();
+    const mockFn = vi.fn();
     const user = userEvent.setup();
     const props = getProps({ handleKeyDownOnFirstElement: mockFn });
     render(<BulletPoints {...props} />);
@@ -128,7 +128,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `editItem` when a bullet point value is changed', async () => {
-    const editItemMock = jest.fn((_itemIndex: number, _value: string) => {});
+    const editItemMock = vi.fn((_itemIndex: number, _value: string) => {});
     render(<BulletPoints {...getProps({ editItem: editItemMock })} />);
     const user = userEvent.setup();
 
@@ -170,7 +170,7 @@ describe('BulletPoints', () => {
     expect(a11yElement).toBeInTheDocument();
   });
 
-  // TODO: figure out how to test drag over. As far as I understand, it is impossible to do by the means of unit testing, at least in Jest.
+  // TODO: figure out how to test drag over. As far as I understand, it is impossible to do by the means of unit testing, at least in JSDOM.
 
   it('should announce "Dragging was cancelled. Draggable item [index + 1] was put to its initial position." to screen readers when Escape is pressed during dragging', async () => {
     render(<BulletPoints {...getProps()} />);
@@ -246,7 +246,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `deleteItem` with a correct index when a delete button is pressed', async () => {
-    const deleteItemMock = jest.fn((_itemIndex: number) => {});
+    const deleteItemMock = vi.fn((_itemIndex: number) => {});
     render(<BulletPoints {...getProps({ deleteItem: deleteItemMock })} />);
     const user = userEvent.setup();
 
@@ -261,7 +261,7 @@ describe('BulletPoints', () => {
   });
 
   it('should announce "Bullet point [index + 1] was deleted." to screen readers when a delete button is clicked', async () => {
-    const updateScreenReaderAnnouncementMock = jest.fn(
+    const updateScreenReaderAnnouncementMock = vi.fn(
       (_announcement: string) => {},
     );
 
@@ -309,7 +309,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `addItem` when the add-button is clicked', async () => {
-    const addItemMock = jest.fn();
+    const addItemMock = vi.fn();
     render(<BulletPoints {...getProps({ addItem: addItemMock })} />);
     const user = userEvent.setup();
 

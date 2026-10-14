@@ -29,11 +29,11 @@ bun x stylelint "src/**/*.scss" --fix
 bun x prettier --write <modified-files>
 
 # 5. Targeted test suite execution
-bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests
+bun x vitest related --run --bail=1 <modified-files> --passWithNoTests
 ```
 
 > [!IMPORTANT]
-> Never run bare `bun test`. Bun's native test runner does not run JSDOM or use the Jest setup. Always run `bun run test` (for full suite) or `bun x jest` (for targeted test runs).
+> Never run bare `bun test`. Bun's native test runner does not run JSDOM or use the Vitest setup. Always run `bun run test` (for full suite) or `bun x vitest` (for targeted test runs).
 
 ---
 

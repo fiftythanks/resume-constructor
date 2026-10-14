@@ -1,20 +1,13 @@
-import '@testing-library/jest-dom';
-
-import { deserialize, serialize } from 'node:v8';
+import '@testing-library/jest-dom/vitest';
 
 import type { UsePDFInstance } from '@react-pdf/renderer';
+import type { Mock } from 'vitest';
 
-// TODO: clean up here.
+vi.mock('tabbable');
 
-/**
- * The Orta Jest extension didn't want to recognise `structuredClone`
- * as a function, and nothing worked. So I found this solution.
- */
-if (typeof structuredClone !== 'function') {
-  global.structuredClone = (value) => {
-    return deserialize(serialize(value));
-  };
-}
+vi.mock('pdfjs-dist/build/pdf.worker.min.mjs', () => ({
+  default: 'test-file-stub',
+}));
 
 if (typeof Blob.prototype.arrayBuffer !== 'function') {
   Blob.prototype.arrayBuffer = async function () {
@@ -38,15 +31,17 @@ if (typeof Blob.prototype.arrayBuffer !== 'function') {
  * and `HTMLDialogElement.prototype.showModal` in JSDOM yet.
  */
 
-HTMLDialogElement.prototype.close = jest.fn(function () {
+HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
   this.open = false;
 });
 
-HTMLDialogElement.prototype.showModal = jest.fn(function () {
+HTMLDialogElement.prototype.showModal = vi.fn(function (
+  this: HTMLDialogElement,
+) {
   this.open = true;
 });
 
-jest.mock('pdfjs-dist', () => {
+vi.mock('pdfjs-dist', () => {
   const render = () => ({
     cancel() {},
     promise: Promise.resolve(),
@@ -100,7 +95,7 @@ jest.mock('pdfjs-dist', () => {
   }
 
   return {
-    getDocument: jest.fn(getDocumentImplementation),
+    getDocument: vi.fn(getDocumentImplementation),
     GlobalWorkerOptions: {
       workerSrc: '',
     },
@@ -113,59 +108,64 @@ jest.mock('pdfjs-dist', () => {
  * workaround. The best way I could've come up with is mocking.
  */
 
-jest.mock('@react-pdf/renderer', () => ({
-  Document: jest.fn(({ children, ..._rest }) => children),
+vi.mock('@react-pdf/renderer', () => ({
+  Document: vi.fn(({ children, ..._rest }) => children),
   Font: {
     load() {
       return Promise.resolve(true);
     },
     register(_data: unknown) {},
   },
-  Link: jest.fn(({ children, href, ..._rest }) => (
-    <a href={href}>{children}</a>
-  )),
-  Page: jest.fn(({ children, ..._rest }) => <div>{children}</div>),
+  Link: vi.fn(({ children, href, ..._rest }) => <a href={href}>{children}</a>),
+  Page: vi.fn(({ children, ..._rest }) => <div>{children}</div>),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  PDFDownloadLink: jest.fn(({ children, fileName, ...props }) => (
+  PDFDownloadLink: vi.fn(({ children, fileName, ...props }) => (
     <a data-testid="mock-pdf-download-link" {...props}>
       {typeof children === 'function'
         ? children({ error: null, loading: false })
         : children}
     </a>
   )),
-  PDFViewer: jest.fn(({ children, ..._rest }) => (
+  PDFViewer: vi.fn(({ children, ..._rest }) => (
     <iframe data-testid="mock-pdf-viewer" title="PDF Viewer">
       {children}
     </iframe>
   )),
   StyleSheet: {
-    create: jest.fn((styles: unknown) => styles),
+    create: vi.fn((styles: unknown) => styles),
   },
-  Text: jest.fn(({ children, ..._rest }) => <span>{children}</span>),
-  usePDF: jest.fn((): [UsePDFInstance, jest.Mock] => [
+  Text: vi.fn(({ children, ..._rest }) => <span>{children}</span>),
+  usePDF: vi.fn((): [UsePDFInstance, Mock] => [
     {
       blob: new Blob(['mock-pdf-content'], { type: 'application/pdf' }),
       error: null,
       loading: false,
       url: 'blob:mock-pdf-url',
     },
-    jest.fn(),
+    vi.fn(),
   ]),
-  View: jest.fn(({ children, ..._rest }) => <div>{children}</div>),
+  View: vi.fn(({ children, ..._rest }) => <div>{children}</div>),
 }));
 
 /**
  * `getComputedStyle` is used in `Preview` and must return `{ ...,
  * paddingInline: string }` for everything to work correctly.
  */
-const getComputedStyleOriginal = window.getComputedStyle;
+const getComputedStyleOriginal = window.getComputedStyle.bind(window);
 
-jest.spyOn(window, 'getComputedStyle').mockImplementation((elt: Element) => {
-  const style = getComputedStyleOriginal(elt);
+vi.spyOn(window, 'getComputedStyle').mockImplementation(
+  (elt: Element, pseudoElt?: null | string) => {
+    const style = getComputedStyleOriginal(elt, pseudoElt);
 
-  if (style.getPropertyValue('padding-inline') === '') {
-    style.setProperty('padding-inline', '2rem');
-  }
+    return new Proxy(style, {
+      get(target, prop) {
+        if (prop === 'paddingInline') {
+          return Reflect.get(target, prop, target) || '2rem';
+        }
 
-  return style;
-});
+        const value: unknown = Reflect.get(target, prop, target);
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
+  },
+);

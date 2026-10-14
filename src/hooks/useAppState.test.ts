@@ -1,4 +1,4 @@
-/* eslint-disable jest/no-identical-title */
+/* eslint-disable vitest/no-identical-title */
 import { act, renderHook } from '@testing-library/react';
 
 import neverReached from '@/utils/neverReached';

@@ -19,7 +19,7 @@ bun install --frozen-lockfile
 # Start local development server (webpack 5 dev server)
 bun start
 
-# Run unit and integration tests (Jest)
+# Run unit and integration tests (Vitest)
 bun run test
 
 # Run type check
@@ -30,7 +30,7 @@ bun run build
 ```
 
 > [!IMPORTANT]
-> Never run bare `bun test`. Bun's native test runner does not run JSDOM or use the Jest test configuration. Always run `bun run test` (for full suite) or `bun x jest --bail --findRelatedTests <file> --passWithNoTests` (for targeted runs).
+> Never run bare `bun test`. Bun's native test runner does not run JSDOM or use the Vitest test configuration. Always run `bun run test` (for full suite) or `bun x vitest related --run --bail=1 <file> --passWithNoTests` (for targeted runs).
 
 ---
 
@@ -127,8 +127,8 @@ All scopes must be **strictly lowercase**.
 - `husky`: Git pre-commit and pre-push hooks (`.husky/`)
 - `ci`: Continuous Integration workflows (`.github/workflows/`)
 - `e2e`: Playwright test suites and configs (`e2e/`, `playwright.config.ts`)
-- `jest`: Jest configuration and testing setup (`jest.config.ts`, `jest.setup.tsx`)
-- `eslint`: ESLint flat configuration and rules (`eslint.config.js`)
+- `vitest`: Vitest configuration and testing setup (`vitest.config.ts`, `vitest.setup.tsx`)
+- `eslint`: ESLint flat configuration and rules (`eslint.config.ts`)
 - `package`: Dependency manifests and runtime updates (`package.json`, `bun.lock`)
 - `readme`: Root repository documentation (`README.md`)
 - `docs`: Documentation portal, guides and configuration (`docs/`)

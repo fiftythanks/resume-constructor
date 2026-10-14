@@ -7,7 +7,7 @@
 import type { RefObject } from 'react';
 
 import { getByRole, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import userEvent from '@testing-library/user-event';
 
 import Project from './Project';
@@ -110,7 +110,7 @@ describe('Project', () => {
     });
 
     it('should call `editText` on Project Name change via the corresponding text input', async () => {
-      const editTextMock = jest.fn(
+      const editTextMock = vi.fn(
         (_field: 'projectName' | 'stack', _value: string) => {},
       );
 
@@ -164,7 +164,7 @@ describe('Project', () => {
     });
 
     it('should call `editText` on Tech Stack change via the corresponding text input', async () => {
-      const editTextMock = jest.fn(
+      const editTextMock = vi.fn(
         (_field: 'projectName' | 'stack', _value: string) => {},
       );
 
@@ -239,7 +239,7 @@ describe('Project', () => {
      * the test's name should be changed.
      */
     it('should call `updateScreenReaderAnnouncement` when an important change is made to the bullet points via the corresponding controls (not DnD related)', async () => {
-      const updateScreenReaderAnnouncementMock = jest.fn(
+      const updateScreenReaderAnnouncementMock = vi.fn(
         (_announcement: string) => {},
       );
 
@@ -293,7 +293,7 @@ describe('Project', () => {
       });
 
       it("should call `editLink` on Code link's text change via the corresponding text input", async () => {
-        const editLinkMock = jest.fn(
+        const editLinkMock = vi.fn(
           (
             _field: 'code' | 'demo',
             _type: 'link' | 'text',
@@ -351,7 +351,7 @@ describe('Project', () => {
       });
 
       it("should call `editLink` on Code link's URL change via the corresponding text input", async () => {
-        const editLinkMock = jest.fn(
+        const editLinkMock = vi.fn(
           (
             _field: 'code' | 'demo',
             _type: 'link' | 'text',
@@ -409,7 +409,7 @@ describe('Project', () => {
       });
 
       it("should call `editLink` on Demo link's text change via the corresponding text input", async () => {
-        const editLinkMock = jest.fn(
+        const editLinkMock = vi.fn(
           (
             _field: 'code' | 'demo',
             _type: 'link' | 'text',
@@ -467,7 +467,7 @@ describe('Project', () => {
       });
 
       it("should call `editLink` on Demo link's URL change via the corresponding text input", async () => {
-        const editLinkMock = jest.fn(
+        const editLinkMock = vi.fn(
           (
             _field: 'code' | 'demo',
             _type: 'link' | 'text',

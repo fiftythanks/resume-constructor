@@ -277,7 +277,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.education.shownDegreeIndex).toBe(1);
         } else {
           await act(async () => {
@@ -285,7 +285,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.education.shownDegreeIndex).toBe(0);
         }
       });
@@ -626,7 +626,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.experience.shownJobIndex).toBe(1);
         } else {
           await act(async () => {
@@ -634,7 +634,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.experience.shownJobIndex).toBe(0);
         }
       });
@@ -1037,7 +1037,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.projects.shownProjectIndex).toBe(1);
         } else {
           await act(async () => {
@@ -1045,7 +1045,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.projects.shownProjectIndex).toBe(0);
         }
       });

@@ -1,10 +1,10 @@
 /* eslint-disable import-x/no-named-as-default-member */
 import js from '@eslint/js';
 import json from '@eslint/json';
+import vitest from '@vitest/eslint-plugin';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import { createNodeResolver, importX } from 'eslint-plugin-import-x';
-import pluginJest from 'eslint-plugin-jest';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import nodePlugin from 'eslint-plugin-n';
 import perfectionist from 'eslint-plugin-perfectionist';
@@ -55,7 +55,6 @@ export default tseslint.config([
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.jest,
         ...globals.es2026,
       },
       parser: tseslint.parser,
@@ -300,14 +299,18 @@ export default tseslint.config([
   },
   {
     files: ['**/*.{test,spec}.{mjs,js,jsx,mts,ts,tsx}'],
-    plugins: { jest: pluginJest },
+    plugins: { vitest },
     languageOptions: {
-      globals: pluginJest.environments.globals.globals,
+      globals: vitest.environments.env.globals,
     },
-    extends: [
-      pluginJest.configs['flat/recommended'],
-      pluginJest.configs['flat/style'],
-    ],
+    extends: [vitest.configs.recommended],
+    rules: {
+      'vitest/no-alias-methods': 'error',
+      'vitest/prefer-called-exactly-once-with': 'off',
+      'vitest/prefer-to-be': 'error',
+      'vitest/prefer-to-contain': 'error',
+      'vitest/prefer-to-have-length': 'error',
+    },
   },
   {
     files: ['**/*.json'],

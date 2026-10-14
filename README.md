@@ -2,7 +2,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![webpack](https://img.shields.io/badge/webpack-Custom-8DD6F9?logo=webpack&logoColor=black)
 
-![Test Coverage](https://img.shields.io/badge/Tests-11.7k%2B_Lines-2ea44f?logo=jest&logoColor=white)
+![Test Coverage](https://img.shields.io/badge/Tests-11.7k%2B_Lines-2ea44f?logo=vitest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-E2E-45ba4b?logo=playwright&logoColor=white)
 ![Style](https://img.shields.io/badge/Style-SCSS_%2B_BEM-hotpink?logo=sass&logoColor=white)
 ![Accessibility](https://img.shields.io/badge/A11y-WCAG_2.2-blueviolet?logo=w3c&logoColor=white)
@@ -32,7 +32,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
 - **Architecture:** Strict separation of concerns (UI Kit vs Business Logic) combined with component colocation (tests, styles and logic kept together) for high maintainability.
 - **Build System:** **Custom webpack 5 configuration** written in TypeScript (`webpack.common.ts`, `webpack.dev.ts` and `webpack.prod.ts`) leveraging native HTML (`experiments.html`) and native CSS (`experiments.css`) processing with zero external HTML/CSS loader overhead, preserving CSS layer precedence and extracting stylesheets natively.
 - **Strict Type Safety:** TypeScript application source code (`strict: true`, no implicit `any`, no unreachable code) enforcing deep immutability across component boundaries via `ReadonlyExcept` and `type-fest`'s `ReadonlyDeep`.
-- **Testing Strategy:** Over 600 automated unit and integration tests (12,000+ lines of Jest and React Testing Library specs, accounting for over 60% of the codebase size), querying elements strictly by accessible roles and simulating user interactions.
+- **Testing Strategy:** Over 600 automated unit and integration tests (12,000+ lines of Vitest and React Testing Library specs, accounting for over 60% of the codebase size), querying elements strictly by accessible roles and simulating user interactions.
   - **E2E & Automated Audits (Playwright):** Dockerised smoke and visual regression test suites verifying core user flows (data population, canvas rendering, PDF blob download) and automated `@axe-core/playwright` accessibility audits.
 - **Inclusive Design (A11y):** Built targeting WCAG 2.2 AA standards. All features, including complex interactions like drag & drop, are fully keyboard-navigable with focus management via `tabbable`, dynamic announcements via `aria-live="polite"` and explicit `htmlFor` form labeling.
 - **Rich Interactive Experience:** Implemented an accessible Drag & Drop interface using `@dnd-kit` for intuitive reordering of resume sections and list items:

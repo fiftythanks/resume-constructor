@@ -42,7 +42,7 @@ jobs:
       - name: Lint Styles
         run: bun x stylelint "src/**/*.scss"
 
-      - name: Run Jest tests
+      - name: Run Vitest tests
         run: bun run test:ci
 
       - name: Verify production build

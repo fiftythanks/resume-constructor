@@ -29,10 +29,9 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
   ```tsx
   import { tabbable } from 'tabbable';
 
-  // Always specify displayCheck for test environments:
-  const tabbables = tabbable(containerRef.current, {
-    displayCheck: process.env.NODE_ENV === 'test' ? 'none' : 'full',
-  });
+  // tabbable is globally mocked in vitest.setup.tsx via __mocks__/tabbable.js
+  // to inject { displayCheck: 'none' } automatically in JSDOM:
+  const tabbables = tabbable(containerRef.current);
   if (tabbables.length > 0) {
     tabbables[0].focus();
   }
@@ -42,7 +41,7 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
 
 ### C. Screen Reader Announcements (`aria-live="polite"`)
 
-- Dynamic UI changes (e.g., reordering sections, drag-and-drop operations, deleting items or switching editor modes) must trigger polite live announcements:
+- Dynamic UI changes (e.g. reordering sections, drag-and-drop operations, deleting items or switching editor modes) must trigger polite live announcements:
   ```tsx
   <span
     aria-live="polite"
@@ -66,7 +65,7 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
 
 ## 2. Testing & Verification Checklist
 
-1. **Jest + React Testing Library:**
+1. **Vitest + React Testing Library:**
    - Query elements strictly by accessible role and accessible name:
      ```tsx
      expect(

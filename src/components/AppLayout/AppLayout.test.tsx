@@ -6,7 +6,7 @@ import { act } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
@@ -216,7 +216,7 @@ function getProps(
     deleteSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
     editorMode: false,
     fillAll() {},
-    focusSection: jest.fn(),
+    focusSection: vi.fn(),
     openedSectionId: 'personal',
     openSection(_sectionId: SectionId) {},
     reorderSections(_sectionIds: ReadonlyDeep<SectionId[]>) {},
@@ -294,7 +294,7 @@ describe('AppLayout', () => {
     describe('"Open Next Section" button', () => {
       it("should call `openSection` passing the next section's ID to it when pressed", async () => {
         // Arrange
-        const mockFn = jest.fn((_sectionId: SectionId) => {});
+        const mockFn = vi.fn((_sectionId: SectionId) => {});
         const props = getProps({ openSection: mockFn });
 
         renderAppLayout(props);
@@ -335,7 +335,7 @@ describe('AppLayout', () => {
       it("should call `openSection` passing the previous section's ID to it when pressed", async () => {
         // Arrange
         const openedSectionId = possibleSectionIds[3];
-        const mockFn = jest.fn((_sectionId: SectionId) => {});
+        const mockFn = vi.fn((_sectionId: SectionId) => {});
         const props = getProps({ openedSectionId, openSection: mockFn });
 
         renderAppLayout(props);
@@ -406,7 +406,7 @@ describe('AppLayout', () => {
 
     it('should call `openSection` with the correct section ID when a section is selected', async () => {
       // Arrange
-      const mockFn = jest.fn((_sectionId: SectionId) => {});
+      const mockFn = vi.fn((_sectionId: SectionId) => {});
       const props = getProps({ openSection: mockFn });
 
       renderAppLayoutWithNavbarExpanded(props);
@@ -432,7 +432,7 @@ describe('AppLayout', () => {
 
     it('should call `deleteSections` with the correct section ID when a section is deleted', async () => {
       // Arrange
-      const mockFn = jest.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
+      const mockFn = vi.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
       const props = getProps({ deleteSections: mockFn, editorMode: true });
 
       renderAppLayoutWithNavbarExpanded(props);
@@ -475,7 +475,7 @@ describe('AppLayout', () => {
 
       it('should call `toggleEditorMode` when pressed', async () => {
         // Arrange
-        const mockFn = jest.fn();
+        const mockFn = vi.fn();
         const props = getProps({ toggleEditorMode: mockFn });
 
         renderAppLayoutWithNavbarExpanded(props);
@@ -517,7 +517,7 @@ describe('AppLayout', () => {
       it('should call `addSections` with the correct section ID when a section is added', async () => {
         // Arrange
         const activeSectionIds: SectionId[] = ['personal'];
-        const mockFn = jest.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
+        const mockFn = vi.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
         const props = getProps({ activeSectionIds, addSections: mockFn });
 
         renderAppLayoutWithNavbarExpanded(props);
@@ -543,7 +543,7 @@ describe('AppLayout', () => {
 
       it('should call `resetScreenReaderAnnouncement` when shown', async () => {
         // Arrange
-        const mockFn = jest.fn();
+        const mockFn = vi.fn();
         const activeSectionIds: SectionId[] = ['personal'];
 
         const props = getProps({
@@ -671,7 +671,7 @@ describe('AppLayout', () => {
 
       it('should call `deleteAll` when pressed', async () => {
         // Arrange
-        const mockFn = jest.fn();
+        const mockFn = vi.fn();
         const props = getProps({ deleteAll: mockFn });
 
         renderAppLayout(props);
@@ -697,7 +697,7 @@ describe('AppLayout', () => {
     describe('"Fill All" button', () => {
       it('should call `fillAll` when pressed', async () => {
         // Arrange
-        const mockFn = jest.fn();
+        const mockFn = vi.fn();
         const props = getProps({ fillAll: mockFn });
 
         renderAppLayout(props);
@@ -752,7 +752,7 @@ describe('AppLayout', () => {
           describe("Editor mode is off and shift isn't pressed", () => {
             it('should call focusSection', async () => {
               // Arrange
-              const mockFocusSection = jest.fn();
+              const mockFocusSection = vi.fn();
               const props = getProps({ focusSection: mockFocusSection });
 
               renderAppLayoutWithNavbarExpanded(props);
@@ -990,7 +990,7 @@ describe('AppLayout', () => {
       describe('Editor mode is on', () => {
         it('should toggle editor mode', async () => {
           // Arrange
-          const mockFn = jest.fn();
+          const mockFn = vi.fn();
           const editorMode = true;
           const props = getProps({ editorMode, toggleEditorMode: mockFn });
 

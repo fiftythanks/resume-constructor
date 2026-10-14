@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import ListItem from './ListItem';
 
@@ -68,7 +68,7 @@ describe('ListItem', () => {
     });
 
     it('should call `edit` when the text input value is changed', async () => {
-      const editMock = jest.fn();
+      const editMock = vi.fn();
       render(<ListItem {...getProps({ edit: editMock })} />);
       const user = userEvent.setup();
       const input = screen.getByRole('textbox', { name: 'Bullet point 2' });
@@ -91,7 +91,7 @@ describe('ListItem', () => {
     });
 
     it('should call `handleFocusOnFirstElement` when focused if `handleFocusOnFirstElement` is defined', () => {
-      const mockFn = jest.fn();
+      const mockFn = vi.fn();
       const props = getProps({ handleFocusOnFirstElement: mockFn });
       render(<ListItem {...props} />);
 
@@ -105,7 +105,7 @@ describe('ListItem', () => {
     });
 
     it('should call `handleKeyDownOnFirstElement` when key is pressed if `handleKeyDownOnFirstElement` is defined', async () => {
-      const mockFn = jest.fn();
+      const mockFn = vi.fn();
       const user = userEvent.setup();
       const props = getProps({ handleKeyDownOnFirstElement: mockFn });
       render(<ListItem {...props} />);
@@ -133,7 +133,7 @@ describe('ListItem', () => {
     });
 
     it('should call `deleteItem` when the delete button is clicked', async () => {
-      const deleteItemMock = jest.fn();
+      const deleteItemMock = vi.fn();
       render(<ListItem {...getProps({ deleteItem: deleteItemMock })} />);
       const user = userEvent.setup();
 

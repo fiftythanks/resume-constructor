@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
@@ -64,7 +64,7 @@ describe('AddSections', () => {
   });
 
   it('should call `onClose` on close', () => {
-    const onCloseMock = jest.fn();
+    const onCloseMock = vi.fn();
     render(<Container />);
     render(<AddSections {...getProps({ onClose: onCloseMock })} />);
     const popup = screen.getByRole('dialog', { name: 'Add Sections' });
@@ -119,7 +119,7 @@ describe('AddSections', () => {
     });
 
     it('should call `addSections` when an "Add [section title]" button is clicked, with the corresponding ID passed to it', async () => {
-      const addSectionsMock = jest.fn((_sectionIds: SectionId[]) => {});
+      const addSectionsMock = vi.fn((_sectionIds: SectionId[]) => {});
       render(<Container />);
       render(<AddSections {...getProps({ addSections: addSectionsMock })} />);
       const user = userEvent.setup();
@@ -179,7 +179,7 @@ describe('AddSections', () => {
     });
 
     it('should call `onClose` if the added section is the only addable section', async () => {
-      const onCloseMock = jest.fn();
+      const onCloseMock = vi.fn();
       const activeSectionIds = possibleSectionIds.toSpliced(-1, 1);
       const props = getProps({ activeSectionIds, onClose: onCloseMock });
       render(<Container />);
@@ -212,7 +212,7 @@ describe('AddSections', () => {
   });
 
   it('should call `onClose` when "Add All Sections" is clicked', async () => {
-    const onCloseMock = jest.fn();
+    const onCloseMock = vi.fn();
     render(<Container />);
     render(<AddSections {...getProps({ onClose: onCloseMock })} />);
     const user = userEvent.setup();
@@ -236,7 +236,7 @@ describe('AddSections', () => {
   });
 
   it('should call `onClose` when the close button is clicked', async () => {
-    const onCloseMock = jest.fn();
+    const onCloseMock = vi.fn();
     render(<Container />);
     render(<AddSections {...getProps({ onClose: onCloseMock })} />);
     const user = userEvent.setup();

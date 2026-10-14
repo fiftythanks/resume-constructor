@@ -19,23 +19,23 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "rootDir": "./",
-    "types": ["node", "jest"],
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": [
-    "babel.config.cjs",
-    "commitlint.config.cjs",
+    "__mocks__",
+    "commitlint.config.ts",
     "e2e",
     "eslint.config.ts",
-    "jest.config.ts",
-    "jest.setup.tsx",
     "playwright.config.ts",
     "prettier.config.js",
     "src",
     "scripts",
     "stylelint.config.js",
+    "vitest.config.ts",
+    "vitest.setup.tsx",
     "webpack.common.ts",
     "webpack.dev.ts",
     "webpack.prod.ts"

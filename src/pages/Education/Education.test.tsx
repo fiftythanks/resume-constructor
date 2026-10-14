@@ -7,7 +7,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import useResumeData from '@/hooks/useResumeData';
 
@@ -158,7 +158,7 @@ describe('Education', () => {
       it('should call `showDegree(shownDegreeIndex - 1)` when the button is clicked', async () => {
         // Arrange
         const data = structuredClone({ ...DATA, shownDegreeIndex: 1 });
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = vi.fn((_index: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, showDegree: mockFn });
 
         render(<Education {...getProps({ data, functions })} />);
@@ -198,7 +198,7 @@ describe('Education', () => {
 
       it('should call `showDegree(shownDegreeIndex + 1)` when the button is clicked', async () => {
         // Arrange
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = vi.fn((_index: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, showDegree: mockFn });
         const props = getProps({ functions });
 
@@ -229,7 +229,7 @@ describe('Education', () => {
 
     it('should call `addDegree` when the button is clicked', async () => {
       // Arrange
-      const mockFn = jest.fn();
+      const mockFn = vi.fn();
       const functions = cloneDeep({ ...FUNCTIONS, addDegree: mockFn });
 
       render(<Education {...getProps({ functions })} />);
@@ -269,7 +269,7 @@ describe('Education', () => {
 
     it('should call `deleteDegree(shownDegreeIndex)` when the button is called', async () => {
       // Arrange
-      const mockFn = jest.fn((_index: number) => {});
+      const mockFn = vi.fn((_index: number) => {});
       const functions = cloneDeep({ ...FUNCTIONS, deleteDegree: mockFn });
 
       render(<Education {...getProps({ functions })} />);
@@ -393,7 +393,7 @@ describe('Education', () => {
     describe('Functions', () => {
       it('should call `addBulletPoint(degreeIndex)` when a bullet point is added via the corresponding control', async () => {
         // Arrange
-        const mockFn = jest.fn((_bulletIndex: number) => {});
+        const mockFn = vi.fn((_bulletIndex: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
         render(<Education {...getProps({ functions })} />);
@@ -414,7 +414,7 @@ describe('Education', () => {
       it('should call `deleteBulletPoint(degreeIndex, itemIndex)` when a bullet point is deleted via the corresponding control', async () => {
         // Arrange
         const implementation = (_bulletIndex: number, _itemIndex: number) => {};
-        const mockFn = jest.fn(implementation);
+        const mockFn = vi.fn(implementation);
         const functions = cloneDeep(FUNCTIONS);
         functions.deleteBulletPoint = mockFn;
 
@@ -435,7 +435,7 @@ describe('Education', () => {
 
       it('should call `editBulletPoint(degreeIndex, itemIndex, value)` when a bullet point is edited via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
+        const mockFn = vi.fn(
           (_degreeIndex: number, _itemIndex: number, _value: string) => {},
         );
 
@@ -465,7 +465,7 @@ describe('Education', () => {
 
       it('should call `editDegree(degreeIndex, field, value)` when a text field of a degree is changed via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
+        const mockFn = vi.fn(
           (_degreeIndex: number, _field: Field, _value: string) => {},
         );
 
@@ -501,7 +501,7 @@ describe('Education', () => {
        */
       it('should call `updateScreenReaderAnnouncement` when an important change is made to a degree via its controls or text inputs (not DnD-related)', async () => {
         // Arrange
-        const mockFn = jest.fn((_announcement: string) => {});
+        const mockFn = vi.fn((_announcement: string) => {});
         const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
         render(<Education {...props} />);

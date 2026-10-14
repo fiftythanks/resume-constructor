@@ -186,32 +186,8 @@ export default function App() {
   const focusSection = useCallback(() => {
     if (sectionRefs[openedSectionId].current === null) return;
 
-    /**
-     * `tabbable` has no support for `jsdom`. Its documentation highly
-     * recommends setting `displayCheck` to `none` for `jsdom`, therefore.
-     *
-     * TODO: A better solution might be to define a global mock like this:
-     *
-     * ```
-     * // __mocks__/tabbable.js
-     *
-     * const lib = jest.requireActual('tabbable');
-     *
-     * const tabbable = {
-     *    ...lib,
-     *    tabbable: (node, options) => lib.tabbable(node, { ...options, displayCheck: 'none' }),
-     *    focusable: (node, options) => lib.focusable(node, { ...options, displayCheck: 'none' }),
-     *    isFocusable: (node, options) => lib.isFocusable(node, { ...options, displayCheck: 'none' }),
-     *    isTabbable: (node, options) => lib.isTabbable(node, { ...options, displayCheck: 'none' }),
-     * };
-     *
-     * module.exports = tabbable;
-     * ```
-     */
     // TODO: Verify `sectionRefs[openedSectionId].current.isConnected` and `allTabbable[0].isConnected` before invoking `.focus()`.
-    const allTabbable = tabbable(sectionRefs[openedSectionId].current, {
-      displayCheck: process.env.NODE_ENV === 'test' ? 'none' : 'full',
-    });
+    const allTabbable = tabbable(sectionRefs[openedSectionId].current);
 
     if (allTabbable.length > 0) allTabbable[0].focus();
   }, [openedSectionId, sectionRefs]);

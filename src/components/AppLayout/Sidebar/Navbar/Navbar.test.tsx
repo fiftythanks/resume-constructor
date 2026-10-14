@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { clsx } from 'clsx';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
@@ -176,7 +176,7 @@ describe('Navbar', () => {
     });
 
     it('should call `selectSection(sectionId)` when a section is selected', async () => {
-      const mockFn = jest.fn((_sectionId: SectionId) => {});
+      const mockFn = vi.fn((_sectionId: SectionId) => {});
       renderComponents(getProps({ selectSection: mockFn }));
       const user = userEvent.setup();
       const tab = screen.getByRole('tab', { name: sectionTitles['skills'] });
@@ -189,7 +189,7 @@ describe('Navbar', () => {
 
     it('should not call `selectSection` when a section tab is clicked if the editor mode is on', async () => {
       // Arrange
-      const mockFn = jest.fn((_sectionId: SectionId) => {});
+      const mockFn = vi.fn((_sectionId: SectionId) => {});
       const props = getProps({ editorMode: true, selectSection: mockFn });
 
       renderComponents(props);
@@ -220,7 +220,7 @@ describe('Navbar', () => {
       });
 
       it('should call `deleteSections(sectionIds)` when a section is deleted', async () => {
-        const mockFn = jest.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
+        const mockFn = vi.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
         const props = getProps({ editorMode: true, deleteSections: mockFn });
 
         renderComponents(props);
@@ -344,7 +344,7 @@ describe('Navbar', () => {
       });
 
       it('should call `toggleEditorMode` when "Toggle Editor Mode" is clicked', async () => {
-        const mockFn = jest.fn();
+        const mockFn = vi.fn();
         renderComponents(getProps({ toggleEditorMode: mockFn }));
         const user = userEvent.setup();
         const btn = screen.getByRole('button', { name: 'Toggle Editor Mode' });
@@ -408,7 +408,7 @@ describe('Navbar', () => {
 
     it('should call `addSections` when a section is added', async () => {
       // Arrange
-      const mockFn = jest.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
+      const mockFn = vi.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
       const activeSectionIds: SectionId[] = ['personal', 'links', 'projects'];
       const props = getProps({ activeSectionIds, addSections: mockFn });
 
@@ -452,7 +452,7 @@ describe('Navbar', () => {
 
   // DnD
   describe('DnD', () => {
-    // TODO: find a way to test DnD itself. At the moment, it doesn't work in Jest.
+    // TODO: find a way to test DnD itself. At the moment, it doesn't work in JSDOM.
     it('should provide draggable tabs with an accessible description for DnD behaviour in editor mode, "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."', () => {
       // Arrange
       const description =

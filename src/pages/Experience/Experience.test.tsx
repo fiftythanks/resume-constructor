@@ -7,7 +7,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import useResumeData from '@/hooks/useResumeData';
 
@@ -155,7 +155,7 @@ describe('Experience', () => {
       it('should call `showJob(shownJobIndex - 1)` when the button is clicked', async () => {
         // Arrange
         const data = structuredClone({ ...DATA, shownJobIndex: 1 });
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = vi.fn((_index: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, showJob: mockFn });
 
         render(<Experience {...getProps({ data, functions })} />);
@@ -192,7 +192,7 @@ describe('Experience', () => {
 
       it('should call `showJob(shownJobIndex + 1)` when the button is clicked', async () => {
         // Arrange
-        const mockFn = jest.fn((_index: number) => {});
+        const mockFn = vi.fn((_index: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, showJob: mockFn });
         const props = getProps({ functions });
 
@@ -223,7 +223,7 @@ describe('Experience', () => {
 
     it('should call `addJob` when the button is clicked', async () => {
       // Arrange
-      const mockFn = jest.fn();
+      const mockFn = vi.fn();
       const functions = cloneDeep({ ...FUNCTIONS, addJob: mockFn });
 
       render(<Experience {...getProps({ functions })} />);
@@ -262,7 +262,7 @@ describe('Experience', () => {
 
     it('should call `deleteJob(shownJobIndex)` when the button is called', async () => {
       // Arrange
-      const mockFn = jest.fn((_index: number) => {});
+      const mockFn = vi.fn((_index: number) => {});
       const functions = cloneDeep({ ...FUNCTIONS, deleteJob: mockFn });
 
       render(<Experience {...getProps({ functions })} />);
@@ -376,7 +376,7 @@ describe('Experience', () => {
     describe('Functions', () => {
       it('should call `addBulletPoint(jobIndex)` when a bullet point is added via the corresponding control', async () => {
         // Arrange
-        const mockFn = jest.fn((_bulletIndex: number) => {});
+        const mockFn = vi.fn((_bulletIndex: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
         render(<Experience {...getProps({ functions })} />);
@@ -396,7 +396,7 @@ describe('Experience', () => {
       it('should call `deleteBulletPoint(jobIndex, itemIndex)` when a bullet point is deleted via the corresponding control', async () => {
         // Arrange
         const implementation = (_bulletIndex: number, _itemIndex: number) => {};
-        const mockFn = jest.fn(implementation);
+        const mockFn = vi.fn(implementation);
         const functions = cloneDeep(FUNCTIONS);
         functions.deleteBulletPoint = mockFn;
 
@@ -416,7 +416,7 @@ describe('Experience', () => {
 
       it('should call `editBulletPoint(jobIndex, itemIndex, value)` when a bullet point is edited via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
+        const mockFn = vi.fn(
           (_jobIndex: number, _itemIndex: number, _value: string) => {},
         );
 
@@ -446,7 +446,7 @@ describe('Experience', () => {
 
       it('should call `editJob(jobIndex, field, value)` when a text field of a job is changed via the corresponding text input', async () => {
         // Arrange
-        const mockFn = jest.fn(
+        const mockFn = vi.fn(
           (_jobIndex: number, _field: Field, _value: string) => {},
         );
 
@@ -483,7 +483,7 @@ describe('Experience', () => {
        */
       it('should call `updateScreenReaderAnnouncement` when an important change is made to the job via its controls or text inputs (not DnD-related)', async () => {
         // Arrange
-        const mockFn = jest.fn((_announcement: string) => {});
+        const mockFn = vi.fn((_announcement: string) => {});
         const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
         render(<Experience {...props} />);

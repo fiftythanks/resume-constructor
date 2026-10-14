@@ -6,7 +6,7 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import Projects from './Projects';
 
@@ -180,7 +180,7 @@ describe('Projects', () => {
 
       it('should call `showProject(shownProjectIndex - 1)` when the button is clicked', async () => {
         render(<div aria-label="Projects" id="projects" />);
-        const showProjectMock = jest.fn((_index: number) => {});
+        const showProjectMock = vi.fn((_index: number) => {});
         let props = getProps();
 
         props = {
@@ -238,7 +238,7 @@ describe('Projects', () => {
 
       it('should call `showProject(shownProjectIndex + 1)` when the button is clicked', async () => {
         render(<div aria-label="Projects" id="projects" />);
-        const showProjectMock = jest.fn((_index: number) => {});
+        const showProjectMock = vi.fn((_index: number) => {});
         let props = getProps();
 
         props = {
@@ -276,7 +276,7 @@ describe('Projects', () => {
 
     it('should call `addProject` when the button is clicked', async () => {
       render(<div aria-label="Projects" id="projects" />);
-      const addProjectMock = jest.fn();
+      const addProjectMock = vi.fn();
       let props = getProps();
 
       props = {
@@ -330,7 +330,7 @@ describe('Projects', () => {
 
     it('should call `deleteProject(shownProjectIndex)` when the button is called', async () => {
       render(<div aria-label="Projects" id="projects" />);
-      const deleteProjectMock = jest.fn((_index: number) => {});
+      const deleteProjectMock = vi.fn((_index: number) => {});
       let props = getProps();
 
       props = {
@@ -418,7 +418,7 @@ describe('Projects', () => {
 
     it('should call `addBulletPoint(projectIndex)` when a bullet point is added via the corresponding control', async () => {
       render(<div aria-label="Projects" id="projects" />);
-      const addBulletPointMock = jest.fn((_projectIndex: number) => {});
+      const addBulletPointMock = vi.fn((_projectIndex: number) => {});
       let props = getProps();
 
       props = {
@@ -445,7 +445,7 @@ describe('Projects', () => {
     it('should call `deleteBulletPoint(projectIndex, itemIndex)` when a bullet point is deleted via the corresponding control', async () => {
       render(<div aria-label="Projects" id="projects" />);
 
-      const deleteBulletPointMock = jest.fn(
+      const deleteBulletPointMock = vi.fn(
         (_projectIndex: number, _itemIndex: number) => {},
       );
 
@@ -479,7 +479,7 @@ describe('Projects', () => {
     it('should call `editBulletPoint(projectIndex, itemIndex, value)` when a bullet point is edited via the corresponding text input', async () => {
       render(<div aria-label="Projects" id="projects" />);
 
-      const editBulletPointMock = jest.fn(
+      const editBulletPointMock = vi.fn(
         (_projectIndex: number, _itemIndex: number, _value: string) => {},
       );
 
@@ -517,7 +517,7 @@ describe('Projects', () => {
     it('should call `editProjectLink(projectIndex, field, type, value)` when a link is edited via the corresponding text input', async () => {
       render(<div aria-label="Projects" id="projects" />);
 
-      const editProjectLinkMock = jest.fn(
+      const editProjectLinkMock = vi.fn(
         (
           _projectIndex: number,
           _field: 'code' | 'demo',
@@ -561,7 +561,7 @@ describe('Projects', () => {
     it('should call `editProjectText(projectIndex, field, value)` when a text field of a project is changed via the corresponding text input', async () => {
       render(<div aria-label="Projects" id="projects" />);
 
-      const editProjectTextMock = jest.fn(
+      const editProjectTextMock = vi.fn(
         (
           _projectIndex: number,
           _field: 'projectName' | 'stack',
@@ -609,7 +609,7 @@ describe('Projects', () => {
     it('should call `updateScreenReaderAnnouncement` when an important change is made to the project via its controls or text inputs (not DnD-related)', async () => {
       render(<div aria-label="Projects" id="projects" />);
       const implementation = (_announcement: string) => {};
-      const updateScreenReaderAnnouncementMock = jest.fn(implementation);
+      const updateScreenReaderAnnouncementMock = vi.fn(implementation);
       const props = getProps();
       props.updateScreenReaderAnnouncement = updateScreenReaderAnnouncementMock;
       render(<Projects {...props} />);

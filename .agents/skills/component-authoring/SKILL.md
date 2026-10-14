@@ -20,7 +20,7 @@ Every component lives in its own dedicated directory under `src/components/<Comp
 src/components/MyComponent/
 ├── MyComponent.tsx         # Component definition and props interface
 ├── MyComponent.scss        # Component-scoped BEM styles
-├── MyComponent.test.tsx    # Comprehensive Jest + React Testing Library tests
+├── MyComponent.test.tsx    # Comprehensive Vitest + React Testing Library tests
 └── index.tsx               # Single-line barrel export
 ```
 
@@ -61,7 +61,7 @@ export interface MyComponentProps {
 type ReadonlyMyComponentProps = ReadonlyExcept<MyComponentProps, 'ref'>;
 
 /**
- * Detailed JSDoc comment explaining component purpose, accessibility behavior,
+ * Detailed JSDoc comment explaining component purpose, accessibility behaviour
  * and usage examples.
  */
 export default function MyComponent({
@@ -172,15 +172,16 @@ import type { MouseEvent } from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
+import type { Mock } from 'vitest';
 
 import MyComponent from './MyComponent';
 
 describe('MyComponent', () => {
-  let handleClickMock: jest.Mock<void, [MouseEvent<HTMLButtonElement>]>;
+  let handleClickMock: Mock<(e: MouseEvent<HTMLButtonElement>) => void>;
 
   beforeEach(() => {
-    handleClickMock = jest.fn();
+    handleClickMock = vi.fn();
   });
 
   it('should render with accessible role and name', () => {
@@ -225,5 +226,5 @@ describe('MyComponent', () => {
 Run targeted test verification:
 
 ```bash
-bun x jest --bail --findRelatedTests src/components/MyComponent/MyComponent.tsx --passWithNoTests
+bun x vitest related --run --bail=1 src/components/MyComponent/MyComponent.tsx --passWithNoTests
 ```

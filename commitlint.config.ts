@@ -1,13 +1,9 @@
-module.exports = {
+export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
-    'header-max-length': [2, 'always', 50],
     'body-max-line-length': [2, 'always', 80],
-    'type-enum': [
-      2,
-      'always',
-      ['feat', 'fix', 'refactor', 'test', 'docs', 'chore'],
-    ],
+    'header-max-length': [2, 'always', 50],
+    'scope-case': [2, 'always', 'lower-case'],
     'scope-enum': [
       2,
       'always',
@@ -26,7 +22,6 @@ module.exports = {
         'experience',
         'hooks',
         'husky',
-        'jest',
         'links',
         'navbar',
         'package',
@@ -41,10 +36,15 @@ module.exports = {
         'toolbar',
         'types',
         'utils',
+        'vitest',
         'webpack',
       ],
     ],
-    'scope-case': [2, 'always', 'lower-case'],
     'subject-case': [0],
+    'type-enum': [
+      2,
+      'always',
+      ['feat', 'fix', 'refactor', 'test', 'docs', 'chore'],
+    ],
   },
 };

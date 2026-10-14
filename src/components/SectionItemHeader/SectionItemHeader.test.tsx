@@ -2,7 +2,7 @@ import type { FocusEvent, KeyboardEvent, RefObject } from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import SectionItemHeader from './SectionItemHeader';
 
@@ -12,23 +12,23 @@ function getMockSectionItemHeaderProps(
   overrides?: Partial<SectionItemHeaderProps>,
 ): SectionItemHeaderProps {
   return {
-    addItem: jest.fn<void, []>(),
-    deleteItem: jest.fn<void, []>(),
-    handleFocus: jest.fn<void, [FocusEvent<HTMLElement>]>(),
-    handleKeyDown: jest.fn<void, [KeyboardEvent]>(),
+    addItem: vi.fn<() => void>(),
+    deleteItem: vi.fn<() => void>(),
+    handleFocus: vi.fn<(e: FocusEvent<HTMLElement>) => void>(),
+    handleKeyDown: vi.fn<(e: KeyboardEvent) => void>(),
     itemName: 'Project',
     itemNumber: 1,
     itemsNumber: 1,
-    showNextItem: jest.fn<void, []>(),
-    showPreviousItem: jest.fn<void, []>(),
-    updateScreenReaderAnnouncement: jest.fn<void, [string]>(),
+    showNextItem: vi.fn<() => void>(),
+    showPreviousItem: vi.fn<() => void>(),
+    updateScreenReaderAnnouncement: vi.fn<(announcement: string) => void>(),
     ...overrides,
   };
 }
 
 describe('SectionItemHeader', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Semantic Structure & Accessibility', () => {
@@ -182,7 +182,7 @@ describe('SectionItemHeader', () => {
     });
 
     it('should invoke a callback ref with the root header element', () => {
-      const callbackRef = jest.fn();
+      const callbackRef = vi.fn();
 
       render(
         <SectionItemHeader
@@ -204,8 +204,8 @@ describe('SectionItemHeader', () => {
       expect.hasAssertions();
 
       const user = userEvent.setup();
-      const addItemMock = jest.fn<void, []>();
-      const announceMock = jest.fn<void, [string]>();
+      const addItemMock = vi.fn<() => void>();
+      const announceMock = vi.fn<(announcement: string) => void>();
 
       render(
         <SectionItemHeader
@@ -230,8 +230,8 @@ describe('SectionItemHeader', () => {
       expect.hasAssertions();
 
       const user = userEvent.setup();
-      const deleteItemMock = jest.fn<void, []>();
-      const announceMock = jest.fn<void, [string]>();
+      const deleteItemMock = vi.fn<() => void>();
+      const announceMock = vi.fn<(announcement: string) => void>();
 
       render(
         <SectionItemHeader
@@ -255,8 +255,8 @@ describe('SectionItemHeader', () => {
     it('should invoke `showNextItem` and announce navigation when Next button is clicked', async () => {
       expect.hasAssertions();
       const user = userEvent.setup();
-      const showNextMock = jest.fn<void, []>();
-      const announceMock = jest.fn<void, [string]>();
+      const showNextMock = vi.fn<() => void>();
+      const announceMock = vi.fn<(announcement: string) => void>();
 
       render(
         <SectionItemHeader
@@ -279,8 +279,8 @@ describe('SectionItemHeader', () => {
     it('should invoke `showPreviousItem` and announce navigation when Previous button is clicked', async () => {
       expect.hasAssertions();
       const user = userEvent.setup();
-      const showPreviousMock = jest.fn<void, []>();
-      const announceMock = jest.fn<void, [string]>();
+      const showPreviousMock = vi.fn<() => void>();
+      const announceMock = vi.fn<(announcement: string) => void>();
 
       render(
         <SectionItemHeader
@@ -305,7 +305,7 @@ describe('SectionItemHeader', () => {
     it('should operate safely when `updateScreenReaderAnnouncement` is omitted', async () => {
       expect.hasAssertions();
       const user = userEvent.setup();
-      const addItemMock = jest.fn<void, []>();
+      const addItemMock = vi.fn<() => void>();
 
       render(
         <SectionItemHeader

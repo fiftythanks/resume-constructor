@@ -39,7 +39,7 @@ Every UI component and page feature is self-contained in its own directory follo
 src/components/Button/
 ├── Button.tsx         # Component implementation and prop types
 ├── Button.scss        # Scoped BEM styles
-├── Button.test.tsx    # Jest + React Testing Library suite
+├── Button.test.tsx    # Vitest + React Testing Library suite
 └── index.tsx          # Clean public barrel export
 ```
 
@@ -55,7 +55,7 @@ import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 export interface ButtonProps {
   children: ReactNode;
   disabled?: boolean;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   ref?: RefCallback<HTMLButtonElement> | RefObject<HTMLButtonElement | null>;
   variant?: 'icon' | 'primary' | 'secondary';
 }

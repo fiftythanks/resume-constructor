@@ -18,17 +18,17 @@
 
 - **Package Manager:** Always use Bun (`bun`).
 - **Running Tests:**
-  - Run Jest via `bun run test` (or `bun run test:ci`).
-  - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of Jest with JSDOM.
-  - For targeted test execution: `bun x jest --bail --findRelatedTests <file> --passWithNoTests`.
+  - Run Vitest via `bun run test` (or `bun run test:ci`).
+  - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of Vitest with JSDOM.
+  - For targeted test execution: `bun x vitest related --run --bail=1 <file> --passWithNoTests`.
 - **Linting & Formatting:**
   - ESLint: `bun x eslint <path> --fix`
   - Stylelint: `bun x stylelint "src/**/*.scss" --fix`
   - Prettier: `bun x prettier --write <path>`
   - Type-check: `bun x tsc --noEmit`
 - **Build & Dev:**
-  - Dev server: `bun start` (`webpack serve --config webpack.dev.ts`)
-  - Production build: `bun run build` (`webpack --config webpack.prod.ts`)
+  - Dev server: `bun start` (`webpack serve --disable-interpret --config webpack.dev.ts`)
+  - Production build: `bun run build` (`webpack --disable-interpret --config webpack.prod.ts`)
 
 ---
 
@@ -123,7 +123,7 @@ Every file must strictly adhere to the automated sorting hierarchy:
 
 ---
 
-## 6. Testing Philosophy (Jest + React Testing Library)
+## 6. Testing Philosophy (Vitest + React Testing Library)
 
 - **Accessible Queries Only:** Query elements by accessible role (`screen.getByRole('button', { name: /save/i })`), never by test ID or CSS class unless testing an aria-live region.
 - **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
@@ -136,8 +136,8 @@ Every file must strictly adhere to the automated sorting hierarchy:
   - **Component-Level Acceptance Workflows (Section 8.4):** Only write component-level acceptance tests where behaviour, user intent and business risk intersect (complex stateful feature containers, flow gates and compound primitives). Never write acceptance tests for presentational or leaf components (`SectionItemHeader`, `Button`, dumb layout shells) and never create artificial stateful wrapper components inside test files to simulate state that lives in external hooks. Treat the boundary of an acceptance test as the boundary of a genuine user capability; leave broad multi-page journeys to Playwright E2E tests.
 - **User Event Setup:** Always initialise `const user = userEvent.setup()` and `await user.click(...)`.
 - **Strict Hygiene:** Never commit `describe.only` or `it.only` (`no-restricted-properties` lint rule).
-- **Mocking:** Explicitly type mocks with `jest.Mock<ReturnType, Parameters>`.
-- **JSDOM Focus Workaround:** When using `tabbable`, pass `{ displayCheck: process.env.NODE_ENV === 'test' ? 'none' : 'full' }`.
+- **Mocking:** Explicitly type mocks with `Mock<Procedure>` imported from `'vitest'`.
+- **JSDOM Focus Workaround:** `tabbable` is globally mocked in `vitest.setup.tsx` via `__mocks__/tabbable.js` to inject `{ displayCheck: 'none' }` automatically in JSDOM.
 
 ---
 
@@ -160,7 +160,7 @@ Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
   - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.
   - Pages: `personal`, `education`, `experience`, `projects`, `skills`, `certifications`, `links`, `pages`.
   - Core: `hooks`, `utils`, `types`, `styles`.
-  - Tooling/Infra: `webpack`, `husky`, `ci`, `e2e`, `jest`, `eslint`, `package`, `readme`, `docs`, `agents`.
+  - Tooling/Infra: `webpack`, `husky`, `ci`, `e2e`, `vitest`, `eslint`, `package`, `readme`, `docs`, `agents`.
 
 ---
 
@@ -174,7 +174,7 @@ Before finishing any task or concluding a turn:
 4. If a component, hook, utility or page was created, verify its entry point is registered in `docs/astro.config.ts`.
 5. Run `bun x eslint <modified-files> --fix` to ensure zero lint errors and perfectionist order compliance.
 6. Run `bun x stylelint <modified-scss-files> --fix` if styles were changed.
-7. Run `bun x jest --bail --findRelatedTests <modified-files> --passWithNoTests`.
+7. Run `bun x vitest related --run --bail=1 <modified-files> --passWithNoTests`.
 8. **Prose & Typography Audit:** Scan all added comments, docstrings and commit messages for Oxford commas (search for `, and` / `, or`) and remove them. Verify traditional British English and double quotes.
 9. If errors occur, diagnose using: `[Error Source] -> [Attempted Fix] -> [Result]`.
 10. Once all verification checks pass cleanly, create an atomic git commit for the completed change following the commit conventions in section 7 before concluding the task.

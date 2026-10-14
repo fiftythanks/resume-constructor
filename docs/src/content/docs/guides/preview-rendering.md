@@ -69,7 +69,7 @@ Standard JSDOM environments do not implement the HTML Canvas 2D rendering contex
 
 To maintain test execution speed without native binary canvas dependencies:
 
-- In `jest.setup.tsx`, `pdfjs-dist` is comprehensively mocked with `getDocument`, `getPage`, `getViewport`, `getTextContent`, `render` returning a cancellable promise and `TextLayer` mock supporting `render` and `cancel`.
+- In `vitest.setup.tsx`, `pdfjs-dist` is comprehensively mocked with `getDocument`, `getPage`, `getViewport`, `getTextContent`, `render` returning a cancellable promise and `TextLayer` mock supporting `render` and `cancel`.
 - `Blob.prototype.arrayBuffer` is polyfilled to guarantee seamless binary buffer generation under Node.js and JSDOM.
 - Native `HTMLDialogElement` methods (`showModal` and `close`) are mocked to manage the dialog's `open` state.
 - The mocked `@react-pdf/renderer` provides pure DOM elements and a mocked `usePDF` tuple, allowing tests to execute in milliseconds while thoroughly verifying component lifecycle, focus traps and prop propagation.
