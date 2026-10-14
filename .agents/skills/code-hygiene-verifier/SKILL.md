@@ -45,7 +45,7 @@ bun x vitest related --run --bail=1 <modified-files> --passWithNoTests
 
 1. `react`, `react-dom`
 2. Node built-ins (`fs`, `path`, etc.)
-3. External npm packages (`@testing-library/react`, `tabbable`, `clsx`, etc.)
+3. External npm packages (`vitest-browser-react`, `tabbable`, `clsx`, etc.)
 4. `@/hooks/*`
 5. `@/layout/*`
 6. `@/pages/*`
@@ -169,7 +169,7 @@ Whenever creating a component, hook, utility or feature page, its entry point MU
 
 - Every unit test must follow the Arrange-Act-Assert pattern. Distinct stages must be separated by empty lines. Whenever a test is not clearly divided by empty lines into three distinct stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
 - **Strict Single-Act Principle:** Unit tests must test a single atomic behaviour. Chaining multiple `Act` and `Assert` sequences (`// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`) inside a single unit test is strictly prohibited (the "Multiple Act" / "Eager Test" anti-pattern). Decompose multi-step interactions into separate, atomic test cases. Each unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when checking multiple facets of that same atomic action.
-- **Lucas da Costa Testing Standards:** Enforce tight assertions (no loose `expect.any(...)` matchers for known entities), strict spy verification (`toHaveBeenCalledTimes(n)` and `toHaveBeenCalledWith(...)`), specialised `jest-dom` matchers (such as `toHaveFocus()`), BEM class verification (`toHaveClass(...)`) and assertion count guarantees (`expect.hasAssertions()`) as codified in the `testing-patterns` skill.
+- **Lucas da Costa Testing Standards:** Enforce tight assertions (no loose `expect.any(...)` matchers for known entities), strict spy verification (`toHaveBeenCalledTimes(n)` and `toHaveBeenCalledWith(...)`), specialised `expect.element(...)` matchers (such as `toHaveFocus()`), BEM class verification (`toHaveClass(...)`) and assertion count guarantees (`expect.hasAssertions()`) as codified in the `testing-patterns` skill.
 
 ---
 

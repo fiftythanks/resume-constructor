@@ -39,7 +39,7 @@ Every UI component and page feature is self-contained in its own directory follo
 src/components/Button/
 ├── Button.tsx         # Component implementation and prop types
 ├── Button.scss        # Scoped BEM styles
-├── Button.test.tsx    # Vitest + React Testing Library suite
+├── Button.test.tsx    # Vitest + vitest-browser-react suite
 └── index.tsx          # Clean public barrel export
 ```
 
