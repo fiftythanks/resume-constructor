@@ -1,8 +1,7 @@
 import type { FocusEvent, KeyboardEvent, RefObject } from 'react';
 
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom/vitest';
+import { render } from 'vitest-browser-react';
+import { userEvent } from 'vitest/browser';
 
 import SectionItemHeader from './SectionItemHeader';
 
@@ -32,8 +31,8 @@ describe('SectionItemHeader', () => {
   });
 
   describe('Semantic Structure & Accessibility', () => {
-    it('should render a level-2 heading identifying the item name and number', () => {
-      render(
+    it('should render a level-2 heading identifying the item name and number', async () => {
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemName: 'Degree',
@@ -48,11 +47,11 @@ describe('SectionItemHeader', () => {
         name: 'Degree 2',
       });
 
-      expect(heading).toBeInTheDocument();
+      await expect.element(heading).toBeInTheDocument();
     });
 
-    it('should render only the Add button when there is a single item in the collection', () => {
-      render(
+    it('should render only the Add button when there is a single item in the collection', async () => {
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemNumber: 1,
@@ -61,22 +60,22 @@ describe('SectionItemHeader', () => {
         />,
       );
 
-      expect(
-        screen.getByRole('button', { name: 'Add Project 2' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', { name: /previous/i }),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', { name: /show next/i }),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', { name: /delete/i }),
-      ).not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Add Project 2' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: /previous/i }))
+        .not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: /show next/i }))
+        .not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: /delete/i }))
+        .not.toBeInTheDocument();
     });
 
-    it('should render Next, Add and Delete buttons on the first item of a multi-item collection', () => {
-      render(
+    it('should render Next, Add and Delete buttons on the first item of a multi-item collection', async () => {
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemNumber: 1,
@@ -85,22 +84,22 @@ describe('SectionItemHeader', () => {
         />,
       );
 
-      expect(
-        screen.getByRole('button', { name: 'Show Next Project' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Add Project 4' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Delete Project 1' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', { name: /previous/i }),
-      ).not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Show Next Project' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Add Project 4' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Delete Project 1' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: /previous/i }))
+        .not.toBeInTheDocument();
     });
 
-    it('should render Previous, Next, Add and Delete buttons on a middle item of a multi-item collection', () => {
-      render(
+    it('should render Previous, Next, Add and Delete buttons on a middle item of a multi-item collection', async () => {
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemNumber: 2,
@@ -109,22 +108,22 @@ describe('SectionItemHeader', () => {
         />,
       );
 
-      expect(
-        screen.getByRole('button', { name: 'Show Previous Project' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Show Next Project' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Add Project 4' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Delete Project 2' }),
-      ).toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Show Previous Project' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Show Next Project' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Add Project 4' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Delete Project 2' }))
+        .toBeInTheDocument();
     });
 
-    it('should render Previous, Add and Delete buttons on the final item of a multi-item collection', () => {
-      render(
+    it('should render Previous, Add and Delete buttons on the final item of a multi-item collection', async () => {
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemNumber: 3,
@@ -133,22 +132,22 @@ describe('SectionItemHeader', () => {
         />,
       );
 
-      expect(
-        screen.getByRole('button', { name: 'Show Previous Project' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Add Project 4' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Delete Project 3' }),
-      ).toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', { name: /show next/i }),
-      ).not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Show Previous Project' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Add Project 4' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: 'Delete Project 3' }))
+        .toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: /show next/i }))
+        .not.toBeInTheDocument();
     });
 
-    it('should not render navigation controls when itemsNumber is 0', () => {
-      render(
+    it('should not render navigation controls when itemsNumber is 0', async () => {
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemNumber: 1,
@@ -157,18 +156,18 @@ describe('SectionItemHeader', () => {
         />,
       );
 
-      expect(
-        screen.queryByRole('button', { name: /previous/i }),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', { name: /show next/i }),
-      ).not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: /previous/i }))
+        .not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole('button', { name: /show next/i }))
+        .not.toBeInTheDocument();
     });
 
-    it('should forward a ref object to the root header element', () => {
+    it('should forward a ref object to the root header element', async () => {
       const ref: RefObject<HTMLElement | null> = { current: null };
 
-      render(
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             ref,
@@ -176,15 +175,15 @@ describe('SectionItemHeader', () => {
         />,
       );
 
-      const header = screen.getByTestId('section-item-header');
+      const header = screen.getByTestId('section-item-header').element();
 
       expect(ref.current).toBe(header);
     });
 
-    it('should invoke a callback ref with the root header element', () => {
+    it('should invoke a callback ref with the root header element', async () => {
       const callbackRef = vi.fn();
 
-      render(
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             ref: callbackRef,
@@ -192,7 +191,7 @@ describe('SectionItemHeader', () => {
         />,
       );
 
-      const header = screen.getByTestId('section-item-header');
+      const header = screen.getByTestId('section-item-header').element();
 
       expect(callbackRef).toHaveBeenCalledTimes(1);
       expect(callbackRef).toHaveBeenCalledWith(header);
@@ -207,7 +206,7 @@ describe('SectionItemHeader', () => {
       const addItemMock = vi.fn<() => void>();
       const announceMock = vi.fn<(announcement: string) => void>();
 
-      render(
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             addItem: addItemMock,
@@ -233,7 +232,7 @@ describe('SectionItemHeader', () => {
       const deleteItemMock = vi.fn<() => void>();
       const announceMock = vi.fn<(announcement: string) => void>();
 
-      render(
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             deleteItem: deleteItemMock,
@@ -258,7 +257,7 @@ describe('SectionItemHeader', () => {
       const showNextMock = vi.fn<() => void>();
       const announceMock = vi.fn<(announcement: string) => void>();
 
-      render(
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemNumber: 1,
@@ -282,7 +281,7 @@ describe('SectionItemHeader', () => {
       const showPreviousMock = vi.fn<() => void>();
       const announceMock = vi.fn<(announcement: string) => void>();
 
-      render(
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             itemNumber: 2,
@@ -307,7 +306,7 @@ describe('SectionItemHeader', () => {
       const user = userEvent.setup();
       const addItemMock = vi.fn<() => void>();
 
-      render(
+      const screen = await render(
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             addItem: addItemMock,

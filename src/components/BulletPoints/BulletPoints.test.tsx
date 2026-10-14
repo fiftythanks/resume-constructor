@@ -1,9 +1,8 @@
 // It disallowed using `crypto`, which is well supported.
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom/vitest';
+import { render } from 'vitest-browser-react';
+import { page, userEvent } from 'vitest/browser';
 
 import BulletPoints from './BulletPoints';
 
@@ -44,45 +43,46 @@ function getProps(overrides?: Partial<BulletPointsProps>): BulletPointsProps {
 }
 
 describe('BulletPoints', () => {
-  it('should render as a group with an accessible name from the `legend` prop', () => {
-    render(<BulletPoints {...getProps()} />);
+  it('should render as a group with an accessible name from the `legend` prop', async () => {
+    await render(<BulletPoints {...getProps()} />);
 
-    const group = screen.getByRole('group', { name: 'Some Legend' });
+    const group = page.getByRole('group', { name: 'Some Legend' });
 
-    expect(group).toBeInTheDocument();
+    await expect.element(group).toBeInTheDocument();
   });
 
-  it('should render bullet points for each item in `data`', () => {
-    render(<BulletPoints {...getProps()} />);
+  it('should render bullet points for each item in `data`', async () => {
+    await render(<BulletPoints {...getProps()} />);
 
-    ITEMS.forEach(({ id }, i) => {
-      const inputField = screen.getByRole('textbox', {
+    for (let i = 0; i < ITEMS.length; i++) {
+      const { id } = ITEMS[i];
+      const inputField = page.getByRole('textbox', {
         name: `Bullet point ${i + 1}`,
       });
 
-      expect(inputField).toBeInTheDocument();
-      expect(inputField.id).toBe(id);
-    });
+      await expect.element(inputField).toBeInTheDocument();
+      await expect.element(inputField).toHaveAttribute('id', id);
+    }
   });
 
-  it('should have no more bullet points than there are items', () => {
-    render(<BulletPoints {...getProps()} />);
+  it('should have no more bullet points than there are items', async () => {
+    await render(<BulletPoints {...getProps()} />);
 
-    const bulletPoints = screen.getByTestId('bullet-points');
+    const bulletPoints = page.getByTestId('bullet-points');
 
-    expect(bulletPoints.children).toHaveLength(ITEMS.length);
+    expect(bulletPoints.element().children).toHaveLength(ITEMS.length);
   });
 
-  it('should call `handleFocusOnFirstElement` when the first bullet point drag handle is focused', () => {
+  it('should call `handleFocusOnFirstElement` when the first bullet point drag handle is focused', async () => {
     const mockFn = vi.fn();
     const props = getProps({ handleFocusOnFirstElement: mockFn });
-    render(<BulletPoints {...props} />);
+    await render(<BulletPoints {...props} />);
 
-    const dragHandle = screen.getByRole('button', {
+    const dragHandle = page.getByRole('button', {
       name: 'Drag bullet point 1',
     });
 
-    dragHandle.focus();
+    dragHandle.element().focus();
 
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
@@ -91,48 +91,51 @@ describe('BulletPoints', () => {
     const mockFn = vi.fn();
     const user = userEvent.setup();
     const props = getProps({ handleKeyDownOnFirstElement: mockFn });
-    render(<BulletPoints {...props} />);
+    await render(<BulletPoints {...props} />);
 
-    const dragHandle = screen.getByRole('button', {
+    const dragHandle = page.getByRole('button', {
       name: 'Drag bullet point 1',
     });
 
-    dragHandle.focus();
+    dragHandle.element().focus();
     await user.keyboard('{Tab}');
 
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  it('should render the first three bullet points with placeholders from props `placeholder1`, `placeholder2` and `placeholder3` correspondingly', () => {
-    render(<BulletPoints {...getProps()} />);
+  it('should render the first three bullet points with placeholders from props `placeholder1`, `placeholder2` and `placeholder3` correspondingly', async () => {
+    await render(<BulletPoints {...getProps()} />);
 
     for (let i = 0; i < ITEMS.length; i++) {
-      const inputField: HTMLInputElement = screen.getByRole('textbox', {
+      const inputField = page.getByRole('textbox', {
         name: `Bullet point ${i + 1}`,
       });
 
-      expect(inputField.placeholder).toBe(`Placeholder ${i + 1}`);
+      await expect
+        .element(inputField)
+        .toHaveAttribute('placeholder', `Placeholder ${i + 1}`);
     }
   });
 
-  it('should render bullet points with correct values from `data`', () => {
-    render(<BulletPoints {...getProps()} />);
+  it('should render bullet points with correct values from `data`', async () => {
+    await render(<BulletPoints {...getProps()} />);
 
-    ITEMS.forEach(({ value }, i) => {
-      const inputField: HTMLInputElement = screen.getByRole('textbox', {
+    for (let i = 0; i < ITEMS.length; i++) {
+      const { value } = ITEMS[i];
+      const inputField = page.getByRole('textbox', {
         name: `Bullet point ${i + 1}`,
       });
 
-      expect(inputField.value).toBe(value);
-    });
+      await expect.element(inputField).toHaveValue(value);
+    }
   });
 
   it('should call `editItem` when a bullet point value is changed', async () => {
     const editItemMock = vi.fn((_itemIndex: number, _value: string) => {});
-    render(<BulletPoints {...getProps({ editItem: editItemMock })} />);
+    await render(<BulletPoints {...getProps({ editItem: editItemMock })} />);
     const user = userEvent.setup();
 
-    const inputField = screen.getByRole('textbox', {
+    const inputField = page.getByRole('textbox', {
       name: 'Bullet point 1',
     });
 
@@ -142,88 +145,88 @@ describe('BulletPoints', () => {
     expect(editItemMock).toHaveBeenCalledWith(0, 'value 1s');
   });
 
-  it('should render drag handles with accessible names "Drag bullet point [index + 1]" for each bullet point', () => {
-    render(<BulletPoints {...getProps()} />);
+  it('should render drag handles with accessible names "Drag bullet point [index + 1]" for each bullet point', async () => {
+    await render(<BulletPoints {...getProps()} />);
 
     for (let i = 0; i < ITEMS.length; i++) {
-      const dragHandle = screen.getByRole('button', {
+      const dragHandle = page.getByRole('button', {
         name: `Drag bullet point ${i + 1}`,
       });
 
-      expect(dragHandle).toBeInTheDocument();
+      await expect.element(dragHandle).toBeInTheDocument();
     }
   });
 
   it('should announce "Picked up draggable item [index + 1]" to screen readers when the drag handle of a bullet point [index + 1] is clicked for the first time (in other words, on drag start)', async () => {
-    render(<BulletPoints {...getProps()} />);
+    await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
-    const dragHandle = screen.getByRole('button', {
+    const dragHandle = page.getByRole('button', {
       name: 'Drag bullet point 1',
     });
 
-    dragHandle.focus();
+    dragHandle.element().focus();
     await user.keyboard(' ');
 
-    const a11yElement = screen.getByText('Picked up draggable item 1.');
+    const a11yElement = page.getByText('Picked up draggable item 1.');
 
-    expect(a11yElement).toBeInTheDocument();
+    await expect.element(a11yElement).toBeInTheDocument();
   });
 
   // TODO: figure out how to test drag over. As far as I understand, it is impossible to do by the means of unit testing, at least in JSDOM.
 
   it('should announce "Dragging was cancelled. Draggable item [index + 1] was put to its initial position." to screen readers when Escape is pressed during dragging', async () => {
-    render(<BulletPoints {...getProps()} />);
+    await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
-    const dragHandle = screen.getByRole('button', {
+    const dragHandle = page.getByRole('button', {
       name: 'Drag bullet point 1',
     });
 
-    dragHandle.focus();
+    dragHandle.element().focus();
     await user.keyboard(' ');
     await user.keyboard('{Escape}');
 
-    const a11yElement = screen.getByText(
+    const a11yElement = page.getByText(
       'Dragging was cancelled. Draggable item 1 was put to its initial position.',
     );
 
-    expect(a11yElement).toBeInTheDocument();
+    await expect.element(a11yElement).toBeInTheDocument();
   });
 
   it('should announce "Draggable item [index + 1] was dropped over droppable area [droppableIndex + 1]" to screen readers when the dragged bullet point [index + 1] is dropped over droppable area [droppableIndex + 1]', async () => {
-    render(<BulletPoints {...getProps()} />);
+    await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
-    const dragHandle = screen.getByRole('button', {
+    const dragHandle = page.getByRole('button', {
       name: 'Drag bullet point 1',
     });
 
-    dragHandle.focus();
+    dragHandle.element().focus();
     await user.keyboard(' ');
     await user.keyboard(' ');
 
-    const a11yElement = screen.getByText(
+    const a11yElement = page.getByText(
       'Draggable item 1 was dropped over droppable area 1',
     );
 
-    expect(a11yElement).toBeInTheDocument();
+    await expect.element(a11yElement).toBeInTheDocument();
   });
 
   it('should provide a screen reader instruction "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."', async () => {
-    render(<BulletPoints {...getProps()} />);
+    await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
-    const dragHandle = screen.getByRole('button', {
+    const dragHandle = page.getByRole('button', {
       name: 'Drag bullet point 1',
     });
 
     await user.tab();
 
-    expect(dragHandle).toHaveFocus();
+    await expect.element(dragHandle).toHaveFocus();
 
     const descriptionNode = document.getElementById(
-      dragHandle.getAttribute('aria-describedby')!,
+      dragHandle.element().getAttribute('aria-describedby')!,
     )!;
 
     const cleanText = (text: string) => text.replaceAll(/\s+/g, ' ').trim();
@@ -233,24 +236,26 @@ describe('BulletPoints', () => {
     );
   });
 
-  it('should render delete buttons with accessible names "Delete bullet point [index + 1]" for each bullet point', () => {
-    render(<BulletPoints {...getProps()} />);
+  it('should render delete buttons with accessible names "Delete bullet point [index + 1]" for each bullet point', async () => {
+    await render(<BulletPoints {...getProps()} />);
 
     for (let i = 0; i < ITEMS.length; i++) {
-      const deleteBtn = screen.getByRole('button', {
+      const deleteBtn = page.getByRole('button', {
         name: `Delete bullet point ${i + 1}`,
       });
 
-      expect(deleteBtn).toBeInTheDocument();
+      await expect.element(deleteBtn).toBeInTheDocument();
     }
   });
 
   it('should call `deleteItem` with a correct index when a delete button is pressed', async () => {
     const deleteItemMock = vi.fn((_itemIndex: number) => {});
-    render(<BulletPoints {...getProps({ deleteItem: deleteItemMock })} />);
+    await render(
+      <BulletPoints {...getProps({ deleteItem: deleteItemMock })} />,
+    );
     const user = userEvent.setup();
 
-    const deleteBtn = screen.getByRole('button', {
+    const deleteBtn = page.getByRole('button', {
       name: 'Delete bullet point 1',
     });
 
@@ -265,7 +270,7 @@ describe('BulletPoints', () => {
       (_announcement: string) => {},
     );
 
-    render(
+    await render(
       <BulletPoints
         {...getProps({
           updateScreenReaderAnnouncement: updateScreenReaderAnnouncementMock,
@@ -275,7 +280,7 @@ describe('BulletPoints', () => {
 
     const user = userEvent.setup();
 
-    const deleteBtn = screen.getByRole('button', {
+    const deleteBtn = page.getByRole('button', {
       name: 'Delete bullet point 1',
     });
 
@@ -288,32 +293,32 @@ describe('BulletPoints', () => {
     );
   });
 
-  it("should render an add-button with an accessible name 'Add bullet point' if `itemName` isn't provided", () => {
-    render(<BulletPoints {...getProps()} />);
+  it("should render an add-button with an accessible name 'Add bullet point' if `itemName` isn't provided", async () => {
+    await render(<BulletPoints {...getProps()} />);
 
-    const addBtn = screen.getByRole('button', {
+    const addBtn = page.getByRole('button', {
       name: 'Add bullet point',
     });
 
-    expect(addBtn).toBeInTheDocument();
+    await expect.element(addBtn).toBeInTheDocument();
   });
 
-  it('should render an add-button with an accessible name "Add [itemName]" if `itemName` is provided', () => {
-    render(<BulletPoints {...getProps({ itemName: 'something' })} />);
+  it('should render an add-button with an accessible name "Add [itemName]" if `itemName` is provided', async () => {
+    await render(<BulletPoints {...getProps({ itemName: 'something' })} />);
 
-    const addBtn = screen.getByRole('button', {
+    const addBtn = page.getByRole('button', {
       name: 'Add something',
     });
 
-    expect(addBtn).toBeInTheDocument();
+    await expect.element(addBtn).toBeInTheDocument();
   });
 
   it('should call `addItem` when the add-button is clicked', async () => {
     const addItemMock = vi.fn();
-    render(<BulletPoints {...getProps({ addItem: addItemMock })} />);
+    await render(<BulletPoints {...getProps({ addItem: addItemMock })} />);
     const user = userEvent.setup();
 
-    const addBtn = screen.getByRole('button', {
+    const addBtn = page.getByRole('button', {
       name: 'Add bullet point',
     });
 
@@ -323,26 +328,26 @@ describe('BulletPoints', () => {
   });
 
   it("should focus the next bullet point's delete button if a bullet point that is not last is deleted", async () => {
-    render(<BulletPoints {...getProps()} />);
+    await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
-    const firstBulletPointDeleteBtn = screen.getByRole('button', {
+    const firstBulletPointDeleteBtn = page.getByRole('button', {
       name: 'Delete bullet point 1',
     });
 
-    const secondBulletPointDeleteBtn = screen.getByRole('button', {
+    const secondBulletPointDeleteBtn = page.getByRole('button', {
       name: 'Delete bullet point 2',
     });
 
-    firstBulletPointDeleteBtn.focus();
+    firstBulletPointDeleteBtn.element().focus();
 
     await user.click(firstBulletPointDeleteBtn);
 
-    expect(secondBulletPointDeleteBtn).toHaveFocus();
+    await expect.element(secondBulletPointDeleteBtn).toHaveFocus();
   });
 
   it('should focus the add-button if the only bullet point is deleted', async () => {
-    render(
+    await render(
       <BulletPoints
         {...getProps({ data: [{ id: crypto.randomUUID(), value: '' }] })}
       />,
@@ -350,39 +355,39 @@ describe('BulletPoints', () => {
 
     const user = userEvent.setup();
 
-    const deleteBtn = screen.getByRole('button', {
+    const deleteBtn = page.getByRole('button', {
       name: 'Delete bullet point 1',
     });
 
-    const addBtn = screen.getByRole('button', {
+    const addBtn = page.getByRole('button', {
       name: `Add bullet point`,
     });
 
-    deleteBtn.focus();
+    deleteBtn.element().focus();
 
     await user.click(deleteBtn);
 
-    expect(addBtn).toHaveFocus();
+    await expect.element(addBtn).toHaveFocus();
   });
 
   it("should focus the previous bullet point's delete button if the last bullet point (that is not the only one) is deleted", async () => {
-    render(<BulletPoints {...getProps()} />);
+    await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
 
     // There are three bullet points.
 
-    const secondBulletPointDeleteBtn = screen.getByRole('button', {
+    const secondBulletPointDeleteBtn = page.getByRole('button', {
       name: 'Delete bullet point 2',
     });
 
-    const thirdBulletPointDeleteBtn = screen.getByRole('button', {
+    const thirdBulletPointDeleteBtn = page.getByRole('button', {
       name: 'Delete bullet point 3',
     });
 
-    thirdBulletPointDeleteBtn.focus();
+    thirdBulletPointDeleteBtn.element().focus();
 
     await user.click(thirdBulletPointDeleteBtn);
 
-    expect(secondBulletPointDeleteBtn).toHaveFocus();
+    await expect.element(secondBulletPointDeleteBtn).toHaveFocus();
   });
 });

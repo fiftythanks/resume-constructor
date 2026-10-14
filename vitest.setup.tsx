@@ -3,6 +3,18 @@ import '@testing-library/jest-dom/vitest';
 import type { UsePDFInstance } from '@react-pdf/renderer';
 import type { Mock } from 'vitest';
 
+import './src/styles/main.scss';
+
+const style = document.createElement('style');
+style.textContent = `
+  @layer reset, base, blocks, helpers;
+  body > div:has(.AppLayout) {
+    width: 100%;
+    height: 100%;
+  }
+`;
+document.head.prepend(style);
+
 vi.mock('pdfjs-dist', () => {
   const render = () => ({
     cancel() {},

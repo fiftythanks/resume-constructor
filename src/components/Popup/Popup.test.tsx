@@ -1,6 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render } from 'vitest-browser-react';
 import { userEvent } from 'vitest/browser';
-import '@testing-library/jest-dom/vitest';
 
 import Popup from './Popup';
 
@@ -26,46 +25,48 @@ function getProps(overrides?: Partial<PopupProps>): PopupProps {
 }
 
 describe('Popup', () => {
-  it('should render a heading with text from its `title` prop', () => {
-    render(<Container />);
-    render(<Popup {...getProps()} />);
+  it('should render a heading with text from its `title` prop', async () => {
+    await render(<Container />);
+    const screen = await render(<Popup {...getProps()} />);
 
     const heading = screen.getByRole('heading', { name: 'Some Title' });
 
-    expect(heading).toBeInTheDocument();
+    await expect.element(heading).toBeInTheDocument();
   });
 
-  it('should render with an accessible name from its heading', () => {
-    render(<Container />);
-    render(<Popup {...getProps()} />);
+  it('should render with an accessible name from its heading', async () => {
+    await render(<Container />);
+    const screen = await render(<Popup {...getProps()} />);
 
     const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
-    expect(popup).toBeInTheDocument();
+    await expect.element(popup).toBeInTheDocument();
   });
 
-  it("shouldn't render if `isShown === false`", () => {
-    render(<Container />);
-    render(<Popup {...getProps({ isShown: false })} />);
+  it("shouldn't render if `isShown === false`", async () => {
+    await render(<Container />);
+    const screen = await render(<Popup {...getProps({ isShown: false })} />);
 
-    const popup = screen.queryByRole('dialog', { name: 'Some Title' });
+    const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
-    expect(popup).not.toBeInTheDocument();
+    await expect.element(popup).not.toBeInTheDocument();
   });
 
   it('should close and call `onClose` when Escape is pressed', async () => {
     // Arrange
     const onCloseMock = vi.fn();
-    render(<Container />);
-    render(<Popup {...getProps({ onClose: onCloseMock })} />);
+    await render(<Container />);
+    const screen = await render(
+      <Popup {...getProps({ onClose: onCloseMock })} />,
+    );
 
     // Act
     await userEvent.keyboard('{Escape}');
 
     // Assert
-    const popup = screen.queryByRole('dialog', { name: 'Some Title' });
+    const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
-    expect(popup).not.toBeInTheDocument();
+    await expect.element(popup).not.toBeInTheDocument();
     expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 });
