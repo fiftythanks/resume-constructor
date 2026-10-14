@@ -18,7 +18,7 @@
 - **Package Manager:** Always use Bun (`bun`).
 - **Running Tests:**
   - Run Vitest via `bun run test` (or `bun run test:ci`).
-  - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of Vitest with JSDOM.
+  - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of Vitest Browser Mode.
   - For targeted test execution: `bun x vitest related --run --bail=1 <file> --passWithNoTests`.
 - **Linting & Formatting:**
   - ESLint: `bun x eslint <path> --fix`
@@ -136,7 +136,7 @@ Every file must strictly adhere to the automated sorting hierarchy:
 - **User Event Setup:** Always initialise `const user = userEvent.setup()` and `await user.click(...)`.
 - **Strict Hygiene:** Never commit `describe.only` or `it.only` (`no-restricted-properties` lint rule).
 - **Mocking:** Explicitly type mocks with `Mock<Procedure>` imported from `'vitest'`.
-- **JSDOM Focus Workaround:** `tabbable` is globally mocked in `vitest.setup.tsx` via `__mocks__/tabbable.js` to inject `{ displayCheck: 'none' }` automatically in JSDOM.
+- **Vitest Browser Mode:** All unit and integration tests run inside real headless Chromium via `@vitest/browser-playwright`, providing genuine CSS layout, native `<dialog>` top-layer behaviour and real `tabbable` geometry checks without JSDOM polyfills.
 
 ---
 

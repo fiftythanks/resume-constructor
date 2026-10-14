@@ -63,13 +63,11 @@ This canvas rendering is strictly executed on demand when opening the preview mo
 
 ---
 
-## 4. Headless Testing Parity (JSDOM)
+## 4. Headless Browser Testing Parity (Vitest Browser Mode)
 
-Standard JSDOM environments do not implement the HTML Canvas 2D rendering context (`HTMLCanvasElement.prototype.getContext('2d')` returns `null`).
+Automated unit and integration tests execute inside real headless Chromium via **Vitest Browser Mode** (`@vitest/browser-playwright`), providing native browser APIs (`HTMLCanvasElement`, `Blob.prototype.arrayBuffer` and `HTMLDialogElement.prototype.showModal`/`close`) out of the box.
 
-To maintain test execution speed without native binary canvas dependencies:
+To keep unit and component tests fast and deterministic without compiling full PDF binaries on every assertion:
 
-- In `vitest.setup.tsx`, `pdfjs-dist` is comprehensively mocked with `getDocument`, `getPage`, `getViewport`, `getTextContent`, `render` returning a cancellable promise and `TextLayer` mock supporting `render` and `cancel`.
-- `Blob.prototype.arrayBuffer` is polyfilled to guarantee seamless binary buffer generation under Node.js and JSDOM.
-- Native `HTMLDialogElement` methods (`showModal` and `close`) are mocked to manage the dialog's `open` state.
-- The mocked `@react-pdf/renderer` provides pure DOM elements and a mocked `usePDF` tuple, allowing tests to execute in milliseconds while thoroughly verifying component lifecycle, focus traps and prop propagation.
+- In `vitest.setup.tsx`, `pdfjs-dist` is mocked with `getDocument`, `getPage`, `getViewport`, `getTextContent`, `render` returning a cancellable promise and `TextLayer` mock supporting `render` and `cancel`.
+- The mocked `@react-pdf/renderer` provides lightweight DOM elements and a mocked `usePDF` tuple, allowing component suites to verify canvas lifecycle, cancellation tokens, native `<dialog>` focus traps and prop propagation deterministically while full end-to-end PDF compilation and rasterisation are verified by the Playwright E2E suite.

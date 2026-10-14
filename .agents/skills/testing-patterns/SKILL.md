@@ -18,7 +18,7 @@ This skill provides comprehensive standards and patterns for writing automated t
 - **Test Public Behaviour, Not Implementation Details:**
   Always test software from the perspective of its users and consumers. Focus on inputs, observable DOM outputs, accessible names and exported contracts. Never assert on private state or internal component mechanics.
 - **Do Not Test Third-Party Software or Native Engines (Chapter 3, §3.4):**
-  Trust that React, JSDOM, browser engines and external libraries work as documented. Do not write redundant tests verifying third-party features; test only your application's integration contracts and business logic.
+  Trust that React, browser engines and external libraries work as documented. Do not write redundant tests verifying third-party features; test only your application's integration contracts and business logic.
 - **Test Atomicity & Isolation (Chapter 3, §3.1.4):**
   Every test must run completely independent of all others. Executing a test in isolation must produce the exact same outcome as running it alongside one thousand other tests. Never share mutable state between tests; use scoped `beforeEach` hooks or factory functions to provide fresh fixtures.
 - **Single Responsibility & Focused Test Scopes (Chapter 3, §3.1.1):**
@@ -92,7 +92,7 @@ Always use `@testing-library/jest-dom` semantic matchers instead of manually che
 - **Avoid Programmatic Shortcuts Where Realistic Events Exist:**
   Prefer keyboard tabbing (`await user.tab()`) or user clicks over direct `.focus()` invocations when verifying keyboard navigation pathways.
 - **Do Not Mix `fireEvent` and `userEvent` Arbitrarily:**
-  Reserve `fireEvent` exclusively for synthetic DOM events that JSDOM or `user-event` does not dispatch (such as raw `pointerDown` events for pointer-capture handlers). Document why `fireEvent` was necessary in an explanatory comment.
+  Tests run in real headless Chromium via Vitest Browser Mode (`@vitest/browser-playwright`). Prefer `@testing-library/user-event` or `userEvent` from `vitest/browser` (e.g. for native browser `<dialog>` `Escape` dismissal via CDP) over synthetic `fireEvent` calls. Reserve `fireEvent` strictly for cases where synthetic event payloads must be constructed directly and document why in an explanatory comment.
 
 ---
 

@@ -39,7 +39,7 @@ The modal primitive in `src/components/Popup/` complies with the **W3C APG Modal
 - **Native Dialog Semantics:** Built using the native HTML `<dialog>` element rendered via React portals into `#popup-root`.
 - **Attributes:** Configured with `aria-modal="true"` and `aria-labelledby="<id>-title"`.
 - **Focus Containment via `tabbable`:** When opened, focus is immediately shifted to the first interactive element. Pressing `Tab` or `Shift+Tab` cycles strictly within the modal boundaries.
-- **JSDOM Focus Workaround:** When querying tabbable nodes during automated testing, the focus utility passes `{ displayCheck: process.env.NODE_ENV === 'test' ? 'none' : 'full' }` to bypass JSDOM's lack of visual geometry calculations.
+- **Real Browser Verification:** Automated unit and integration tests run inside headless Chromium via Vitest Browser Mode (`@vitest/browser-playwright`), verifying native `<dialog>` top-layer rendering, `Escape` dismissal and `tabbable`'s full visual geometry checks without JSDOM workarounds.
 - **Dismissal & Focus Restoration:** Pressing `Escape` or clicking the close button dismisses the dialog and returns keyboard focus to the originating trigger element.
 
 ---

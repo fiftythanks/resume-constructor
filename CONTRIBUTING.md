@@ -19,7 +19,7 @@ bun install --frozen-lockfile
 # Start local development server (Vite dev server)
 bun start
 
-# Run unit and integration tests (Vitest)
+# Run unit and integration tests (Vitest Browser Mode)
 bun run test
 
 # Run type check
@@ -30,7 +30,7 @@ bun run build
 ```
 
 > [!IMPORTANT]
-> Never run bare `bun test`. Bun's native test runner does not run JSDOM or use the Vitest test configuration. Always run `bun run test` (for full suite) or `bun x vitest related --run --bail=1 <file> --passWithNoTests` (for targeted runs).
+> Never run bare `bun test`. Bun's native test runner does not launch Vitest Browser Mode or use the Vitest test configuration. Always run `bun run test` (for full suite) or `bun x vitest related --run --bail=1 <file> --passWithNoTests` (for targeted runs).
 
 ---
 

@@ -143,5 +143,5 @@ resume-constructor/
 │   └── utils/                # Pure helper functions (capitalize, neverReached)
 ├── index.html                # Application HTML entry point
 ├── vite.config.ts            # Vite 8 build and dev server configuration
-└── vitest.config.ts          # Vitest test runner configuration
+└── vitest.config.ts          # Vitest Browser Mode test runner configuration
 ```

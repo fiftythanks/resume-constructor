@@ -29,8 +29,6 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
   ```tsx
   import { tabbable } from 'tabbable';
 
-  // tabbable is globally mocked in vitest.setup.tsx via __mocks__/tabbable.js
-  // to inject { displayCheck: 'none' } automatically in JSDOM:
   const tabbables = tabbable(containerRef.current);
   if (tabbables.length > 0) {
     tabbables[0].focus();
