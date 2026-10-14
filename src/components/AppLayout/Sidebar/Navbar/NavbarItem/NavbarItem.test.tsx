@@ -1,6 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom/vitest';
+import { render } from 'vitest-browser-react';
+import { page, userEvent } from 'vitest/browser';
 
 import NavbarItem from './NavbarItem';
 
@@ -24,21 +23,21 @@ function getProps(overrides?: Partial<NavbarItemProps>): NavbarItemProps {
 
 describe('NavbarItem', () => {
   describe('tab', () => {
-    it('should render with an accessible name from the `sectionTitle` prop', () => {
+    it('should render with an accessible name from the `sectionTitle` prop', async () => {
       const props = getProps();
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = page.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab).toBeInTheDocument();
+      await expect.element(tab).toBeInTheDocument();
     });
 
     it('should call `onSelectSection` on click when `isEditorMode === false', async () => {
       const user = userEvent.setup();
       const props = getProps();
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = page.getByRole('tab', { name: props.sectionTitle });
       await user.click(tab);
 
       expect(props.onSelectSection).toHaveBeenCalledTimes(1);
@@ -47,137 +46,137 @@ describe('NavbarItem', () => {
     it('should not call `onSelectSection` on click when `isEditorMode === true', async () => {
       const user = userEvent.setup();
       const props = getProps({ isEditorMode: true });
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
-      await user.click(tab);
+      const tab = page.getByRole('tab', { name: props.sectionTitle });
+      await user.click(tab, { force: true });
 
       expect(props.onSelectSection).not.toHaveBeenCalled();
     });
 
-    it('should be enabled when `isEditorMode === false`', () => {
+    it('should be enabled when `isEditorMode === false`', async () => {
       const props = getProps({ isEditorMode: false });
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = page.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaDisabled).toBe('false');
+      await expect.element(tab).toHaveAttribute('aria-disabled', 'false');
     });
 
-    it('should be disabled when `isEditorMode === true`', () => {
+    it('should be disabled when `isEditorMode === true`', async () => {
       const props = getProps({ isEditorMode: true });
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = page.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaDisabled).toBe('true');
+      await expect.element(tab).toHaveAttribute('aria-disabled', 'true');
     });
 
-    it('should be selected when `isSelected === true`', () => {
+    it('should be selected when `isSelected === true`', async () => {
       const props = getProps({ isSelected: true });
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = page.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaSelected).toBe('true');
+      await expect.element(tab).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('should not be selected when `isSelected === false`', () => {
+    it('should not be selected when `isSelected === false`', async () => {
       const props = getProps({ isSelected: false });
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const tab = screen.getByRole('tab', { name: props.sectionTitle });
+      const tab = page.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaSelected).toBe('false');
+      await expect.element(tab).toHaveAttribute('aria-selected', 'false');
     });
   });
 
   describe('icon', () => {
-    it('should render with an accessible name from the `alt` prop', () => {
+    it('should render with an accessible name from the `alt` prop', async () => {
       const props = getProps();
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const icon = screen.getByRole('img', { name: props.alt });
+      const icon = page.getByRole('img', { name: props.alt });
 
-      expect(icon).toBeInTheDocument();
+      await expect.element(icon).toBeInTheDocument();
     });
 
-    it('should render the correct icon', () => {
+    it('should render the correct icon', async () => {
       const props = getProps();
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const icon: HTMLImageElement = screen.getByRole('img', {
+      const icon = page.getByRole('img', {
         name: props.alt,
       });
 
       const endsWithIconSrc = new RegExp(`${props.iconSrc}$`);
-      expect(icon.src).toMatch(endsWithIconSrc);
+      await expect
+        .element(icon)
+        .toHaveAttribute('src', expect.stringMatching(endsWithIconSrc));
     });
 
-    it('should be a correct icon specified with the `iconSrc` prop', () => {
+    it('should be a correct icon specified with the `iconSrc` prop', async () => {
       const props = getProps();
-      render(<NavbarItem {...props} />);
-      const icon = screen.getByRole('img', { name: props.alt });
+      await render(<NavbarItem {...props} />);
+      const icon = page.getByRole('img', { name: props.alt });
 
-      const src = icon.getAttribute('src');
-
-      expect(src).toBe(props.iconSrc);
+      await expect.element(icon).toHaveAttribute('src', props.iconSrc);
     });
   });
 
   describe('delete button', () => {
     describe('render conditions', () => {
-      it('should render when `isEditorMode === true && isDraggable === true`', () => {
+      it('should render when `isEditorMode === true && isDraggable === true`', async () => {
         const props = getProps({ isEditorMode: true });
-        render(<NavbarItem {...props} />);
+        await render(<NavbarItem {...props} />);
 
-        const button = screen.getByRole('button', {
+        const button = page.getByRole('button', {
           name: `Delete ${props.sectionTitle}`,
         });
 
-        expect(button).toBeInTheDocument();
+        await expect.element(button).toBeInTheDocument();
       });
 
-      it('should not render when `isEditorMode === false && isDraggable === true`', () => {
+      it('should not render when `isEditorMode === false && isDraggable === true`', async () => {
         const props = getProps();
-        render(<NavbarItem {...props} />);
+        await render(<NavbarItem {...props} />);
 
-        const btn = screen.queryByRole('button', {
+        const btn = page.getByRole('button', {
           name: `Delete ${props.sectionTitle}`,
         });
 
-        expect(btn).not.toBeInTheDocument();
+        await expect.element(btn).not.toBeInTheDocument();
       });
 
-      it('should not render when `isEditorMode === true && isDraggable === false`', () => {
+      it('should not render when `isEditorMode === true && isDraggable === false`', async () => {
         const props = getProps({ isEditorMode: true, isDraggable: false });
-        render(<NavbarItem {...props} />);
+        await render(<NavbarItem {...props} />);
 
-        const btn = screen.queryByRole('button', {
+        const btn = page.getByRole('button', {
           name: `Delete ${props.sectionTitle}`,
         });
 
-        expect(btn).not.toBeInTheDocument();
+        await expect.element(btn).not.toBeInTheDocument();
       });
 
-      it('should not render when `isEditorMode === false && isDraggable === false`', () => {
+      it('should not render when `isEditorMode === false && isDraggable === false`', async () => {
         const props = getProps({ isDraggable: false });
-        render(<NavbarItem {...props} />);
+        await render(<NavbarItem {...props} />);
 
-        const btn = screen.queryByRole('button', {
+        const btn = page.getByRole('button', {
           name: `Delete ${props.sectionTitle}`,
         });
 
-        expect(btn).not.toBeInTheDocument();
+        await expect.element(btn).not.toBeInTheDocument();
       });
     });
 
     it('should call `onDeleteSection` on click', async () => {
       const user = userEvent.setup();
       const props = getProps({ isEditorMode: true });
-      render(<NavbarItem {...props} />);
+      await render(<NavbarItem {...props} />);
 
-      const deleteBtn = screen.getByRole('button', {
+      const deleteBtn = page.getByRole('button', {
         name: `Delete ${props.sectionTitle}`,
       });
 

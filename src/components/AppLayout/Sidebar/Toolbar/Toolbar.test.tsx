@@ -1,12 +1,9 @@
 // It disallowed using `crypto`, which is well supported.
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { act } from 'react';
-
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom/vitest';
+import { render } from 'vitest-browser-react';
+import { page, userEvent } from 'vitest/browser';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 
@@ -202,25 +199,25 @@ function getProps(overrides?: Partial<ToolbarProps>): ToolbarProps {
   };
 }
 
-function renderToolbar(props?: Partial<ToolbarProps>) {
-  render(<div id="popup-root" />);
-  render(<Toolbar {...getProps(props)} />);
+async function renderToolbar(props?: Partial<ToolbarProps>) {
+  await render(<div id="popup-root" />);
+  await render(<Toolbar {...getProps(props)} />);
 }
 
 describe('Toolbar', () => {
-  it('should render a toolbar', () => {
-    renderToolbar();
+  it('should render a toolbar', async () => {
+    await renderToolbar();
 
-    const toolbar = screen.getByRole('toolbar');
+    const toolbar = page.getByRole('toolbar');
 
-    expect(toolbar).toBeInTheDocument();
+    await expect.element(toolbar).toBeInTheDocument();
   });
 
-  it("should use the `className` prop in the toolbar's class", () => {
-    renderToolbar({ className: 'ToolbarClass' });
-    const toolbar = screen.getByRole('toolbar');
+  it("should use the `className` prop in the toolbar's class", async () => {
+    await renderToolbar({ className: 'ToolbarClass' });
+    const toolbar = page.getByRole('toolbar');
 
-    expect(toolbar).toHaveClass('ToolbarClass');
+    await expect.element(toolbar).toHaveClass('ToolbarClass');
   });
 
   const deletableSectionIds: SectionIdsDeletable = possibleSectionIds.toSpliced(
@@ -240,28 +237,30 @@ describe('Toolbar', () => {
 
   describe('Buttons', () => {
     describe('"Clear All" button', () => {
-      it('should render with an accessible name "Clear All"', () => {
-        renderToolbar();
+      it('should render with an accessible name "Clear All"', async () => {
+        await renderToolbar();
 
-        const btn = screen.getByRole('button', { name: 'Clear All' });
+        const btn = page.getByRole('button', { name: 'Clear All' });
 
-        expect(btn).toBeInTheDocument();
+        await expect.element(btn).toBeInTheDocument();
       });
 
-      it('should control deletable section tabs and tabpanels', () => {
-        renderToolbar();
+      it('should control deletable section tabs and tabpanels', async () => {
+        await renderToolbar();
 
-        const btn = screen.getByRole('button', { name: 'Clear All' });
+        const btn = page.getByRole('button', { name: 'Clear All' });
 
-        expect(btn).toHaveAttribute('aria-controls', allControlledIds);
+        await expect
+          .element(btn)
+          .toHaveAttribute('aria-controls', allControlledIds);
       });
 
       it('should call `deleteAll` when clicked', async () => {
         const deleteAllMock = vi.fn();
-        renderToolbar({ deleteAll: deleteAllMock });
+        await renderToolbar({ deleteAll: deleteAllMock });
         const user = userEvent.setup();
 
-        const btn = screen.getByRole('button', { name: 'Clear All' });
+        const btn = page.getByRole('button', { name: 'Clear All' });
         await user.click(btn);
 
         expect(deleteAllMock).toHaveBeenCalledTimes(1);
@@ -269,28 +268,30 @@ describe('Toolbar', () => {
     });
 
     describe('"Fill All" button', () => {
-      it('should render with an accessible name "Fill All"', () => {
-        renderToolbar();
+      it('should render with an accessible name "Fill All"', async () => {
+        await renderToolbar();
 
-        const btn = screen.getByRole('button', { name: 'Fill All' });
+        const btn = page.getByRole('button', { name: 'Fill All' });
 
-        expect(btn).toBeInTheDocument();
+        await expect.element(btn).toBeInTheDocument();
       });
 
-      it('should control deletable section tabs and tabpanels', () => {
-        renderToolbar();
+      it('should control deletable section tabs and tabpanels', async () => {
+        await renderToolbar();
 
-        const btn = screen.getByRole('button', { name: 'Fill All' });
+        const btn = page.getByRole('button', { name: 'Fill All' });
 
-        expect(btn).toHaveAttribute('aria-controls', allControlledIds);
+        await expect
+          .element(btn)
+          .toHaveAttribute('aria-controls', allControlledIds);
       });
 
       it('should call `fillAll` when clicked', async () => {
         const fillAllMock = vi.fn();
-        renderToolbar({ fillAll: fillAllMock });
+        await renderToolbar({ fillAll: fillAllMock });
         const user = userEvent.setup();
 
-        const btn = screen.getByRole('button', { name: 'Fill All' });
+        const btn = page.getByRole('button', { name: 'Fill All' });
         await user.click(btn);
 
         expect(fillAllMock).toHaveBeenCalledTimes(1);
@@ -298,33 +299,35 @@ describe('Toolbar', () => {
     });
 
     describe('"Open Preview" button', () => {
-      it('should render with an accessible name "Open Preview"', () => {
-        renderToolbar();
+      it('should render with an accessible name "Open Preview"', async () => {
+        await renderToolbar();
 
-        const btn = screen.getByRole('button', { name: 'Open Preview' });
+        const btn = page.getByRole('button', { name: 'Open Preview' });
 
-        expect(btn).toBeInTheDocument();
+        await expect.element(btn).toBeInTheDocument();
       });
 
-      it('should control the resume preview dialog', () => {
-        renderToolbar();
+      it('should control the resume preview dialog', async () => {
+        await renderToolbar();
 
-        const btn = screen.getByRole('button', { name: 'Open Preview' });
+        const btn = page.getByRole('button', { name: 'Open Preview' });
 
-        expect(btn).toHaveAttribute('aria-controls', 'resume-preview-dialog');
+        await expect
+          .element(btn)
+          .toHaveAttribute('aria-controls', 'resume-preview-dialog');
       });
 
       it('should show the preview dialog on click', async () => {
-        renderToolbar();
+        await renderToolbar();
         const user = userEvent.setup();
 
-        const btn = screen.getByRole('button', { name: 'Open Preview' });
+        const btn = page.getByRole('button', { name: 'Open Preview' });
 
         await user.click(btn);
 
-        expect(
-          screen.getByRole('dialog', { name: 'Preview' }),
-        ).toBeInTheDocument();
+        await expect
+          .element(page.getByRole('dialog', { name: 'Preview' }))
+          .toBeInTheDocument();
       });
     });
   });
@@ -332,140 +335,128 @@ describe('Toolbar', () => {
   describe('Keyboard navigation', () => {
     describe('Arrow Left keypress', () => {
       it('should focus the rightmost button ("Open Preview") if "Clear All" is focused', async () => {
-        renderToolbar();
+        await renderToolbar();
         const user = userEvent.setup();
 
-        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
-        const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
+        const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+        const previewBtn = page.getByRole('button', { name: 'Open Preview' });
 
-        act(() => {
-          clearAllBtn.focus();
-        });
+        clearAllBtn.element().focus();
         await user.keyboard('{ArrowLeft}');
 
-        expect(previewBtn).toHaveFocus();
+        await expect.element(previewBtn).toHaveFocus();
       });
 
       it('should focus "Clear All" if "Fill All" is focused', async () => {
-        renderToolbar();
+        await renderToolbar();
         const user = userEvent.setup();
 
-        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
-        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
+        const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+        const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
 
-        act(() => {
-          fillAllBtn.focus();
-        });
+        fillAllBtn.element().focus();
         await user.keyboard('{ArrowLeft}');
 
-        expect(clearAllBtn).toHaveFocus();
+        await expect.element(clearAllBtn).toHaveFocus();
       });
 
       it('should focus "Fill All" if "Open Preview" is focused', async () => {
-        renderToolbar();
+        await renderToolbar();
         const user = userEvent.setup();
 
-        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
-        const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
+        const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+        const previewBtn = page.getByRole('button', { name: 'Open Preview' });
 
-        act(() => {
-          previewBtn.focus();
-        });
+        previewBtn.element().focus();
         await user.keyboard('{ArrowLeft}');
 
-        expect(fillAllBtn).toHaveFocus();
+        await expect.element(fillAllBtn).toHaveFocus();
       });
     });
 
     describe('Arrow Right keypress', () => {
       it('should focus "Fill All" if "Clear All" is focused', async () => {
-        renderToolbar();
+        await renderToolbar();
         const user = userEvent.setup();
 
-        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
-        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
+        const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+        const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
 
-        act(() => {
-          clearAllBtn.focus();
-        });
+        clearAllBtn.element().focus();
         await user.keyboard('{ArrowRight}');
 
-        expect(fillAllBtn).toHaveFocus();
+        await expect.element(fillAllBtn).toHaveFocus();
       });
 
       it('should focus "Open Preview" if "Fill All" is focused', async () => {
-        renderToolbar();
+        await renderToolbar();
         const user = userEvent.setup();
 
-        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
-        const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
+        const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+        const previewBtn = page.getByRole('button', { name: 'Open Preview' });
 
-        act(() => {
-          fillAllBtn.focus();
-        });
+        fillAllBtn.element().focus();
         await user.keyboard('{ArrowRight}');
 
-        expect(previewBtn).toHaveFocus();
+        await expect.element(previewBtn).toHaveFocus();
       });
 
       it('should focus the leftmost button ("Clear All") if "Open Preview" is focused', async () => {
-        renderToolbar();
+        await renderToolbar();
         const user = userEvent.setup();
 
-        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
-        const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
+        const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+        const previewBtn = page.getByRole('button', { name: 'Open Preview' });
 
-        act(() => {
-          previewBtn.focus();
-        });
+        previewBtn.element().focus();
         await user.keyboard('{ArrowRight}');
 
-        expect(clearAllBtn).toHaveFocus();
+        await expect.element(clearAllBtn).toHaveFocus();
       });
     });
   });
 
   describe('Roving tabindex', () => {
-    it('should initially set tabIndex 0 to "Clear All" and -1 to others', () => {
-      renderToolbar();
+    it('should initially set tabIndex 0 to "Clear All" and -1 to others', async () => {
+      await renderToolbar();
 
-      const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
-      const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
-      const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
+      const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+      const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+      const previewBtn = page.getByRole('button', { name: 'Open Preview' });
 
-      expect(clearAllBtn).toHaveAttribute('tabindex', '0');
-      expect(fillAllBtn).toHaveAttribute('tabindex', '-1');
-      expect(previewBtn).toHaveAttribute('tabindex', '-1');
+      await expect.element(clearAllBtn).toHaveAttribute('tabindex', '0');
+      await expect.element(fillAllBtn).toHaveAttribute('tabindex', '-1');
+      await expect.element(previewBtn).toHaveAttribute('tabindex', '-1');
     });
 
     it('should update tabIndex to 0 on "Fill All" when it is focused', async () => {
-      renderToolbar();
+      await renderToolbar();
       const user = userEvent.setup();
 
-      const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
-      const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
-      const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
+      const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+      const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+      const previewBtn = page.getByRole('button', { name: 'Open Preview' });
 
       await user.click(fillAllBtn);
 
-      expect(fillAllBtn).toHaveAttribute('tabindex', '0');
-      expect(clearAllBtn).toHaveAttribute('tabindex', '-1');
-      expect(previewBtn).toHaveAttribute('tabindex', '-1');
+      await expect.element(fillAllBtn).toHaveAttribute('tabindex', '0');
+      await expect.element(clearAllBtn).toHaveAttribute('tabindex', '-1');
+      await expect.element(previewBtn).toHaveAttribute('tabindex', '-1');
     });
 
     it('should update tabIndex to 0 on "Open Preview" when it is focused', async () => {
-      renderToolbar();
+      await renderToolbar();
       const user = userEvent.setup();
 
-      const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
-      const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
-      const previewBtn = screen.getByRole('button', { name: 'Open Preview' });
+      const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+      const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+      const previewBtn = page.getByRole('button', { name: 'Open Preview' });
 
       await user.click(previewBtn);
 
-      expect(previewBtn).toHaveAttribute('tabindex', '0');
-      expect(clearAllBtn).toHaveAttribute('tabindex', '-1');
-      expect(fillAllBtn).toHaveAttribute('tabindex', '-1');
+      await expect.element(previewBtn).toHaveAttribute('tabindex', '0');
+      await expect.element(clearAllBtn).toHaveAttribute('tabindex', '-1');
+      await expect.element(fillAllBtn).toHaveAttribute('tabindex', '-1');
     });
   });
 });

@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { clsx } from 'clsx';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom/vitest';
+import { render } from 'vitest-browser-react';
+import { page, userEvent } from 'vitest/browser';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
@@ -38,67 +37,63 @@ function NavbarToggle() {
   return <div aria-label="Navigation" id="toggle-navbar" />;
 }
 
-function renderComponents(navbarProps?: NavbarProps) {
-  render(<PopupContainer />);
-  render(<NavbarToggle />);
+async function renderComponents(navbarProps?: NavbarProps) {
+  await render(<PopupContainer />);
+  await render(<NavbarToggle />);
 
   if (navbarProps === undefined) {
-    render(<Navbar {...getProps()} />);
+    await render(<Navbar {...getProps()} />);
   } else {
-    render(<Navbar {...navbarProps} />);
+    await render(<Navbar {...navbarProps} />);
   }
 }
 
 function getDeleteBtn(sectionId: SectionId) {
-  if (sectionId === 'personal') return null;
-
-  return screen.getByRole('button', {
+  return page.getByRole('button', {
     name: `Delete ${sectionTitles[sectionId]}`,
   });
 }
 
 describe('Navbar', () => {
-  it('should render a navigation with an accessible name derived from an element with an ID "toggle-navbar"', () => {
-    renderComponents();
+  it('should render a navigation with an accessible name derived from an element with an ID "toggle-navbar"', async () => {
+    await renderComponents();
 
-    const nav = screen.getByRole('navigation', { name: 'Navigation' });
+    const nav = page.getByRole('navigation', { name: 'Navigation' });
 
-    expect(nav).toBeInTheDocument();
+    await expect.element(nav).toBeInTheDocument();
   });
 
-  it('should use the prop `className` in its class', () => {
-    renderComponents(getProps({ className: 'bluh-bluh' }));
-    const nav = screen.getByRole('navigation', { name: 'Navigation' });
+  it('should use the prop `className` in its class', async () => {
+    await renderComponents(getProps({ className: 'bluh-bluh' }));
+    const nav = page.getByRole('navigation', { name: 'Navigation' });
 
-    const classList = nav.classList;
-
-    expect(classList).toContain('bluh-bluh');
+    await expect.element(nav).toHaveClass('bluh-bluh');
   });
 
-  it('should apply the hidden modifier class when `hidden` is true', () => {
+  it('should apply the hidden modifier class when `hidden` is true', async () => {
     // Arrange
     const props = getProps({ hidden: true });
 
     // Act
-    renderComponents(props);
+    await renderComponents(props);
 
     // Assert
-    const nav = screen.getByRole('navigation', { hidden: true });
+    const nav = page.getByRole('navigation', { includeHidden: true });
 
-    expect(nav).toHaveClass('Navbar_hidden');
+    await expect.element(nav).toHaveClass('Navbar_hidden');
   });
 
-  it('should not apply the hidden modifier class when `hidden` is false', () => {
+  it('should not apply the hidden modifier class when `hidden` is false', async () => {
     // Arrange
     const props = getProps({ hidden: false });
 
     // Act
-    renderComponents(props);
+    await renderComponents(props);
 
     // Assert
-    const nav = screen.getByRole('navigation', { name: 'Navigation' });
+    const nav = page.getByRole('navigation', { name: 'Navigation' });
 
-    expect(nav).not.toHaveClass('Navbar_hidden');
+    await expect.element(nav).not.toHaveClass('Navbar_hidden');
   });
 
   describe('"Resume Sections" tablist', () => {
@@ -107,79 +102,79 @@ describe('Navbar', () => {
      * it's better tested via the keyboard navigation testing.
      */
 
-    it('should render a tablist "Resume Sections"', () => {
-      renderComponents();
+    it('should render a tablist "Resume Sections"', async () => {
+      await renderComponents();
 
-      const tablist = screen.getByRole('tablist', { name: 'Resume Sections' });
+      const tablist = page.getByRole('tablist', { name: 'Resume Sections' });
 
-      expect(tablist).toBeInTheDocument();
+      await expect.element(tablist).toBeInTheDocument();
     });
 
-    it('should have the correct `aria-owns` attribute for the tablist that specifies all section IDs', () => {
-      renderComponents();
+    it('should have the correct `aria-owns` attribute for the tablist that specifies all section IDs', async () => {
+      await renderComponents();
       const correctValue = clsx(possibleSectionIds);
 
-      const tablist = screen.getByRole('tablist', { name: 'Resume Sections' });
+      const tablist = page.getByRole('tablist', { name: 'Resume Sections' });
 
-      expect(tablist).toHaveAttribute('aria-owns', correctValue);
+      await expect.element(tablist).toHaveAttribute('aria-owns', correctValue);
     });
   });
 
   describe('Sections', () => {
-    it('should render tabs for all active sections', () => {
-      renderComponents(getProps());
+    it('should render tabs for all active sections', async () => {
+      await renderComponents(getProps());
 
       let name: SectionTitle = sectionTitles.personal;
-      const personalTab = screen.getByRole('tab', { name });
+      const personalTab = page.getByRole('tab', { name });
       name = sectionTitles.links;
-      const linksTab = screen.getByRole('tab', { name });
+      const linksTab = page.getByRole('tab', { name });
       name = sectionTitles.skills;
-      const skillsTab = screen.getByRole('tab', { name });
+      const skillsTab = page.getByRole('tab', { name });
       name = sectionTitles.experience;
-      const experienceTab = screen.getByRole('tab', { name });
+      const experienceTab = page.getByRole('tab', { name });
       name = sectionTitles.projects;
-      const projectsTab = screen.getByRole('tab', { name });
+      const projectsTab = page.getByRole('tab', { name });
       name = sectionTitles.education;
-      const educationTab = screen.getByRole('tab', { name });
+      const educationTab = page.getByRole('tab', { name });
       name = sectionTitles.certifications;
-      const certificationsTab = screen.getByRole('tab', { name });
+      const certificationsTab = page.getByRole('tab', { name });
 
-      expect(personalTab).toBeInTheDocument();
-      expect(linksTab).toBeInTheDocument();
-      expect(skillsTab).toBeInTheDocument();
-      expect(experienceTab).toBeInTheDocument();
-      expect(projectsTab).toBeInTheDocument();
-      expect(educationTab).toBeInTheDocument();
-      expect(certificationsTab).toBeInTheDocument();
+      await expect.element(personalTab).toBeInTheDocument();
+      await expect.element(linksTab).toBeInTheDocument();
+      await expect.element(skillsTab).toBeInTheDocument();
+      await expect.element(experienceTab).toBeInTheDocument();
+      await expect.element(projectsTab).toBeInTheDocument();
+      await expect.element(educationTab).toBeInTheDocument();
+      await expect.element(certificationsTab).toBeInTheDocument();
     });
 
-    it('should not render tabs for inactive sections', () => {
+    it('should not render tabs for inactive sections', async () => {
       const activeSectionIds: SectionId[] = ['personal', 'education'];
-      renderComponents(getProps({ activeSectionIds }));
+      await renderComponents(getProps({ activeSectionIds }));
 
       let name: SectionTitle = sectionTitles['links'];
-      const linksTab = screen.queryByRole('tab', { name });
+      const linksTab = page.getByRole('tab', { name });
       name = sectionTitles.skills;
-      const skillsTab = screen.queryByRole('tab', { name });
+      const skillsTab = page.getByRole('tab', { name });
       name = sectionTitles.experience;
-      const experienceTab = screen.queryByRole('tab', { name });
+      const experienceTab = page.getByRole('tab', { name });
       name = sectionTitles.projects;
-      const projectsTab = screen.queryByRole('tab', { name });
+      const projectsTab = page.getByRole('tab', { name });
       name = sectionTitles.certifications;
-      const certificationsTab = screen.queryByRole('tab', { name });
+      const certificationsTab = page.getByRole('tab', { name });
 
-      expect(linksTab).not.toBeInTheDocument();
-      expect(skillsTab).not.toBeInTheDocument();
-      expect(experienceTab).not.toBeInTheDocument();
-      expect(projectsTab).not.toBeInTheDocument();
-      expect(certificationsTab).not.toBeInTheDocument();
+      await expect.element(linksTab).not.toBeInTheDocument();
+      await expect.element(skillsTab).not.toBeInTheDocument();
+      await expect.element(experienceTab).not.toBeInTheDocument();
+      await expect.element(projectsTab).not.toBeInTheDocument();
+      await expect.element(certificationsTab).not.toBeInTheDocument();
     });
 
     it('should call `selectSection(sectionId)` when a section is selected', async () => {
       const mockFn = vi.fn((_sectionId: SectionId) => {});
-      renderComponents(getProps({ selectSection: mockFn }));
+      await renderComponents(getProps({ selectSection: mockFn }));
       const user = userEvent.setup();
-      const tab = screen.getByRole('tab', { name: sectionTitles['skills'] });
+      const tab = page.getByRole('tab', { name: sectionTitles['skills'] });
 
       await user.click(tab);
 
@@ -192,40 +187,46 @@ describe('Navbar', () => {
       const mockFn = vi.fn((_sectionId: SectionId) => {});
       const props = getProps({ editorMode: true, selectSection: mockFn });
 
-      renderComponents(props);
+      await renderComponents(props);
       const user = userEvent.setup();
-      const tab = screen.getByRole('tab', { name: sectionTitles['skills'] });
+      const tab = page.getByRole('tab', { name: sectionTitles['skills'] });
 
-      await user.click(tab);
+      /**
+       * Draggable tabs run an infinite CSS shake animation in editor mode,
+       * so Playwright's layout stability check must be bypassed via `force`.
+       */
+      await user.click(tab, { force: true });
 
       expect(mockFn).not.toHaveBeenCalled();
     });
 
     describe('Delete buttons', () => {
-      it('should render delete buttons for deletable sections in editor mode', () => {
-        renderComponents(getProps({ editorMode: true }));
+      it('should render delete buttons for deletable sections in editor mode', async () => {
+        await renderComponents(getProps({ editorMode: true }));
 
-        expect(getDeleteBtn('links')).toBeInTheDocument();
-        expect(getDeleteBtn('skills')).toBeInTheDocument();
-        expect(getDeleteBtn('experience')).toBeInTheDocument();
-        expect(getDeleteBtn('projects')).toBeInTheDocument();
-        expect(getDeleteBtn('education')).toBeInTheDocument();
-        expect(getDeleteBtn('certifications')).toBeInTheDocument();
+        await expect.element(getDeleteBtn('links')).toBeInTheDocument();
+        await expect.element(getDeleteBtn('skills')).toBeInTheDocument();
+        await expect.element(getDeleteBtn('experience')).toBeInTheDocument();
+        await expect.element(getDeleteBtn('projects')).toBeInTheDocument();
+        await expect.element(getDeleteBtn('education')).toBeInTheDocument();
+        await expect
+          .element(getDeleteBtn('certifications'))
+          .toBeInTheDocument();
       });
 
-      it('should not render a delete button for the "Personal Details" section in editor mode', () => {
-        renderComponents(getProps({ editorMode: true }));
+      it('should not render a delete button for the "Personal Details" section in editor mode', async () => {
+        await renderComponents(getProps({ editorMode: true }));
 
-        expect(getDeleteBtn('personal')).not.toBeInTheDocument();
+        await expect.element(getDeleteBtn('personal')).not.toBeInTheDocument();
       });
 
       it('should call `deleteSections(sectionIds)` when a section is deleted', async () => {
         const mockFn = vi.fn((_sectionIds: ReadonlyDeep<SectionId[]>) => {});
         const props = getProps({ editorMode: true, deleteSections: mockFn });
 
-        renderComponents(props);
+        await renderComponents(props);
         const user = userEvent.setup();
-        const btn = getDeleteBtn('education')!;
+        const btn = getDeleteBtn('education');
 
         await user.click(btn);
 
@@ -240,13 +241,13 @@ describe('Navbar', () => {
           editorMode: true,
         });
 
-        renderComponents(props);
+        await renderComponents(props);
         const user = userEvent.setup();
 
-        const deleteBtn = getDeleteBtn('skills')!;
-        deleteBtn.focus();
+        const deleteBtn = getDeleteBtn('skills');
+        deleteBtn.element().focus();
 
-        const editSectionsBtn = screen.getByRole('button', {
+        const editSectionsBtn = page.getByRole('button', {
           name: 'Toggle Editor Mode',
         });
 
@@ -254,7 +255,7 @@ describe('Navbar', () => {
         await user.keyboard('{Enter}');
 
         // Assert
-        expect(editSectionsBtn).toHaveFocus();
+        await expect.element(editSectionsBtn).toHaveFocus();
       });
 
       it("should focus the next deletable section's tab if the deleted section is neither the only deletable section nor the last deletable section", async () => {
@@ -264,18 +265,18 @@ describe('Navbar', () => {
           editorMode: true,
         });
 
-        renderComponents(props);
+        await renderComponents(props);
         const user = userEvent.setup();
 
-        const deleteSkillsBtn = getDeleteBtn('skills')!;
-        const deleteEducationBtn = getDeleteBtn('education')!;
-        deleteSkillsBtn.focus();
+        const deleteSkillsBtn = getDeleteBtn('skills');
+        const deleteEducationBtn = getDeleteBtn('education');
+        deleteSkillsBtn.element().focus();
 
         // Act
         await user.keyboard('{Enter}');
 
         // Assert
-        expect(deleteEducationBtn).toHaveFocus();
+        await expect.element(deleteEducationBtn).toHaveFocus();
       });
 
       it("should foucs the previous deletable section's tab if the deleted section isn't the only deletable section and is the last deletable section", async () => {
@@ -285,69 +286,73 @@ describe('Navbar', () => {
           editorMode: true,
         });
 
-        renderComponents(props);
+        await renderComponents(props);
         const user = userEvent.setup();
 
-        const deleteSkillsBtn = getDeleteBtn('skills')!;
-        const deleteEducationBtn = getDeleteBtn('education')!;
-        deleteEducationBtn.focus();
+        const deleteSkillsBtn = getDeleteBtn('skills');
+        const deleteEducationBtn = getDeleteBtn('education');
+        deleteEducationBtn.element().focus();
 
         // Act
         await user.keyboard('{Enter}');
 
         // Assert
-        expect(deleteSkillsBtn).toHaveFocus();
+        await expect.element(deleteSkillsBtn).toHaveFocus();
       });
     });
   });
 
   describe('Controls', () => {
     describe('"Add Sections" button', () => {
-      it('should render an "Add Sections" button if `canAddSections === true`', () => {
-        renderComponents(getProps({ activeSectionIds: ['personal', 'links'] }));
+      it('should render an "Add Sections" button if `canAddSections === true`', async () => {
+        await renderComponents(
+          getProps({ activeSectionIds: ['personal', 'links'] }),
+        );
 
-        const btn = screen.getByRole('button', { name: 'Add Sections' });
+        const btn = page.getByRole('button', { name: 'Add Sections' });
 
-        expect(btn).toBeInTheDocument();
+        await expect.element(btn).toBeInTheDocument();
       });
 
-      it('should not render an "Add Sections" button if `canAddSections === false`', () => {
-        renderComponents(getProps({ canAddSections: false }));
+      it('should not render an "Add Sections" button if `canAddSections === false`', async () => {
+        await renderComponents(getProps({ canAddSections: false }));
 
-        const btn = screen.queryByRole('button', { name: 'Add Sections' });
+        const btn = page.getByRole('button', { name: 'Add Sections' });
 
-        expect(btn).not.toBeInTheDocument();
+        await expect.element(btn).not.toBeInTheDocument();
       });
 
       it('should show the "Add Sections" dialog when the "Add Sections" button is clicked', async () => {
         // Arrange
-        renderComponents(getProps({ activeSectionIds: ['personal', 'links'] }));
+        await renderComponents(
+          getProps({ activeSectionIds: ['personal', 'links'] }),
+        );
         const user = userEvent.setup();
-        const btn = screen.getByRole('button', { name: 'Add Sections' });
+        const btn = page.getByRole('button', { name: 'Add Sections' });
 
         // Act
         await user.click(btn);
 
         // Assert
-        const dialog = screen.getByRole('dialog', { name: 'Add Sections' });
-        expect(dialog).toBeInTheDocument();
+        const dialog = page.getByRole('dialog', { name: 'Add Sections' });
+        await expect.element(dialog).toBeInTheDocument();
       });
     });
 
     describe('"Toggle Editor Mode" button', () => {
-      it('should render a "Toggle Editor Mode" button', () => {
-        renderComponents();
+      it('should render a "Toggle Editor Mode" button', async () => {
+        await renderComponents();
 
-        const btn = screen.getByRole('button', { name: 'Toggle Editor Mode' });
+        const btn = page.getByRole('button', { name: 'Toggle Editor Mode' });
 
-        expect(btn).toBeInTheDocument();
+        await expect.element(btn).toBeInTheDocument();
       });
 
       it('should call `toggleEditorMode` when "Toggle Editor Mode" is clicked', async () => {
         const mockFn = vi.fn();
-        renderComponents(getProps({ toggleEditorMode: mockFn }));
+        await renderComponents(getProps({ toggleEditorMode: mockFn }));
         const user = userEvent.setup();
-        const btn = screen.getByRole('button', { name: 'Toggle Editor Mode' });
+        const btn = page.getByRole('button', { name: 'Toggle Editor Mode' });
 
         await user.click(btn);
 
@@ -358,18 +363,18 @@ describe('Navbar', () => {
 
   describe('"Add Sections" dialog', () => {
     function getAddBtn(sectionId: SectionId) {
-      return screen.queryByRole('button', {
+      return page.getByRole('button', {
         name: `Add ${sectionTitles[sectionId]}`,
       });
     }
     it('should render add-buttons for all inactive sections', async () => {
       // Arrange
       const activeSectionIds: SectionId[] = ['personal', 'links', 'projects'];
-      renderComponents(getProps({ activeSectionIds }));
+      await renderComponents(getProps({ activeSectionIds }));
       const user = userEvent.setup();
 
       const name = 'Add Sections';
-      const addSectionsBtn = screen.getByRole('button', { name });
+      const addSectionsBtn = page.getByRole('button', { name });
       await user.click(addSectionsBtn);
 
       // Act
@@ -379,20 +384,20 @@ describe('Navbar', () => {
       const addCertifications = getAddBtn('certifications');
 
       // Assert
-      expect(addSkills).toBeInTheDocument();
-      expect(addExperience).toBeInTheDocument();
-      expect(addEducation).toBeInTheDocument();
-      expect(addCertifications).toBeInTheDocument();
+      await expect.element(addSkills).toBeInTheDocument();
+      await expect.element(addExperience).toBeInTheDocument();
+      await expect.element(addEducation).toBeInTheDocument();
+      await expect.element(addCertifications).toBeInTheDocument();
     });
 
     it('should not render add-buttons for active sections', async () => {
       // Arrange
       const activeSectionIds: SectionId[] = ['personal', 'links', 'projects'];
-      renderComponents(getProps({ activeSectionIds }));
+      await renderComponents(getProps({ activeSectionIds }));
       const user = userEvent.setup();
 
       const name = 'Add Sections';
-      const addSectionsBtn = screen.getByRole('button', { name });
+      const addSectionsBtn = page.getByRole('button', { name });
       await user.click(addSectionsBtn);
 
       // Act
@@ -401,9 +406,9 @@ describe('Navbar', () => {
       const addProjects = getAddBtn('projects');
 
       // Assert
-      expect(addPersonal).not.toBeInTheDocument();
-      expect(addLinks).not.toBeInTheDocument();
-      expect(addProjects).not.toBeInTheDocument();
+      await expect.element(addPersonal).not.toBeInTheDocument();
+      await expect.element(addLinks).not.toBeInTheDocument();
+      await expect.element(addProjects).not.toBeInTheDocument();
     });
 
     it('should call `addSections` when a section is added', async () => {
@@ -412,14 +417,14 @@ describe('Navbar', () => {
       const activeSectionIds: SectionId[] = ['personal', 'links', 'projects'];
       const props = getProps({ activeSectionIds, addSections: mockFn });
 
-      renderComponents(props);
+      await renderComponents(props);
       const user = userEvent.setup();
 
       const name = 'Add Sections';
-      const addSectionsBtn = screen.getByRole('button', { name });
+      const addSectionsBtn = page.getByRole('button', { name });
       await user.click(addSectionsBtn);
 
-      const addSkillsBtn = getAddBtn('skills')!;
+      const addSkillsBtn = getAddBtn('skills');
 
       // Act
       await user.click(addSkillsBtn);
@@ -432,28 +437,28 @@ describe('Navbar', () => {
     it("should close the 'Add Sections' popup when it's closed", async () => {
       // Arrange
       const activeSectionIds: SectionId[] = ['personal', 'links', 'projects'];
-      renderComponents(getProps({ activeSectionIds }));
+      await renderComponents(getProps({ activeSectionIds }));
       const user = userEvent.setup();
 
       const name = 'Add Sections';
-      const addSectionsBtn = screen.getByRole('button', { name });
+      const addSectionsBtn = page.getByRole('button', { name });
       await user.click(addSectionsBtn);
 
-      const closeBtn = screen.getByRole('button', { name: 'Close Popup' });
+      const closeBtn = page.getByRole('button', { name: 'Close Popup' });
 
       // Act
       await user.click(closeBtn);
 
       // Assert
-      const dialog = screen.queryByRole('dialog', { name: 'Add Sections' });
-      expect(dialog).not.toBeInTheDocument();
+      const dialog = page.getByRole('dialog', { name: 'Add Sections' });
+      await expect.element(dialog).not.toBeInTheDocument();
     });
   });
 
   // DnD
   describe('DnD', () => {
     // TODO: find a way to test DnD itself. At the moment, it doesn't work in JSDOM.
-    it('should provide draggable tabs with an accessible description for DnD behaviour in editor mode, "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."', () => {
+    it('should provide draggable tabs with an accessible description for DnD behaviour in editor mode, "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."', async () => {
       // Arrange
       const description =
         'To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel.';
@@ -462,35 +467,39 @@ describe('Navbar', () => {
         return string.replaceAll(/\s+/g, ' ').trim();
       }
 
-      renderComponents(getProps({ editorMode: true }));
+      await renderComponents(getProps({ editorMode: true }));
 
       // Act
       const name = sectionTitles['education'];
-      const draggableTab = screen.getByRole('tab', { name });
-      const descriptionNodeId = draggableTab.getAttribute('aria-describedby');
+      const draggableTab = page.getByRole('tab', { name });
+      const descriptionNodeId = draggableTab
+        .element()
+        .getAttribute('aria-describedby');
       const descriptionNode = document.getElementById(descriptionNodeId!)!;
 
       // Assert
-      expect(descriptionNode).toBeInTheDocument();
+      expect(descriptionNode).toBeTruthy();
       const cleanedTextContent = cleanSting(descriptionNode.textContent);
       expect(cleanedTextContent).toBe(description);
     });
 
-    it('should not provide tabs with an accessible description when the editor mode is off', () => {
-      renderComponents();
+    it('should not provide tabs with an accessible description when the editor mode is off', async () => {
+      await renderComponents();
 
       const name = sectionTitles['education'];
-      const draggableTab = screen.getByRole('tab', { name });
-      const descriptionNodeId = draggableTab.getAttribute('aria-describedby');
+      const draggableTab = page.getByRole('tab', { name });
+      const descriptionNodeId = draggableTab
+        .element()
+        .getAttribute('aria-describedby');
 
       expect(descriptionNodeId).toBeNull();
     });
 
-    it('should not provide undraggable tabs with an accessible description', () => {
-      renderComponents(getProps({ editorMode: true }));
+    it('should not provide undraggable tabs with an accessible description', async () => {
+      await renderComponents(getProps({ editorMode: true }));
 
-      const tab = screen.getByRole('tab', { name: sectionTitles['personal'] });
-      const descriptionNodeId = tab.getAttribute('aria-describedby');
+      const tab = page.getByRole('tab', { name: sectionTitles['personal'] });
+      const descriptionNodeId = tab.element().getAttribute('aria-describedby');
 
       expect(descriptionNodeId).toBeNull();
     });
@@ -502,32 +511,32 @@ describe('Navbar', () => {
         it('should focus the "Add Sections" button when Arrow Down is pressed', async () => {
           // Arrange
           const activeSectionIds: SectionId[] = ['personal'];
-          renderComponents(getProps({ activeSectionIds }));
+          await renderComponents(getProps({ activeSectionIds }));
           const user = userEvent.setup();
 
           const name = sectionTitles['personal'];
-          const tab = screen.getByRole('tab', { name });
-          const btn = screen.getByRole('button', { name: 'Add Sections' });
-          tab.focus();
+          const tab = page.getByRole('tab', { name });
+          const btn = page.getByRole('button', { name: 'Add Sections' });
+          tab.element().focus();
 
           // Act
           await user.keyboard('{ArrowDown}');
 
           // Assert
-          expect(btn).toHaveFocus();
+          await expect.element(btn).toHaveFocus();
         });
 
         it('should focus the "Toggle Editor Mode" button when Arrow Up is pressed', async () => {
           // Arrange
           const activeSectionIds: SectionId[] = ['personal'];
-          renderComponents(getProps({ activeSectionIds }));
+          await renderComponents(getProps({ activeSectionIds }));
           const user = userEvent.setup();
 
           const name = sectionTitles['personal'];
-          const tab = screen.getByRole('tab', { name });
-          tab.focus();
+          const tab = page.getByRole('tab', { name });
+          tab.element().focus();
 
-          const btn = screen.getByRole('button', {
+          const btn = page.getByRole('button', {
             name: 'Toggle Editor Mode',
           });
 
@@ -535,113 +544,113 @@ describe('Navbar', () => {
           await user.keyboard('{ArrowUp}');
 
           // Assert
-          expect(btn).toHaveFocus();
+          await expect.element(btn).toHaveFocus();
         });
       });
 
       describe("The section corresponding to the tab isn't the only active section", () => {
         it("should focus the next tab when Arrow Down is pressed if the focused tab isn't the last", async () => {
           // Arrange
-          renderComponents();
+          await renderComponents();
           const user = userEvent.setup();
 
           let name: SectionTitle = sectionTitles['personal'];
-          const personalTab = screen.getByRole('tab', { name });
-          personalTab.focus();
+          const personalTab = page.getByRole('tab', { name });
+          personalTab.element().focus();
 
           name = sectionTitles['links'];
-          const linksTab = screen.getByRole('tab', { name });
+          const linksTab = page.getByRole('tab', { name });
 
           // Act
           await user.keyboard('{ArrowDown}');
 
           // Assert
-          expect(linksTab).toHaveFocus();
+          await expect.element(linksTab).toHaveFocus();
         });
 
         it('should focus "Add Sections" when Arrow Down is pressed if the focused tab is the last and `canAddSections === true`', async () => {
           // Arrange
-          renderComponents(
+          await renderComponents(
             getProps({ activeSectionIds: ['personal', 'links'] }),
           );
           const user = userEvent.setup();
 
-          const tab = screen.getByRole('tab', {
+          const tab = page.getByRole('tab', {
             name: sectionTitles['links'],
           });
-          const btn = screen.getByRole('button', { name: 'Add Sections' });
-          tab.focus();
+          const btn = page.getByRole('button', { name: 'Add Sections' });
+          tab.element().focus();
 
           // Act
           await user.keyboard('{ArrowDown}');
 
           // Assert
-          expect(btn).toHaveFocus();
+          await expect.element(btn).toHaveFocus();
         });
 
         it('should focus "Toggle Editor Mode" when Arrow Down is pressed if the focused tab is the last and `canAddSections === false`', async () => {
           // Arrange
           const activeSectionIds: SectionId[] = ['personal', 'links'];
-          renderComponents(
+          await renderComponents(
             getProps({ activeSectionIds, canAddSections: false }),
           );
           const user = userEvent.setup();
 
-          const tab = screen.getByRole('tab', {
+          const tab = page.getByRole('tab', {
             name: sectionTitles['links'],
           });
-          const btn = screen.getByRole('button', {
+          const btn = page.getByRole('button', {
             name: 'Toggle Editor Mode',
           });
-          tab.focus();
+          tab.element().focus();
 
           // Act
           await user.keyboard('{ArrowDown}');
 
           // Assert
-          expect(btn).toHaveFocus();
+          await expect.element(btn).toHaveFocus();
         });
 
         it("should focus the previous tab when Arrow Up is clicked if the focused tab isn't the first one", async () => {
           // Arrange
-          renderComponents();
+          await renderComponents();
           const user = userEvent.setup();
 
           let name: SectionTitle = sectionTitles['education'];
-          const educationTab = screen.getByRole('tab', { name });
-          educationTab.focus();
+          const educationTab = page.getByRole('tab', { name });
+          educationTab.element().focus();
 
           name = sectionTitles['projects'];
-          const projectsTab = screen.getByRole('tab', { name });
+          const projectsTab = page.getByRole('tab', { name });
 
           // Act
           await user.keyboard('{ArrowUp}');
 
           // Assert
           // "projects" goes before "education".
-          expect(projectsTab).toHaveFocus();
+          await expect.element(projectsTab).toHaveFocus();
         });
 
         it('should focus "Toggle Editor Mode" when Arrow Up is clicked if the focused tab is the first one', async () => {
           // Arrange
-          renderComponents();
+          await renderComponents();
           const user = userEvent.setup();
 
-          const tab = screen.getByRole('tab', {
+          const tab = page.getByRole('tab', {
             name: sectionTitles['personal'],
           });
 
-          const btn = screen.getByRole('button', {
+          const btn = page.getByRole('button', {
             name: 'Toggle Editor Mode',
           });
 
-          tab.focus();
+          tab.element().focus();
 
           // Act
           await user.keyboard('{ArrowUp}');
 
           // Assert
-          expect(btn).toHaveFocus();
+          await expect.element(btn).toHaveFocus();
         });
       });
     });
@@ -649,164 +658,164 @@ describe('Navbar', () => {
     describe('A delete-section button is focused', () => {
       it("should focus the next delete button when Arrow Down is pressed if the focused delete button isn't the last one", async () => {
         // Arrange
-        renderComponents(getProps({ editorMode: true }));
+        await renderComponents(getProps({ editorMode: true }));
         const user = userEvent.setup();
 
-        const deleteProjectsBtn = getDeleteBtn('projects')!;
-        const deleteEducationBtn = getDeleteBtn('education')!;
-        deleteProjectsBtn.focus();
+        const deleteProjectsBtn = getDeleteBtn('projects');
+        const deleteEducationBtn = getDeleteBtn('education');
+        deleteProjectsBtn.element().focus();
 
         // Act
         await user.keyboard('{ArrowDown}');
 
         // Assert
-        expect(deleteEducationBtn).toHaveFocus();
+        await expect.element(deleteEducationBtn).toHaveFocus();
       });
 
       it('should focus the first delete button when Arrow Down is pressed if the focused delete button is the last one', async () => {
-        renderComponents(getProps({ editorMode: true }));
+        await renderComponents(getProps({ editorMode: true }));
         const user = userEvent.setup();
 
-        const firstBtn = getDeleteBtn('links')!;
-        const lastBtn = getDeleteBtn('certifications')!;
-        lastBtn.focus();
+        const firstBtn = getDeleteBtn('links');
+        const lastBtn = getDeleteBtn('certifications');
+        lastBtn.element().focus();
 
         // Act
         await user.keyboard('{ArrowDown}');
 
         // Assert
-        expect(firstBtn).toHaveFocus();
+        await expect.element(firstBtn).toHaveFocus();
       });
 
       it("should focus the previous delete button when Arrow Up is pressed if the focused delete button isn't the last one", async () => {
         // Arrange
-        renderComponents(getProps({ editorMode: true }));
+        await renderComponents(getProps({ editorMode: true }));
         const user = userEvent.setup();
 
-        const previousBtn = getDeleteBtn('projects')!;
-        const btn = getDeleteBtn('education')!;
-        btn.focus();
+        const previousBtn = getDeleteBtn('projects');
+        const btn = getDeleteBtn('education');
+        btn.element().focus();
 
         // Act
         await user.keyboard('{ArrowUp}');
 
         // Assert
-        expect(previousBtn).toHaveFocus();
+        await expect.element(previousBtn).toHaveFocus();
       });
 
       it('should focus the last delete button when Arrow Up is pressed if the focused delete button is the last one', async () => {
         // Arrange
-        renderComponents(getProps({ editorMode: true }));
+        await renderComponents(getProps({ editorMode: true }));
         const user = userEvent.setup();
 
-        const firstBtn = getDeleteBtn('links')!;
-        const lastBtn = getDeleteBtn('certifications')!;
-        firstBtn.focus();
+        const firstBtn = getDeleteBtn('links');
+        const lastBtn = getDeleteBtn('certifications');
+        firstBtn.element().focus();
 
         // Act
         await user.keyboard('{ArrowUp}');
 
         // Assert
-        expect(lastBtn).toHaveFocus();
+        await expect.element(lastBtn).toHaveFocus();
       });
     });
 
     describe('The "Add Sections" button is focused', () => {
       it('should focus "Toggle Editor Mode" when Arrow Down is pressed', async () => {
         // Arrange
-        renderComponents(getProps({ activeSectionIds: ['personal'] }));
+        await renderComponents(getProps({ activeSectionIds: ['personal'] }));
         const user = userEvent.setup();
 
         let name = 'Add Sections';
-        const addSectionsBtn = screen.getByRole('button', { name });
+        const addSectionsBtn = page.getByRole('button', { name });
         name = 'Toggle Editor Mode';
-        const toggleEditorModeBtn = screen.getByRole('button', { name });
+        const toggleEditorModeBtn = page.getByRole('button', { name });
 
-        addSectionsBtn.focus();
+        addSectionsBtn.element().focus();
 
         // Act
         await user.keyboard('{ArrowDown}');
 
         // Assert
-        expect(toggleEditorModeBtn).toHaveFocus();
+        await expect.element(toggleEditorModeBtn).toHaveFocus();
       });
 
       it('should focus the last section tab when Arrow Up is pressed', async () => {
         // Arrange
         const activeSectionIds: SectionId[] = ['personal', 'projects'];
-        renderComponents(getProps({ activeSectionIds }));
+        await renderComponents(getProps({ activeSectionIds }));
         const user = userEvent.setup();
 
         const name = sectionTitles['projects'];
-        const tab = screen.getByRole('tab', { name });
+        const tab = page.getByRole('tab', { name });
 
-        const btn = screen.getByRole('button', { name: 'Add Sections' });
-        btn.focus();
+        const btn = page.getByRole('button', { name: 'Add Sections' });
+        btn.element().focus();
 
         // Act
         await user.keyboard('{ArrowUp}');
 
         // Assert
-        expect(tab).toHaveFocus();
+        await expect.element(tab).toHaveFocus();
       });
     });
 
     describe('The "Toggle Editor Mode" button is focused', () => {
       it('should focus the first tab when Arrow Down is pressed', async () => {
         // Arrange
-        renderComponents();
+        await renderComponents();
         const user = userEvent.setup();
 
         let name: string = sectionTitles['personal'];
-        const tab = screen.getByRole('tab', { name });
+        const tab = page.getByRole('tab', { name });
         name = 'Toggle Editor Mode';
-        const btn = screen.getByRole('button', { name });
+        const btn = page.getByRole('button', { name });
 
-        btn.focus();
+        btn.element().focus();
 
         // Act
         await user.keyboard('{ArrowDown}');
 
         // Assert
-        expect(tab).toHaveFocus();
+        await expect.element(tab).toHaveFocus();
       });
 
       it('should focus "Add Sections" when Arrow Up is pressed if `canAddSections === true`', async () => {
         // Arrange
-        renderComponents(getProps({ activeSectionIds: ['personal'] }));
+        await renderComponents(getProps({ activeSectionIds: ['personal'] }));
         const user = userEvent.setup();
 
         let name = 'Add Sections';
-        const addSectionsBtn = screen.getByRole('button', { name });
+        const addSectionsBtn = page.getByRole('button', { name });
         name = 'Toggle Editor Mode';
-        const toggleEditorModeBtn = screen.getByRole('button', { name });
+        const toggleEditorModeBtn = page.getByRole('button', { name });
 
-        toggleEditorModeBtn.focus();
+        toggleEditorModeBtn.element().focus();
 
         // Act
         await user.keyboard('{ArrowUp}');
 
         // Assert
-        expect(addSectionsBtn).toHaveFocus();
+        await expect.element(addSectionsBtn).toHaveFocus();
       });
 
       it('should focus the last tab when Arrow Up is pressed if `canAddSections === false`', async () => {
         // Arrange
-        renderComponents(getProps({ canAddSections: false }));
+        await renderComponents(getProps({ canAddSections: false }));
         const user = userEvent.setup();
 
         let name: string = sectionTitles['certifications'];
-        const tab = screen.getByRole('tab', { name });
+        const tab = page.getByRole('tab', { name });
         name = 'Toggle Editor Mode';
-        const btn = screen.getByRole('button', { name });
+        const btn = page.getByRole('button', { name });
 
-        btn.focus();
+        btn.element().focus();
 
         // Act
         await user.keyboard('{ArrowUp}');
 
         // Assert
-        expect(tab).toHaveFocus();
+        await expect.element(tab).toHaveFocus();
       });
     });
   });
