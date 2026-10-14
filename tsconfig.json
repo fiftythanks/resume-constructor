@@ -19,7 +19,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "rootDir": "./",
-    "types": ["node"],
+    "types": ["node", "jest"],
     "paths": {
       "@/*": ["./src/*"]
     }

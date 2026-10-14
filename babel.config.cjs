@@ -9,7 +9,6 @@ module.exports = {
       {
         extensions: ['.jsx', '.mjs', '.js'],
         resolvePath(sourcePath, currentFile) {
-          // This logic remains exactly the same.
           if (sourcePath.startsWith('.') && path.extname(sourcePath) === '') {
             const possibleMjsPath = path.join(
               path.dirname(currentFile),
