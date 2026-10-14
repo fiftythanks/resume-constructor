@@ -2,7 +2,6 @@ import { act } from 'react';
 
 import {
   ByRoleOptions,
-  fireEvent,
   getAllByRole,
   getByRole,
   render,
@@ -1073,8 +1072,6 @@ describe('App', () => {
         });
 
         // Act
-        // NOTE: fireEvent.pointerDown is used because JSDOM does not synthesize pointerdown events upon click.
-        fireEvent.pointerDown(personalTab);
         await user.click(personalTab);
 
         // Assert

@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { userEvent as browserUserEvent } from 'vitest/browser';
 import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
@@ -42,8 +43,6 @@ function getProps(overrides?: Partial<AddSectionsProps>): AddSectionsProps {
   };
 }
 
-// TODO: should close when Escape is pressed.
-
 describe('AddSections', () => {
   it('should render with an accessible name "Add Sections" when `isShown === true`', () => {
     render(<Container />);
@@ -63,20 +62,19 @@ describe('AddSections', () => {
     expect(popup).not.toBeInTheDocument();
   });
 
-  it('should call `onClose` on close', () => {
+  it('should close and call `onClose` when Escape is pressed', async () => {
+    // Arrange
     const onCloseMock = vi.fn();
     render(<Container />);
     render(<AddSections {...getProps({ onClose: onCloseMock })} />);
-    const popup = screen.getByRole('dialog', { name: 'Add Sections' });
 
-    /**
-     * JSDOM hasn't implemented HTMLDialogElement properly yet, so the `close`
-     * event won't fire when the popup is closed. I had to come up with
-     * a workaround in this test. This is the best thing I could've thought of
-     * at the moment.
-     */
-    fireEvent(popup, new Event('close'));
+    // Act
+    await browserUserEvent.keyboard('{Escape}');
 
+    // Assert
+    const popup = screen.queryByRole('dialog', { name: 'Add Sections' });
+
+    expect(popup).not.toBeInTheDocument();
     expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 

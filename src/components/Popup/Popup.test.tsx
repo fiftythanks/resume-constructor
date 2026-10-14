@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from 'vitest/browser';
 import '@testing-library/jest-dom/vitest';
 
 import Popup from './Popup';
@@ -23,8 +24,6 @@ function getProps(overrides?: Partial<PopupProps>): PopupProps {
     ...overrides,
   };
 }
-
-// should render a heading with text `title`
 
 describe('Popup', () => {
   it('should render a heading with text from its `title` prop', () => {
@@ -54,31 +53,19 @@ describe('Popup', () => {
     expect(popup).not.toBeInTheDocument();
   });
 
-  it('should call `onClose` on close', () => {
+  it('should close and call `onClose` when Escape is pressed', async () => {
+    // Arrange
     const onCloseMock = vi.fn();
     render(<Container />);
     render(<Popup {...getProps({ onClose: onCloseMock })} />);
-    const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
-    /**
-     * JSDOM hasn't implemented HTMLDialogElement properly yet, so the `close`
-     * event won't fire when the popup is closed. I had to come up with
-     * a workaround in this test. This is the best thing I could've thought of
-     * at the moment.
-     */
-    fireEvent(popup, new Event('close'));
+    // Act
+    await userEvent.keyboard('{Escape}');
 
+    // Assert
+    const popup = screen.queryByRole('dialog', { name: 'Some Title' });
+
+    expect(popup).not.toBeInTheDocument();
     expect(onCloseMock).toHaveBeenCalledTimes(1);
-  });
-
-  // TODO: add a test for closing the popup by pressing Escape.
-
-  it('should render a heading with text from the prop `title`', () => {
-    render(<Container />);
-    render(<Popup {...getProps()} />);
-
-    const heading = screen.getByRole('heading', { name: 'Some Title' });
-
-    expect(heading).toBeInTheDocument();
   });
 });
