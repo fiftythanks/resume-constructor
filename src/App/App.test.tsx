@@ -712,7 +712,8 @@ describe('App', () => {
 
       it('should rewrite previous input in "Personal Details"', async () => {
         // Arrange
-        const { user } = await renderAppWithNavbarExpanded();
+        const { fillAllBtn, user } =
+          await renderAppWithNavbarAndControlsExpanded();
 
         const personalTabpanel = screen.getByRole('tabpanel', {
           name: sectionTitles.personal,
@@ -735,8 +736,6 @@ describe('App', () => {
         const summary = getByRole(personalTabpanel, 'textbox', { name });
         summary.focus();
         await user.keyboard('some summary');
-
-        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);

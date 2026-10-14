@@ -42,6 +42,9 @@ jobs:
       - name: Lint Styles
         run: bun x stylelint "src/**/*.scss"
 
+      - name: Install Playwright Chromium
+        run: bun x playwright install --with-deps chromium
+
       - name: Run Vitest tests
         run: bun run test:ci
 

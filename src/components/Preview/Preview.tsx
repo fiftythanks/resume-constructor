@@ -316,10 +316,7 @@ export default function Preview({
         aria-label="Close Popup"
         className="Preview-CloseBtn"
         type="button"
-        onClick={() => {
-          popupRef.current?.close();
-          onClose();
-        }}
+        onClick={onClose}
       >
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>

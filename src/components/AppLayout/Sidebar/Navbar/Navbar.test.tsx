@@ -83,7 +83,7 @@ describe('Navbar', () => {
     renderComponents(props);
 
     // Assert
-    const nav = screen.getByRole('navigation', { name: 'Navigation' });
+    const nav = screen.getByRole('navigation', { hidden: true });
 
     expect(nav).toHaveClass('Navbar_hidden');
   });

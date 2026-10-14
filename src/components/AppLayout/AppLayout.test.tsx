@@ -577,8 +577,16 @@ describe('AppLayout', () => {
     expect(wrapper).toBeInTheDocument();
   });
 
-  it('should render the toolbar', () => {
+  it('should render the toolbar', async () => {
     renderAppLayout();
+    const user = userEvent.setup();
+
+    const toggleToolbarBtn = screen.getByRole('button', {
+      expanded: false,
+      name: 'Toolbar',
+    });
+
+    await user.click(toggleToolbarBtn);
 
     const toolbar = screen.getByRole('toolbar');
 

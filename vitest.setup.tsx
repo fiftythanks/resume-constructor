@@ -3,40 +3,6 @@ import '@testing-library/jest-dom/vitest';
 import type { UsePDFInstance } from '@react-pdf/renderer';
 import type { Mock } from 'vitest';
 
-vi.mock('tabbable');
-
-if (typeof Blob.prototype.arrayBuffer !== 'function') {
-  Blob.prototype.arrayBuffer = async function () {
-    return new Promise<ArrayBuffer>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.result instanceof ArrayBuffer) {
-          resolve(reader.result);
-        } else {
-          resolve(new ArrayBuffer(0));
-        }
-      };
-      reader.onerror = () => reject(reader.error);
-      reader.readAsArrayBuffer(this);
-    });
-  };
-}
-
-/**
- * There's no implementation for `HTMLDialogElement.prototype.close`
- * and `HTMLDialogElement.prototype.showModal` in JSDOM yet.
- */
-
-HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
-  this.open = false;
-});
-
-HTMLDialogElement.prototype.showModal = vi.fn(function (
-  this: HTMLDialogElement,
-) {
-  this.open = true;
-});
-
 vi.mock('pdfjs-dist', () => {
   const render = () => ({
     cancel() {},
@@ -100,8 +66,8 @@ vi.mock('pdfjs-dist', () => {
 });
 
 /**
- * Since ReactPDF and PDF.js can't work in a Node environment, we need a solid
- * workaround. The best way I could've come up with is mocking.
+ * Mock `@react-pdf/renderer` and `pdfjs-dist` in component tests so PDF
+ * compilation and canvas rendering remain fast and deterministic.
  */
 
 vi.mock('@react-pdf/renderer', () => ({
@@ -114,6 +80,7 @@ vi.mock('@react-pdf/renderer', () => ({
   },
   Link: vi.fn(({ children, href, ..._rest }) => <a href={href}>{children}</a>),
   Page: vi.fn(({ children, ..._rest }) => <div>{children}</div>),
+  Path: vi.fn(() => <path />),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   PDFDownloadLink: vi.fn(({ children, fileName, ...props }) => (
     <a data-testid="mock-pdf-download-link" {...props}>
@@ -130,6 +97,7 @@ vi.mock('@react-pdf/renderer', () => ({
   StyleSheet: {
     create: vi.fn((styles: unknown) => styles),
   },
+  Svg: vi.fn(({ children, ..._rest }) => <svg>{children}</svg>),
   Text: vi.fn(({ children, ..._rest }) => <span>{children}</span>),
   usePDF: vi.fn((): [UsePDFInstance, Mock] => [
     {
@@ -142,26 +110,3 @@ vi.mock('@react-pdf/renderer', () => ({
   ]),
   View: vi.fn(({ children, ..._rest }) => <div>{children}</div>),
 }));
-
-/**
- * `getComputedStyle` is used in `Preview` and must return `{ ...,
- * paddingInline: string }` for everything to work correctly.
- */
-const getComputedStyleOriginal = window.getComputedStyle.bind(window);
-
-vi.spyOn(window, 'getComputedStyle').mockImplementation(
-  (elt: Element, pseudoElt?: null | string) => {
-    const style = getComputedStyleOriginal(elt, pseudoElt);
-
-    return new Proxy(style, {
-      get(target, prop) {
-        if (prop === 'paddingInline') {
-          return Reflect.get(target, prop, target) || '2rem';
-        }
-
-        const value: unknown = Reflect.get(target, prop, target);
-        return typeof value === 'function' ? value.bind(target) : value;
-      },
-    });
-  },
-);

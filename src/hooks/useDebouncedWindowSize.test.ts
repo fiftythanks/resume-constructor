@@ -23,9 +23,10 @@ describe('useDebouncedWindowSize', () => {
     const { result } = renderHook(() => useDebouncedWindowSize());
 
     await act(async () => {
-      Object.defineProperty(window, innerWidth, {
-        writable: true,
+      Object.defineProperty(window, 'innerWidth', {
+        configurable: true,
         value: 1024,
+        writable: true,
       });
 
       window.dispatchEvent(new Event('resize'));
