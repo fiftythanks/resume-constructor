@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom/vitest';
-
 import type { UsePDFInstance } from '@react-pdf/renderer';
 import type { Mock } from 'vitest';
 

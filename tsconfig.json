@@ -23,7 +23,8 @@
       "node",
       "vite/client",
       "vitest/globals",
-      "@testing-library/jest-dom"
+      "@vitest/browser-playwright",
+      "vitest-browser-react"
     ],
     "paths": {
       "@/*": ["./src/*"]
