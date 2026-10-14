@@ -5,10 +5,9 @@
 /* eslint-disable n/no-unsupported-features/node-builtins */
 import { RefObject } from 'react';
 
-import { getByRole, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom/vitest';
 import cloneDeep from 'lodash/cloneDeep';
+import { render } from 'vitest-browser-react';
+import { page, userEvent } from 'vitest/browser';
 
 import Degree from './Degree';
 
@@ -59,128 +58,137 @@ function getProps(overrides?: Partial<DegreeProps>): DegreeProps {
   };
 }
 
-function getInput(name: string): HTMLInputElement {
-  return screen.getByRole('textbox', { name });
+function getInput(name: string) {
+  return page.getByRole('textbox', { name });
 }
 
 describe('Degree', () => {
-  it('should assign the University Name input field to `firstFormFieldRef.current`', () => {
+  it('should assign the University Name input field to `firstFormFieldRef.current`', async () => {
     const firstFormFieldRef: RefObject<HTMLInputElement | null> = {
       current: null,
     };
-    render(<Degree {...getProps({ firstFormFieldRef })} />);
+    await render(<Degree {...getProps({ firstFormFieldRef })} />);
 
-    const universityNameField = screen.getByRole('textbox', {
+    const universityNameField = page.getByRole('textbox', {
       name: 'University Name',
     });
 
-    expect(firstFormFieldRef.current).toBe(universityNameField);
+    expect(firstFormFieldRef.current).toBe(universityNameField.element());
   });
 
   describe('Fields', () => {
     describe('University Name', () => {
-      it('should render a text input for University Name', () => {
-        render(<Degree {...getProps()} />);
+      it('should render a text input for University Name', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('University Name');
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it('should have a placeholder "e.g. University of California, Berkeley" for University Name', () => {
-        render(<Degree {...getProps()} />);
+      it('should have a placeholder "e.g. University of California, Berkeley" for University Name', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('University Name');
 
-        expect(input.placeholder).toBe(
-          'e.g. University of California, Berkeley',
-        );
+        await expect
+          .element(input)
+          .toHaveAttribute(
+            'placeholder',
+            'e.g. University of California, Berkeley',
+          );
       });
 
-      it('should have the correct value from `data` for University Name', () => {
-        render(<Degree {...getProps()} />);
+      it('should have the correct value from `data` for University Name', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('University Name');
 
-        expect(input.value).toBe(DATA.uni);
+        await expect.element(input).toHaveValue(DATA.uni);
       });
     });
 
     describe('Degree', () => {
-      it('should render a text input for Degree', () => {
-        render(<Degree {...getProps()} />);
+      it('should render a text input for Degree', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Degree');
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it('should have a placeholder "e.g. B.S. in Computer Science" for Degree', () => {
-        render(<Degree {...getProps()} />);
+      it('should have a placeholder "e.g. B.S. in Computer Science" for Degree', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Degree');
 
-        expect(input.placeholder).toBe('e.g. B.S. in Computer Science');
+        await expect
+          .element(input)
+          .toHaveAttribute('placeholder', 'e.g. B.S. in Computer Science');
       });
 
-      it('should have the correct value from `data` for Degree', () => {
-        render(<Degree {...getProps()} />);
+      it('should have the correct value from `data` for Degree', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Degree');
 
-        expect(input.value).toBe(DATA.degree);
+        await expect.element(input).toHaveValue(DATA.degree);
       });
     });
 
     describe('Graduation', () => {
-      it('should render a text input for Graduation', () => {
-        render(<Degree {...getProps()} />);
+      it('should render a text input for Graduation', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Graduation');
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it('should have a placeholder "e.g. May 2021" for Graduation', () => {
-        render(<Degree {...getProps()} />);
+      it('should have a placeholder "e.g. May 2021" for Graduation', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Graduation');
 
-        expect(input.placeholder).toBe('e.g. May 2021');
+        await expect
+          .element(input)
+          .toHaveAttribute('placeholder', 'e.g. May 2021');
       });
 
-      it('should have the correct value from `data` for Graduation', () => {
-        render(<Degree {...getProps()} />);
+      it('should have the correct value from `data` for Graduation', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Graduation');
 
-        expect(input.value).toBe(DATA.graduation);
+        await expect.element(input).toHaveValue(DATA.graduation);
       });
     });
 
     describe('Address', () => {
-      it('should render a text input for Address', () => {
-        render(<Degree {...getProps()} />);
+      it('should render a text input for Address', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Address');
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it('should have a placeholder "e.g. Berkeley, CA, USA" for Address', () => {
-        render(<Degree {...getProps()} />);
+      it('should have a placeholder "e.g. Berkeley, CA, USA" for Address', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Address');
 
-        expect(input.placeholder).toBe('e.g. Berkeley, CA, USA');
+        await expect
+          .element(input)
+          .toHaveAttribute('placeholder', 'e.g. Berkeley, CA, USA');
       });
 
-      it('should have the correct value from `data` for Address', () => {
-        render(<Degree {...getProps()} />);
+      it('should have the correct value from `data` for Address', async () => {
+        await render(<Degree {...getProps()} />);
 
         const input = getInput('Address');
 
-        expect(input.value).toBe(DATA.address);
+        await expect.element(input).toHaveValue(DATA.address);
       });
     });
   });
@@ -191,7 +199,7 @@ describe('Degree', () => {
     const mockFn = vi.fn((_field: Field, _value: string) => {});
     const functions = cloneDeep({ ...FUNCTIONS, edit: mockFn });
 
-    render(<Degree {...getProps({ functions })} />);
+    await render(<Degree {...getProps({ functions })} />);
     const user = userEvent.setup();
 
     /**
@@ -204,13 +212,13 @@ describe('Degree', () => {
     const addressInput = getInput('Address');
 
     // Act
-    uniInput.focus();
+    uniInput.element().focus();
     await user.keyboard('s');
-    degreeInput.focus();
+    degreeInput.element().focus();
     await user.keyboard('s');
-    graduationInput.focus();
+    graduationInput.element().focus();
     await user.keyboard('s');
-    addressInput.focus();
+    addressInput.element().focus();
     await user.keyboard('s');
 
     // Assert
@@ -222,43 +230,49 @@ describe('Degree', () => {
   });
 
   describe('Bullet points', () => {
-    it('should render bullet points with an accessible name "Bullet Points"', () => {
-      render(<Degree {...getProps()} />);
+    it('should render bullet points with an accessible name "Bullet Points"', async () => {
+      await render(<Degree {...getProps()} />);
 
-      const bullets = screen.getByRole('group', { name: 'Bullet Points' });
+      const bullets = page.getByRole('group', { name: 'Bullet Points' });
 
-      expect(bullets).toBeInTheDocument();
+      await expect.element(bullets).toBeInTheDocument();
     });
 
     function getBulletInputGetter() {
-      const bullets = screen.getByRole('group', { name: 'Bullet Points' });
+      const bullets = page.getByRole('group', { name: 'Bullet Points' });
 
-      function getBulletInput(name: string): HTMLInputElement {
-        return getByRole(bullets, 'textbox', { name });
+      function getBulletInput(name: string) {
+        return bullets.getByRole('textbox', { name });
       }
 
       return getBulletInput;
     }
 
-    it('should have the correct data from `data`', () => {
-      render(<Degree {...getProps()} />);
+    it('should have the correct data from `data`', async () => {
+      await render(<Degree {...getProps()} />);
       const getBulletInput = getBulletInputGetter();
 
       const input1 = getBulletInput('Bullet point 1');
       const input2 = getBulletInput('Bullet point 2');
       const input3 = getBulletInput('Bullet point 3');
 
-      expect(input1.value).toBe(DATA.bulletPoints[0].value);
-      expect(input1.id).toBe(DATA.bulletPoints[0].id);
-      expect(input2.value).toBe(DATA.bulletPoints[1].value);
-      expect(input2.id).toBe(DATA.bulletPoints[1].id);
-      expect(input3.value).toBe(DATA.bulletPoints[2].value);
-      expect(input3.id).toBe(DATA.bulletPoints[2].id);
+      await expect.element(input1).toHaveValue(DATA.bulletPoints[0].value);
+      await expect
+        .element(input1)
+        .toHaveAttribute('id', DATA.bulletPoints[0].id);
+      await expect.element(input2).toHaveValue(DATA.bulletPoints[1].value);
+      await expect
+        .element(input2)
+        .toHaveAttribute('id', DATA.bulletPoints[1].id);
+      await expect.element(input3).toHaveValue(DATA.bulletPoints[2].value);
+      await expect
+        .element(input3)
+        .toHaveAttribute('id', DATA.bulletPoints[2].id);
     });
 
-    it('should have placeholders "Relevant coursework: Data Structures, Algorithms, Web Development", "Graduated with Honors, GPA: 3.8/4.0", "Led a team project to build a React-based student portal" for the first 3 bullet points', () => {
+    it('should have placeholders "Relevant coursework: Data Structures, Algorithms, Web Development", "Graduated with Honors, GPA: 3.8/4.0", "Led a team project to build a React-based student portal" for the first 3 bullet points', async () => {
       // Arrange
-      render(<Degree {...getProps()} />);
+      await render(<Degree {...getProps()} />);
       const getBulletInput = getBulletInputGetter();
 
       const placeholders = [
@@ -273,9 +287,15 @@ describe('Degree', () => {
       const input3 = getBulletInput('Bullet point 3');
 
       // Assert
-      expect(input1.placeholder).toBe(placeholders[0]);
-      expect(input2.placeholder).toBe(placeholders[1]);
-      expect(input3.placeholder).toBe(placeholders[2]);
+      await expect
+        .element(input1)
+        .toHaveAttribute('placeholder', placeholders[0]);
+      await expect
+        .element(input2)
+        .toHaveAttribute('placeholder', placeholders[1]);
+      await expect
+        .element(input3)
+        .toHaveAttribute('placeholder', placeholders[2]);
     });
 
     /**
@@ -287,10 +307,10 @@ describe('Degree', () => {
       const mockFn = vi.fn((_announcement: string) => {});
       const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
-      render(<Degree {...props} />);
+      await render(<Degree {...props} />);
       const user = userEvent.setup();
 
-      const deleteBtn = screen.getByRole('button', {
+      const deleteBtn = page.getByRole('button', {
         name: 'Delete bullet point 1',
       });
 
@@ -306,9 +326,9 @@ describe('Degree', () => {
       const mockFn = vi.fn();
       const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
-      render(<Degree {...getProps({ functions })} />);
+      await render(<Degree {...getProps({ functions })} />);
       const user = userEvent.setup();
-      const addBtn = screen.getByRole('button', { name: 'Add bullet point' });
+      const addBtn = page.getByRole('button', { name: 'Add bullet point' });
 
       // Act
       await user.click(addBtn);
@@ -322,10 +342,10 @@ describe('Degree', () => {
       const mockFn = vi.fn((_index: number) => {});
       const functions = cloneDeep({ ...FUNCTIONS, deleteBulletPoint: mockFn });
 
-      render(<Degree {...getProps({ functions })} />);
+      await render(<Degree {...getProps({ functions })} />);
       const user = userEvent.setup();
 
-      const deleteBtn = screen.getByRole('button', {
+      const deleteBtn = page.getByRole('button', {
         name: 'Delete bullet point 1',
       });
 
@@ -342,11 +362,11 @@ describe('Degree', () => {
       const mockFn = vi.fn((_index: number, _value: string) => {});
       const functions = cloneDeep({ ...FUNCTIONS, editBulletPoint: mockFn });
 
-      render(<Degree {...getProps({ functions })} />);
+      await render(<Degree {...getProps({ functions })} />);
       const user = userEvent.setup();
 
-      const input = screen.getByRole('textbox', { name: 'Bullet point 1' });
-      input.focus();
+      const input = page.getByRole('textbox', { name: 'Bullet point 1' });
+      input.element().focus();
 
       // Act
       await user.keyboard('s');

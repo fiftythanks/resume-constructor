@@ -4,10 +4,9 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom/vitest';
+import { render } from 'vitest-browser-react';
+import { page, userEvent } from 'vitest/browser';
 
 import useResumeData from '@/hooks/useResumeData';
 
@@ -113,46 +112,48 @@ function getProps(overrides?: Partial<EducationProps>): EducationProps {
 }
 
 describe('Education', () => {
-  // `Education` gets its accessible name from this element.
-  render(<div aria-label="Education" id="education" />);
-
-  it('should render as a tabpanel with an accessible name derived from an element with an ID "education"', () => {
-    render(<Education {...getProps()} />);
-
-    const education = screen.getByRole('tabpanel', { name: 'Education' });
-
-    expect(education).toBeInTheDocument();
+  beforeEach(async () => {
+    // `Education` gets its accessible name from this element.
+    await render(<div aria-label="Education" id="education" />);
   });
 
-  it('should render a heading "Degree [index + 1]"', () => {
-    render(<Education {...getProps()} />);
+  it('should render as a tabpanel with an accessible name derived from an element with an ID "education"', async () => {
+    await render(<Education {...getProps()} />);
 
-    const heading = screen.getByRole('heading', { name: 'Degree 1' });
+    const education = page.getByRole('tabpanel', { name: 'Education' });
 
-    expect(heading).toBeInTheDocument();
+    await expect.element(education).toBeInTheDocument();
+  });
+
+  it('should render a heading "Degree [index + 1]"', async () => {
+    await render(<Education {...getProps()} />);
+
+    const heading = page.getByRole('heading', { name: 'Degree 1' });
+
+    await expect.element(heading).toBeInTheDocument();
   });
 
   describe('"Show Previous / Next Degree" buttons', () => {
     describe('"Show Previous Degree" button', () => {
-      it('should not render the button if the shown degree is the first one', () => {
-        render(<Education {...getProps()} />);
+      it('should not render the button if the shown degree is the first one', async () => {
+        await render(<Education {...getProps()} />);
 
-        const btn = screen.queryByRole('button', {
+        const btn = page.getByRole('button', {
           name: 'Show Previous Degree',
         });
 
-        expect(btn).not.toBeInTheDocument();
+        await expect.element(btn).not.toBeInTheDocument();
       });
 
-      it("should render the button if the shown degree isn't the first one", () => {
+      it("should render the button if the shown degree isn't the first one", async () => {
         const data = structuredClone({ ...DATA, shownDegreeIndex: 1 });
-        render(<Education {...getProps({ data })} />);
+        await render(<Education {...getProps({ data })} />);
 
-        const btn = screen.getByRole('button', {
+        const btn = page.getByRole('button', {
           name: 'Show Previous Degree',
         });
 
-        expect(btn).toBeInTheDocument();
+        await expect.element(btn).toBeInTheDocument();
       });
 
       it('should call `showDegree(shownDegreeIndex - 1)` when the button is clicked', async () => {
@@ -161,10 +162,10 @@ describe('Education', () => {
         const mockFn = vi.fn((_index: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, showDegree: mockFn });
 
-        render(<Education {...getProps({ data, functions })} />);
+        await render(<Education {...getProps({ data, functions })} />);
         const user = userEvent.setup();
 
-        const btn = screen.getByRole('button', {
+        const btn = page.getByRole('button', {
           name: 'Show Previous Degree',
         });
 
@@ -178,22 +179,22 @@ describe('Education', () => {
     });
 
     describe('"Show Next Degree" button', () => {
-      it("should render the button if the shown degree isn't the last one", () => {
-        render(<Education {...getProps()} />);
+      it("should render the button if the shown degree isn't the last one", async () => {
+        await render(<Education {...getProps()} />);
 
-        const btn = screen.getByRole('button', { name: 'Show Next Degree' });
+        const btn = page.getByRole('button', { name: 'Show Next Degree' });
 
-        expect(btn).toBeInTheDocument();
+        await expect.element(btn).toBeInTheDocument();
       });
 
-      it('should not render the button if the shown degree is the last one', () => {
+      it('should not render the button if the shown degree is the last one', async () => {
         const shownDegreeIndex = DATA.degrees.length - 1;
         const data = structuredClone({ ...DATA, shownDegreeIndex });
-        render(<Education {...getProps({ data })} />);
+        await render(<Education {...getProps({ data })} />);
 
-        const btn = screen.queryByRole('button', { name: 'Show Next Degree' });
+        const btn = page.getByRole('button', { name: 'Show Next Degree' });
 
-        expect(btn).not.toBeInTheDocument();
+        await expect.element(btn).not.toBeInTheDocument();
       });
 
       it('should call `showDegree(shownDegreeIndex + 1)` when the button is clicked', async () => {
@@ -202,9 +203,9 @@ describe('Education', () => {
         const functions = cloneDeep({ ...FUNCTIONS, showDegree: mockFn });
         const props = getProps({ functions });
 
-        render(<Education {...props} />);
+        await render(<Education {...props} />);
         const user = userEvent.setup();
-        const btn = screen.getByRole('button', { name: 'Show Next Degree' });
+        const btn = page.getByRole('button', { name: 'Show Next Degree' });
 
         // Act
         await user.click(btn);
@@ -217,14 +218,14 @@ describe('Education', () => {
   });
 
   describe('"Add Degree" button', () => {
-    it('should render a button "Add Degree [number of degrees + 1]', () => {
-      render(<Education {...getProps()} />);
+    it('should render a button "Add Degree [number of degrees + 1]', async () => {
+      await render(<Education {...getProps()} />);
 
-      const btn = screen.getByRole('button', {
+      const btn = page.getByRole('button', {
         name: `Add Degree ${DATA.degrees.length + 1}`,
       });
 
-      expect(btn).toBeInTheDocument();
+      await expect.element(btn).toBeInTheDocument();
     });
 
     it('should call `addDegree` when the button is clicked', async () => {
@@ -232,10 +233,10 @@ describe('Education', () => {
       const mockFn = vi.fn();
       const functions = cloneDeep({ ...FUNCTIONS, addDegree: mockFn });
 
-      render(<Education {...getProps({ functions })} />);
+      await render(<Education {...getProps({ functions })} />);
       const user = userEvent.setup();
 
-      const btn = screen.getByRole('button', {
+      const btn = page.getByRole('button', {
         name: `Add Degree ${DATA.degrees.length + 1}`,
       });
 
@@ -248,23 +249,23 @@ describe('Education', () => {
   });
 
   describe('"Delete Degree" button', () => {
-    it('should render a "Delete Degree [shown degree index + 1]" button if there is more than one degree', () => {
-      render(<Education {...getProps()} />);
+    it('should render a "Delete Degree [shown degree index + 1]" button if there is more than one degree', async () => {
+      await render(<Education {...getProps()} />);
 
-      const btn = screen.getByRole('button', {
+      const btn = page.getByRole('button', {
         name: `Delete Degree ${DATA.shownDegreeIndex + 1}`,
       });
 
-      expect(btn).toBeInTheDocument();
+      await expect.element(btn).toBeInTheDocument();
     });
 
-    it("should not render the button if there's just one degree", () => {
+    it("should not render the button if there's just one degree", async () => {
       const data = structuredClone({ ...DATA, degrees: [DATA.degrees[0]] });
-      render(<Education {...getProps({ data })} />);
+      await render(<Education {...getProps({ data })} />);
 
-      const btn = screen.queryByRole('button', { name: 'Delete Degree 1' });
+      const btn = page.getByRole('button', { name: 'Delete Degree 1' });
 
-      expect(btn).not.toBeInTheDocument();
+      await expect.element(btn).not.toBeInTheDocument();
     });
 
     it('should call `deleteDegree(shownDegreeIndex)` when the button is called', async () => {
@@ -272,10 +273,10 @@ describe('Education', () => {
       const mockFn = vi.fn((_index: number) => {});
       const functions = cloneDeep({ ...FUNCTIONS, deleteDegree: mockFn });
 
-      render(<Education {...getProps({ functions })} />);
+      await render(<Education {...getProps({ functions })} />);
       const user = userEvent.setup();
 
-      const btn = screen.getByRole('button', {
+      const btn = page.getByRole('button', {
         name: `Delete Degree ${DATA.shownDegreeIndex + 1}`,
       });
 
@@ -295,96 +296,102 @@ describe('Education', () => {
       const degreeIndex = DATA.shownDegreeIndex;
       const { address, degree, graduation, uni } = DATA.degrees[degreeIndex];
 
-      beforeEach(() => {
-        render(<Education {...getProps()} />);
+      beforeEach(async () => {
+        await render(<Education {...getProps()} />);
       });
 
-      it('should have the correct university name', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+      it('should have the correct university name', async () => {
+        const input = page.getByRole('textbox', {
           name: 'University Name',
         });
 
-        expect(input.value).toBe(uni);
+        await expect.element(input).toHaveValue(uni);
       });
 
-      it('should have the correct degree', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+      it('should have the correct degree', async () => {
+        const input = page.getByRole('textbox', {
           name: 'Degree',
         });
 
-        expect(input.value).toBe(degree);
+        await expect.element(input).toHaveValue(degree);
       });
 
-      it('should have the correct graduation', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+      it('should have the correct graduation', async () => {
+        const input = page.getByRole('textbox', {
           name: 'Graduation',
         });
 
-        expect(input.value).toBe(graduation);
+        await expect.element(input).toHaveValue(graduation);
       });
 
-      it('should have the correct address', () => {
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+      it('should have the correct address', async () => {
+        const input = page.getByRole('textbox', {
           name: 'Address',
         });
 
-        expect(input.value).toBe(address);
+        await expect.element(input).toHaveValue(address);
       });
 
       describe('bullet points', () => {
         const { bulletPoints } = DATA.degrees[degreeIndex];
 
         describe('bullet point 1', () => {
-          it('should have the correct value', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
+          it('should have the correct value', async () => {
+            const input = page.getByRole('textbox', {
               name: 'Bullet point 1',
             });
 
-            expect(input.value).toBe(bulletPoints[0].value);
+            await expect.element(input).toHaveValue(bulletPoints[0].value);
           });
 
-          it('should have the correct ID', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
+          it('should have the correct ID', async () => {
+            const input = page.getByRole('textbox', {
               name: 'Bullet point 1',
             });
 
-            expect(input.id).toBe(bulletPoints[0].id);
+            await expect
+              .element(input)
+              .toHaveAttribute('id', bulletPoints[0].id);
           });
         });
 
         describe('bullet point 2', () => {
-          it('should have the correct value', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
+          it('should have the correct value', async () => {
+            const input = page.getByRole('textbox', {
               name: 'Bullet point 2',
             });
 
-            expect(input.value).toBe(bulletPoints[1].value);
+            await expect.element(input).toHaveValue(bulletPoints[1].value);
           });
 
-          it('should have the correct ID', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
+          it('should have the correct ID', async () => {
+            const input = page.getByRole('textbox', {
               name: 'Bullet point 2',
             });
 
-            expect(input.id).toBe(bulletPoints[1].id);
+            await expect
+              .element(input)
+              .toHaveAttribute('id', bulletPoints[1].id);
           });
         });
 
         describe('bullet point 3', () => {
-          it('should have the correct value', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
+          it('should have the correct value', async () => {
+            const input = page.getByRole('textbox', {
               name: 'Bullet point 3',
             });
 
-            expect(input.value).toBe(bulletPoints[2].value);
+            await expect.element(input).toHaveValue(bulletPoints[2].value);
           });
 
-          it('should have the correct ID', () => {
-            const input: HTMLInputElement = screen.getByRole('textbox', {
+          it('should have the correct ID', async () => {
+            const input = page.getByRole('textbox', {
               name: 'Bullet point 3',
             });
 
-            expect(input.id).toBe(bulletPoints[2].id);
+            await expect
+              .element(input)
+              .toHaveAttribute('id', bulletPoints[2].id);
           });
         });
       });
@@ -396,10 +403,10 @@ describe('Education', () => {
         const mockFn = vi.fn((_bulletIndex: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
-        render(<Education {...getProps({ functions })} />);
+        await render(<Education {...getProps({ functions })} />);
         const user = userEvent.setup();
 
-        const addBulletPointBtn = screen.getByRole('button', {
+        const addBulletPointBtn = page.getByRole('button', {
           name: 'Add bullet point',
         });
 
@@ -418,10 +425,10 @@ describe('Education', () => {
         const functions = cloneDeep(FUNCTIONS);
         functions.deleteBulletPoint = mockFn;
 
-        render(<Education {...getProps({ functions })} />);
+        await render(<Education {...getProps({ functions })} />);
         const user = userEvent.setup();
 
-        const deleteBulletPointBtn = screen.getByRole('button', {
+        const deleteBulletPointBtn = page.getByRole('button', {
           name: 'Delete bullet point 1',
         });
 
@@ -444,11 +451,11 @@ describe('Education', () => {
           editBulletPoint: mockFn,
         });
 
-        render(<Education {...getProps({ functions })} />);
+        await render(<Education {...getProps({ functions })} />);
         const user = userEvent.setup();
 
-        const input = screen.getByRole('textbox', { name: 'Bullet point 1' });
-        input.focus();
+        const input = page.getByRole('textbox', { name: 'Bullet point 1' });
+        input.element().focus();
 
         // Act
         await user.keyboard('s');
@@ -474,11 +481,11 @@ describe('Education', () => {
           editDegree: mockFn,
         });
 
-        render(<Education {...getProps({ functions })} />);
+        await render(<Education {...getProps({ functions })} />);
         const user = userEvent.setup();
 
-        const input = screen.getByRole('textbox', { name: 'Degree' });
-        input.focus();
+        const input = page.getByRole('textbox', { name: 'Degree' });
+        input.element().focus();
 
         // Act
         await user.keyboard('s');
@@ -504,10 +511,10 @@ describe('Education', () => {
         const mockFn = vi.fn((_announcement: string) => {});
         const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
-        render(<Education {...props} />);
+        await render(<Education {...props} />);
         const user = userEvent.setup();
 
-        const deleteBtn = screen.getByRole('button', {
+        const deleteBtn = page.getByRole('button', {
           name: 'Delete bullet point 1',
         });
 
@@ -520,12 +527,12 @@ describe('Education', () => {
     });
   });
 
-  it('should pass the section element to `ref.current`', () => {
+  it('should pass the section element to `ref.current`', async () => {
     const ref = { current: null };
-    render(<Education {...getProps({ ref })} />);
+    await render(<Education {...getProps({ ref })} />);
 
-    const education = screen.getByRole('tabpanel');
+    const education = page.getByRole('tabpanel');
 
-    expect(ref.current).toBe(education);
+    expect(ref.current).toBe(education.element());
   });
 });

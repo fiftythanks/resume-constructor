@@ -6,9 +6,8 @@
 
 import type { RefObject } from 'react';
 
-import { getByRole, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom/vitest';
-import userEvent from '@testing-library/user-event';
+import { render } from 'vitest-browser-react';
+import { page, userEvent } from 'vitest/browser';
 
 import Project from './Project';
 
@@ -66,47 +65,49 @@ function getProps(overrides?: Partial<ProjectProps>): ProjectProps {
 }
 
 describe('Project', () => {
-  it('should assign the Project Name input field to `firstFormFieldRef.current`', () => {
+  it('should assign the Project Name input field to `firstFormFieldRef.current`', async () => {
     const firstFormFieldRef: RefObject<HTMLInputElement | null> = {
       current: null,
     };
-    render(<Project {...getProps({ firstFormFieldRef })} />);
+    await render(<Project {...getProps({ firstFormFieldRef })} />);
 
-    const projectNameField = screen.getByRole('textbox', {
+    const projectNameField = page.getByRole('textbox', {
       name: 'Project Name',
     });
 
-    expect(firstFormFieldRef.current).toBe(projectNameField);
+    expect(firstFormFieldRef.current).toBe(projectNameField.element());
   });
 
   describe('Project Name', () => {
-    it('should render a text input for Project Name', () => {
-      render(<Project {...getProps()} />);
+    it('should render a text input for Project Name', async () => {
+      await render(<Project {...getProps()} />);
 
-      const input = screen.getByRole('textbox', { name: 'Project Name' });
+      const input = page.getByRole('textbox', { name: 'Project Name' });
 
-      expect(input).toBeInTheDocument();
+      await expect.element(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "TravelPlanner" for Project Name', () => {
-      render(<Project {...getProps()} />);
+    it('should have a placeholder "TravelPlanner" for Project Name', async () => {
+      await render(<Project {...getProps()} />);
 
-      const input: HTMLInputElement = screen.getByRole('textbox', {
+      const input = page.getByRole('textbox', {
         name: 'Project Name',
       });
 
-      expect(input.placeholder).toBe('TravelPlanner');
+      await expect
+        .element(input)
+        .toHaveAttribute('placeholder', 'TravelPlanner');
     });
 
-    it('should have the correct value from `data` for Project Name', () => {
+    it('should have the correct value from `data` for Project Name', async () => {
       const props = getProps();
-      render(<Project {...props} />);
+      await render(<Project {...props} />);
 
-      const input: HTMLInputElement = screen.getByRole('textbox', {
+      const input = page.getByRole('textbox', {
         name: 'Project Name',
       });
 
-      expect(input.value).toBe(props.data.projectName);
+      await expect.element(input).toHaveValue(props.data.projectName);
     });
 
     it('should call `editText` on Project Name change via the corresponding text input', async () => {
@@ -114,7 +115,7 @@ describe('Project', () => {
         (_field: 'projectName' | 'stack', _value: string) => {},
       );
 
-      render(
+      await render(
         <Project
           {...getProps({
             functions: { ...getProps().functions, editText: editTextMock },
@@ -123,7 +124,7 @@ describe('Project', () => {
       );
 
       const user = userEvent.setup();
-      const input = screen.getByRole('textbox', { name: 'Project Name' });
+      const input = page.getByRole('textbox', { name: 'Project Name' });
 
       await user.type(input, 's');
 
@@ -132,35 +133,38 @@ describe('Project', () => {
   });
 
   describe('Tech Stack', () => {
-    it('should render a text input for Tech Stack', () => {
-      render(<Project {...getProps()} />);
+    it('should render a text input for Tech Stack', async () => {
+      await render(<Project {...getProps()} />);
 
-      const input = screen.getByRole('textbox', { name: 'Tech Stack' });
+      const input = page.getByRole('textbox', { name: 'Tech Stack' });
 
-      expect(input).toBeInTheDocument();
+      await expect.element(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "HTML, CSS, React, TypeScript, Redux, Bootstrap, Express.js, PostgreSQL" for Tech Stack', () => {
-      render(<Project {...getProps()} />);
+    it('should have a placeholder "HTML, CSS, React, TypeScript, Redux, Bootstrap, Express.js, PostgreSQL" for Tech Stack', async () => {
+      await render(<Project {...getProps()} />);
 
-      const input: HTMLInputElement = screen.getByRole('textbox', {
+      const input = page.getByRole('textbox', {
         name: 'Tech Stack',
       });
 
-      expect(input.placeholder).toBe(
-        'HTML, CSS, React, TypeScript, Redux, Bootstrap, Express.js, PostgreSQL',
-      );
+      await expect
+        .element(input)
+        .toHaveAttribute(
+          'placeholder',
+          'HTML, CSS, React, TypeScript, Redux, Bootstrap, Express.js, PostgreSQL',
+        );
     });
 
-    it('should have the correct value from `data` for Tech Stack', () => {
+    it('should have the correct value from `data` for Tech Stack', async () => {
       const props = getProps();
-      render(<Project {...props} />);
+      await render(<Project {...props} />);
 
-      const input: HTMLInputElement = screen.getByRole('textbox', {
+      const input = page.getByRole('textbox', {
         name: 'Tech Stack',
       });
 
-      expect(input.value).toBe(props.data.stack);
+      await expect.element(input).toHaveValue(props.data.stack);
     });
 
     it('should call `editText` on Tech Stack change via the corresponding text input', async () => {
@@ -168,7 +172,7 @@ describe('Project', () => {
         (_field: 'projectName' | 'stack', _value: string) => {},
       );
 
-      render(
+      await render(
         <Project
           {...getProps({
             functions: { ...getProps().functions, editText: editTextMock },
@@ -177,7 +181,7 @@ describe('Project', () => {
       );
 
       const user = userEvent.setup();
-      const input = screen.getByRole('textbox', { name: 'Tech Stack' });
+      const input = page.getByRole('textbox', { name: 'Tech Stack' });
 
       await user.type(input, 's');
 
@@ -187,41 +191,34 @@ describe('Project', () => {
 
   // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
   describe('Bullet points', () => {
-    it('should render bullet points with an accessible name "Bullet Points"', () => {
-      render(<Project {...getProps()} />);
+    it('should render bullet points with an accessible name "Bullet Points"', async () => {
+      await render(<Project {...getProps()} />);
 
-      const bulletPoints = screen.getByRole('group', { name: 'Bullet Points' });
+      const bulletPoints = page.getByRole('group', { name: 'Bullet Points' });
 
-      expect(bulletPoints).toBeInTheDocument();
+      await expect.element(bulletPoints).toBeInTheDocument();
     });
 
-    it('should pass the correct data from `data` to the bullet points', () => {
+    it('should pass the correct data from `data` to the bullet points', async () => {
       const props = getProps();
-      render(<Project {...props} />);
-      const bulletPoints = screen.getByRole('group', { name: 'Bullet Points' });
+      await render(<Project {...props} />);
+      const bulletPoints = page.getByRole('group', { name: 'Bullet Points' });
 
-      props.data.bulletPoints.forEach((bulletPoint, i) => {
-        const { id, value } = bulletPoint;
+      for (let i = 0; i < props.data.bulletPoints.length; i++) {
+        const { id, value } = props.data.bulletPoints[i];
 
-        const input: HTMLInputElement = getByRole(bulletPoints, 'textbox', {
+        const input = bulletPoints.getByRole('textbox', {
           name: `Bullet point ${i + 1}`,
         });
 
-        expect(input.id).toBe(id);
-        expect(input.value).toBe(value);
-      });
+        await expect.element(input).toHaveAttribute('id', id);
+        await expect.element(input).toHaveValue(value);
+      }
     });
 
-    it('should have placeholders "Developed a user-friendly web application for travel planning, allowing users to create and manage their itineraries.", "Utilized Redux for state management, enabling efficient data flow and improved application performance.", "Designed RESTful APIs using Node.js and Express.js, facilitating data retrieval and storage from the PostgreSQL database." for the first 3 bullet points', () => {
-      render(<Project {...getProps()} />);
-      const bulletPoints = screen.getByRole('group', { name: 'Bullet Points' });
-      const bulletNodes: Array<HTMLInputElement> = [];
-
-      for (let i = 0; i < 3; i++) {
-        bulletNodes[i] = getByRole(bulletPoints, 'textbox', {
-          name: `Bullet point ${i + 1}`,
-        });
-      }
+    it('should have placeholders "Developed a user-friendly web application for travel planning, allowing users to create and manage their itineraries.", "Utilized Redux for state management, enabling efficient data flow and improved application performance.", "Designed RESTful APIs using Node.js and Express.js, facilitating data retrieval and storage from the PostgreSQL database." for the first 3 bullet points', async () => {
+      await render(<Project {...getProps()} />);
+      const bulletPoints = page.getByRole('group', { name: 'Bullet Points' });
 
       const placeholders = [
         'Developed a user-friendly web application for travel planning, allowing users to create and manage their itineraries.',
@@ -229,9 +226,14 @@ describe('Project', () => {
         'Designed RESTful APIs using Node.js and Express.js, facilitating data retrieval and storage from the PostgreSQL database.',
       ];
 
-      bulletNodes.forEach((node, i) => {
-        expect(node.placeholder).toBe(placeholders[i]);
-      });
+      for (let i = 0; i < 3; i++) {
+        const node = bulletPoints.getByRole('textbox', {
+          name: `Bullet point ${i + 1}`,
+        });
+        await expect
+          .element(node)
+          .toHaveAttribute('placeholder', placeholders[i]);
+      }
     });
 
     /**
@@ -247,11 +249,11 @@ describe('Project', () => {
         updateScreenReaderAnnouncement: updateScreenReaderAnnouncementMock,
       });
 
-      render(<Project {...props} />);
+      await render(<Project {...props} />);
       const user = userEvent.setup();
-      const bulletPoints = screen.getByRole('group', { name: 'Bullet Points' });
+      const bulletPoints = page.getByRole('group', { name: 'Bullet Points' });
 
-      const deleteBtn = getByRole(bulletPoints, 'button', {
+      const deleteBtn = bulletPoints.getByRole('button', {
         name: 'Delete bullet point 1',
       });
 
@@ -263,33 +265,35 @@ describe('Project', () => {
 
   describe('Code', () => {
     describe('Text', () => {
-      it("should render a text input for Code link's text", () => {
-        render(<Project {...getProps()} />);
+      it("should render a text input for Code link's text", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input = screen.getByRole('textbox', { name: 'Code (text)' });
+        const input = page.getByRole('textbox', { name: 'Code (text)' });
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it("should have a placeholder 'GitHub Repo' for Code link's text", () => {
-        render(<Project {...getProps()} />);
+      it("should have a placeholder 'GitHub Repo' for Code link's text", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Code (text)',
         });
 
-        expect(input.placeholder).toBe('GitHub Repo');
+        await expect
+          .element(input)
+          .toHaveAttribute('placeholder', 'GitHub Repo');
       });
 
-      it("should have the correct value from `data` for Code link's text", () => {
+      it("should have the correct value from `data` for Code link's text", async () => {
         const props = getProps();
-        render(<Project {...getProps()} />);
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Code (text)',
         });
 
-        expect(input.value).toBe(props.data.code.text);
+        await expect.element(input).toHaveValue(props.data.code.text);
       });
 
       it("should call `editLink` on Code link's text change via the corresponding text input", async () => {
@@ -301,7 +305,7 @@ describe('Project', () => {
           ) => {},
         );
 
-        render(
+        await render(
           <Project
             {...getProps({
               functions: { ...getProps().functions, editLink: editLinkMock },
@@ -310,7 +314,7 @@ describe('Project', () => {
         );
 
         const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Code (text)' });
+        const input = page.getByRole('textbox', { name: 'Code (text)' });
 
         await user.type(input, 's');
 
@@ -319,35 +323,38 @@ describe('Project', () => {
     });
 
     describe('URL', () => {
-      it("should render a text input for Code link's URL", () => {
-        render(<Project {...getProps()} />);
+      it("should render a text input for Code link's URL", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input = screen.getByRole('textbox', { name: 'Code (link)' });
+        const input = page.getByRole('textbox', { name: 'Code (link)' });
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it("should have a placeholder 'https://www.github.com/johndoe/TravelPlanner/' for Code link's URL", () => {
-        render(<Project {...getProps()} />);
+      it("should have a placeholder 'https://www.github.com/johndoe/TravelPlanner/' for Code link's URL", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Code (link)',
         });
 
-        expect(input.placeholder).toBe(
-          'https://www.github.com/johndoe/TravelPlanner/',
-        );
+        await expect
+          .element(input)
+          .toHaveAttribute(
+            'placeholder',
+            'https://www.github.com/johndoe/TravelPlanner/',
+          );
       });
 
-      it("should have the correct value from `data` for Code link's URL", () => {
+      it("should have the correct value from `data` for Code link's URL", async () => {
         const props = getProps();
-        render(<Project {...getProps()} />);
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Code (link)',
         });
 
-        expect(input.value).toBe(props.data.code.link);
+        await expect.element(input).toHaveValue(props.data.code.link);
       });
 
       it("should call `editLink` on Code link's URL change via the corresponding text input", async () => {
@@ -359,7 +366,7 @@ describe('Project', () => {
           ) => {},
         );
 
-        render(
+        await render(
           <Project
             {...getProps({
               functions: { ...getProps().functions, editLink: editLinkMock },
@@ -368,7 +375,7 @@ describe('Project', () => {
         );
 
         const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Code (link)' });
+        const input = page.getByRole('textbox', { name: 'Code (link)' });
 
         await user.type(input, 's');
 
@@ -379,33 +386,35 @@ describe('Project', () => {
 
   describe('Demo', () => {
     describe('Text', () => {
-      it("should render a text input for Demo link's text", () => {
-        render(<Project {...getProps()} />);
+      it("should render a text input for Demo link's text", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input = screen.getByRole('textbox', { name: 'Demo (text)' });
+        const input = page.getByRole('textbox', { name: 'Demo (text)' });
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it("should have a placeholder 'Live Preview' for Demo link's text", () => {
-        render(<Project {...getProps()} />);
+      it("should have a placeholder 'Live Preview' for Demo link's text", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Demo (text)',
         });
 
-        expect(input.placeholder).toBe('Live Preview');
+        await expect
+          .element(input)
+          .toHaveAttribute('placeholder', 'Live Preview');
       });
 
-      it("should have the correct value from `data` for Demo link's text", () => {
+      it("should have the correct value from `data` for Demo link's text", async () => {
         const props = getProps();
-        render(<Project {...getProps()} />);
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Demo (text)',
         });
 
-        expect(input.value).toBe(props.data.demo.text);
+        await expect.element(input).toHaveValue(props.data.demo.text);
       });
 
       it("should call `editLink` on Demo link's text change via the corresponding text input", async () => {
@@ -417,7 +426,7 @@ describe('Project', () => {
           ) => {},
         );
 
-        render(
+        await render(
           <Project
             {...getProps({
               functions: { ...getProps().functions, editLink: editLinkMock },
@@ -426,7 +435,7 @@ describe('Project', () => {
         );
 
         const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Demo (text)' });
+        const input = page.getByRole('textbox', { name: 'Demo (text)' });
 
         await user.type(input, 's');
 
@@ -435,35 +444,38 @@ describe('Project', () => {
     });
 
     describe('URL', () => {
-      it("should render a text input for Demo link's URL", () => {
-        render(<Project {...getProps()} />);
+      it("should render a text input for Demo link's URL", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input = screen.getByRole('textbox', { name: 'Demo (link)' });
+        const input = page.getByRole('textbox', { name: 'Demo (link)' });
 
-        expect(input).toBeInTheDocument();
+        await expect.element(input).toBeInTheDocument();
       });
 
-      it("should have a placeholder 'https://john-doe-travel-planner.herokuapp.com/' for Demo link's URL", () => {
-        render(<Project {...getProps()} />);
+      it("should have a placeholder 'https://john-doe-travel-planner.herokuapp.com/' for Demo link's URL", async () => {
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Demo (link)',
         });
 
-        expect(input.placeholder).toBe(
-          'https://john-doe-travel-planner.herokuapp.com/',
-        );
+        await expect
+          .element(input)
+          .toHaveAttribute(
+            'placeholder',
+            'https://john-doe-travel-planner.herokuapp.com/',
+          );
       });
 
-      it("should have the correct value from `data` for Demo link's URL", () => {
+      it("should have the correct value from `data` for Demo link's URL", async () => {
         const props = getProps();
-        render(<Project {...getProps()} />);
+        await render(<Project {...getProps()} />);
 
-        const input: HTMLInputElement = screen.getByRole('textbox', {
+        const input = page.getByRole('textbox', {
           name: 'Demo (link)',
         });
 
-        expect(input.value).toBe(props.data.demo.link);
+        await expect.element(input).toHaveValue(props.data.demo.link);
       });
 
       it("should call `editLink` on Demo link's URL change via the corresponding text input", async () => {
@@ -475,7 +487,7 @@ describe('Project', () => {
           ) => {},
         );
 
-        render(
+        await render(
           <Project
             {...getProps({
               functions: { ...getProps().functions, editLink: editLinkMock },
@@ -484,7 +496,7 @@ describe('Project', () => {
         );
 
         const user = userEvent.setup();
-        const input = screen.getByRole('textbox', { name: 'Demo (link)' });
+        const input = page.getByRole('textbox', { name: 'Demo (link)' });
 
         await user.type(input, 's');
 
