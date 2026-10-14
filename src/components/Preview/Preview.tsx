@@ -9,7 +9,7 @@ import {
 
 import { Font, PDFDownloadLink, usePDF } from '@react-pdf/renderer';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs';
+import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 

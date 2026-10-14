@@ -19,7 +19,12 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "rootDir": "./",
-    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
+    "types": [
+      "node",
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ],
     "paths": {
       "@/*": ["./src/*"]
     }
@@ -34,10 +39,8 @@
     "src",
     "scripts",
     "stylelint.config.js",
+    "vite.config.ts",
     "vitest.config.ts",
-    "vitest.setup.tsx",
-    "webpack.common.ts",
-    "webpack.dev.ts",
-    "webpack.prod.ts"
+    "vitest.setup.tsx"
   ]
 }

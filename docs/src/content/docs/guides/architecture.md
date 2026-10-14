@@ -3,7 +3,7 @@ title: System Architecture & Design Patterns
 description: Core architectural principles, zero-bootstrap philosophy, component colocation and state flow in Resume Constructor.
 ---
 
-Resume Constructor is a production-grade, zero-bootstrap resume generator built on **React 19**, **TypeScript (strict)**, **SCSS with BEM**, custom **webpack 5** and the **Bun** runtime. It implements the formatting, typography and content standards defined in [The Tech Resume Inside Out](https://thetechresume.com/) book by Gergely Orosz.
+Resume Constructor is a production-grade, zero-bootstrap resume generator built on **React 19**, **TypeScript (strict)**, **SCSS with BEM**, **Vite**, **Vitest** and the **Bun** runtime. It implements the formatting, typography and content standards defined in [The Tech Resume Inside Out](https://thetechresume.com/) book by Gergely Orosz.
 
 The codebase is engineered around strict boundaries between presentation, form state, document rendering and accessibility infrastructure.
 
@@ -141,7 +141,7 @@ resume-constructor/
 │   ├── styles/               # Global SCSS, custom properties, BEM base
 │   ├── types/                # TypeScript domain interfaces and utility types
 │   └── utils/                # Pure helper functions (capitalize, neverReached)
-├── webpack.common.ts         # Shared webpack 5 build configuration
-├── webpack.dev.ts            # Development server configuration
-└── webpack.prod.ts           # Production optimization pipeline
+├── index.html                # Application HTML entry point
+├── vite.config.ts            # Vite 8 build and dev server configuration
+└── vitest.config.ts          # Vitest test runner configuration
 ```

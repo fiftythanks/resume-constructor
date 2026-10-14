@@ -1,16 +1,18 @@
-import { configDefaults, defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig, mergeConfig } from 'vitest/config';
 
-export default defineConfig({
-  resolve: {
-    tsconfigPaths: true,
-  },
-  test: {
-    clearMocks: true,
-    css: false,
-    environment: 'jsdom',
-    exclude: [...configDefaults.exclude, 'docs/**', 'e2e/**'],
-    globals: true,
-    setupFiles: ['./vitest.setup.tsx'],
-    testTimeout: 25_000,
-  },
-});
+import viteConfig from './vite.config';
+
+export default mergeConfig(
+  viteConfig,
+  defineConfig({
+    test: {
+      clearMocks: true,
+      css: false,
+      environment: 'jsdom',
+      exclude: [...configDefaults.exclude, 'docs/**', 'e2e/**'],
+      globals: true,
+      setupFiles: ['./vitest.setup.tsx'],
+      testTimeout: 25_000,
+    },
+  }),
+);

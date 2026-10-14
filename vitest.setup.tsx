@@ -5,10 +5,6 @@ import type { Mock } from 'vitest';
 
 vi.mock('tabbable');
 
-vi.mock('pdfjs-dist/build/pdf.worker.min.mjs', () => ({
-  default: 'test-file-stub',
-}));
-
 if (typeof Blob.prototype.arrayBuffer !== 'function') {
   Blob.prototype.arrayBuffer = async function () {
     return new Promise<ArrayBuffer>((resolve, reject) => {

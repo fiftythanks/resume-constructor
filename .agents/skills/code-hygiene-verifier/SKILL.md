@@ -134,7 +134,7 @@ Rule mandates explicit `htmlFor` association:
 
 All documentation, markdown files, commit messages and code comments must adhere to strict typographic rules:
 
-- **Language & Casing:** Traditional British English ("optimise", "initialise", "behaviour", "centre", "colour"), lowercase `webpack`.
+- **Language & Casing:** Traditional British English ("optimise", "initialise", "behaviour", "centre", "colour").
 - **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma (serial comma) in commit messages, code comments, docstrings or documentation. In lists of three or more items, never place a comma before the coordinating conjunction ("and" or "or").
   - Correct: `"apples, oranges and bananas"` ✔️
   - Incorrect: `"apples, oranges, and bananas"` ❌

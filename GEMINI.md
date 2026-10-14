@@ -2,9 +2,8 @@
 
 ## 1. Project Overview & Architectural Principles
 
-- **Core Stack:** React 19, TypeScript (strict), SCSS + BEM, custom webpack 5, Bun runtime/package manager.
+- **Core Stack:** React 19, TypeScript (strict), SCSS + BEM, Vite, Vitest, Bun runtime/package manager.
 - **Domain:** Production-grade, zero-bootstrap resume generator implementing _The Tech Resume Inside Out_.
-- **Branding & Casing:** Always spell `webpack` in strictly lowercase letters (`webpack`, never capitalised as `Webpack`).
 - **Key Constraints:**
   - Component colocation: `Component.tsx`, `Component.scss`, `Component.test.tsx`, `index.tsx` (barrel export).
   - Strict separation: UI primitives (`src/components/`) decoupled from feature pages (`src/pages/`) and business logic (`src/hooks/`).
@@ -27,8 +26,8 @@
   - Prettier: `bun x prettier --write <path>`
   - Type-check: `bun x tsc --noEmit`
 - **Build & Dev:**
-  - Dev server: `bun start` (`webpack serve --disable-interpret --config webpack.dev.ts`)
-  - Production build: `bun run build` (`webpack --disable-interpret --config webpack.prod.ts`)
+  - Dev server: `bun start` (`vite`)
+  - Production build: `bun run build` (`vite build`)
 
 ---
 
@@ -160,7 +159,7 @@ Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
   - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.
   - Pages: `personal`, `education`, `experience`, `projects`, `skills`, `certifications`, `links`, `pages`.
   - Core: `hooks`, `utils`, `types`, `styles`.
-  - Tooling/Infra: `webpack`, `husky`, `ci`, `e2e`, `vitest`, `eslint`, `package`, `readme`, `docs`, `agents`.
+  - Tooling/Infra: `vite`, `husky`, `ci`, `e2e`, `vitest`, `eslint`, `package`, `readme`, `docs`, `agents`.
 
 ---
 
