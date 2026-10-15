@@ -71,6 +71,7 @@ export default defineConfig({
             '../src/components/Button/index.tsx',
             '../src/components/Popup/index.tsx',
             '../src/components/AddSections/index.tsx',
+            '../src/components/AddSections/getAddableSectionIds.ts',
             '../src/components/AppbarIconButton/index.tsx',
             '../src/components/AppLayout/index.tsx',
             '../src/components/BulletPoints/index.tsx',

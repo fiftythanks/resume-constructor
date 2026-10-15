@@ -5,6 +5,7 @@ import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
 
 import AddSections from './AddSections';
+import getAddableSectionIds from './getAddableSectionIds';
 
 import type { AddSectionsProps } from './AddSections';
 import type { SectionId } from '@/types/resumeData';
@@ -24,12 +25,6 @@ const ACTIVE_SECTION_IDS: SectionId[] = [
   'education',
   'experience',
 ];
-
-function getAddableSectionIds(): SectionId[] {
-  return possibleSectionIds.filter(
-    (sectionId) => !ACTIVE_SECTION_IDS.includes(sectionId),
-  );
-}
 
 function getProps(overrides?: Partial<AddSectionsProps>): AddSectionsProps {
   return {
@@ -90,7 +85,7 @@ describe('AddSections', () => {
       await render(<Container />);
       await render(<AddSections {...getProps()} />);
 
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
       for (const sectionId of addableSectionIds) {
         const addBtn = page.getByRole('button', {
@@ -121,7 +116,7 @@ describe('AddSections', () => {
         <AddSections {...getProps({ addSections: addSectionsMock })} />,
       );
       const user = userEvent.setup();
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
       const sectionToAddId = addableSectionIds[0];
 
       const btn = page.getByRole('button', {
@@ -138,7 +133,7 @@ describe('AddSections', () => {
       await render(<Container />);
       await render(<AddSections {...getProps()} />);
       const user = userEvent.setup();
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
       const firstAddBtn = page.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds[0]]}`,
@@ -159,7 +154,7 @@ describe('AddSections', () => {
       await render(<Container />);
       await render(<AddSections {...getProps()} />);
       const user = userEvent.setup();
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
       const lastAddBtn = page.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds.at(-1)!]}`,

@@ -4,6 +4,8 @@ import Popup from '@/components/Popup';
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
 
+import getAddableSectionIds from './getAddableSectionIds';
+
 import closeSrc from '@/assets/icons/cross.svg';
 
 import './AddSections.scss';
@@ -47,9 +49,7 @@ export default function AddSections({
    * Creates an array of "add-buttons" for adding sections.
    */
   const createAddBtns = () => {
-    const addableSectionIds = possibleSectionIds.filter(
-      (sectionId) => !activeSectionIds.includes(sectionId),
-    );
+    const addableSectionIds = getAddableSectionIds(activeSectionIds);
 
     return addableSectionIds.map((sectionId, i) => {
       const handleClick = () => {
