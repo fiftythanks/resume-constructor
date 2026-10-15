@@ -159,7 +159,7 @@ Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
   - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.
   - Pages: `personal`, `education`, `experience`, `projects`, `skills`, `certifications`, `links`, `pages`.
   - Core: `hooks`, `utils`, `types`, `styles`.
-  - Tooling/Infra: `vite`, `husky`, `ci`, `e2e`, `vitest`, `eslint`, `package`, `readme`, `docs`, `agents`.
+  - Tooling/Infra: `vite`, `ts`, `vitest`, `eslint`, `prettier`, `stylelint`, `playwright`, `e2e`, `husky`, `ci`, `package`, `readme`, `docs`, `agents`.
 
 ---
 

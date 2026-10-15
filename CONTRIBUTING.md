@@ -124,11 +124,15 @@ All scopes must be **strictly lowercase**.
 #### Domain D: Infrastructure, Tooling & Build System
 
 - `vite`: Vite build and development server configuration (`vite.config.ts`)
-- `husky`: Git pre-commit and pre-push hooks (`.husky/`)
-- `ci`: Continuous Integration workflows (`.github/workflows/`)
-- `e2e`: Playwright test suites and configs (`e2e/`, `playwright.config.ts`)
+- `ts`: TypeScript compiler configuration (`tsconfig.json`, `docs/tsconfig.json`)
 - `vitest`: Vitest configuration and testing setup (`vitest.config.ts`, `vitest.setup.tsx`)
 - `eslint`: ESLint flat configuration and rules (`eslint.config.ts`)
+- `prettier`: Prettier formatting configuration (`prettier.config.js`, `.prettierignore`)
+- `stylelint`: Stylelint configuration and rules (`stylelint.config.js`)
+- `playwright`: Playwright test runner configuration (`playwright.config.ts`)
+- `e2e`: End-to-end Playwright test suites (`e2e/`)
+- `husky`: Git pre-commit and pre-push hooks (`.husky/`)
+- `ci`: Continuous Integration workflows (`.github/workflows/`)
 - `package`: Dependency manifests and runtime updates (`package.json`, `bun.lock`)
 - `readme`: Root repository documentation (`README.md`)
 - `docs`: Documentation portal, guides and configuration (`docs/`)
