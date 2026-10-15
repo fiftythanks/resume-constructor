@@ -78,6 +78,8 @@ export default defineConfig({
             '../src/components/BulletPoints/index.tsx',
             '../src/components/Preview/index.tsx',
             '../src/components/Preview/getResumePdfFileName.ts',
+            '../src/components/SectionItemHeader/index.tsx',
+            '../src/components/SectionItemHeader/getSectionItemHeaderState.ts',
             '../src/pages/Personal/index.tsx',
             '../src/pages/Education/index.tsx',
             '../src/pages/Experience/index.tsx',

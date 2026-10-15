@@ -14,21 +14,24 @@ import type {
 
 import Button from '@/components/Button';
 
+import getSectionItemHeaderState from './getSectionItemHeaderState';
+
 import addSrc from '@/assets/icons/add-black.svg';
 import deleteSrc from '@/assets/icons/delete.svg';
 import nextSrc from '@/assets/icons/next.svg';
 import prevSrc from '@/assets/icons/prev.svg';
 
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
-
 import './SectionItemHeader.scss';
+
+import type { SectionItemName } from './getSectionItemHeaderState';
+import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
 
 export interface SectionItemHeaderProps {
   addItem: () => void;
   deleteItem: () => void;
   handleFocus?: HandleFocus;
   handleKeyDown?: HandleKeyboard;
-  itemName: 'Degree' | 'Job' | 'Project';
+  itemName: SectionItemName;
   itemNumber: number;
   itemsNumber: number;
   ref?: Ref<HTMLElement>;
@@ -150,26 +153,35 @@ export default function SectionItemHeader({
     }
   };
 
+  const {
+    addAnnouncement,
+    canDelete,
+    canShowNext,
+    canShowPrevious,
+    deleteAnnouncement,
+    headerModifier,
+    nextAnnouncement,
+    previousAnnouncement,
+  } = getSectionItemHeaderState(itemName, itemNumber, itemsNumber);
+
   const handlePrevious = () => {
     showPreviousItem();
-    updateScreenReaderAnnouncement?.(`Showing ${itemName} ${itemNumber - 1}`);
+    updateScreenReaderAnnouncement?.(previousAnnouncement);
   };
 
   const handleNext = () => {
     showNextItem();
-    updateScreenReaderAnnouncement?.(`Showing ${itemName} ${itemNumber + 1}`);
+    updateScreenReaderAnnouncement?.(nextAnnouncement);
   };
 
   const handleAdd = () => {
     addItem();
-    updateScreenReaderAnnouncement?.(
-      `${itemName} ${itemsNumber + 1} was added`,
-    );
+    updateScreenReaderAnnouncement?.(addAnnouncement);
   };
 
   const handleDelete = () => {
     deleteItem();
-    updateScreenReaderAnnouncement?.(`${itemName} ${itemNumber} was deleted`);
+    updateScreenReaderAnnouncement?.(deleteAnnouncement);
   };
 
   const handleNextFocus = (e: FocusEvent<HTMLButtonElement>) => {
@@ -198,27 +210,17 @@ export default function SectionItemHeader({
 
   return (
     <header
+      className={clsx('SectionItemHeader', headerModifier)}
       data-testid="section-item-header"
       ref={handleHeaderRef}
       onBlurCapture={handleBlurCapture}
       onFocusCapture={handleFocusCapture}
-      className={clsx(
-        'SectionItemHeader',
-        itemsNumber === 1 && 'SectionItemHeader_oneButton',
-        itemsNumber > 1 &&
-          (itemNumber === 1 || itemNumber === itemsNumber) &&
-          'SectionItemHeader_threeButtons',
-        itemsNumber > 2 &&
-          itemNumber !== 1 &&
-          itemNumber !== itemsNumber &&
-          'SectionItemHeader_fourButtons',
-      )}
     >
       <h2 className="SectionItemHeader-Title">
         {itemName} {itemNumber}
       </h2>
       <div className="SectionItemHeader-BtnsWrapper">
-        {itemNumber > 1 && (
+        {canShowPrevious && (
           <Button
             aria-label={`Show Previous ${itemName}`}
             id={`show-previous-${itemName.toLowerCase()}`}
@@ -232,7 +234,7 @@ export default function SectionItemHeader({
             <img alt="Previous" height="25px" src={prevSrc} width="25px" />
           </Button>
         )}
-        {itemNumber < itemsNumber && (
+        {canShowNext && (
           <Button
             aria-label={`Show Next ${itemName}`}
             id={`show-next-${itemName.toLowerCase()}`}
@@ -257,7 +259,7 @@ export default function SectionItemHeader({
         >
           <img alt="Add" height="25px" src={addSrc} width="25px" />
         </Button>
-        {itemsNumber > 1 && (
+        {canDelete && (
           <Button
             aria-label={`Delete ${itemName} ${itemNumber}`}
             className="SectionItemHeader-Button SectionItemHeader-Button_pushToEnd"
