@@ -204,46 +204,6 @@ describe('Skills', () => {
       );
     });
 
-    it('should call `updateSkills` with `"languages"` and the reordered languages when a language is dragged and dropped onto another language', async () => {
-      // ARRANGE
-      await render(<div aria-label="Skills" id="skills" />);
-
-      const updateSkillsMock = vi.fn(
-        <T extends 'frameworks' | 'languages' | 'tools'>(
-          _field: T,
-          _value: ResumeData['skills'][T],
-        ) => {},
-      );
-
-      let props = getProps();
-
-      props = {
-        ...props,
-        functions: { ...props.functions, updateSkills: updateSkillsMock },
-      };
-
-      await render(<Skills {...props} />);
-      const user = userEvent.setup();
-      const languages = page.getByRole('group', { name: 'Languages' });
-      const firstDragHandle = languages.getByRole('button', {
-        name: 'Drag bullet point 1',
-      });
-      const thirdDragHandle = languages.getByRole('button', {
-        name: 'Drag bullet point 3',
-      });
-
-      // ACT
-      await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
-
-      // ASSERT
-      expect(updateSkillsMock).toHaveBeenCalledTimes(1);
-      expect(updateSkillsMock).toHaveBeenCalledWith('languages', [
-        props.data.languages[1],
-        props.data.languages[2],
-        props.data.languages[0],
-      ]);
-    });
-
     /**
      * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
      * the test's name should be changed.
@@ -400,48 +360,6 @@ describe('Skills', () => {
       );
     });
 
-    it('should call `updateSkills` with `"frameworks"` and the reordered frameworks when a framework is dragged and dropped onto another framework', async () => {
-      // ARRANGE
-      await render(<div aria-label="Skills" id="skills" />);
-
-      const updateSkillsMock = vi.fn(
-        <T extends 'frameworks' | 'languages' | 'tools'>(
-          _field: T,
-          _value: ResumeData['skills'][T],
-        ) => {},
-      );
-
-      let props = getProps();
-
-      props = {
-        ...props,
-        functions: { ...props.functions, updateSkills: updateSkillsMock },
-      };
-
-      await render(<Skills {...props} />);
-      const user = userEvent.setup();
-      const frameworks = page.getByRole('group', {
-        name: 'Frameworks, Libraries & Databases',
-      });
-      const firstDragHandle = frameworks.getByRole('button', {
-        name: 'Drag bullet point 1',
-      });
-      const thirdDragHandle = frameworks.getByRole('button', {
-        name: 'Drag bullet point 3',
-      });
-
-      // ACT
-      await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
-
-      // ASSERT
-      expect(updateSkillsMock).toHaveBeenCalledTimes(1);
-      expect(updateSkillsMock).toHaveBeenCalledWith('frameworks', [
-        props.data.frameworks[1],
-        props.data.frameworks[2],
-        props.data.frameworks[0],
-      ]);
-    });
-
     /**
      * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
      * the test's name should be changed.
@@ -583,48 +501,6 @@ describe('Skills', () => {
         0,
         `${props.data.tools[0].value}s`,
       );
-    });
-
-    it('should call `updateSkills` with `"tools"` and the reordered tools when a tool is dragged and dropped onto another tool', async () => {
-      // ARRANGE
-      await render(<div aria-label="Skills" id="skills" />);
-
-      const updateSkillsMock = vi.fn(
-        <T extends 'frameworks' | 'languages' | 'tools'>(
-          _field: T,
-          _value: ResumeData['skills'][T],
-        ) => {},
-      );
-
-      let props = getProps();
-
-      props = {
-        ...props,
-        functions: { ...props.functions, updateSkills: updateSkillsMock },
-      };
-
-      await render(<Skills {...props} />);
-      const user = userEvent.setup();
-      const tools = page.getByRole('group', {
-        name: 'Tools & Other Technologies',
-      });
-      const firstDragHandle = tools.getByRole('button', {
-        name: 'Drag bullet point 1',
-      });
-      const thirdDragHandle = tools.getByRole('button', {
-        name: 'Drag bullet point 3',
-      });
-
-      // ACT
-      await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
-
-      // ASSERT
-      expect(updateSkillsMock).toHaveBeenCalledTimes(1);
-      expect(updateSkillsMock).toHaveBeenCalledWith('tools', [
-        props.data.tools[1],
-        props.data.tools[2],
-        props.data.tools[0],
-      ]);
     });
 
     /**

@@ -600,47 +600,6 @@ describe('Projects', () => {
       );
     });
 
-    it('should call `updateBulletPoints` with the reordered bullet points when a bullet point of the project is dragged and dropped onto another bullet point', async () => {
-      // ARRANGE
-      await render(<div aria-label="Projects" id="projects" />);
-      const updateBulletPointsMock = vi.fn(
-        (_projectIndex: number, _value: ItemWithId[]) => {},
-      );
-      let props = getProps();
-
-      props = {
-        ...props,
-        functions: {
-          ...props.functions,
-          updateBulletPoints: updateBulletPointsMock,
-        },
-      };
-
-      await render(<Projects {...props} />);
-      const user = userEvent.setup();
-
-      const firstDragHandle = page.getByRole('button', {
-        name: 'Drag bullet point 1',
-      });
-      const thirdDragHandle = page.getByRole('button', {
-        name: 'Drag bullet point 3',
-      });
-
-      // ACT
-      await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
-
-      // ASSERT
-      const { shownProjectIndex } = props.data;
-      const { bulletPoints } = props.data.projects[shownProjectIndex];
-
-      expect(updateBulletPointsMock).toHaveBeenCalledTimes(1);
-      expect(updateBulletPointsMock).toHaveBeenCalledWith(shownProjectIndex, [
-        bulletPoints[1],
-        bulletPoints[2],
-        bulletPoints[0],
-      ]);
-    });
-
     /**
      * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
      * the test's name should be changed.

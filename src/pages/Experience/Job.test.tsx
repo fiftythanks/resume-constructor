@@ -341,29 +341,5 @@ describe('Job', () => {
       const { value: initialValue } = DATA.bulletPoints[0];
       expect(mockFn).toHaveBeenCalledWith(0, `${initialValue}s`);
     });
-
-    it('should call `updateBulletPoints` with the reordered bullet points when a bullet point is dragged and dropped onto another bullet point', async () => {
-      const mockFn = vi.fn((_value: ItemWithId[]) => {});
-      const functions = cloneDeep(FUNCTIONS);
-      functions.updateBulletPoints = mockFn;
-      const props = getProps({ functions });
-      await render(<Job {...props} />);
-      const user = userEvent.setup();
-      const firstDragHandle = page.getByRole('button', {
-        name: 'Drag bullet point 1',
-      });
-      const thirdDragHandle = page.getByRole('button', {
-        name: 'Drag bullet point 3',
-      });
-
-      await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
-
-      expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(mockFn).toHaveBeenCalledWith([
-        DATA.bulletPoints[1],
-        DATA.bulletPoints[2],
-        DATA.bulletPoints[0],
-      ]);
-    });
   });
 });

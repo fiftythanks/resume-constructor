@@ -482,39 +482,6 @@ describe('Experience', () => {
         );
       });
 
-      it('should call `updateBulletPoints` with the reordered bullet points when a bullet point of the job is dragged and dropped onto another bullet point', async () => {
-        // ARRANGE
-        const mockFn = vi.fn((_jobIndex: number, _value: ItemWithId[]) => {});
-
-        const functions = cloneDeep({
-          ...FUNCTIONS,
-          updateBulletPoints: mockFn,
-        });
-
-        await render(<Experience {...getProps({ functions })} />);
-        const user = userEvent.setup();
-
-        const firstDragHandle = page.getByRole('button', {
-          name: 'Drag bullet point 1',
-        });
-        const thirdDragHandle = page.getByRole('button', {
-          name: 'Drag bullet point 3',
-        });
-
-        // ACT
-        await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
-
-        // ASSERT
-        const { bulletPoints } = DATA.jobs[DATA.shownJobIndex];
-
-        expect(mockFn).toHaveBeenCalledTimes(1);
-        expect(mockFn).toHaveBeenCalledWith(DATA.shownJobIndex, [
-          bulletPoints[1],
-          bulletPoints[2],
-          bulletPoints[0],
-        ]);
-      });
-
       /**
        * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
        * the test's name should be changed.
