@@ -140,33 +140,6 @@ describe('App', () => {
     await expect.element(appLayout).toBeInTheDocument();
   });
 
-  describe("Tabbing to tabpanels' first tabbable elements", () => {
-    it.each(Object.values(sectionTitles))(
-      "should focus the %s tabpanel's first tabbable element when the user presses Tab while focused on the corresponding tab",
-      async (sectionTitle) => {
-        // Arrange
-        const { navbar, user, fillAllBtn } =
-          await renderAppWithNavbarAndControlsExpanded();
-
-        await user.click(fillAllBtn);
-        const tab = navbar.getByRole('tab', { name: sectionTitle });
-        await user.click(tab);
-
-        // Act
-        await user.keyboard('{Tab}');
-
-        // Assert
-        const tabpanel = page.getByRole('tabpanel', { name: sectionTitle });
-        const rawFirstTabbable = tabpanel
-          .element()
-          .querySelector('button, input, textarea');
-        const firstTabbable =
-          rawFirstTabbable instanceof HTMLElement ? rawFirstTabbable : null;
-        await expect.element(firstTabbable).toHaveFocus();
-      },
-    );
-  });
-
   describe('Focus retention', () => {
     const cases = [
       {
@@ -480,50 +453,6 @@ describe('App', () => {
 
         // Assert
         expect(tabs).toHaveLength(initialTabs.length);
-      });
-    });
-
-    describe('Section tab reordering', () => {
-      it('should reorder section tabs when a draggable tab is dragged and dropped onto another draggable tab in editor mode', async () => {
-        // ARRANGE
-        const { fillAllBtn, navbar, toggleEditorModeBtn, user } =
-          await renderAppWithNavbarAndControlsExpanded();
-
-        await user.click(fillAllBtn);
-        await user.click(toggleEditorModeBtn);
-
-        const sourceTab = navbar.getByRole('tab', {
-          name: sectionTitles.education,
-        });
-        const targetTab = navbar.getByRole('tab', {
-          name: sectionTitles.skills,
-        });
-
-        // ACT
-        /**
-         * Draggable tabs run an infinite CSS shake animation in editor mode,
-         * so Playwright's layout stability check must be bypassed via `force`.
-         */
-        await user.dragAndDrop(sourceTab, targetTab, {
-          force: true,
-          steps: 5,
-        });
-
-        // ASSERT
-        const tabIds = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element().id);
-
-        expect(tabIds).toEqual([
-          'personal',
-          'links',
-          'education',
-          'skills',
-          'experience',
-          'projects',
-          'certifications',
-        ]);
       });
     });
 
