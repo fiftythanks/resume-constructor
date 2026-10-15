@@ -3,12 +3,12 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-
 import type { RefObject } from 'react';
 
+import { getByRole, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
+import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import { render } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
 
 import Job from './Job';
 
@@ -66,134 +66,128 @@ function getProps(overrides?: Partial<JobProps>): JobProps {
 }
 
 describe('Job', () => {
-  it('should assign the Company Name input field to `firstFormFieldRef.current`', async () => {
+  it('should assign the Company Name input field to `firstFormFieldRef.current`', () => {
     const firstFormFieldRef: RefObject<HTMLInputElement | null> = {
       current: null,
     };
-    await render(<Job {...getProps({ firstFormFieldRef })} />);
+    render(<Job {...getProps({ firstFormFieldRef })} />);
 
-    const companyNameField = page.getByRole('textbox', {
+    const companyNameField = screen.getByRole('textbox', {
       name: 'Company Name',
     });
 
-    expect(firstFormFieldRef.current).toBe(companyNameField.element());
+    expect(firstFormFieldRef.current).toBe(companyNameField);
   });
 
   describe('Company Name', () => {
     const name = 'Company Name';
 
-    it('should render a text input for Company Name', async () => {
-      await render(<Job {...getProps()} />);
+    it('should render a text input for Company Name', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "Google" for Company Name', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have a placeholder "Google" for Company Name', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toHaveAttribute('placeholder', 'Google');
+      expect(input.placeholder).toBe('Google');
     });
 
-    it('should have the correct value from `data` for Company Name', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have the correct value from `data` for Company Name', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toHaveValue(DATA.companyName);
+      expect(input.value).toBe(DATA.companyName);
     });
   });
 
   describe('Job Title', () => {
     const name = 'Job Title';
 
-    it('should render a text input for Job Title', async () => {
-      await render(<Job {...getProps()} />);
+    it('should render a text input for Job Title', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "Senior Frontend Engineer" for Job Title', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have a placeholder "Senior Frontend Engineer" for Job Title', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'Senior Frontend Engineer');
+      expect(input.placeholder).toBe('Senior Frontend Engineer');
     });
 
-    it('should have the correct value from `data` for Job Title', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have the correct value from `data` for Job Title', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toHaveValue(DATA.jobTitle);
+      expect(input.value).toBe(DATA.jobTitle);
     });
   });
 
   describe('Duration', () => {
     const name = 'Duration';
 
-    it('should render a text input for Duration', async () => {
-      await render(<Job {...getProps()} />);
+    it('should render a text input for Duration', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "Feb 2021 – Present" for Duration', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have a placeholder "Feb 2021 – Present" for Duration', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'Feb 2021 – Present');
+      expect(input.placeholder).toBe('Feb 2021 – Present');
     });
 
-    it('should have the correct value from `data` for Duration', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have the correct value from `data` for Duration', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toHaveValue(DATA.duration);
+      expect(input.value).toBe(DATA.duration);
     });
   });
 
   describe('Address', () => {
     const name = 'Address';
 
-    it('should render a text input for Address', async () => {
-      await render(<Job {...getProps()} />);
+    it('should render a text input for Address', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "Mountain View, CA" for Address', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have a placeholder "Mountain View, CA" for Address', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'Mountain View, CA');
+      expect(input.placeholder).toBe('Mountain View, CA');
     });
 
-    it('should have the correct value from `data` for Address', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have the correct value from `data` for Address', () => {
+      render(<Job {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name });
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-      await expect.element(input).toHaveValue(DATA.address);
+      expect(input.value).toBe(DATA.address);
     });
   });
 
@@ -214,17 +208,17 @@ describe('Job', () => {
 
     type Field = 'address' | 'companyName' | 'duration' | 'jobTitle';
     const editMockImplementation = (_field: Field, _value: string) => {};
-    const { rerender } = await render(<Job {...getProps()} />);
+    const { rerender } = render(<Job {...getProps()} />);
 
     for (const { fieldName, name } of fields) {
       const editMock = vi.fn(editMockImplementation);
       const functions = cloneDeep(FUNCTIONS);
       functions.edit = editMock;
       const props = getProps({ functions });
-      await rerender(<Job {...props} />);
+      rerender(<Job {...props} />);
       const user = userEvent.setup();
-      const input = page.getByRole('textbox', { name });
-      input.element().focus();
+      const input: HTMLInputElement = screen.getByRole('textbox', { name });
+      input.focus();
 
       await user.keyboard('s');
 
@@ -234,30 +228,30 @@ describe('Job', () => {
   });
 
   describe('Bullet points', () => {
-    it('should render bullet points with an accessible name "Bullet Points"', async () => {
-      await render(<Job {...getProps()} />);
+    it('should render bullet points with an accessible name "Bullet Points"', () => {
+      render(<Job {...getProps()} />);
 
-      const bullets = page.getByRole('group', { name: 'Bullet Points' });
+      const bullets = screen.getByRole('group', { name: 'Bullet Points' });
 
-      await expect.element(bullets).toBeInTheDocument();
+      expect(bullets).toBeInTheDocument();
     });
 
-    it('should have the correct data from `data`', async () => {
-      await render(<Job {...getProps()} />);
-      const bullets = page.getByRole('group', { name: 'Bullet Points' });
+    it('should have the correct data from `data`', () => {
+      render(<Job {...getProps()} />);
+      const bullets = screen.getByRole('group', { name: 'Bullet Points' });
 
-      for (let i = 0; i < DATA.bulletPoints.length; i++) {
-        const { id, value } = DATA.bulletPoints[i];
+      DATA.bulletPoints.forEach((bullet, i) => {
+        const { id, value } = bullet;
         const name = `Bullet point ${i + 1}`;
-        const input = bullets.getByRole('textbox', { name });
+        const input: HTMLInputElement = getByRole(bullets, 'textbox', { name });
 
-        await expect.element(input).toHaveAttribute('id', id);
-        await expect.element(input).toHaveValue(value);
-      }
+        expect(input.id).toBe(id);
+        expect(input.value).toBe(value);
+      });
     });
 
-    it('should have placeholders "Led a team of 10 developers in the successful design, development, and delivery of a scalable and high-performance SaaS platform, resulting in a 30% increase in user engagement and a 20% reduction in response time.", "Architected and implemented a microservices-based architecture using Node.js and Docker, resulting in a more flexible and maintainable system and enabling seamless integration with third-party services.", "Core responsibility #3. Pretend this is where they stop reading. First 3 things should be the most impressive" for the first 3 bullet points', async () => {
-      await render(<Job {...getProps()} />);
+    it('should have placeholders "Led a team of 10 developers in the successful design, development, and delivery of a scalable and high-performance SaaS platform, resulting in a 30% increase in user engagement and a 20% reduction in response time.", "Architected and implemented a microservices-based architecture using Node.js and Docker, resulting in a more flexible and maintainable system and enabling seamless integration with third-party services.", "Core responsibility #3. Pretend this is where they stop reading. First 3 things should be the most impressive" for the first 3 bullet points', () => {
+      render(<Job {...getProps()} />);
 
       const placeholders = [
         'Led a team of 10 developers in the successful design, development, and delivery of a scalable and high-performance SaaS platform, resulting in a 30% increase in user engagement and a 20% reduction in response time.',
@@ -267,11 +261,9 @@ describe('Job', () => {
 
       for (let i = 0; i < 3; i++) {
         const name = `Bullet point ${i + 1}`;
-        const input = page.getByRole('textbox', { name });
+        const input: HTMLInputElement = screen.getByRole('textbox', { name });
 
-        await expect
-          .element(input)
-          .toHaveAttribute('placeholder', placeholders[i]);
+        expect(input.placeholder).toBe(placeholders[i]);
       }
     });
 
@@ -283,10 +275,10 @@ describe('Job', () => {
       const implementation = (_announcement: string) => {};
       const mockFn = vi.fn(implementation);
       const props = getProps({ updateScreenReaderAnnouncement: mockFn });
-      await render(<Job {...props} />);
+      render(<Job {...props} />);
       const user = userEvent.setup();
       const name = 'Delete bullet point 1';
-      const deleteBtn = page.getByRole('button', { name });
+      const deleteBtn = screen.getByRole('button', { name });
 
       await user.click(deleteBtn);
 
@@ -298,10 +290,10 @@ describe('Job', () => {
       const functions = cloneDeep(FUNCTIONS);
       functions.addBulletPoint = mockFn;
       const props = getProps({ functions });
-      await render(<Job {...props} />);
+      render(<Job {...props} />);
       const user = userEvent.setup();
       const name = 'Add bullet point';
-      const addBtn = page.getByRole('button', { name });
+      const addBtn = screen.getByRole('button', { name });
 
       await user.click(addBtn);
 
@@ -313,10 +305,10 @@ describe('Job', () => {
       const functions = cloneDeep(FUNCTIONS);
       functions.deleteBulletPoint = mockFn;
       const props = getProps({ functions });
-      await render(<Job {...props} />);
+      render(<Job {...props} />);
       const user = userEvent.setup();
       const name = 'Delete bullet point 1';
-      const deleteBtn = page.getByRole('button', { name });
+      const deleteBtn = screen.getByRole('button', { name });
 
       await user.click(deleteBtn);
 
@@ -329,11 +321,11 @@ describe('Job', () => {
       const functions = cloneDeep(FUNCTIONS);
       functions.editBulletPoint = mockFn;
       const props = getProps({ functions });
-      await render(<Job {...props} />);
+      render(<Job {...props} />);
       const user = userEvent.setup();
       const name = 'Bullet point 1';
-      const input = page.getByRole('textbox', { name });
-      input.element().focus();
+      const input = screen.getByRole('textbox', { name });
+      input.focus();
 
       await user.keyboard('s');
 
@@ -341,5 +333,7 @@ describe('Job', () => {
       const { value: initialValue } = DATA.bulletPoints[0];
       expect(mockFn).toHaveBeenCalledWith(0, `${initialValue}s`);
     });
+
+    // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
   });
 });

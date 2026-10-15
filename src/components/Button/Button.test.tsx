@@ -1,7 +1,8 @@
 import type { MouseEvent } from 'react';
 
-import { render } from 'vitest-browser-react';
-import { userEvent } from 'vitest/browser';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import Button from './Button';
 
@@ -14,18 +15,16 @@ describe('Button', () => {
     handleClickMock = vi.fn();
   });
 
-  it('should render with the correct accessible name from its children', async () => {
-    const screen = await render(
-      <Button onClick={handleClickMock}>Click me</Button>,
-    );
+  it('should render with the correct accessible name from its children', () => {
+    render(<Button onClick={handleClickMock}>Click me</Button>);
 
     const btn = screen.getByRole('button', { name: /click me/i });
 
-    await expect.element(btn).toBeInTheDocument();
+    expect(btn).toBeInTheDocument();
   });
 
-  it('should use the `aria-label` prop for its accessible name when provided', async () => {
-    const screen = await render(
+  it('should use the `aria-label` prop for its accessible name when provided', () => {
+    render(
       <Button aria-label="Close Dialog" onClick={handleClickMock}>
         X
       </Button>,
@@ -33,15 +32,13 @@ describe('Button', () => {
 
     const btn = screen.getByRole('button', { name: /close dialog/i });
 
-    await expect.element(btn).toBeInTheDocument();
-    await expect.element(btn).toHaveTextContent('X');
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('X');
   });
 
   it('should call the `onClick` handler when the user clicks the button', async () => {
     const user = userEvent.setup();
-    const screen = await render(
-      <Button onClick={handleClickMock}>Click me</Button>,
-    );
+    render(<Button onClick={handleClickMock}>Click me</Button>);
     const btn = screen.getByRole('button', { name: /click me/i });
 
     await user.click(btn);

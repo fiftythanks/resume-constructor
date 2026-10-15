@@ -1,4 +1,5 @@
-import { render } from 'vitest-browser-react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 
 import Popup from './Popup';
 
@@ -24,30 +25,30 @@ function getProps(overrides?: Partial<PopupProps>): PopupProps {
 }
 
 describe('Popup', () => {
-  it('should render a heading with text from its `title` prop', async () => {
-    await render(<Container />);
-    const screen = await render(<Popup {...getProps()} />);
+  it('should render a heading with text from its `title` prop', () => {
+    render(<Container />);
+    render(<Popup {...getProps()} />);
 
     const heading = screen.getByRole('heading', { name: 'Some Title' });
 
-    await expect.element(heading).toBeInTheDocument();
+    expect(heading).toBeInTheDocument();
   });
 
-  it('should render with an accessible name from its heading', async () => {
-    await render(<Container />);
-    const screen = await render(<Popup {...getProps()} />);
+  it('should render with an accessible name from its heading', () => {
+    render(<Container />);
+    render(<Popup {...getProps()} />);
 
     const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
-    await expect.element(popup).toBeInTheDocument();
+    expect(popup).toBeInTheDocument();
   });
 
-  it("shouldn't render if `isShown === false`", async () => {
-    await render(<Container />);
-    const screen = await render(<Popup {...getProps({ isShown: false })} />);
+  it("shouldn't render if `isShown === false`", () => {
+    render(<Container />);
+    render(<Popup {...getProps({ isShown: false })} />);
 
-    const popup = screen.getByRole('dialog', { name: 'Some Title' });
+    const popup = screen.queryByRole('dialog', { name: 'Some Title' });
 
-    await expect.element(popup).not.toBeInTheDocument();
+    expect(popup).not.toBeInTheDocument();
   });
 });

@@ -1,5 +1,6 @@
-import { render, renderHook } from 'vitest-browser-react';
-import { userEvent } from 'vitest/browser';
+import { render, renderHook, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import useLastComponentBeforeTabpanel from './useLastComponentBeforeTabpanel';
 
@@ -11,13 +12,13 @@ describe('useLastComponentBeforeTabpanel', () => {
   describe('handleKeyboard', () => {
     it('should not interrupt the default behaviour of Shift + Tab if the last component is of the relevant type, but its ID does not match the passed to the hook ID', async () => {
       // ARRANGE
-      const { result } = await renderHook(() =>
+      const { result } = renderHook(() =>
         useLastComponentBeforeTabpanel('personal'),
       );
 
       const user = userEvent.setup();
 
-      const screen = await render(
+      render(
         <>
           <button
             aria-label="Irrelevant Button"
@@ -57,18 +58,16 @@ describe('useLastComponentBeforeTabpanel', () => {
         name: 'Irrelevant Button',
       });
 
-      await expect.element(irrelevantBtn).toHaveFocus();
+      expect(irrelevantBtn).toHaveFocus();
     });
 
     it('should focus the last component on Shift + Tab press if the last component is a button with the passed to the hook ID', async () => {
       // ARRANGE
       const id: SectionId = 'personal';
-      const { result } = await renderHook(() =>
-        useLastComponentBeforeTabpanel(id),
-      );
+      const { result } = renderHook(() => useLastComponentBeforeTabpanel(id));
       const user = userEvent.setup();
 
-      const screen = await render(
+      render(
         <>
           <button id="irrelevant-button" type="button" />
           <input
@@ -104,16 +103,16 @@ describe('useLastComponentBeforeTabpanel', () => {
         name: 'Relevant Button',
       });
 
-      await expect.element(lastComponent).toHaveFocus();
+      expect(lastComponent).toHaveFocus();
     });
 
     it('should not interrupt the default behaviour of Shift + Tab if the last component is not of the relevant type', async () => {
       // ARRANGE
-      const { result } = await renderHook(() =>
+      const { result } = renderHook(() =>
         useLastComponentBeforeTabpanel('personal'),
       );
 
-      const screen = await render(
+      render(
         <>
           <button id="preview" type="button" />
           <button
@@ -152,7 +151,7 @@ describe('useLastComponentBeforeTabpanel', () => {
         name: 'Irrelevant Button',
       });
 
-      await expect.element(irrelevantBtn).toHaveFocus();
+      expect(irrelevantBtn).toHaveFocus();
     });
   });
 });

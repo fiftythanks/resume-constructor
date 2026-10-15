@@ -4,8 +4,9 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { render } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
+import { getByRole, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import Skills from './Skills';
 
@@ -18,43 +19,19 @@ function getProps(overrides?: Partial<SkillsProps>): SkillsProps {
       frameworks: [
         {
           id: crypto.randomUUID(),
-          value: 'framework 1',
-        },
-        {
-          id: crypto.randomUUID(),
-          value: 'framework 2',
-        },
-        {
-          id: crypto.randomUUID(),
-          value: 'framework 3',
+          value: 'framework',
         },
       ],
       languages: [
         {
           id: crypto.randomUUID(),
-          value: 'language 1',
-        },
-        {
-          id: crypto.randomUUID(),
-          value: 'language 2',
-        },
-        {
-          id: crypto.randomUUID(),
-          value: 'language 3',
+          value: 'language',
         },
       ],
       tools: [
         {
           id: crypto.randomUUID(),
-          value: 'tool 1',
-        },
-        {
-          id: crypto.randomUUID(),
-          value: 'tool 2',
-        },
-        {
-          id: crypto.randomUUID(),
-          value: 'tool 3',
+          value: 'tool',
         },
       ],
     },
@@ -89,46 +66,48 @@ function getProps(overrides?: Partial<SkillsProps>): SkillsProps {
  * updateScreenReaderAnnouncement for tools
  */
 
+// TODO: find a way to test `updateSkills` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
+
 describe('Skills', () => {
-  it('should render as a tabpanel with an accessible name derived from an element with an ID "skills"', async () => {
-    await render(<div aria-label="Skills" id="skills" />);
-    await render(<Skills {...getProps()} />);
+  it('should render as a tabpanel with an accessible name derived from an element with an ID "skills"', () => {
+    render(<div aria-label="Skills" id="skills" />);
+    render(<Skills {...getProps()} />);
 
-    const skills = page.getByRole('tabpanel', { name: 'Skills' });
+    const skills = screen.getByRole('tabpanel', { name: 'Skills' });
 
-    await expect.element(skills).toBeInTheDocument();
+    expect(skills).toBeInTheDocument();
   });
 
   describe('Languages', () => {
-    it('should render Languages bullet points', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
-      await render(<Skills {...getProps()} />);
+    it('should render Languages bullet points', () => {
+      render(<div aria-label="Skills" id="skills" />);
+      render(<Skills {...getProps()} />);
 
-      const languages = page.getByRole('group', { name: 'Languages' });
+      const languages = screen.getByRole('group', { name: 'Languages' });
 
-      await expect.element(languages).toBeInTheDocument();
+      expect(languages).toBeInTheDocument();
     });
 
-    it('should have the correct data from `data.languages` for Languages', async () => {
+    it('should have the correct data from `data.languages` for Languages', () => {
       const props = getProps();
-      await render(<div aria-label="Skills" id="skills" />);
-      await render(<Skills {...props} />);
-      const languages = page.getByRole('group', { name: 'Languages' });
+      render(<div aria-label="Skills" id="skills" />);
+      render(<Skills {...props} />);
+      const languages = screen.getByRole('group', { name: 'Languages' });
 
-      for (let i = 0; i < props.data.languages.length; i++) {
-        const { id, value } = props.data.languages[i];
+      props.data.languages.forEach((language, i) => {
+        const { id, value } = language;
 
-        const input = languages.getByRole('textbox', {
+        const input: HTMLInputElement = getByRole(languages, 'textbox', {
           name: `Bullet point ${i + 1}`,
         });
 
-        await expect.element(input).toHaveAttribute('id', id);
-        await expect.element(input).toHaveValue(value);
-      }
+        expect(input.id).toBe(id);
+        expect(input.value).toBe(value);
+      });
     });
 
     it('should call `addLanguage` when a language is added via the add-button', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
       const addLanguageMock = vi.fn();
       let props = getProps();
 
@@ -137,10 +116,10 @@ describe('Skills', () => {
         functions: { ...props.functions, addLanguage: addLanguageMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
 
-      const addBtn = page.getByRole('button', {
+      const addBtn = screen.getByRole('button', {
         name: 'Add language',
       });
 
@@ -150,7 +129,7 @@ describe('Skills', () => {
     });
 
     it('should call `deleteLanguage` with the correct index when a language is deleted via the corresponding delete button', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
       const deleteLanguageMock = vi.fn((_languageIndex: number) => {});
       let props = getProps();
 
@@ -159,12 +138,12 @@ describe('Skills', () => {
         functions: { ...props.functions, deleteLanguage: deleteLanguageMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
 
-      const languages = page.getByRole('group', { name: 'Languages' });
+      const languages = screen.getByRole('group', { name: 'Languages' });
 
-      const deleteBtn = languages.getByRole('button', {
+      const deleteBtn = getByRole(languages, 'button', {
         name: 'Delete bullet point 1',
       });
 
@@ -175,7 +154,7 @@ describe('Skills', () => {
     });
 
     it('should call `editLanguage` with the correct index when a language is edited via the corresponding text input', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
 
       const editLanguageMock = vi.fn(
         (_languageIndex: number, _value: string) => {},
@@ -188,11 +167,11 @@ describe('Skills', () => {
         functions: { ...props.functions, editLanguage: editLanguageMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
-      const languages = page.getByRole('group', { name: 'Languages' });
-      const input = languages.getByRole('textbox', { name: 'Bullet point 1' });
-      input.element().focus();
+      const languages = screen.getByRole('group', { name: 'Languages' });
+      const input = getByRole(languages, 'textbox', { name: 'Bullet point 1' });
+      input.focus();
 
       await user.keyboard('s');
 
@@ -209,7 +188,7 @@ describe('Skills', () => {
      * the test's name should be changed.
      */
     it('should call `updateScreenReaderAnnouncement` when an important change is made to Languages via the corresponding controls (not DnD related)', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
 
       const updateScreenReaderAnnouncementMock = vi.fn(
         (_announcement: string) => {},
@@ -219,11 +198,11 @@ describe('Skills', () => {
         updateScreenReaderAnnouncement: updateScreenReaderAnnouncementMock,
       });
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
-      const languages = page.getByRole('group', { name: 'Languages' });
+      const languages = screen.getByRole('group', { name: 'Languages' });
 
-      const deleteBtn = languages.getByRole('button', {
+      const deleteBtn = getByRole(languages, 'button', {
         name: 'Delete bullet point 1',
       });
 
@@ -233,50 +212,50 @@ describe('Skills', () => {
     });
   });
 
-  it('should pass the section element to `ref.current`', async () => {
+  it('should pass the section element to `ref.current`', () => {
     const ref = { current: null };
-    await render(<Skills {...getProps({ ref })} />);
+    render(<Skills {...getProps({ ref })} />);
 
-    const skills = page.getByRole('tabpanel');
+    const skills = screen.getByRole('tabpanel');
 
-    expect(ref.current).toBe(skills.element());
+    expect(ref.current).toBe(skills);
   });
 
   describe('Frameworks', () => {
-    it('should render Frameworks bullet points', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
-      await render(<Skills {...getProps()} />);
+    it('should render Frameworks bullet points', () => {
+      render(<div aria-label="Skills" id="skills" />);
+      render(<Skills {...getProps()} />);
 
-      const frameworks = page.getByRole('group', {
+      const frameworks = screen.getByRole('group', {
         name: 'Frameworks, Libraries & Databases',
       });
 
-      await expect.element(frameworks).toBeInTheDocument();
+      expect(frameworks).toBeInTheDocument();
     });
 
-    it('should have the correct data from `data.frameworks` for Frameworks', async () => {
+    it('should have the correct data from `data.frameworks` for Frameworks', () => {
       const props = getProps();
-      await render(<div aria-label="Skills" id="skills" />);
-      await render(<Skills {...props} />);
+      render(<div aria-label="Skills" id="skills" />);
+      render(<Skills {...props} />);
 
-      const frameworks = page.getByRole('group', {
+      const frameworks = screen.getByRole('group', {
         name: 'Frameworks, Libraries & Databases',
       });
 
-      for (let i = 0; i < props.data.frameworks.length; i++) {
-        const { id, value } = props.data.frameworks[i];
+      props.data.frameworks.forEach((framework, i) => {
+        const { id, value } = framework;
 
-        const input = frameworks.getByRole('textbox', {
+        const input: HTMLInputElement = getByRole(frameworks, 'textbox', {
           name: `Bullet point ${i + 1}`,
         });
 
-        await expect.element(input).toHaveAttribute('id', id);
-        await expect.element(input).toHaveValue(value);
-      }
+        expect(input.id).toBe(id);
+        expect(input.value).toBe(value);
+      });
     });
 
     it('should call `addFramework` when a framework is added via the add-button', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
       const addFrameworkMock = vi.fn();
       let props = getProps();
 
@@ -285,10 +264,10 @@ describe('Skills', () => {
         functions: { ...props.functions, addFramework: addFrameworkMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
 
-      const addBtn = page.getByRole('button', {
+      const addBtn = screen.getByRole('button', {
         name: 'Add framework',
       });
 
@@ -298,7 +277,7 @@ describe('Skills', () => {
     });
 
     it('should call `deleteFramework` with the correct index when a framework is deleted via the corresponding delete button', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
       const deleteFrameworkMock = vi.fn((_frameworkIndex: number) => {});
       let props = getProps();
 
@@ -307,14 +286,14 @@ describe('Skills', () => {
         functions: { ...props.functions, deleteFramework: deleteFrameworkMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
 
-      const frameworks = page.getByRole('group', {
+      const frameworks = screen.getByRole('group', {
         name: 'Frameworks, Libraries & Databases',
       });
 
-      const deleteBtn = frameworks.getByRole('button', {
+      const deleteBtn = getByRole(frameworks, 'button', {
         name: 'Delete bullet point 1',
       });
 
@@ -325,7 +304,7 @@ describe('Skills', () => {
     });
 
     it('should call `editFramework` with the correct index when a framework is edited via the corresponding text input', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
 
       const editFrameworkMock = vi.fn(
         (_frameworkIndex: number, _value: string) => {},
@@ -338,17 +317,17 @@ describe('Skills', () => {
         functions: { ...props.functions, editFramework: editFrameworkMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
-      const frameworks = page.getByRole('group', {
+      const frameworks = screen.getByRole('group', {
         name: 'Frameworks, Libraries & Databases',
       });
 
-      const input = frameworks.getByRole('textbox', {
+      const input = getByRole(frameworks, 'textbox', {
         name: 'Bullet point 1',
       });
 
-      input.element().focus();
+      input.focus();
 
       await user.keyboard('s');
 
@@ -365,7 +344,7 @@ describe('Skills', () => {
      * the test's name should be changed.
      */
     it('should call `updateScreenReaderAnnouncement` when an important change is made to Frameworks via the corresponding controls (not DnD related)', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
 
       const updateScreenReaderAnnouncementMock = vi.fn(
         (_announcement: string) => {},
@@ -375,13 +354,13 @@ describe('Skills', () => {
         updateScreenReaderAnnouncement: updateScreenReaderAnnouncementMock,
       });
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
-      const frameworks = page.getByRole('group', {
+      const frameworks = screen.getByRole('group', {
         name: 'Frameworks, Libraries & Databases',
       });
 
-      const deleteBtn = frameworks.getByRole('button', {
+      const deleteBtn = getByRole(frameworks, 'button', {
         name: 'Delete bullet point 1',
       });
 
@@ -392,40 +371,40 @@ describe('Skills', () => {
   });
 
   describe('Tools', () => {
-    it('should render Tools bullet points', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
-      await render(<Skills {...getProps()} />);
+    it('should render Tools bullet points', () => {
+      render(<div aria-label="Skills" id="skills" />);
+      render(<Skills {...getProps()} />);
 
-      const tools = page.getByRole('group', {
+      const tools = screen.getByRole('group', {
         name: 'Tools & Other Technologies',
       });
 
-      await expect.element(tools).toBeInTheDocument();
+      expect(tools).toBeInTheDocument();
     });
 
-    it('should have the correct data from `data.tools` for Tools', async () => {
+    it('should have the correct data from `data.tools` for Tools', () => {
       const props = getProps();
-      await render(<div aria-label="Skills" id="skills" />);
-      await render(<Skills {...props} />);
+      render(<div aria-label="Skills" id="skills" />);
+      render(<Skills {...props} />);
 
-      const tools = page.getByRole('group', {
+      const tools = screen.getByRole('group', {
         name: 'Tools & Other Technologies',
       });
 
-      for (let i = 0; i < props.data.tools.length; i++) {
-        const { id, value } = props.data.tools[i];
+      props.data.tools.forEach((tool, i) => {
+        const { id, value } = tool;
 
-        const toolInput = tools.getByRole('textbox', {
+        const toolInput: HTMLInputElement = getByRole(tools, 'textbox', {
           name: `Bullet point ${i + 1}`,
         });
 
-        await expect.element(toolInput).toHaveAttribute('id', id);
-        await expect.element(toolInput).toHaveValue(value);
-      }
+        expect(toolInput.id).toBe(id);
+        expect(toolInput.value).toBe(value);
+      });
     });
 
     it('should call `addTool` when a tool is added via the add-button', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
       const addToolMock = vi.fn();
       let props = getProps();
 
@@ -434,10 +413,10 @@ describe('Skills', () => {
         functions: { ...props.functions, addTool: addToolMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
 
-      const addBtn = page.getByRole('button', {
+      const addBtn = screen.getByRole('button', {
         name: 'Add tool',
       });
 
@@ -447,7 +426,7 @@ describe('Skills', () => {
     });
 
     it('should call `deleteTool` with the correct index when a tool is deleted via the corresponding delete button', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
       const deleteToolMock = vi.fn((_toolIndex: number) => {});
       let props = getProps();
 
@@ -456,14 +435,14 @@ describe('Skills', () => {
         functions: { ...props.functions, deleteTool: deleteToolMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
 
-      const tools = page.getByRole('group', {
+      const tools = screen.getByRole('group', {
         name: 'Tools & Other Technologies',
       });
 
-      const deleteBtn = tools.getByRole('button', {
+      const deleteBtn = getByRole(tools, 'button', {
         name: 'Delete bullet point 1',
       });
 
@@ -474,7 +453,7 @@ describe('Skills', () => {
     });
 
     it('should call `editTool` with the correct index when a tool is edited via the corresponding text input', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
 
       const editToolMock = vi.fn((_toolIndex: number, _value: string) => {});
 
@@ -485,13 +464,13 @@ describe('Skills', () => {
         functions: { ...props.functions, editTool: editToolMock },
       };
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
-      const tools = page.getByRole('group', {
+      const tools = screen.getByRole('group', {
         name: 'Tools & Other Technologies',
       });
-      const input = tools.getByRole('textbox', { name: 'Bullet point 1' });
-      input.element().focus();
+      const input = getByRole(tools, 'textbox', { name: 'Bullet point 1' });
+      input.focus();
 
       await user.keyboard('s');
 
@@ -508,7 +487,7 @@ describe('Skills', () => {
      * the test's name should be changed.
      */
     it('should call `updateScreenReaderAnnouncement` when an important change is made to Tools via the corresponding controls (not DnD related)', async () => {
-      await render(<div aria-label="Skills" id="skills" />);
+      render(<div aria-label="Skills" id="skills" />);
 
       const updateScreenReaderAnnouncementMock = vi.fn(
         (_announcement: string) => {},
@@ -518,13 +497,13 @@ describe('Skills', () => {
         updateScreenReaderAnnouncement: updateScreenReaderAnnouncementMock,
       });
 
-      await render(<Skills {...props} />);
+      render(<Skills {...props} />);
       const user = userEvent.setup();
-      const tools = page.getByRole('group', {
+      const tools = screen.getByRole('group', {
         name: 'Tools & Other Technologies',
       });
 
-      const deleteBtn = tools.getByRole('button', {
+      const deleteBtn = getByRole(tools, 'button', {
         name: 'Delete bullet point 1',
       });
 

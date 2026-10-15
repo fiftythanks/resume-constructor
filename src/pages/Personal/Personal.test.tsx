@@ -1,5 +1,6 @@
-import { render } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import Personal from './Personal';
 
@@ -28,55 +29,53 @@ function getProps(overrides?: Partial<PersonalProps>): PersonalProps {
 }
 
 describe('Personal', () => {
-  beforeEach(async () => {
-    await render(<div aria-label="Personal" id="personal" />);
+  render(<div aria-label="Personal" id="personal" />);
+
+  it('should render as a tabpanel with an accessible name derived from an element with an ID "personal"', () => {
+    render(<Personal {...getProps()} />);
+
+    const personal = screen.getByRole('tabpanel', { name: 'Personal' });
+
+    expect(personal).toBeInTheDocument();
   });
 
-  it('should render as a tabpanel with an accessible name derived from an element with an ID "personal"', async () => {
-    await render(<Personal {...getProps()} />);
-
-    const personal = page.getByRole('tabpanel', { name: 'Personal' });
-
-    await expect.element(personal).toBeInTheDocument();
-  });
-
-  it('should pass the section element to `ref.current`', async () => {
+  it('should pass the section element to `ref.current`', () => {
     const ref = { current: null };
-    await render(<Personal {...getProps({ ref })} />);
+    render(<Personal {...getProps({ ref })} />);
 
-    const personal = page.getByRole('tabpanel');
+    const personal = screen.getByRole('tabpanel');
 
-    expect(ref.current).toBe(personal.element());
+    expect(ref.current).toBe(personal);
   });
 
   describe('Full Name', () => {
-    it('should render a text input for Full Name', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should render a text input for Full Name', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name: 'Full Name' });
+      const input = screen.getByRole('textbox', { name: 'Full Name' });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "John Doe" for Full Name', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should have a placeholder "John Doe" for Full Name', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Full Name',
       });
 
-      await expect.element(input).toHaveAttribute('placeholder', 'John Doe');
+      expect(input.placeholder).toBe('John Doe');
     });
 
-    it('should pass the correct value to the text input from `data`', async () => {
+    it('should pass the correct value to the text input from `data`', () => {
       const props = getProps();
-      await render(<Personal {...props} />);
+      render(<Personal {...props} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Full Name',
       });
 
-      await expect.element(input).toHaveValue(props.data.fullName);
+      expect(input.value).toBe(props.data.fullName);
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
@@ -88,7 +87,7 @@ describe('Personal', () => {
         ) => {},
       );
 
-      await render(
+      render(
         <Personal
           {...getProps({
             functions: { updatePersonal: updatePersonalMock },
@@ -97,7 +96,7 @@ describe('Personal', () => {
       );
 
       const user = userEvent.setup();
-      const input = page.getByRole('textbox', { name: 'Full Name' });
+      const input = screen.getByRole('textbox', { name: 'Full Name' });
 
       await user.type(input, 's');
 
@@ -106,35 +105,33 @@ describe('Personal', () => {
   });
 
   describe('Job Title', () => {
-    it('should render a text input for Job Title', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should render a text input for Job Title', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name: 'Job Title' });
+      const input = screen.getByRole('textbox', { name: 'Job Title' });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "Frontend Engineer" for Job Title', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should have a placeholder "Frontend Engineer" for Job Title', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Job Title',
       });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'Frontend Engineer');
+      expect(input.placeholder).toBe('Frontend Engineer');
     });
 
-    it('should pass the correct value to the text input from `data`', async () => {
+    it('should pass the correct value to the text input from `data`', () => {
       const props = getProps();
-      await render(<Personal {...props} />);
+      render(<Personal {...props} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Job Title',
       });
 
-      await expect.element(input).toHaveValue(props.data.jobTitle);
+      expect(input.value).toBe(props.data.jobTitle);
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
@@ -146,7 +143,7 @@ describe('Personal', () => {
         ) => {},
       );
 
-      await render(
+      render(
         <Personal
           {...getProps({
             functions: { updatePersonal: updatePersonalMock },
@@ -155,7 +152,7 @@ describe('Personal', () => {
       );
 
       const user = userEvent.setup();
-      const input = page.getByRole('textbox', { name: 'Job Title' });
+      const input = screen.getByRole('textbox', { name: 'Job Title' });
 
       await user.type(input, 's');
 
@@ -164,35 +161,33 @@ describe('Personal', () => {
   });
 
   describe('Email', () => {
-    it('should render a text input for Email', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should render a text input for Email', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name: 'Email' });
+      const input = screen.getByRole('textbox', { name: 'Email' });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "john.doe@gmail.com" for Email', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should have a placeholder "john.doe@gmail.com" for Email', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Email',
       });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'john.doe@gmail.com');
+      expect(input.placeholder).toBe('john.doe@gmail.com');
     });
 
-    it('should pass the correct value to the text input from `data`', async () => {
+    it('should pass the correct value to the text input from `data`', () => {
       const props = getProps();
-      await render(<Personal {...props} />);
+      render(<Personal {...props} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Email',
       });
 
-      await expect.element(input).toHaveValue(props.data.email);
+      expect(input.value).toBe(props.data.email);
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
@@ -204,7 +199,7 @@ describe('Personal', () => {
         ) => {},
       );
 
-      await render(
+      render(
         <Personal
           {...getProps({
             functions: { updatePersonal: updatePersonalMock },
@@ -213,7 +208,7 @@ describe('Personal', () => {
       );
 
       const user = userEvent.setup();
-      const input = page.getByRole('textbox', { name: 'Email' });
+      const input = screen.getByRole('textbox', { name: 'Email' });
 
       await user.type(input, 's');
 
@@ -222,35 +217,33 @@ describe('Personal', () => {
   });
 
   describe('Phone', () => {
-    it('should render a text input for Phone', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should render a text input for Phone', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name: 'Phone' });
+      const input = screen.getByRole('textbox', { name: 'Phone' });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "+7 666 534-32-33" for Phone', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should have a placeholder "+7 666 534-32-33" for Phone', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Phone',
       });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', '+7 666 534-32-33');
+      expect(input.placeholder).toBe('+7 666 534-32-33');
     });
 
-    it('should pass the correct value to the text input from `data`', async () => {
+    it('should pass the correct value to the text input from `data`', () => {
       const props = getProps();
-      await render(<Personal {...props} />);
+      render(<Personal {...props} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Phone',
       });
 
-      await expect.element(input).toHaveValue(props.data.phone);
+      expect(input.value).toBe(props.data.phone);
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
@@ -262,7 +255,7 @@ describe('Personal', () => {
         ) => {},
       );
 
-      await render(
+      render(
         <Personal
           {...getProps({
             functions: { updatePersonal: updatePersonalMock },
@@ -271,7 +264,7 @@ describe('Personal', () => {
       );
 
       const user = userEvent.setup();
-      const input = page.getByRole('textbox', { name: 'Phone' });
+      const input = screen.getByRole('textbox', { name: 'Phone' });
 
       await user.type(input, 's');
 
@@ -280,35 +273,33 @@ describe('Personal', () => {
   });
 
   describe('Address', () => {
-    it('should render a text input for Address', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should render a text input for Address', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name: 'Address' });
+      const input = screen.getByRole('textbox', { name: 'Address' });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should have a placeholder "Cool St, Cambridge" for Address', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should have a placeholder "Cool St, Cambridge" for Address', () => {
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Address',
       });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'Cool St, Cambridge');
+      expect(input.placeholder).toBe('Cool St, Cambridge');
     });
 
-    it('should pass the correct value to the text input from `data`', async () => {
+    it('should pass the correct value to the text input from `data`', () => {
       const props = getProps();
-      await render(<Personal {...getProps()} />);
+      render(<Personal {...getProps()} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Address',
       });
 
-      await expect.element(input).toHaveValue(props.data.address);
+      expect(input.value).toBe(props.data.address);
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
@@ -320,7 +311,7 @@ describe('Personal', () => {
         ) => {},
       );
 
-      await render(
+      render(
         <Personal
           {...getProps({
             functions: { updatePersonal: updatePersonalMock },
@@ -329,7 +320,7 @@ describe('Personal', () => {
       );
 
       const user = userEvent.setup();
-      const input = page.getByRole('textbox', { name: 'Address' });
+      const input = screen.getByRole('textbox', { name: 'Address' });
 
       await user.type(input, 's');
 
@@ -338,38 +329,35 @@ describe('Personal', () => {
   });
 
   describe('Summary', () => {
-    it('should render a textarea for Summary', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should render a textarea for Summary', () => {
+      render(<Personal {...getProps()} />);
 
-      const textarea = page.getByRole('textbox', { name: 'Summary' });
+      const textarea = screen.getByRole('textbox', { name: 'Summary' });
 
-      await expect.element(textarea).toBeInTheDocument();
+      expect(textarea).toBeInTheDocument();
     });
 
-    it('should have a placeholder "Detail-oriented Frontend Engineer eager to create seamless user experiences." for Summary', async () => {
-      await render(<Personal {...getProps()} />);
+    it('should have a placeholder "Detail-oriented Frontend Engineer eager to create seamless user experiences." for Summary', () => {
+      render(<Personal {...getProps()} />);
 
-      const textarea = page.getByRole('textbox', {
+      const textarea: HTMLTextAreaElement = screen.getByRole('textbox', {
         name: 'Summary',
       });
 
-      await expect
-        .element(textarea)
-        .toHaveAttribute(
-          'placeholder',
-          'Detail-oriented Frontend Engineer eager to create seamless user experiences.',
-        );
+      expect(textarea.placeholder).toBe(
+        'Detail-oriented Frontend Engineer eager to create seamless user experiences.',
+      );
     });
 
-    it('should pass the correct value to the textarea from `data`', async () => {
+    it('should pass the correct value to the textarea from `data`', () => {
       const props = getProps();
-      await render(<Personal {...props} />);
+      render(<Personal {...props} />);
 
-      const textarea = page.getByRole('textbox', {
+      const textarea: HTMLTextAreaElement = screen.getByRole('textbox', {
         name: 'Summary',
       });
 
-      await expect.element(textarea).toHaveValue(props.data.summary);
+      expect(textarea.value).toBe(props.data.summary);
     });
 
     it("should call `updatePersonal` when the textarea's value is changed", async () => {
@@ -381,7 +369,7 @@ describe('Personal', () => {
         ) => {},
       );
 
-      await render(
+      render(
         <Personal
           {...getProps({
             functions: { updatePersonal: updatePersonalMock },
@@ -390,7 +378,7 @@ describe('Personal', () => {
       );
 
       const user = userEvent.setup();
-      const textarea = page.getByRole('textbox', { name: 'Summary' });
+      const textarea = screen.getByRole('textbox', { name: 'Summary' });
 
       await user.type(textarea, 's');
 

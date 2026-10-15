@@ -1,7 +1,9 @@
-import type { UsePDFInstance } from '@react-pdf/renderer';
-import type { Mock } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 import './src/styles/main.scss';
+
+import type { UsePDFInstance } from '@react-pdf/renderer';
+import type { Mock } from 'vitest';
 
 const style = document.createElement('style');
 style.textContent = `
@@ -119,4 +121,8 @@ vi.mock('@react-pdf/renderer', () => ({
     vi.fn(),
   ]),
   View: vi.fn(({ children, ..._rest }) => <div>{children}</div>),
+}));
+
+vi.mock('@vercel/speed-insights/react', () => ({
+  SpeedInsights: () => null,
 }));

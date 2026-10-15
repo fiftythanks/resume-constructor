@@ -1,7 +1,8 @@
 import * as renderer from '@react-pdf/renderer';
+import { render, renderHook, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as pdfjsLib from 'pdfjs-dist';
-import { render, renderHook } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
+import '@testing-library/jest-dom/vitest';
 
 import useAppState from '@/hooks/useAppState';
 import useResumeData from '@/hooks/useResumeData';
@@ -87,15 +88,11 @@ function mockNumPagesTemporary(numPages: number) {
 }
 
 describe('Preview', () => {
-  async function getProps(
-    overrides?: Partial<PreviewProps>,
-  ): Promise<PreviewProps> {
-    const { result: resumeDataResult } = await renderHook(() =>
-      useResumeData(),
-    );
-    const { result: appStateResult } = await renderHook(() => useAppState());
-    const { activeSectionIds } = appStateResult.current;
+  const { result: resumeDataResult } = renderHook(() => useResumeData());
+  const { result: appStateResult } = renderHook(() => useAppState());
+  const { activeSectionIds } = appStateResult.current;
 
+  function getProps(overrides?: Partial<PreviewProps>): PreviewProps {
     return {
       activeSectionIds: structuredClone(activeSectionIds),
       data: structuredClone(resumeDataResult.current.data),
@@ -105,56 +102,53 @@ describe('Preview', () => {
     };
   }
 
-  async function renderPreview(props?: Partial<PreviewProps>) {
-    const resolvedProps = await getProps(props);
-    await render(<div id="popup-root" />);
-    await render(<Preview {...resolvedProps} />);
+  function renderPreview(props?: Partial<PreviewProps>) {
+    render(<div id="popup-root" />);
+    render(<Preview {...getProps(props)} />);
   }
 
   describe('Modal dialog and accessibility', () => {
     it('should render dialog with accessible name "Preview"', async () => {
       // ARRANGE & ACT
-      await renderPreview();
+      renderPreview();
 
-      const popup = page.getByRole('dialog', { name: 'Preview' });
+      const popup = await screen.findByRole('dialog', { name: 'Preview' });
 
       // ASSERT
-      await expect.element(popup).toBeInTheDocument();
-      await expect
-        .element(popup)
-        .toHaveAttribute('id', 'resume-preview-dialog');
-      await expect.element(popup).toHaveClass('Popup', 'Preview');
+      expect(popup).toBeInTheDocument();
+      expect(popup).toHaveAttribute('id', 'resume-preview-dialog');
+      expect(popup).toHaveClass('Popup', 'Preview');
     });
 
     it('should support a custom dialog id via the "id" prop', async () => {
       // ARRANGE & ACT
-      await renderPreview({ id: 'custom-dialog-id' });
+      renderPreview({ id: 'custom-dialog-id' });
 
-      const popup = page.getByRole('dialog', { name: 'Preview' });
+      const popup = await screen.findByRole('dialog', { name: 'Preview' });
 
       // ASSERT
-      await expect.element(popup).toHaveAttribute('id', 'custom-dialog-id');
+      expect(popup).toHaveAttribute('id', 'custom-dialog-id');
     });
   });
 
   describe('Close button', () => {
     it('should render with an accessible name "Close Popup"', async () => {
       // ARRANGE & ACT
-      await renderPreview();
+      renderPreview();
 
-      const btn = page.getByRole('button', { name: 'Close Popup' });
+      const btn = await screen.findByRole('button', { name: 'Close Popup' });
 
       // ASSERT
-      await expect.element(btn).toBeInTheDocument();
-      await expect.element(btn).toHaveClass('Preview-CloseBtn');
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveClass('Preview-CloseBtn');
     });
 
     it('should call "onClose" when clicked', async () => {
       // ARRANGE
       const onCloseMock = vi.fn();
-      await renderPreview({ onClose: onCloseMock });
+      renderPreview({ onClose: onCloseMock });
       const user = userEvent.setup();
-      const btn = page.getByRole('button', { name: 'Close Popup' });
+      const btn = await screen.findByRole('button', { name: 'Close Popup' });
 
       // ACT
       await user.click(btn);
@@ -167,18 +161,16 @@ describe('Preview', () => {
   describe('Download buttons', () => {
     it('should render two download buttons with accessible name "Download"', async () => {
       // ARRANGE & ACT
-      await renderPreview();
+      renderPreview();
 
-      const downloadBtnLocator = page.getByRole('button', {
+      const downloadBtns = await screen.findAllByRole('button', {
         name: 'Download',
       });
-      await expect.element(downloadBtnLocator.first()).toBeInTheDocument();
-      const downloadBtns = downloadBtnLocator.all();
 
       // ASSERT
       expect(downloadBtns).toHaveLength(2);
-      await expect.element(downloadBtns[0]).toBeInTheDocument();
-      await expect.element(downloadBtns[1]).toBeInTheDocument();
+      expect(downloadBtns[0]).toBeInTheDocument();
+      expect(downloadBtns[1]).toBeInTheDocument();
     });
   });
 
@@ -186,18 +178,16 @@ describe('Preview', () => {
     describe('"Next Page" button', () => {
       it('should render two "Next Page" buttons on initial page load', async () => {
         // ARRANGE & ACT
-        await renderPreview();
+        renderPreview();
 
-        const nextBtnLocator = page.getByRole('button', {
+        const btns = await screen.findAllByRole('button', {
           name: 'Next Page',
         });
-        await expect.element(nextBtnLocator.first()).toBeInTheDocument();
-        const btns = nextBtnLocator.all();
 
         // ASSERT
         expect(btns).toHaveLength(2);
-        await expect.element(btns[0]).toBeInTheDocument();
-        await expect.element(btns[1]).toBeInTheDocument();
+        expect(btns[0]).toBeInTheDocument();
+        expect(btns[1]).toBeInTheDocument();
       });
 
       it('should not render "Next Page" buttons when document has only one page', async () => {
@@ -205,15 +195,13 @@ describe('Preview', () => {
         const restore = mockNumPagesTemporary(1);
 
         // ACT
-        await renderPreview();
-        await expect
-          .element(page.getByRole('dialog', { name: 'Preview' }))
-          .toBeInTheDocument();
+        renderPreview();
+        await screen.findByRole('dialog', { name: 'Preview' });
 
         // ASSERT
-        await expect
-          .element(page.getByRole('button', { name: 'Next Page' }))
-          .not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: 'Next Page' }),
+        ).not.toBeInTheDocument();
 
         // CLEANUP
         restore();
@@ -221,71 +209,75 @@ describe('Preview', () => {
 
       it('should render "Previous Page" buttons after clicking "Next Page"', async () => {
         // ARRANGE
-        await renderPreview();
+        renderPreview();
         const user = userEvent.setup();
-        const nextBtnLocator = page.getByRole('button', {
+        const nextBtns = await screen.findAllByRole('button', {
           name: 'Next Page',
         });
 
         // ACT
-        await user.click(nextBtnLocator.first());
+        await user.click(nextBtns[0]);
 
         // ASSERT
-        const previousBtnLocator = page.getByRole('button', {
+        const previousBtns = await screen.findAllByRole('button', {
           name: 'Previous Page',
         });
-        await expect.element(previousBtnLocator.first()).toBeInTheDocument();
-        expect(previousBtnLocator.all()).toHaveLength(2);
+        expect(previousBtns).toHaveLength(2);
       });
 
       it('should not render "Next Page" buttons when advancing to the final page', async () => {
         // ARRANGE
-        await renderPreview();
+        renderPreview();
         const user = userEvent.setup();
-        const nextBtnLocator = page.getByRole('button', {
+        const firstNextBtns = await screen.findAllByRole('button', {
           name: 'Next Page',
         });
-        await user.click(nextBtnLocator.first());
+        await user.click(firstNextBtns[0]);
+        const secondNextBtns = await screen.findAllByRole('button', {
+          name: 'Next Page',
+        });
 
         // ACT
-        await user.click(nextBtnLocator.first());
+        await user.click(secondNextBtns[0]);
 
         // ASSERT
-        await expect.element(nextBtnLocator).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: 'Next Page' }),
+        ).not.toBeInTheDocument();
       });
     });
 
     describe('"Previous Page" button', () => {
       it('should not render "Previous Page" buttons on the first page', async () => {
         // ARRANGE & ACT
-        await renderPreview();
-        await expect
-          .element(page.getByRole('dialog', { name: 'Preview' }))
-          .toBeInTheDocument();
+        renderPreview();
+        await screen.findByRole('dialog', { name: 'Preview' });
 
         // ASSERT
-        await expect
-          .element(page.getByRole('button', { name: 'Previous Page' }))
-          .not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: 'Previous Page' }),
+        ).not.toBeInTheDocument();
       });
 
       it('should hide "Previous Page" buttons after returning to the first page', async () => {
         // ARRANGE
-        await renderPreview();
+        renderPreview();
         const user = userEvent.setup();
-        const nextBtnLocator = page.getByRole('button', {
+        const nextBtns = await screen.findAllByRole('button', {
           name: 'Next Page',
         });
-        await user.click(nextBtnLocator.first());
-        const previousBtnLocator = page.getByRole('button', {
+        await user.click(nextBtns[0]);
+        const previousBtns = await screen.findAllByRole('button', {
           name: 'Previous Page',
         });
 
         // ACT
-        await user.click(previousBtnLocator.first());
+        await user.click(previousBtns[0]);
 
         // ASSERT
-        await expect.element(previousBtnLocator).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: 'Previous Page' }),
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -293,30 +285,28 @@ describe('Preview', () => {
   describe('Canvas and text layer rendering', () => {
     it('should render the resume page canvas', async () => {
       // ARRANGE & ACT
-      await renderPreview();
+      renderPreview();
 
-      const canvas = page.getByRole('img', {
+      const canvas = await screen.findByRole('img', {
         name: 'Resume page canvas',
       });
 
       // ASSERT
-      await expect.element(canvas).toBeInTheDocument();
-      await expect.element(canvas).toHaveClass('Preview-Canvas');
+      expect(canvas).toBeInTheDocument();
+      expect(canvas).toHaveClass('Preview-Canvas');
     });
 
     it('should render the transparent text selection layer', async () => {
       // ARRANGE & ACT
-      await renderPreview();
+      renderPreview();
 
-      const textLayer = page.getByRole('region', {
+      const textLayer = await screen.findByRole('region', {
         name: 'Text selection layer',
       });
 
       // ASSERT
-      await expect.element(textLayer).toBeInTheDocument();
-      await expect
-        .element(textLayer)
-        .toHaveClass('Preview-TextLayer', 'textLayer');
+      expect(textLayer).toBeInTheDocument();
+      expect(textLayer).toHaveClass('Preview-TextLayer', 'textLayer');
     });
   });
 
@@ -326,13 +316,13 @@ describe('Preview', () => {
       const restore = mockInstanceStatusTemporary({ loading: true });
 
       // ACT
-      await renderPreview();
+      renderPreview();
 
-      const loadingText = page.getByText('Loading...');
+      const loadingText = await screen.findByText('Loading...');
 
       // ASSERT
-      await expect.element(loadingText).toBeInTheDocument();
-      await expect.element(loadingText).toHaveClass('Preview-PdfTextAlt');
+      expect(loadingText).toBeInTheDocument();
+      expect(loadingText).toHaveClass('Preview-PdfTextAlt');
 
       // CLEANUP
       restore();
@@ -345,15 +335,15 @@ describe('Preview', () => {
       });
 
       // ACT
-      await renderPreview();
+      renderPreview();
 
-      const errorText = page.getByText(
+      const errorText = await screen.findByText(
         'Something went wrong. Try reloading the page.',
       );
 
       // ASSERT
-      await expect.element(errorText).toBeInTheDocument();
-      await expect.element(errorText).toHaveClass('Preview-PdfTextAlt');
+      expect(errorText).toBeInTheDocument();
+      expect(errorText).toHaveClass('Preview-PdfTextAlt');
 
       // CLEANUP
       restore();

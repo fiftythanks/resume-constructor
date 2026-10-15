@@ -4,8 +4,9 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
-import { render } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import Projects from './Projects';
 
@@ -131,54 +132,54 @@ function getProps(overrides?: Partial<ProjectsProps>): ProjectsProps {
 }
 
 describe('Projects', () => {
-  it('should render as a tabpanel with an accessible name derived from an element with an ID "projects"', async () => {
-    await render(<div aria-label="Projects" id="projects" />);
-    await render(<Projects {...getProps()} />);
+  it('should render as a tabpanel with an accessible name derived from an element with an ID "projects"', () => {
+    render(<div aria-label="Projects" id="projects" />);
+    render(<Projects {...getProps()} />);
 
-    const projects = page.getByRole('tabpanel', { name: 'Projects' });
+    const projects = screen.getByRole('tabpanel', { name: 'Projects' });
 
-    await expect.element(projects).toBeInTheDocument();
+    expect(projects).toBeInTheDocument();
   });
 
-  it('should render a heading "Project [index + 1]"', async () => {
-    await render(<div aria-label="Projects" id="projects" />);
-    await render(<Projects {...getProps()} />);
+  it('should render a heading "Project [index + 1]"', () => {
+    render(<div aria-label="Projects" id="projects" />);
+    render(<Projects {...getProps()} />);
 
-    const heading = page.getByRole('heading', { name: 'Project 1' });
+    const heading = screen.getByRole('heading', { name: 'Project 1' });
 
-    await expect.element(heading).toBeInTheDocument();
+    expect(heading).toBeInTheDocument();
   });
 
   describe('"Show Previous / Next Project" buttons', () => {
     describe('"Show Previous Project" button', () => {
-      it('should not render the button if the shown project is the first one', async () => {
-        await render(<div aria-label="Projects" id="projects" />);
-        await render(<Projects {...getProps()} />);
+      it('should not render the button if the shown project is the first one', () => {
+        render(<div aria-label="Projects" id="projects" />);
+        render(<Projects {...getProps()} />);
 
-        const btn = page.getByRole('button', {
+        const btn = screen.queryByRole('button', {
           name: 'Show Previous Project',
         });
 
-        await expect.element(btn).not.toBeInTheDocument();
+        expect(btn).not.toBeInTheDocument();
       });
 
-      it("should render the button if the shown project isn't the first one", async () => {
-        await render(<div aria-label="Projects" id="projects" />);
+      it("should render the button if the shown project isn't the first one", () => {
+        render(<div aria-label="Projects" id="projects" />);
         let props = getProps();
 
         props = { ...props, data: { ...props.data, shownProjectIndex: 1 } };
 
-        await render(<Projects {...props} />);
+        render(<Projects {...props} />);
 
-        const btn = page.getByRole('button', {
+        const btn = screen.getByRole('button', {
           name: 'Show Previous Project',
         });
 
-        await expect.element(btn).toBeInTheDocument();
+        expect(btn).toBeInTheDocument();
       });
 
       it('should call `showProject(shownProjectIndex - 1)` when the button is clicked', async () => {
-        await render(<div aria-label="Projects" id="projects" />);
+        render(<div aria-label="Projects" id="projects" />);
         const showProjectMock = vi.fn((_index: number) => {});
         let props = getProps();
 
@@ -188,10 +189,10 @@ describe('Projects', () => {
           functions: { ...props.functions, showProject: showProjectMock },
         };
 
-        await render(<Projects {...props} />);
+        render(<Projects {...props} />);
         const user = userEvent.setup();
 
-        const btn = page.getByRole('button', {
+        const btn = screen.getByRole('button', {
           name: 'Show Previous Project',
         });
 
@@ -203,8 +204,8 @@ describe('Projects', () => {
     });
 
     describe('"Show Next Project" button', () => {
-      it('should not render the button if the shown project is the last one', async () => {
-        await render(<div aria-label="Projects" id="projects" />);
+      it('should not render the button if the shown project is the last one', () => {
+        render(<div aria-label="Projects" id="projects" />);
         let props = getProps();
 
         props = {
@@ -215,28 +216,28 @@ describe('Projects', () => {
           },
         };
 
-        await render(<Projects {...props} />);
+        render(<Projects {...props} />);
 
-        const btn = page.getByRole('button', {
+        const btn = screen.queryByRole('button', {
           name: 'Show Next Project',
         });
 
-        await expect.element(btn).not.toBeInTheDocument();
+        expect(btn).not.toBeInTheDocument();
       });
 
-      it("should render the button if the shown project isn't the last one", async () => {
-        await render(<div aria-label="Projects" id="projects" />);
-        await render(<Projects {...getProps()} />);
+      it("should render the button if the shown project isn't the last one", () => {
+        render(<div aria-label="Projects" id="projects" />);
+        render(<Projects {...getProps()} />);
 
-        const btn = page.getByRole('button', {
+        const btn = screen.getByRole('button', {
           name: 'Show Next Project',
         });
 
-        await expect.element(btn).toBeInTheDocument();
+        expect(btn).toBeInTheDocument();
       });
 
       it('should call `showProject(shownProjectIndex + 1)` when the button is clicked', async () => {
-        await render(<div aria-label="Projects" id="projects" />);
+        render(<div aria-label="Projects" id="projects" />);
         const showProjectMock = vi.fn((_index: number) => {});
         let props = getProps();
 
@@ -245,10 +246,10 @@ describe('Projects', () => {
           functions: { ...props.functions, showProject: showProjectMock },
         };
 
-        await render(<Projects {...props} />);
+        render(<Projects {...props} />);
         const user = userEvent.setup();
 
-        const btn = page.getByRole('button', {
+        const btn = screen.getByRole('button', {
           name: 'Show Next Project',
         });
 
@@ -261,20 +262,20 @@ describe('Projects', () => {
   });
 
   describe('"Add Project" button', () => {
-    it('should render a button "Add Project [number of projects + 1]', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+    it('should render a button "Add Project [number of projects + 1]', () => {
+      render(<div aria-label="Projects" id="projects" />);
       const props = getProps();
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
 
-      const btn = page.getByRole('button', {
+      const btn = screen.getByRole('button', {
         name: `Add Project ${props.data.projects.length + 1}`,
       });
 
-      await expect.element(btn).toBeInTheDocument();
+      expect(btn).toBeInTheDocument();
     });
 
     it('should call `addProject` when the button is clicked', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
       const addProjectMock = vi.fn();
       let props = getProps();
 
@@ -283,10 +284,10 @@ describe('Projects', () => {
         functions: { ...props.functions, addProject: addProjectMock },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
 
-      const btn = page.getByRole('button', {
+      const btn = screen.getByRole('button', {
         name: `Add Project ${props.data.projects.length + 1}`,
       });
 
@@ -297,20 +298,20 @@ describe('Projects', () => {
   });
 
   describe('"Delete Project" button', () => {
-    it('should render a "Delete Project [shown project index + 1]" button if there is more than one project', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+    it('should render a "Delete Project [shown project index + 1]" button if there is more than one project', () => {
+      render(<div aria-label="Projects" id="projects" />);
       const props = getProps();
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
 
-      const btn = page.getByRole('button', {
+      const btn = screen.getByRole('button', {
         name: `Delete Project ${props.data.shownProjectIndex + 1}`,
       });
 
-      await expect.element(btn).toBeInTheDocument();
+      expect(btn).toBeInTheDocument();
     });
 
-    it("should not render the button if there's just one project", async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+    it("should not render the button if there's just one project", () => {
+      render(<div aria-label="Projects" id="projects" />);
       let props = getProps();
 
       props = {
@@ -318,17 +319,17 @@ describe('Projects', () => {
         data: { shownProjectIndex: 0, projects: [props.data.projects[0]] },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
 
-      const btn = page.getByRole('button', {
+      const btn = screen.queryByRole('button', {
         name: 'Delete Project 1',
       });
 
-      await expect.element(btn).not.toBeInTheDocument();
+      expect(btn).not.toBeInTheDocument();
     });
 
     it('should call `deleteProject(shownProjectIndex)` when the button is called', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
       const deleteProjectMock = vi.fn((_index: number) => {});
       let props = getProps();
 
@@ -337,10 +338,10 @@ describe('Projects', () => {
         functions: { ...props.functions, deleteProject: deleteProjectMock },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
 
-      const btn = page.getByRole('button', {
+      const btn = screen.getByRole('button', {
         name: `Delete Project ${props.data.shownProjectIndex + 1}`,
       });
 
@@ -357,67 +358,66 @@ describe('Projects', () => {
   describe('Shown project', () => {
     // TODO: should render a project. (At the moment, the way `Projects` is structured, it's hard to come up with a proper way to write this test. The component needs a refactor.)
 
-    it('should have the correct data from `data`', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+    it('should have the correct data from `data`', () => {
+      render(<div aria-label="Projects" id="projects" />);
       const props = getProps();
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
 
       const { shownProjectIndex } = props.data;
 
       const { bulletPoints, code, demo, projectName, stack } =
         props.data.projects[shownProjectIndex];
 
-      const projectNameInput = page.getByRole('textbox', {
+      const projectNameInput: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Project Name',
       });
 
-      const stackInput = page.getByRole('textbox', {
+      const stackInput: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Tech Stack',
       });
 
-      const codeText = page.getByRole('textbox', {
+      const codeText: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Code (text)',
       });
 
-      const codeUrl = page.getByRole('textbox', {
+      const codeUrl: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Code (link)',
       });
 
-      const demoText = page.getByRole('textbox', {
+      const demoText: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Demo (text)',
       });
 
-      const demoUrl = page.getByRole('textbox', {
+      const demoUrl: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Demo (link)',
       });
 
-      await expect.element(projectNameInput).toBeInTheDocument();
-      await expect.element(projectNameInput).toHaveValue(projectName);
-      await expect.element(stackInput).toBeInTheDocument();
-      await expect.element(stackInput).toHaveValue(stack);
-      await expect.element(codeText).toBeInTheDocument();
-      await expect.element(codeText).toHaveValue(code.text);
-      await expect.element(codeUrl).toBeInTheDocument();
-      await expect.element(codeUrl).toHaveValue(code.link);
-      await expect.element(demoText).toBeInTheDocument();
-      await expect.element(demoText).toHaveValue(demo.text);
-      await expect.element(demoUrl).toBeInTheDocument();
-      await expect.element(demoUrl).toHaveValue(demo.link);
+      expect(projectNameInput).toBeInTheDocument();
+      expect(projectNameInput.value).toBe(projectName);
+      expect(stackInput).toBeInTheDocument();
+      expect(stackInput.value).toBe(stack);
+      expect(codeText).toBeInTheDocument();
+      expect(codeText.value).toBe(code.text);
+      expect(codeUrl).toBeInTheDocument();
+      expect(codeUrl.value).toBe(code.link);
+      expect(demoText).toBeInTheDocument();
+      expect(demoText.value).toBe(demo.text);
+      expect(demoUrl).toBeInTheDocument();
+      expect(demoUrl.value).toBe(demo.link);
 
-      for (let i = 0; i < bulletPoints.length; i++) {
-        const bulletPoint = bulletPoints[i];
-        const textInput = page.getByRole('textbox', {
+      bulletPoints.forEach((bulletPoint, i) => {
+        const textInput: HTMLInputElement = screen.getByRole('textbox', {
           name: `Bullet point ${i + 1}`,
         });
 
-        await expect.element(textInput).toBeInTheDocument();
-        await expect.element(textInput).toHaveAttribute('id', bulletPoint.id);
-        await expect.element(textInput).toHaveValue(bulletPoint.value);
-      }
+        expect(textInput).toBeInTheDocument();
+        expect(textInput.id).toBe(bulletPoint.id);
+        expect(textInput.value).toBe(bulletPoint.value);
+      });
     });
 
     it('should call `addBulletPoint(projectIndex)` when a bullet point is added via the corresponding control', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
       const addBulletPointMock = vi.fn((_projectIndex: number) => {});
       let props = getProps();
 
@@ -426,10 +426,10 @@ describe('Projects', () => {
         functions: { ...props.functions, addBulletPoint: addBulletPointMock },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
 
-      const addBulletPointBtn = page.getByRole('button', {
+      const addBulletPointBtn = screen.getByRole('button', {
         name: 'Add bullet point',
       });
 
@@ -443,7 +443,7 @@ describe('Projects', () => {
     });
 
     it('should call `deleteBulletPoint(projectIndex, itemIndex)` when a bullet point is deleted via the corresponding control', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
 
       const deleteBulletPointMock = vi.fn(
         (_projectIndex: number, _itemIndex: number) => {},
@@ -459,10 +459,10 @@ describe('Projects', () => {
         },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
 
-      const deleteBulletPointBtn = page.getByRole('button', {
+      const deleteBulletPointBtn = screen.getByRole('button', {
         name: 'Delete bullet point 1',
       });
 
@@ -477,7 +477,7 @@ describe('Projects', () => {
     });
 
     it('should call `editBulletPoint(projectIndex, itemIndex, value)` when a bullet point is edited via the corresponding text input', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
 
       const editBulletPointMock = vi.fn(
         (_projectIndex: number, _itemIndex: number, _value: string) => {},
@@ -490,14 +490,14 @@ describe('Projects', () => {
         functions: { ...props.functions, editBulletPoint: editBulletPointMock },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
 
-      const input = page.getByRole('textbox', {
+      const input = screen.getByRole('textbox', {
         name: 'Bullet point 1',
       });
 
-      input.element().focus();
+      input.focus();
 
       await user.keyboard('s');
 
@@ -515,7 +515,7 @@ describe('Projects', () => {
     });
 
     it('should call `editProjectLink(projectIndex, field, type, value)` when a link is edited via the corresponding text input', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
 
       const editProjectLinkMock = vi.fn(
         (
@@ -533,14 +533,14 @@ describe('Projects', () => {
         functions: { ...props.functions, editProjectLink: editProjectLinkMock },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
 
-      const input = page.getByRole('textbox', {
+      const input = screen.getByRole('textbox', {
         name: 'Code (text)',
       });
 
-      input.element().focus();
+      input.focus();
 
       await user.keyboard('s');
 
@@ -559,7 +559,7 @@ describe('Projects', () => {
     });
 
     it('should call `editProjectText(projectIndex, field, value)` when a text field of a project is changed via the corresponding text input', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
 
       const editProjectTextMock = vi.fn(
         (
@@ -576,14 +576,14 @@ describe('Projects', () => {
         functions: { ...props.functions, editProjectText: editProjectTextMock },
       };
 
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
 
-      const input = page.getByRole('textbox', {
+      const input = screen.getByRole('textbox', {
         name: 'Project Name',
       });
 
-      input.element().focus();
+      input.focus();
 
       await user.keyboard('s');
 
@@ -600,20 +600,22 @@ describe('Projects', () => {
       );
     });
 
+    // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
+
     /**
      * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
      * the test's name should be changed.
      */
     it('should call `updateScreenReaderAnnouncement` when an important change is made to the project via its controls or text inputs (not DnD-related)', async () => {
-      await render(<div aria-label="Projects" id="projects" />);
+      render(<div aria-label="Projects" id="projects" />);
       const implementation = (_announcement: string) => {};
       const updateScreenReaderAnnouncementMock = vi.fn(implementation);
       const props = getProps();
       props.updateScreenReaderAnnouncement = updateScreenReaderAnnouncementMock;
-      await render(<Projects {...props} />);
+      render(<Projects {...props} />);
       const user = userEvent.setup();
       const name = 'Delete bullet point 1';
-      const deleteBtn = page.getByRole('button', { name });
+      const deleteBtn = screen.getByRole('button', { name });
 
       await user.click(deleteBtn);
 
@@ -621,12 +623,12 @@ describe('Projects', () => {
     });
   });
 
-  it('should pass the section element to `ref.current`', async () => {
+  it('should pass the section element to `ref.current`', () => {
     const ref = { current: null };
-    await render(<Projects {...getProps({ ref })} />);
+    render(<Projects {...getProps({ ref })} />);
 
-    const projects = page.getByRole('tabpanel');
+    const projects = screen.getByRole('tabpanel');
 
-    expect(ref.current).toBe(projects.element());
+    expect(ref.current).toBe(projects);
   });
 });

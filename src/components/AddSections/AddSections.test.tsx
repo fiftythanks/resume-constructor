@@ -1,5 +1,6 @@
-import { render } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
@@ -37,73 +38,71 @@ function getProps(overrides?: Partial<AddSectionsProps>): AddSectionsProps {
 }
 
 describe('AddSections', () => {
-  it('should render with an accessible name "Add Sections" when `isShown === true`', async () => {
-    await render(<Container />);
-    await render(<AddSections {...getProps()} />);
+  it('should render with an accessible name "Add Sections" when `isShown === true`', () => {
+    render(<Container />);
+    render(<AddSections {...getProps()} />);
 
-    const popup = page.getByRole('dialog', { name: 'Add Sections' });
+    const popup = screen.getByRole('dialog', { name: 'Add Sections' });
 
-    await expect.element(popup).toBeInTheDocument();
+    expect(popup).toBeInTheDocument();
   });
 
-  it('should not render when `isShown === false`', async () => {
-    await render(<Container />);
-    await render(<AddSections {...getProps({ isShown: false })} />);
+  it('should not render when `isShown === false`', () => {
+    render(<Container />);
+    render(<AddSections {...getProps({ isShown: false })} />);
 
-    const popup = page.getByRole('dialog', { name: 'Add Sections' });
+    const popup = screen.queryByRole('dialog', { name: 'Add Sections' });
 
-    await expect.element(popup).not.toBeInTheDocument();
+    expect(popup).not.toBeInTheDocument();
   });
 
-  it('should render a heading "Add Sections"', async () => {
-    await render(<Container />);
-    await render(<AddSections {...getProps()} />);
+  it('should render a heading "Add Sections"', () => {
+    render(<Container />);
+    render(<AddSections {...getProps()} />);
 
-    const heading = page.getByRole('heading', { name: 'Add Sections' });
+    const heading = screen.getByRole('heading', { name: 'Add Sections' });
 
-    await expect.element(heading).toBeInTheDocument();
+    expect(heading).toBeInTheDocument();
   });
 
   describe('add-buttons', () => {
-    it('should render add-buttons for all inactive sections', async () => {
-      await render(<Container />);
-      await render(<AddSections {...getProps()} />);
+    it('should render add-buttons for all inactive sections', () => {
+      render(<Container />);
+      render(<AddSections {...getProps()} />);
 
       const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
-      for (const sectionId of addableSectionIds) {
-        const addBtn = page.getByRole('button', {
+      addableSectionIds.forEach((sectionId) => {
+        const addBtn = screen.getByRole('button', {
           name: `Add ${sectionTitles[sectionId]}`,
         });
 
-        await expect.element(addBtn).toBeInTheDocument();
-      }
+        expect(addBtn).toBeInTheDocument();
+      });
     });
 
-    it('should render add-buttons only for inactive sections', async () => {
-      await render(<Container />);
-      await render(<AddSections {...getProps()} />);
+    it('should render add-buttons only for inactive sections', () => {
+      render(<Container />);
+      render(<AddSections {...getProps()} />);
 
-      for (const sectionId of ACTIVE_SECTION_IDS) {
-        const addBtn = page.getByRole('button', {
+      ACTIVE_SECTION_IDS.forEach((sectionId) => {
+        const addBtn = screen.queryByRole('button', {
           name: `Add ${sectionTitles[sectionId]}`,
         });
 
-        await expect.element(addBtn).not.toBeInTheDocument();
-      }
+        expect(addBtn).not.toBeInTheDocument();
+      });
     });
 
     it('should call `addSections` when an "Add [section title]" button is clicked, with the corresponding ID passed to it', async () => {
       const addSectionsMock = vi.fn((_sectionIds: SectionId[]) => {});
-      await render(<Container />);
-      await render(
-        <AddSections {...getProps({ addSections: addSectionsMock })} />,
-      );
+      render(<Container />);
+      render(<AddSections {...getProps({ addSections: addSectionsMock })} />);
       const user = userEvent.setup();
       const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
       const sectionToAddId = addableSectionIds[0];
 
-      const btn = page.getByRole('button', {
+      const btn = screen.getByRole('button', {
         name: `Add ${sectionTitles[sectionToAddId]}`,
       });
 
@@ -114,87 +113,87 @@ describe('AddSections', () => {
     });
 
     it("should focus the next section's add-button if the added section isn't the last one", async () => {
-      await render(<Container />);
-      await render(<AddSections {...getProps()} />);
+      render(<Container />);
+      render(<AddSections {...getProps()} />);
       const user = userEvent.setup();
       const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
-      const firstAddBtn = page.getByRole('button', {
+      const firstAddBtn = screen.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds[0]]}`,
       });
 
-      const secondAddBtn = page.getByRole('button', {
+      const secondAddBtn = screen.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds[1]]}`,
       });
 
-      firstAddBtn.element().focus();
+      firstAddBtn.focus();
 
       await user.keyboard('{Enter}');
 
-      await expect.element(secondAddBtn).toHaveFocus();
+      expect(secondAddBtn).toHaveFocus();
     });
 
     it("should focus the previous section's add-button if the added section is the last and isn't the only addable section", async () => {
-      await render(<Container />);
-      await render(<AddSections {...getProps()} />);
+      render(<Container />);
+      render(<AddSections {...getProps()} />);
       const user = userEvent.setup();
       const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
-      const lastAddBtn = page.getByRole('button', {
+      const lastAddBtn = screen.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds.at(-1)!]}`,
       });
 
-      const oneBeforeLastAddBtn = page.getByRole('button', {
+      const oneBeforeLastAddBtn = screen.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds.at(-2)!]}`,
       });
 
-      lastAddBtn.element().focus();
+      lastAddBtn.focus();
 
       await user.keyboard('{Enter}');
 
-      await expect.element(oneBeforeLastAddBtn).toHaveFocus();
+      expect(oneBeforeLastAddBtn).toHaveFocus();
     });
 
     it('should call `onClose` if the added section is the only addable section', async () => {
       const onCloseMock = vi.fn();
       const activeSectionIds = possibleSectionIds.toSpliced(-1, 1);
       const props = getProps({ activeSectionIds, onClose: onCloseMock });
-      await render(<Container />);
-      await render(<AddSections {...props} />);
+      render(<Container />);
+      render(<AddSections {...props} />);
       const user = userEvent.setup();
       const addableSectionId = possibleSectionIds.at(-1)!;
       const addableSectionTitle = sectionTitles[addableSectionId];
 
-      const addBtn = page.getByRole('button', {
+      const addBtn = screen.getByRole('button', {
         name: `Add ${addableSectionTitle}`,
       });
 
-      addBtn.element().focus();
+      addBtn.focus();
 
       await user.keyboard('{Enter}');
 
       expect(onCloseMock).toHaveBeenCalledTimes(1);
     });
 
-    it('should render an "Add All Sections" button', async () => {
-      await render(<Container />);
-      await render(<AddSections {...getProps()} />);
+    it('should render an "Add All Sections" button', () => {
+      render(<Container />);
+      render(<AddSections {...getProps()} />);
 
-      const addAllSectionsBtn = page.getByRole('button', {
+      const addAllSectionsBtn = screen.getByRole('button', {
         name: 'Add All Sections',
       });
 
-      await expect.element(addAllSectionsBtn).toBeInTheDocument();
+      expect(addAllSectionsBtn).toBeInTheDocument();
     });
   });
 
   it('should call `onClose` when "Add All Sections" is clicked', async () => {
     const onCloseMock = vi.fn();
-    await render(<Container />);
-    await render(<AddSections {...getProps({ onClose: onCloseMock })} />);
+    render(<Container />);
+    render(<AddSections {...getProps({ onClose: onCloseMock })} />);
     const user = userEvent.setup();
 
-    const addAllSectionsBtn = page.getByRole('button', {
+    const addAllSectionsBtn = screen.getByRole('button', {
       name: 'Add All Sections',
     });
 
@@ -203,21 +202,21 @@ describe('AddSections', () => {
     expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should render a close button', async () => {
-    await render(<Container />);
-    await render(<AddSections {...getProps()} />);
+  it('should render a close button', () => {
+    render(<Container />);
+    render(<AddSections {...getProps()} />);
 
-    const closeBtn = page.getByRole('button', { name: 'Close Popup' });
+    const closeBtn = screen.getByRole('button', { name: 'Close Popup' });
 
-    await expect.element(closeBtn).toBeInTheDocument();
+    expect(closeBtn).toBeInTheDocument();
   });
 
   it('should call `onClose` when the close button is clicked', async () => {
     const onCloseMock = vi.fn();
-    await render(<Container />);
-    await render(<AddSections {...getProps({ onClose: onCloseMock })} />);
+    render(<Container />);
+    render(<AddSections {...getProps({ onClose: onCloseMock })} />);
     const user = userEvent.setup();
-    const closeBtn = page.getByRole('button', { name: 'Close Popup' });
+    const closeBtn = screen.getByRole('button', { name: 'Close Popup' });
 
     await user.click(closeBtn);
 

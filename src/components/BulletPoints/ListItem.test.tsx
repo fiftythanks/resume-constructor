@@ -1,5 +1,6 @@
-import { render } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import ListItem from './ListItem';
 
@@ -26,55 +27,51 @@ function getProps(overrides?: Partial<ListItemProps>): ListItemProps {
 
 describe('ListItem', () => {
   describe('text input', () => {
-    it('should render a text input with an accessible name "Bullet point [index + 1]"', async () => {
-      await render(<ListItem {...getProps()} />);
+    it('should render a text input with an accessible name "Bullet point [index + 1]"', () => {
+      render(<ListItem {...getProps()} />);
 
-      const input = page.getByRole('textbox', { name: 'Bullet point 2' });
+      const input = screen.getByRole('textbox', { name: 'Bullet point 2' });
 
-      await expect.element(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
     });
 
-    it('should pass the text input the correct value from the `value` prop', async () => {
+    it('should pass the text input the correct value from the `value` prop', () => {
       const props = getProps();
-      await render(<ListItem {...props} />);
+      render(<ListItem {...props} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Bullet point 2',
       });
 
-      await expect.element(input).toHaveValue(props.value);
+      expect(input.value).toBe(props.value);
     });
 
-    it('should pass the text input a placeholder "Bullet point [index + 1] if the `placeholder` prop is `undefined`', async () => {
-      await render(<ListItem {...getProps()} />);
+    it('should pass the text input a placeholder "Bullet point [index + 1] if the `placeholder` prop is `undefined`', () => {
+      render(<ListItem {...getProps()} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Bullet point 2',
       });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'Bullet point 2');
+      expect(input.placeholder).toBe('Bullet point 2');
     });
 
-    it('should pass the text input a placeholder from `placeholder` if `placeholder !== undefined`', async () => {
+    it('should pass the text input a placeholder from `placeholder` if `placeholder !== undefined`', () => {
       const props = getProps({ placeholder: 'Some placeholder' });
-      await render(<ListItem {...props} />);
+      render(<ListItem {...props} />);
 
-      const input = page.getByRole('textbox', {
+      const input: HTMLInputElement = screen.getByRole('textbox', {
         name: 'Bullet point 2',
       });
 
-      await expect
-        .element(input)
-        .toHaveAttribute('placeholder', 'Some placeholder');
+      expect(input.placeholder).toBe('Some placeholder');
     });
 
     it('should call `edit` when the text input value is changed', async () => {
       const editMock = vi.fn();
-      await render(<ListItem {...getProps({ edit: editMock })} />);
+      render(<ListItem {...getProps({ edit: editMock })} />);
       const user = userEvent.setup();
-      const input = page.getByRole('textbox', { name: 'Bullet point 2' });
+      const input = screen.getByRole('textbox', { name: 'Bullet point 2' });
 
       await user.type(input, 'f');
 
@@ -83,26 +80,26 @@ describe('ListItem', () => {
   });
 
   describe('drag handle', () => {
-    it('should render a drag handle with an accessible name "Drag bullet point [index + 1]"', async () => {
-      await render(<ListItem {...getProps()} />);
+    it('should render a drag handle with an accessible name "Drag bullet point [index + 1]"', () => {
+      render(<ListItem {...getProps()} />);
 
-      const dragHandle = page.getByRole('button', {
+      const dragHandle = screen.getByRole('button', {
         name: 'Drag bullet point 2',
       });
 
-      await expect.element(dragHandle).toBeInTheDocument();
+      expect(dragHandle).toBeInTheDocument();
     });
 
-    it('should call `handleFocusOnFirstElement` when focused if `handleFocusOnFirstElement` is defined', async () => {
+    it('should call `handleFocusOnFirstElement` when focused if `handleFocusOnFirstElement` is defined', () => {
       const mockFn = vi.fn();
       const props = getProps({ handleFocusOnFirstElement: mockFn });
-      await render(<ListItem {...props} />);
+      render(<ListItem {...props} />);
 
-      const dragHandle = page.getByRole('button', {
+      const dragHandle = screen.getByRole('button', {
         name: 'Drag bullet point 2',
       });
 
-      dragHandle.element().focus();
+      dragHandle.focus();
 
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
@@ -111,13 +108,13 @@ describe('ListItem', () => {
       const mockFn = vi.fn();
       const user = userEvent.setup();
       const props = getProps({ handleKeyDownOnFirstElement: mockFn });
-      await render(<ListItem {...props} />);
+      render(<ListItem {...props} />);
 
-      const dragHandle = page.getByRole('button', {
+      const dragHandle = screen.getByRole('button', {
         name: 'Drag bullet point 2',
       });
 
-      dragHandle.element().focus();
+      dragHandle.focus();
       await user.keyboard('{Tab}');
 
       expect(mockFn).toHaveBeenCalledTimes(1);
@@ -125,22 +122,22 @@ describe('ListItem', () => {
   });
 
   describe('delete btn', () => {
-    it('should render a delete button with an accessible name "Delete bullet point [index + 1]"', async () => {
-      await render(<ListItem {...getProps()} />);
+    it('should render a delete button with an accessible name "Delete bullet point [index + 1]"', () => {
+      render(<ListItem {...getProps()} />);
 
-      const deleteBtn = page.getByRole('button', {
+      const deleteBtn = screen.getByRole('button', {
         name: 'Delete bullet point 2',
       });
 
-      await expect.element(deleteBtn).toBeInTheDocument();
+      expect(deleteBtn).toBeInTheDocument();
     });
 
     it('should call `deleteItem` when the delete button is clicked', async () => {
       const deleteItemMock = vi.fn();
-      await render(<ListItem {...getProps({ deleteItem: deleteItemMock })} />);
+      render(<ListItem {...getProps({ deleteItem: deleteItemMock })} />);
       const user = userEvent.setup();
 
-      const deleteBtn = page.getByRole('button', {
+      const deleteBtn = screen.getByRole('button', {
         name: 'Delete bullet point 2',
       });
 

@@ -1,5 +1,11 @@
-import { render } from 'vitest-browser-react';
-import { type Locator, page, userEvent } from 'vitest/browser';
+import {
+  getAllByRole,
+  getByRole,
+  render,
+  screen,
+} from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 
 import getFilledData from '@/hooks/useResumeData/getFilledData';
 
@@ -8,36 +14,29 @@ import sectionTitles from '@/utils/sectionTitles';
 
 import App from './App';
 
-function getTextboxValue(locator: Locator) {
-  const el = locator.element();
-  return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement
-    ? el.value
-    : '';
-}
+import type { ByRoleOptions } from '@testing-library/react';
 
-async function renderApp() {
-  await render(<div id="popup-root" />);
-  await render(<App />);
+function renderApp() {
+  render(<div id="popup-root" />);
+  render(<App />);
 }
 
 async function renderAppWithNavbarExpanded() {
-  await renderApp();
+  renderApp();
   const user = userEvent.setup();
 
-  const toggleNavbarBtn = page.getByRole('button', {
+  const toggleNavbarBtn = screen.getByRole('button', {
     name: 'Navigation',
+    expanded: false,
   });
 
   await user.click(toggleNavbarBtn);
 
-  const navbar = page.getByRole('navigation', { name: 'Navigation' });
-  const initialTabs = navbar
-    .getByRole('tab')
-    .all()
-    .map((tab) => tab.element());
-  const addSectionsBtn = page.getByRole('button', { name: 'Add Sections' });
+  const navbar = screen.getByRole('navigation', { name: 'Navigation' });
+  const initialTabs = getAllByRole(navbar, 'tab');
+  const addSectionsBtn = screen.getByRole('button', { name: 'Add Sections' });
 
-  const toggleEditorModeBtn = page.getByRole('button', {
+  const toggleEditorModeBtn = screen.getByRole('button', {
     name: 'Toggle Editor Mode',
   });
 
@@ -47,14 +46,15 @@ async function renderAppWithNavbarExpanded() {
 async function renderAppWithNavbarAndControlsExpanded() {
   const renderAppWithNavbarExpandedReturn = await renderAppWithNavbarExpanded();
 
-  const toggleControlsBtn = page.getByRole('button', {
+  const toggleControlsBtn = screen.getByRole('button', {
     name: 'Toolbar',
+    expanded: false,
   });
 
   await renderAppWithNavbarExpandedReturn.user.click(toggleControlsBtn);
 
-  const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
-  const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+  const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
+  const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
   return {
     ...renderAppWithNavbarExpandedReturn,
@@ -74,33 +74,32 @@ describe('App', () => {
     await user.click(addSectionsBtn);
 
     // Add the "Skills" section.
-    const addSkillsBtn = page.getByRole('button', {
-      name: `Add ${sectionTitles.skills}`,
-    });
+    const options: ByRoleOptions = { name: `Add ${sectionTitles.skills}` };
+    const addSkillsBtn = screen.getByRole('button', options);
     await user.click(addSkillsBtn);
 
     // Close the dialog.
-    const closeBtn = page.getByRole('button', { name: 'Close Popup' });
+    options.name = 'Close Popup';
+    const closeBtn = screen.getByRole('button', options);
     await user.click(closeBtn);
 
     // Select the "Skills" section.
-    const tab = navbar.getByRole('tab', { name: sectionTitles.skills });
+    options.name = sectionTitles.skills;
+    const tab = getByRole(navbar, 'tab', options);
     await user.click(tab);
 
-    const panel = page.getByRole('tabpanel', { name: sectionTitles.skills });
+    options.name = sectionTitles.skills;
+    const panel = screen.getByRole('tabpanel', options);
 
-    const [deleteBullet] = panel
-      .getByRole('button', { name: 'Delete bullet point 1' })
-      .all();
+    options.name = 'Delete bullet point 1';
+    const [deleteBullet] = getAllByRole(panel, 'button', options);
 
     // Act
     await user.click(deleteBullet);
 
     // Assert
-    const announcement = page.getByTestId('screen-reader-announcement');
-    await expect
-      .element(announcement)
-      .toHaveTextContent('Bullet point 1 was deleted.');
+    const announcement = screen.getByTestId('screen-reader-announcement');
+    expect(announcement).toHaveTextContent('Bullet point 1 was deleted.');
   });
 
   it('should render the correct tabpanel', async () => {
@@ -113,31 +112,29 @@ describe('App', () => {
     // Act
 
     // The default selected section is "Personal Details".
-    const personalTabpanel = page
-      .getByRole('tabpanel', {
-        name: sectionTitles.personal,
-      })
-      .element();
+    const personalTabpanel = screen.getByRole('tabpanel', {
+      name: sectionTitles.personal,
+    });
 
     // Select "Education"
-    const educationTab = navbar.getByRole('tab', { name: 'Education' });
+    const educationTab = getByRole(navbar, 'tab', { name: 'Education' });
     await user.click(educationTab);
 
-    const educationTabpanel = page.getByRole('tabpanel', {
+    const educationTabpanel = screen.getByRole('tabpanel', {
       name: sectionTitles.education,
     });
 
     // Assert
     expect(personalTabpanel).not.toBeNull();
-    await expect.element(educationTabpanel).toBeInTheDocument();
+    expect(educationTabpanel).toBeInTheDocument();
   });
 
-  it('should render `AppLayout`', async () => {
-    await renderApp();
+  it('should render `AppLayout`', () => {
+    renderApp();
 
-    const appLayout = page.getByTestId('app-layout');
+    const appLayout = screen.getByTestId('app-layout');
 
-    await expect.element(appLayout).toBeInTheDocument();
+    expect(appLayout).toBeInTheDocument();
   });
 
   describe('Focus retention', () => {
@@ -164,32 +161,32 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addSectionBtn = page.getByRole('button', {
+        const addSectionBtn = screen.getByRole('button', {
           name: `Add ${sectionTitle}`,
         });
         await user.click(addSectionBtn);
 
-        const closeDialogBtn = page.getByRole('button', {
+        const closeDialogBtn = screen.getByRole('button', {
           name: 'Close Popup',
         });
         await user.click(closeDialogBtn);
 
-        const tab = navbar.getByRole('tab', { name: sectionTitle });
+        const tab = getByRole(navbar, 'tab', { name: sectionTitle });
         await user.click(tab);
 
-        const addBtn = page.getByRole('button', {
+        const addBtn = screen.getByRole('button', {
           name: `Add ${itemName} 2`,
         });
         await user.click(addBtn);
-        const deleteBtn = page.getByRole('button', {
+        const deleteBtn = screen.getByRole('button', {
           name: `Delete ${itemName} 2`,
         });
 
         await user.click(deleteBtn);
 
-        await expect
-          .element(page.getByRole('button', { name: `Add ${itemName} 2` }))
-          .toHaveFocus();
+        expect(
+          screen.getByRole('button', { name: `Add ${itemName} 2` }),
+        ).toHaveFocus();
       },
     );
 
@@ -201,39 +198,37 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addSectionBtn = page.getByRole('button', {
+        const addSectionBtn = screen.getByRole('button', {
           name: `Add ${sectionTitle}`,
         });
         await user.click(addSectionBtn);
 
-        const closeDialogBtn = page.getByRole('button', {
+        const closeDialogBtn = screen.getByRole('button', {
           name: 'Close Popup',
         });
         await user.click(closeDialogBtn);
 
-        const tab = navbar.getByRole('tab', { name: sectionTitle });
+        const tab = getByRole(navbar, 'tab', { name: sectionTitle });
         await user.click(tab);
 
-        const addBtn = page.getByRole('button', {
+        const addBtn = screen.getByRole('button', {
           name: `Add ${itemName} 2`,
         });
         await user.click(addBtn);
 
-        const prevBtn = page.getByRole('button', {
+        const prevBtn = screen.getByRole('button', {
           name: `Show Previous ${itemName}`,
         });
         await user.click(prevBtn);
 
-        const nextBtn = page.getByRole('button', {
+        const nextBtn = screen.getByRole('button', {
           name: `Show Next ${itemName}`,
         });
         await user.click(nextBtn);
 
-        await expect
-          .element(
-            page.getByRole('button', { name: `Show Previous ${itemName}` }),
-          )
-          .toHaveFocus();
+        expect(
+          screen.getByRole('button', { name: `Show Previous ${itemName}` }),
+        ).toHaveFocus();
       },
     );
 
@@ -245,33 +240,33 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addSectionBtn = page.getByRole('button', {
+        const addSectionBtn = screen.getByRole('button', {
           name: `Add ${sectionTitle}`,
         });
         await user.click(addSectionBtn);
 
-        const closeDialogBtn = page.getByRole('button', {
+        const closeDialogBtn = screen.getByRole('button', {
           name: 'Close Popup',
         });
         await user.click(closeDialogBtn);
 
-        const tab = navbar.getByRole('tab', { name: sectionTitle });
+        const tab = getByRole(navbar, 'tab', { name: sectionTitle });
         await user.click(tab);
 
-        const addBtn = page.getByRole('button', {
+        const addBtn = screen.getByRole('button', {
           name: `Add ${itemName} 2`,
         });
         await user.click(addBtn);
 
-        const prevBtn = page.getByRole('button', {
+        const prevBtn = screen.getByRole('button', {
           name: `Show Previous ${itemName}`,
         });
 
         await user.click(prevBtn);
 
-        await expect
-          .element(page.getByRole('button', { name: `Show Next ${itemName}` }))
-          .toHaveFocus();
+        expect(
+          screen.getByRole('button', { name: `Show Next ${itemName}` }),
+        ).toHaveFocus();
       },
     );
   });
@@ -280,29 +275,29 @@ describe('App', () => {
     describe('"Toggle Navigation" button', () => {
       it('should toggle the navbar on', async () => {
         // Arrange
-        await renderApp();
+        renderApp();
         const user = userEvent.setup();
 
-        const toggleNavbarBtn = page.getByRole('button', {
+        const toggleNavbarBtn = screen.getByRole('button', {
           name: 'Navigation',
+          expanded: false,
         });
 
         // Act
         await user.click(toggleNavbarBtn);
 
         // Assert
-        await expect
-          .element(toggleNavbarBtn)
-          .toHaveAttribute('aria-expanded', 'true');
+        expect(toggleNavbarBtn).toHaveAttribute('aria-expanded', 'true');
       });
 
       it('should toggle the navbar off', async () => {
         // Arrange
-        await renderApp();
+        renderApp();
         const user = userEvent.setup();
 
-        const toggleNavbarBtn = page.getByRole('button', {
+        const toggleNavbarBtn = screen.getByRole('button', {
           name: 'Navigation',
+          expanded: false,
         });
 
         await user.click(toggleNavbarBtn);
@@ -311,9 +306,7 @@ describe('App', () => {
         await user.click(toggleNavbarBtn);
 
         // Assert
-        await expect
-          .element(toggleNavbarBtn)
-          .toHaveAttribute('aria-expanded', 'false');
+        expect(toggleNavbarBtn).toHaveAttribute('aria-expanded', 'false');
       });
     });
 
@@ -325,16 +318,13 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addSectionsDialog = page.getByRole('dialog', {
+        const addSectionsDialog = screen.getByRole('dialog', {
           name: 'Add Sections',
         });
 
-        const addBtns = addSectionsDialog
-          .getByRole('button', {
-            name: /^Add (?!All Sections).+/,
-          })
-          .all()
-          .map((btn) => btn.element());
+        const addBtns = getAllByRole(addSectionsDialog, 'button', {
+          name: /^Add (?!All Sections).+/,
+        });
 
         // Act
         // The ID has the form "add-[sectionId]".
@@ -348,16 +338,13 @@ describe('App', () => {
 
         await user.click(addBtns[2]);
 
-        const closeDialogBtn = page.getByRole('button', {
+        const closeDialogBtn = screen.getByRole('button', {
           name: 'Close Popup',
         });
 
         await user.click(closeDialogBtn);
 
-        const tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        const tabs = getAllByRole(navbar, 'tab');
         const [_, secondTab, thirdTab] = tabs;
         const [{ id: secondTabId }, { id: thirdTabId }] = [secondTab, thirdTab];
 
@@ -378,9 +365,7 @@ describe('App', () => {
         await user.click(toggleEditorModeBtn);
 
         // Assert
-        await expect
-          .element(toggleEditorModeBtn)
-          .toHaveAttribute('aria-pressed', 'true');
+        expect(toggleEditorModeBtn).toHaveAttribute('aria-pressed', 'true');
       });
 
       it('should toggle editor mode off', async () => {
@@ -394,9 +379,7 @@ describe('App', () => {
         await user.click(toggleEditorModeBtn);
 
         // Assert
-        await expect
-          .element(toggleEditorModeBtn)
-          .toHaveAttribute('aria-pressed', 'false');
+        expect(toggleEditorModeBtn).toHaveAttribute('aria-pressed', 'false');
       });
     });
 
@@ -413,43 +396,30 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addSectionsDialog = page.getByRole('dialog', {
-          name: 'Add Sections',
+        const addBtns = screen.getAllByRole('button', {
+          name: /^Add (?!All Sections).+/,
         });
-
-        const addBtns = addSectionsDialog
-          .getByRole('button', {
-            name: /^Add (?!All Sections).+/,
-          })
-          .all()
-          .map((btn) => btn.element());
 
         await user.click(addBtns[0]);
         await user.click(addBtns[2]);
         await user.click(addBtns[4]);
 
-        const closeAddSectionsDialogBtn = page.getByRole('button', {
+        const closeAddSectionsDialogBtn = screen.getByRole('button', {
           name: 'Close Popup',
         });
 
         await user.click(closeAddSectionsDialogBtn);
         await user.click(toggleEditorModeBtn);
 
-        const deleteBtns = navbar
-          .getByRole('button', {
-            name: /Delete .+/,
-          })
-          .all()
-          .map((btn) => btn.element());
+        const deleteBtns = getAllByRole(navbar, 'button', {
+          name: /Delete .+/,
+        });
 
         // Act
         await user.click(deleteBtns[0]);
         await user.click(deleteBtns[1]);
         await user.click(deleteBtns[2]);
-        const tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        const tabs = getAllByRole(navbar, 'tab');
 
         // Assert
         expect(tabs).toHaveLength(initialTabs.length);
@@ -464,10 +434,7 @@ describe('App', () => {
 
         // Act
         await user.click(clearAllBtn);
-        const tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        const tabs = getAllByRole(navbar, 'tab');
 
         // Assert
         expect(tabs).toEqual(initialTabs);
@@ -480,33 +447,18 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addSectionsDialog = page.getByRole('dialog', {
-          name: 'Add Sections',
+        const addBtns = screen.getAllByRole('button', {
+          name: /^Add (?!All Sections).+/,
         });
-
-        const addBtns = addSectionsDialog
-          .getByRole('button', {
-            name: /^Add (?!All Sections).+/,
-          })
-          .all()
-          .map((btn) => btn.element());
 
         await user.click(addBtns[0]);
         await user.click(addBtns[4]);
         await user.click(addBtns[1]);
-        await user.click(addBtns[addBtns.length - 1]);
-
-        const closeAddSectionsDialogBtn = page.getByRole('button', {
-          name: 'Close Popup',
-        });
-        await user.click(closeAddSectionsDialogBtn);
+        await user.click(addBtns.at(-1)!);
 
         // Act
         await user.click(clearAllBtn);
-        const tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        const tabs = getAllByRole(navbar, 'tab');
 
         // Assert
         expect(tabs).toEqual(initialTabs);
@@ -519,7 +471,7 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addAllBtn = page.getByRole('button', {
+        const addAllBtn = screen.getByRole('button', {
           name: 'Add All Sections',
         });
 
@@ -527,10 +479,7 @@ describe('App', () => {
 
         // Act
         await user.click(clearAllBtn);
-        const tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        const tabs = getAllByRole(navbar, 'tab');
 
         // Assert
         expect(tabs).toEqual(initialTabs);
@@ -538,38 +487,25 @@ describe('App', () => {
 
       it('should clear "Personal Details"', async () => {
         // Arrange
-        const { initialTabs, user } =
-          await renderAppWithNavbarAndControlsExpanded();
+        const { user } = await renderAppWithNavbarAndControlsExpanded();
 
-        // Focus "Personal Details".
-        initialTabs[0].focus();
+        const tabpanel = screen.getByRole('tabpanel');
+        const [firstInput, secondInput] = getAllByRole(tabpanel, 'textbox');
 
-        // Focus the first input field in the tabpanel.
-        await user.keyboard('{Tab}');
-        const firstInput =
-          document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null;
-
+        firstInput.focus();
         await user.keyboard('Some data');
 
-        // Focus the next input field.
-        await user.keyboard('{Tab}');
-        const secondInput =
-          document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null;
-
+        secondInput.focus();
         await user.keyboard('Some other data');
 
-        const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
 
         // Act
         await user.click(clearAllBtn);
 
         // Assert
-        await expect.element(firstInput).toHaveValue('');
-        await expect.element(secondInput).toHaveValue('');
+        expect(firstInput).toHaveValue('');
+        expect(secondInput).toHaveValue('');
       });
 
       it("should clear sections permanently, so they're empty when re-added", async () => {
@@ -580,24 +516,19 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        let addAll = page.getByRole('button', { name: 'Add All Sections' });
+        let addAll = screen.getByRole('button', { name: 'Add All Sections' });
         await user.click(addAll);
 
-        let tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        let tabs = getAllByRole(navbar, 'tab');
 
         // Select the fourth tab.
         tabs[2].focus();
         await user.keyboard('{Enter}');
 
-        let tabpanel = page.getByRole('tabpanel');
+        let tabpanel = screen.getByRole('tabpanel');
 
-        let textboxes = tabpanel
-          .getByRole('textbox')
-          .all()
-          .map((textbox) => textbox.element());
+        let textboxes: (HTMLInputElement | HTMLTextAreaElement)[] =
+          getAllByRole(tabpanel, 'textbox');
 
         textboxes[0].focus();
         await user.keyboard('some input');
@@ -609,11 +540,8 @@ describe('App', () => {
         tabs[4].focus();
         await user.keyboard('{Enter}');
 
-        tabpanel = page.getByRole('tabpanel');
-        textboxes = tabpanel
-          .getByRole('textbox')
-          .all()
-          .map((textbox) => textbox.element());
+        tabpanel = screen.getByRole('tabpanel');
+        textboxes = getAllByRole(tabpanel, 'textbox');
 
         textboxes[0].focus();
         await user.keyboard('some input');
@@ -621,41 +549,38 @@ describe('App', () => {
         textboxes[1].focus();
         await user.keyboard('some other input');
 
-        const clearAllBtn = page.getByRole('button', { name: 'Clear All' });
+        const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
 
         // Act
         await user.click(clearAllBtn);
 
-        addSectionsBtn = navbar.getByRole('button', { name: 'Add Sections' });
+        addSectionsBtn = getByRole(navbar, 'button', { name: 'Add Sections' });
         await user.click(addSectionsBtn);
 
-        addAll = page.getByRole('button', { name: 'Add All Sections' });
+        addAll = screen.getByRole('button', { name: 'Add All Sections' });
         await user.click(addAll);
 
-        tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        tabs = getAllByRole(navbar, 'tab');
 
         // Select the fourth tab again.
         tabs[2].focus();
         await user.keyboard('{Enter}');
 
-        tabpanel = page.getByRole('tabpanel');
-        let textboxLocators = tabpanel.getByRole('textbox').all();
+        tabpanel = screen.getByRole('tabpanel');
+        textboxes = getAllByRole(tabpanel, 'textbox');
 
-        const firstUsedTextboxValue = getTextboxValue(textboxLocators[0]);
-        const secondUsedTextboxValue = getTextboxValue(textboxLocators[1]);
+        const firstUsedTextboxValue = textboxes[0].value;
+        const secondUsedTextboxValue = textboxes[1].value;
 
         // Repeat with the sixth tab.
         tabs[4].focus();
         await user.keyboard('{Enter}');
 
-        tabpanel = page.getByRole('tabpanel');
-        textboxLocators = tabpanel.getByRole('textbox').all();
+        tabpanel = screen.getByRole('tabpanel');
+        textboxes = getAllByRole(tabpanel, 'textbox');
 
-        const thirdUsedTextboxValue = getTextboxValue(textboxLocators[0]);
-        const fourthUsedTextboxValue = getTextboxValue(textboxLocators[1]);
+        const thirdUsedTextboxValue = textboxes[0].value;
+        const fourthUsedTextboxValue = textboxes[1].value;
 
         // Assert
         expect(firstUsedTextboxValue).toBe('');
@@ -682,10 +607,7 @@ describe('App', () => {
         // Act
         await user.click(fillAllBtn);
 
-        const tabs = navbar
-          .getByRole('tab')
-          .all()
-          .map((tab) => tab.element());
+        const tabs = getAllByRole(navbar, 'tab');
 
         // Assert
         expect(tabs).toHaveLength(possibleSectionIds.length);
@@ -712,7 +634,7 @@ describe('App', () => {
         // Act
         await user.click(fillAllBtn);
 
-        const tabs = navbar.getByRole('tab').all();
+        const tabs = getAllByRole(navbar, 'tab');
 
         // Assert
         expect(tabs).toHaveLength(possibleSectionIds.length);
@@ -726,32 +648,34 @@ describe('App', () => {
         // Act
         await user.click(fillAllBtn);
 
-        const personalTabpanel = page.getByRole('tabpanel', {
+        const personalTabpanel = screen.getByRole('tabpanel', {
           name: sectionTitles.personal,
         });
 
-        const address = personalTabpanel.getByRole('textbox', {
-          name: 'Address',
-        });
+        const address: HTMLInputElement = getByRole(
+          personalTabpanel,
+          'textbox',
+          {
+            name: 'Address',
+          },
+        );
 
-        const phone = personalTabpanel.getByRole('textbox', {
+        const phone: HTMLInputElement = getByRole(personalTabpanel, 'textbox', {
           name: 'Phone',
         });
 
-        const summary = personalTabpanel.getByRole('textbox', {
-          name: 'Summary',
-        });
+        const summary: HTMLTextAreaElement = getByRole(
+          personalTabpanel,
+          'textbox',
+          {
+            name: 'Summary',
+          },
+        );
 
         // Assert
-        await expect
-          .element(address)
-          .toHaveValue(correctPlaceholderData.personal.address);
-        await expect
-          .element(phone)
-          .toHaveValue(correctPlaceholderData.personal.phone);
-        await expect
-          .element(summary)
-          .toHaveValue(correctPlaceholderData.personal.summary);
+        expect(address).toHaveValue(correctPlaceholderData.personal.address);
+        expect(phone).toHaveValue(correctPlaceholderData.personal.phone);
+        expect(summary).toHaveValue(correctPlaceholderData.personal.summary);
       });
 
       it('should rewrite previous input in "Personal Details"', async () => {
@@ -759,42 +683,35 @@ describe('App', () => {
         const { fillAllBtn, user } =
           await renderAppWithNavbarAndControlsExpanded();
 
-        const personalTabpanel = page.getByRole('tabpanel', {
+        const personalTabpanel = screen.getByRole('tabpanel', {
           name: sectionTitles.personal,
         });
 
         // Enter some email.
-        const email = personalTabpanel.getByRole('textbox', { name: 'Email' });
-        email.element().focus();
+        let name = 'Email';
+        const email = getByRole(personalTabpanel, 'textbox', { name });
+        email.focus();
         await user.keyboard('some input');
 
         // Enter some name.
-        const fullName = personalTabpanel.getByRole('textbox', {
-          name: 'Full Name',
-        });
-        fullName.element().focus();
+        name = 'Full Name';
+        const fullName = getByRole(personalTabpanel, 'textbox', { name });
+        fullName.focus();
         await user.keyboard('some name');
 
         // Enter some summary.
-        const summary = personalTabpanel.getByRole('textbox', {
-          name: 'Summary',
-        });
-        summary.element().focus();
+        name = 'Summary';
+        const summary = getByRole(personalTabpanel, 'textbox', { name });
+        summary.focus();
         await user.keyboard('some summary');
 
         // Act
         await user.click(fillAllBtn);
 
         // Assert
-        await expect
-          .element(email)
-          .toHaveValue(correctPlaceholderData.personal.email);
-        await expect
-          .element(fullName)
-          .toHaveValue(correctPlaceholderData.personal.fullName);
-        await expect
-          .element(summary)
-          .toHaveValue(correctPlaceholderData.personal.summary);
+        expect(email).toHaveValue(correctPlaceholderData.personal.email);
+        expect(fullName).toHaveValue(correctPlaceholderData.personal.fullName);
+        expect(summary).toHaveValue(correctPlaceholderData.personal.summary);
       });
 
       it('should fill "Education" with placeholder data', async () => {
@@ -805,26 +722,34 @@ describe('App', () => {
         // Act
         await user.click(fillAllBtn);
 
-        const educationTab = navbar.getByRole('tab', {
+        const educationTab = getByRole(navbar, 'tab', {
           name: sectionTitles.education,
         });
 
         // Select the "Education" section.
         await user.click(educationTab);
 
-        const educationTabpanel = page.getByRole('tabpanel');
+        const educationTabpanel = screen.getByRole('tabpanel');
 
-        const address = educationTabpanel.getByRole('textbox', {
-          name: 'Address',
-        });
+        const address: HTMLInputElement = getByRole(
+          educationTabpanel,
+          'textbox',
+          {
+            name: 'Address',
+          },
+        );
 
-        const uni = educationTabpanel.getByRole('textbox', {
+        const uni: HTMLInputElement = getByRole(educationTabpanel, 'textbox', {
           name: 'University Name',
         });
 
-        const firstBulletPoint = educationTabpanel.getByRole('textbox', {
-          name: 'Bullet point 1',
-        });
+        const firstBulletPoint: HTMLInputElement = getByRole(
+          educationTabpanel,
+          'textbox',
+          {
+            name: 'Bullet point 1',
+          },
+        );
 
         // Assert
 
@@ -834,16 +759,12 @@ describe('App', () => {
         const shownDegreeIndex = 0;
         const shownDegreeCorrectPlaceholderData = degrees[shownDegreeIndex];
 
-        await expect
-          .element(address)
-          .toHaveValue(shownDegreeCorrectPlaceholderData.address);
-        await expect
-          .element(uni)
-          .toHaveValue(shownDegreeCorrectPlaceholderData.uni);
+        expect(address).toHaveValue(shownDegreeCorrectPlaceholderData.address);
+        expect(uni).toHaveValue(shownDegreeCorrectPlaceholderData.uni);
 
-        await expect
-          .element(firstBulletPoint)
-          .toHaveValue(shownDegreeCorrectPlaceholderData.bulletPoints[0].value);
+        expect(firstBulletPoint).toHaveValue(
+          shownDegreeCorrectPlaceholderData.bulletPoints[0].value,
+        );
       });
 
       it('should rewrite previous input in "Education"', async () => {
@@ -855,45 +776,53 @@ describe('App', () => {
         // Fill all sections for the first time.
         await user.click(fillAllBtn);
 
-        const educationTab = navbar.getByRole('tab', {
+        const educationTab = getByRole(navbar, 'tab', {
           name: sectionTitles.education,
         });
 
         // Select the "Education" section.
         await user.click(educationTab);
 
-        const educationTabpanel = page.getByRole('tabpanel');
+        const educationTabpanel = screen.getByRole('tabpanel');
 
-        const address = educationTabpanel.getByRole('textbox', {
-          name: 'Address',
-        });
+        const address: HTMLInputElement = getByRole(
+          educationTabpanel,
+          'textbox',
+          {
+            name: 'Address',
+          },
+        );
 
-        const uni = educationTabpanel.getByRole('textbox', {
+        const uni: HTMLInputElement = getByRole(educationTabpanel, 'textbox', {
           name: 'University Name',
         });
 
-        let firstBulletPoint = educationTabpanel.getByRole('textbox', {
-          name: 'Bullet point 1',
-        });
+        let firstBulletPoint: HTMLInputElement = getByRole(
+          educationTabpanel,
+          'textbox',
+          {
+            name: 'Bullet point 1',
+          },
+        );
 
         // Modify the fields' values.
 
-        address.element().focus();
+        address.focus();
         await user.keyboard('some address');
 
-        uni.element().focus();
+        uni.focus();
         await user.keyboard('some uni');
 
-        firstBulletPoint.element().focus();
+        firstBulletPoint.focus();
         await user.keyboard('some bullet');
 
-        fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+        fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);
 
         // The previous node has been replaced at the current stage.
-        firstBulletPoint = educationTabpanel.getByRole('textbox', {
+        firstBulletPoint = getByRole(educationTabpanel, 'textbox', {
           name: 'Bullet point 1',
         });
 
@@ -905,16 +834,12 @@ describe('App', () => {
         const shownDegreeIndex = 0;
         const shownDegreeCorrectPlaceholderData = degrees[shownDegreeIndex];
 
-        await expect
-          .element(address)
-          .toHaveValue(shownDegreeCorrectPlaceholderData.address);
-        await expect
-          .element(uni)
-          .toHaveValue(shownDegreeCorrectPlaceholderData.uni);
+        expect(address).toHaveValue(shownDegreeCorrectPlaceholderData.address);
+        expect(uni).toHaveValue(shownDegreeCorrectPlaceholderData.uni);
 
-        await expect
-          .element(firstBulletPoint)
-          .toHaveValue(shownDegreeCorrectPlaceholderData.bulletPoints[0].value);
+        expect(firstBulletPoint).toHaveValue(
+          shownDegreeCorrectPlaceholderData.bulletPoints[0].value,
+        );
       });
 
       it('should not rearrange tabs', async () => {
@@ -923,9 +848,8 @@ describe('App', () => {
         const { navbar, user } = result;
 
         // Show the "Add Sections" dialog.
-        const addSectionsBtn = navbar.getByRole('button', {
-          name: 'Add Sections',
-        });
+        const options: ByRoleOptions = { name: 'Add Sections' };
+        const addSectionsBtn = getByRole(navbar, 'button', options);
         await user.click(addSectionsBtn);
 
         // To be added sections' names.
@@ -933,17 +857,14 @@ describe('App', () => {
         const secondName = sectionTitles.links;
         const thirdName = sectionTitles.education;
 
-        const firstAddBtn = page.getByRole('button', {
-          name: `Add ${firstName}`,
-        });
+        options.name = `Add ${firstName}`;
+        const firstAddBtn = screen.getByRole('button', options);
 
-        const secondAddBtn = page.getByRole('button', {
-          name: `Add ${secondName}`,
-        });
+        options.name = `Add ${secondName}`;
+        const secondAddBtn = screen.getByRole('button', options);
 
-        const thirdAddBtn = page.getByRole('button', {
-          name: `Add ${thirdName}`,
-        });
+        options.name = `Add ${thirdName}`;
+        const thirdAddBtn = screen.getByRole('button', options);
 
         // Add the three sections
         await user.click(firstAddBtn);
@@ -951,19 +872,20 @@ describe('App', () => {
         await user.click(thirdAddBtn);
 
         // Close the dialog.
-        await user.keyboard('{Escape}');
+        const closeBtn = screen.getByRole('button', { name: 'Close Popup' });
+        await user.click(closeBtn);
 
-        const fillAllBtn = page.getByRole('button', { name: 'Fill All' });
+        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);
 
-        const tabs = navbar.getByRole('tab').all();
+        const tabs = getAllByRole(navbar, 'tab');
 
         // Assert
-        await expect.element(tabs[1]).toHaveAccessibleName(firstName);
-        await expect.element(tabs[2]).toHaveAccessibleName(secondName);
-        await expect.element(tabs[3]).toHaveAccessibleName(thirdName);
+        expect(tabs[1]).toHaveAccessibleName(firstName);
+        expect(tabs[2]).toHaveAccessibleName(secondName);
+        expect(tabs[3]).toHaveAccessibleName(thirdName);
       });
     });
 
@@ -975,12 +897,12 @@ describe('App', () => {
 
         await user.click(fillAllBtn);
 
-        const nextSectionBtn = page.getByRole('button', {
+        const nextSectionBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
         await user.click(nextSectionBtn);
 
-        const previousSectionBtn = page.getByRole('button', {
+        const previousSectionBtn = screen.getByRole('button', {
           name: 'Open Previous Section',
         });
 
@@ -988,11 +910,11 @@ describe('App', () => {
         await user.click(previousSectionBtn);
 
         // Assert
-        const nextBtn = page.getByRole('button', {
+        const nextBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
 
-        await expect.element(nextBtn).toHaveFocus();
+        expect(nextBtn).toHaveFocus();
       });
 
       it('should retain focus on the Previous Section button when navigating to the final section via the Next Section button', async () => {
@@ -1001,17 +923,17 @@ describe('App', () => {
 
         await user.click(addSectionsBtn);
 
-        const addLinksBtn = page.getByRole('button', {
+        const addLinksBtn = screen.getByRole('button', {
           name: `Add ${sectionTitles.links}`,
         });
         await user.click(addLinksBtn);
 
-        const closeDialogBtn = page.getByRole('button', {
+        const closeDialogBtn = screen.getByRole('button', {
           name: 'Close Popup',
         });
         await user.click(closeDialogBtn);
 
-        const nextSectionBtn = page.getByRole('button', {
+        const nextSectionBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
 
@@ -1019,11 +941,11 @@ describe('App', () => {
         await user.click(nextSectionBtn);
 
         // Assert
-        const previousBtn = page.getByRole('button', {
+        const previousBtn = screen.getByRole('button', {
           name: 'Open Previous Section',
         });
 
-        await expect.element(previousBtn).toHaveFocus();
+        expect(previousBtn).toHaveFocus();
       });
 
       it('should preserve focus on the Previous Section button when navigating between middle sections where it remains mounted', async () => {
@@ -1033,13 +955,13 @@ describe('App', () => {
 
         await user.click(fillAllBtn);
 
-        const nextSectionBtn = page.getByRole('button', {
+        const nextSectionBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
         await user.click(nextSectionBtn);
         await user.click(nextSectionBtn);
 
-        const previousSectionBtn = page.getByRole('button', {
+        const previousSectionBtn = screen.getByRole('button', {
           name: 'Open Previous Section',
         });
 
@@ -1047,11 +969,11 @@ describe('App', () => {
         await user.click(previousSectionBtn);
 
         // Assert
-        const remainingPreviousBtn = page.getByRole('button', {
+        const remainingPreviousBtn = screen.getByRole('button', {
           name: 'Open Previous Section',
         });
 
-        await expect.element(remainingPreviousBtn).toHaveFocus();
+        expect(remainingPreviousBtn).toHaveFocus();
       });
 
       it('should preserve focus on the Next Section button when navigating between middle sections where it remains mounted', async () => {
@@ -1061,7 +983,7 @@ describe('App', () => {
 
         await user.click(fillAllBtn);
 
-        const nextSectionBtn = page.getByRole('button', {
+        const nextSectionBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
 
@@ -1069,11 +991,11 @@ describe('App', () => {
         await user.click(nextSectionBtn);
 
         // Assert
-        const remainingNextBtn = page.getByRole('button', {
+        const remainingNextBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
 
-        await expect.element(remainingNextBtn).toHaveFocus();
+        expect(remainingNextBtn).toHaveFocus();
       });
 
       it('should not move focus to navigation buttons when a section is changed without focusing navigation buttons', async () => {
@@ -1083,7 +1005,7 @@ describe('App', () => {
 
         await user.click(fillAllBtn);
 
-        const linksTab = navbar.getByRole('tab', {
+        const linksTab = getByRole(navbar, 'tab', {
           name: sectionTitles.links,
         });
 
@@ -1091,11 +1013,11 @@ describe('App', () => {
         await user.click(linksTab);
 
         // Assert
-        const previousSectionBtn = page.getByRole('button', {
+        const previousSectionBtn = screen.getByRole('button', {
           name: 'Open Previous Section',
         });
 
-        await expect.element(previousSectionBtn).not.toHaveFocus();
+        expect(previousSectionBtn).not.toHaveFocus();
       });
 
       it('should not retain focus if a pointer interaction occurred outside the navigation buttons', async () => {
@@ -1105,17 +1027,17 @@ describe('App', () => {
 
         await user.click(fillAllBtn);
 
-        const nextSectionBtn = page.getByRole('button', {
+        const nextSectionBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
         await user.click(nextSectionBtn);
 
-        const previousSectionBtn = page.getByRole('button', {
+        const previousSectionBtn = screen.getByRole('button', {
           name: 'Open Previous Section',
         });
-        previousSectionBtn.element().focus();
+        previousSectionBtn.focus();
 
-        const personalTab = navbar.getByRole('tab', {
+        const personalTab = getByRole(navbar, 'tab', {
           name: sectionTitles.personal,
         });
 
@@ -1123,11 +1045,11 @@ describe('App', () => {
         await user.click(personalTab);
 
         // Assert
-        const nextBtn = page.getByRole('button', {
+        const nextBtn = screen.getByRole('button', {
           name: 'Open Next Section',
         });
 
-        await expect.element(nextBtn).not.toHaveFocus();
+        expect(nextBtn).not.toHaveFocus();
       });
     });
   });
@@ -1170,52 +1092,56 @@ describe('App', () => {
       'should correctly wire data for $sectionTitle',
       async ({ sectionTitle, textboxName, testValue }) => {
         // Arrange
-        const { addSectionsBtn, navbar, user } =
-          await renderAppWithNavbarExpanded();
+        const result = await renderAppWithNavbarAndControlsExpanded();
+        const { fillAllBtn, navbar, user } = result;
 
-        await user.click(addSectionsBtn);
-        await user.click(
-          page.getByRole('button', { name: 'Add All Sections' }),
-        );
+        await user.click(fillAllBtn);
 
         // Select the section.
-        const tab = navbar.getByRole('tab', { name: sectionTitle });
+        const tab = getByRole(navbar, 'tab', { name: sectionTitle });
         await user.click(tab);
 
-        const panel = page.getByRole('tabpanel', { name: sectionTitle });
-        const textbox = panel.getByRole('textbox', { name: textboxName });
+        const panel = screen.getByRole('tabpanel', { name: sectionTitle });
+
+        type Textbox = HTMLInputElement | HTMLTextAreaElement;
+        const options = { name: textboxName };
+        const textbox: Textbox = getByRole(panel, 'textbox', options);
+        const initialValue = textbox.value;
 
         // Act
         await user.type(textbox, testValue);
 
         // Assert
-        await expect.element(textbox).toHaveValue(testValue);
+        expect(textbox).toHaveValue(initialValue + testValue);
       },
     );
 
     it(`should correctly wire data for ${sectionTitles.skills}`, async () => {
       // Arrange
-      const { addSectionsBtn, navbar, user } =
-        await renderAppWithNavbarExpanded();
+      const result = await renderAppWithNavbarAndControlsExpanded();
+      const { fillAllBtn, navbar, user } = result;
 
-      await user.click(addSectionsBtn);
-      await user.click(page.getByRole('button', { name: 'Add All Sections' }));
+      await user.click(fillAllBtn);
 
       // Select the section.
-      const tab = navbar.getByRole('tab', { name: sectionTitles.skills });
+      const tab = getByRole(navbar, 'tab', { name: sectionTitles.skills });
       await user.click(tab);
 
-      const panel = page.getByRole('tabpanel', { name: sectionTitles.skills });
-      const languages = panel.getByRole('group', { name: 'Languages' });
-      const textbox = languages.getByRole('textbox', {
-        name: 'Bullet point 1',
-      });
+      const opt: ByRoleOptions = { name: sectionTitles.skills };
+      const panel = screen.getByRole('tabpanel', opt);
+
+      opt.name = 'Languages';
+      const languages = getByRole(panel, 'group', { name: 'Languages' });
+
+      opt.name = 'Bullet point 1';
+      const textbox: HTMLInputElement = getByRole(languages, 'textbox', opt);
+      const initialValue = textbox.value;
 
       // Act
       await user.type(textbox, 'Spanish');
 
       // Assert
-      await expect.element(textbox).toHaveValue('Spanish');
+      expect(textbox).toHaveValue(initialValue + 'Spanish');
     });
   });
 });

@@ -4,9 +4,10 @@
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
 
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import { render } from 'vitest-browser-react';
-import { page, userEvent } from 'vitest/browser';
+import '@testing-library/jest-dom/vitest';
 
 import useResumeData from '@/hooks/useResumeData';
 
@@ -113,44 +114,42 @@ function getProps(overrides?: Partial<ExperienceProps>): ExperienceProps {
 }
 
 describe('Experience', () => {
-  beforeEach(async () => {
-    // `Experience` gets its accessible name from this element.
-    await render(<div aria-label="Experience" id="experience" />);
+  // `Experience` gets its accessible name from this element.
+  render(<div aria-label="Experience" id="experience" />);
+
+  it('should render as a tabpanel with an accessible name derived from an element with an ID "experience"', () => {
+    render(<Experience {...getProps()} />);
+
+    const experience = screen.getByRole('tabpanel', { name: 'Experience' });
+
+    expect(experience).toBeInTheDocument();
   });
 
-  it('should render as a tabpanel with an accessible name derived from an element with an ID "experience"', async () => {
-    await render(<Experience {...getProps()} />);
+  it('should render a heading "Job [index + 1]"', () => {
+    render(<Experience {...getProps()} />);
 
-    const experience = page.getByRole('tabpanel', { name: 'Experience' });
+    const heading = screen.getByRole('heading', { name: 'Job 1' });
 
-    await expect.element(experience).toBeInTheDocument();
-  });
-
-  it('should render a heading "Job [index + 1]"', async () => {
-    await render(<Experience {...getProps()} />);
-
-    const heading = page.getByRole('heading', { name: 'Job 1' });
-
-    await expect.element(heading).toBeInTheDocument();
+    expect(heading).toBeInTheDocument();
   });
 
   describe('"Show Previous / Next Job" buttons', () => {
     describe('"Show Previous Job" button', () => {
-      it('should not render the button if the shown job is the first one', async () => {
-        await render(<Experience {...getProps()} />);
+      it('should not render the button if the shown job is the first one', () => {
+        render(<Experience {...getProps()} />);
 
-        const btn = page.getByRole('button', { name: 'Show Previous Job' });
+        const btn = screen.queryByRole('button', { name: 'Show Previous Job' });
 
-        await expect.element(btn).not.toBeInTheDocument();
+        expect(btn).not.toBeInTheDocument();
       });
 
-      it("should render the button if the shown job isn't the first one", async () => {
+      it("should render the button if the shown job isn't the first one", () => {
         const data = structuredClone({ ...DATA, shownJobIndex: 1 });
-        await render(<Experience {...getProps({ data })} />);
+        render(<Experience {...getProps({ data })} />);
 
-        const btn = page.getByRole('button', { name: 'Show Previous Job' });
+        const btn = screen.getByRole('button', { name: 'Show Previous Job' });
 
-        await expect.element(btn).toBeInTheDocument();
+        expect(btn).toBeInTheDocument();
       });
 
       it('should call `showJob(shownJobIndex - 1)` when the button is clicked', async () => {
@@ -159,9 +158,9 @@ describe('Experience', () => {
         const mockFn = vi.fn((_index: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, showJob: mockFn });
 
-        await render(<Experience {...getProps({ data, functions })} />);
+        render(<Experience {...getProps({ data, functions })} />);
         const user = userEvent.setup();
-        const btn = page.getByRole('button', { name: 'Show Previous Job' });
+        const btn = screen.getByRole('button', { name: 'Show Previous Job' });
 
         // Act
         await user.click(btn);
@@ -173,22 +172,22 @@ describe('Experience', () => {
     });
 
     describe('"Show Next Job" button', () => {
-      it("should render the button if the shown job isn't the last one", async () => {
-        await render(<Experience {...getProps()} />);
+      it("should render the button if the shown job isn't the last one", () => {
+        render(<Experience {...getProps()} />);
 
-        const btn = page.getByRole('button', { name: 'Show Next Job' });
+        const btn = screen.getByRole('button', { name: 'Show Next Job' });
 
-        await expect.element(btn).toBeInTheDocument();
+        expect(btn).toBeInTheDocument();
       });
 
-      it('should not render the button if the shown job is the last one', async () => {
+      it('should not render the button if the shown job is the last one', () => {
         const shownJobIndex = DATA.jobs.length - 1;
         const data = structuredClone({ ...DATA, shownJobIndex });
-        await render(<Experience {...getProps({ data })} />);
+        render(<Experience {...getProps({ data })} />);
 
-        const btn = page.getByRole('button', { name: 'Show Next Job' });
+        const btn = screen.queryByRole('button', { name: 'Show Next Job' });
 
-        await expect.element(btn).not.toBeInTheDocument();
+        expect(btn).not.toBeInTheDocument();
       });
 
       it('should call `showJob(shownJobIndex + 1)` when the button is clicked', async () => {
@@ -197,9 +196,9 @@ describe('Experience', () => {
         const functions = cloneDeep({ ...FUNCTIONS, showJob: mockFn });
         const props = getProps({ functions });
 
-        await render(<Experience {...props} />);
+        render(<Experience {...props} />);
         const user = userEvent.setup();
-        const btn = page.getByRole('button', { name: 'Show Next Job' });
+        const btn = screen.getByRole('button', { name: 'Show Next Job' });
 
         // Act
         await user.click(btn);
@@ -212,14 +211,14 @@ describe('Experience', () => {
   });
 
   describe('"Add Job" button', () => {
-    it('should render a button "Add Job [number of jobs + 1]', async () => {
-      await render(<Experience {...getProps()} />);
+    it('should render a button "Add Job [number of jobs + 1]', () => {
+      render(<Experience {...getProps()} />);
 
-      const btn = page.getByRole('button', {
+      const btn = screen.getByRole('button', {
         name: `Add Job ${DATA.jobs.length + 1}`,
       });
 
-      await expect.element(btn).toBeInTheDocument();
+      expect(btn).toBeInTheDocument();
     });
 
     it('should call `addJob` when the button is clicked', async () => {
@@ -227,11 +226,11 @@ describe('Experience', () => {
       const mockFn = vi.fn();
       const functions = cloneDeep({ ...FUNCTIONS, addJob: mockFn });
 
-      await render(<Experience {...getProps({ functions })} />);
+      render(<Experience {...getProps({ functions })} />);
       const user = userEvent.setup();
 
       const name = `Add Job ${DATA.jobs.length + 1}`;
-      const btn = page.getByRole('button', { name });
+      const btn = screen.getByRole('button', { name });
 
       // Act
       await user.click(btn);
@@ -242,23 +241,23 @@ describe('Experience', () => {
   });
 
   describe('"Delete Job" button', () => {
-    it('should render a "Delete Job [shown job index + 1]" button if there is more than one job', async () => {
-      await render(<Experience {...getProps()} />);
+    it('should render a "Delete Job [shown job index + 1]" button if there is more than one job', () => {
+      render(<Experience {...getProps()} />);
 
-      const btn = page.getByRole('button', {
+      const btn = screen.getByRole('button', {
         name: `Delete Job ${DATA.shownJobIndex + 1}`,
       });
 
-      await expect.element(btn).toBeInTheDocument();
+      expect(btn).toBeInTheDocument();
     });
 
-    it("should not render the button if there's just one job", async () => {
+    it("should not render the button if there's just one job", () => {
       const data = structuredClone({ ...DATA, jobs: [DATA.jobs[0]] });
-      await render(<Experience {...getProps({ data })} />);
+      render(<Experience {...getProps({ data })} />);
 
-      const btn = page.getByRole('button', { name: 'Delete Job 1' });
+      const btn = screen.queryByRole('button', { name: 'Delete Job 1' });
 
-      await expect.element(btn).not.toBeInTheDocument();
+      expect(btn).not.toBeInTheDocument();
     });
 
     it('should call `deleteJob(shownJobIndex)` when the button is called', async () => {
@@ -266,10 +265,10 @@ describe('Experience', () => {
       const mockFn = vi.fn((_index: number) => {});
       const functions = cloneDeep({ ...FUNCTIONS, deleteJob: mockFn });
 
-      await render(<Experience {...getProps({ functions })} />);
+      render(<Experience {...getProps({ functions })} />);
       const user = userEvent.setup();
       const name = `Delete Job ${DATA.shownJobIndex + 1}`;
-      const btn = page.getByRole('button', { name });
+      const btn = screen.getByRole('button', { name });
 
       // Act
       await user.click(btn);
@@ -287,94 +286,88 @@ describe('Experience', () => {
       const job = DATA.jobs[DATA.shownJobIndex];
       const { address, companyName, duration, jobTitle } = job;
 
-      beforeEach(async () => {
-        await render(<Experience {...getProps()} />);
+      beforeEach(() => {
+        render(<Experience {...getProps()} />);
       });
 
-      it('should have the correct address', async () => {
-        const input = page.getByRole('textbox', {
+      it('should have the correct address', () => {
+        const input: HTMLInputElement = screen.getByRole('textbox', {
           name: 'Address',
         });
 
-        await expect.element(input).toHaveValue(address);
+        expect(input.value).toBe(address);
       });
 
-      it('should have the correct company name', async () => {
-        const input = page.getByRole('textbox', {
+      it('should have the correct company name', () => {
+        const input: HTMLInputElement = screen.getByRole('textbox', {
           name: 'Company Name',
         });
 
-        await expect.element(input).toHaveValue(companyName);
+        expect(input.value).toBe(companyName);
       });
 
-      it('should have the correct duration', async () => {
-        const input = page.getByRole('textbox', {
+      it('should have the correct duration', () => {
+        const input: HTMLInputElement = screen.getByRole('textbox', {
           name: 'Duration',
         });
 
-        await expect.element(input).toHaveValue(duration);
+        expect(input.value).toBe(duration);
       });
 
-      it('should have the correct job title', async () => {
-        const input = page.getByRole('textbox', {
+      it('should have the correct job title', () => {
+        const input: HTMLInputElement = screen.getByRole('textbox', {
           name: 'Job Title',
         });
 
-        await expect.element(input).toHaveValue(jobTitle);
+        expect(input.value).toBe(jobTitle);
       });
 
       describe('bullet points', () => {
         const { bulletPoints } = job;
 
-        function getInput(name: string) {
-          return page.getByRole('textbox', { name });
+        function getInput(name: string): HTMLInputElement {
+          return screen.getByRole('textbox', { name });
         }
 
         describe('bullet point 1', () => {
-          it('should have the correct value', async () => {
+          it('should have the correct value', () => {
             const input = getInput('Bullet point 1');
 
-            await expect.element(input).toHaveValue(bulletPoints[0].value);
+            expect(input.value).toBe(bulletPoints[0].value);
           });
 
-          it('should have the correct ID', async () => {
+          it('should have the correct ID', () => {
             const input = getInput('Bullet point 1');
 
-            await expect
-              .element(input)
-              .toHaveAttribute('id', bulletPoints[0].id);
+            expect(input.id).toBe(bulletPoints[0].id);
           });
         });
 
         describe('bullet point 2', () => {
-          it('should have the correct value', async () => {
+          it('should have the correct value', () => {
             const input = getInput('Bullet point 2');
 
-            await expect.element(input).toHaveValue(bulletPoints[1].value);
+            expect(input.value).toBe(bulletPoints[1].value);
           });
 
-          it('should have the correct ID', async () => {
+          it('should have the correct ID', () => {
             const input = getInput('Bullet point 2');
 
-            await expect
-              .element(input)
-              .toHaveAttribute('id', bulletPoints[1].id);
+            expect(input.id).toBe(bulletPoints[1].id);
           });
         });
 
         describe('bullet point 3', () => {
-          it('should have the correct value', async () => {
+          it('should have the correct value', () => {
             const input = getInput('Bullet point 3');
 
-            await expect.element(input).toHaveValue(bulletPoints[2].value);
+            expect(input.value).toBe(bulletPoints[2].value);
           });
 
-          it('should have the correct ID', async () => {
+          it('should have the correct ID', () => {
             const input = getInput('Bullet point 3');
 
-            await expect
-              .element(input)
-              .toHaveAttribute('id', bulletPoints[2].id);
+            expect(input.id).toBe(bulletPoints[2].id);
           });
         });
       });
@@ -386,11 +379,11 @@ describe('Experience', () => {
         const mockFn = vi.fn((_bulletIndex: number) => {});
         const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
-        await render(<Experience {...getProps({ functions })} />);
+        render(<Experience {...getProps({ functions })} />);
         const user = userEvent.setup();
 
         const name = 'Add bullet point';
-        const addBulletPointBtn = page.getByRole('button', { name });
+        const addBulletPointBtn = screen.getByRole('button', { name });
 
         // Act
         await user.click(addBulletPointBtn);
@@ -407,11 +400,11 @@ describe('Experience', () => {
         const functions = cloneDeep(FUNCTIONS);
         functions.deleteBulletPoint = mockFn;
 
-        await render(<Experience {...getProps({ functions })} />);
+        render(<Experience {...getProps({ functions })} />);
         const user = userEvent.setup();
 
         const name = 'Delete bullet point 1';
-        const deleteBulletPointBtn = page.getByRole('button', { name });
+        const deleteBulletPointBtn = screen.getByRole('button', { name });
 
         // Act
         await user.click(deleteBulletPointBtn);
@@ -432,11 +425,11 @@ describe('Experience', () => {
           editBulletPoint: mockFn,
         });
 
-        await render(<Experience {...getProps({ functions })} />);
+        render(<Experience {...getProps({ functions })} />);
         const user = userEvent.setup();
 
-        const input = page.getByRole('textbox', { name: 'Bullet point 1' });
-        input.element().focus();
+        const input = screen.getByRole('textbox', { name: 'Bullet point 1' });
+        input.focus();
 
         // Act
         await user.keyboard('s');
@@ -462,12 +455,12 @@ describe('Experience', () => {
           editJob: mockFn,
         });
 
-        await render(<Experience {...getProps({ functions })} />);
+        render(<Experience {...getProps({ functions })} />);
         const user = userEvent.setup();
 
         const name = 'Job Title';
-        const input = page.getByRole('textbox', { name });
-        input.element().focus();
+        const input = screen.getByRole('textbox', { name });
+        input.focus();
 
         // Act
         await user.keyboard('s');
@@ -482,6 +475,8 @@ describe('Experience', () => {
         );
       });
 
+      // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
+
       /**
        * For DnD announcements, `dnd-kit` has its own logic. If it ever changes,
        * the test's name should be changed.
@@ -491,11 +486,11 @@ describe('Experience', () => {
         const mockFn = vi.fn((_announcement: string) => {});
         const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
-        await render(<Experience {...props} />);
+        render(<Experience {...props} />);
         const user = userEvent.setup();
 
         const name = 'Delete bullet point 1';
-        const deleteBtn = page.getByRole('button', { name });
+        const deleteBtn = screen.getByRole('button', { name });
 
         // Act
         await user.click(deleteBtn);
@@ -506,12 +501,12 @@ describe('Experience', () => {
     });
   });
 
-  it('should pass the section element to `ref.current`', async () => {
+  it('should pass the section element to `ref.current`', () => {
     const ref = { current: null };
-    await render(<Experience {...getProps({ ref })} />);
+    render(<Experience {...getProps({ ref })} />);
 
-    const experience = page.getByRole('tabpanel');
+    const experience = screen.getByRole('tabpanel');
 
-    expect(ref.current).toBe(experience.element());
+    expect(ref.current).toBe(experience);
   });
 });

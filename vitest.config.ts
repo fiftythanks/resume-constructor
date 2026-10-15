@@ -1,5 +1,5 @@
 import { playwright } from '@vitest/browser-playwright';
-import { configDefaults, defineConfig, mergeConfig } from 'vitest/config';
+import { defineConfig, mergeConfig } from 'vitest/config';
 
 import viteConfig from './vite.config.ts';
 
@@ -10,17 +10,47 @@ export default mergeConfig(
       include: ['react-dom/client', 'vitest-browser-react'],
     },
     test: {
-      browser: {
-        enabled: true,
-        headless: true,
-        instances: [{ browser: 'chromium' }],
-        provider: playwright(),
-      },
       clearMocks: true,
-      exclude: [...configDefaults.exclude, 'docs/**', 'e2e/**'],
       globals: true,
-      setupFiles: ['./vitest.setup.tsx'],
-      testTimeout: 25_000,
+      projects: [
+        {
+          extends: true,
+          test: {
+            environment: 'node',
+            exclude: ['src/**/use*.test.ts', 'src/**/*.browser.test.ts'],
+            include: ['src/**/[a-z]*.test.ts'],
+            name: 'unit',
+          },
+        },
+        {
+          extends: true,
+          test: {
+            environment: 'happy-dom',
+            exclude: ['src/**/*.browser.test.{ts,tsx}'],
+            include: [
+              'src/**/[A-Z]*.test.{ts,tsx}',
+              'src/**/use*.test.{ts,tsx}',
+            ],
+            name: 'component',
+            setupFiles: ['./vitest.setup.tsx'],
+          },
+        },
+        {
+          extends: true,
+          test: {
+            browser: {
+              enabled: true,
+              headless: true,
+              instances: [{ browser: 'chromium' }],
+              provider: playwright(),
+            },
+            include: ['src/**/*.browser.test.{ts,tsx}'],
+            name: 'browser',
+            setupFiles: ['./vitest.setup.tsx'],
+            testTimeout: 25_000,
+          },
+        },
+      ],
     },
   }),
 );

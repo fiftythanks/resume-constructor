@@ -145,9 +145,8 @@ export default function Preview({
       return;
     }
 
-    const paddingInline = parseFloat(
-      getComputedStyle(popupRef.current).paddingInline,
-    );
+    const paddingInline =
+      parseFloat(getComputedStyle(popupRef.current).paddingInline) || 0;
 
     const width = viewportWidth - 2 * paddingInline;
 
