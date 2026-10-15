@@ -375,6 +375,31 @@ describe('Degree', () => {
       expect(mockFn).toHaveBeenCalledWith(0, `${DATA.bulletPoints[0].value}s`);
     });
 
-    // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
+    it('should call `updateBulletPoints` with the reordered bullet points when a bullet point is dragged and dropped onto another bullet point', async () => {
+      // ARRANGE
+      const mockFn = vi.fn((_value: ItemWithId[]) => {});
+      const functions = cloneDeep({ ...FUNCTIONS, updateBulletPoints: mockFn });
+
+      await render(<Degree {...getProps({ functions })} />);
+      const user = userEvent.setup();
+
+      const firstDragHandle = page.getByRole('button', {
+        name: 'Drag bullet point 1',
+      });
+      const thirdDragHandle = page.getByRole('button', {
+        name: 'Drag bullet point 3',
+      });
+
+      // ACT
+      await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
+
+      // ASSERT
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).toHaveBeenCalledWith([
+        DATA.bulletPoints[1],
+        DATA.bulletPoints[2],
+        DATA.bulletPoints[0],
+      ]);
+    });
   });
 });

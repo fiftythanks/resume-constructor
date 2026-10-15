@@ -189,7 +189,6 @@ describe('Project', () => {
     });
   });
 
-  // TODO: find a way to test `updateBulletPoints` as soon as or working around finding a way to test dragging over in the `BulletPoints` test suite.
   describe('Bullet points', () => {
     it('should render bullet points with an accessible name "Bullet Points"', async () => {
       await render(<Project {...getProps()} />);
@@ -234,6 +233,41 @@ describe('Project', () => {
           .element(node)
           .toHaveAttribute('placeholder', placeholders[i]);
       }
+    });
+
+    it('should call `updateBulletPoints` with the reordered bullet points when a bullet point is dragged and dropped onto another bullet point', async () => {
+      // ARRANGE
+      const updateBulletPointsMock = vi.fn((_value: ItemWithId[]) => {});
+      const props = getProps();
+
+      await render(
+        <Project
+          {...props}
+          functions={{
+            ...props.functions,
+            updateBulletPoints: updateBulletPointsMock,
+          }}
+        />,
+      );
+
+      const user = userEvent.setup();
+      const firstDragHandle = page.getByRole('button', {
+        name: 'Drag bullet point 1',
+      });
+      const thirdDragHandle = page.getByRole('button', {
+        name: 'Drag bullet point 3',
+      });
+
+      // ACT
+      await user.dragAndDrop(firstDragHandle, thirdDragHandle, { steps: 5 });
+
+      // ASSERT
+      expect(updateBulletPointsMock).toHaveBeenCalledTimes(1);
+      expect(updateBulletPointsMock).toHaveBeenCalledWith([
+        props.data.bulletPoints[1],
+        props.data.bulletPoints[2],
+        props.data.bulletPoints[0],
+      ]);
     });
 
     /**
