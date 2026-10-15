@@ -157,6 +157,29 @@ describe('BulletPoints', () => {
     }
   });
 
+  it('should call `updateData` with the reordered bullet points when a bullet point is dragged and dropped onto another bullet point', async () => {
+    // Arrange
+    const updateDataMock = vi.fn((_newData: ItemWithId[]) => {});
+    await render(
+      <BulletPoints {...getProps({ updateData: updateDataMock })} />,
+    );
+    const user = userEvent.setup();
+
+    const firstDragHandle = page.getByRole('button', {
+      name: 'Drag bullet point 1',
+    });
+    const thirdDragHandle = page.getByRole('button', {
+      name: 'Drag bullet point 3',
+    });
+
+    // Act
+    await user.dragAndDrop(firstDragHandle, thirdDragHandle);
+
+    // Assert
+    expect(updateDataMock).toHaveBeenCalledTimes(1);
+    expect(updateDataMock).toHaveBeenCalledWith([ITEMS[1], ITEMS[2], ITEMS[0]]);
+  });
+
   it('should announce "Picked up draggable item [index + 1]" to screen readers when the drag handle of a bullet point [index + 1] is clicked for the first time (in other words, on drag start)', async () => {
     await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();
@@ -173,7 +196,52 @@ describe('BulletPoints', () => {
     await expect.element(a11yElement).toBeInTheDocument();
   });
 
-  // TODO: figure out how to test drag over. As far as I understand, it is impossible to do by the means of unit testing, at least in JSDOM.
+  it('should announce "Draggable item [index + 1] was moved over droppable area [droppableIndex + 1]." to screen readers when a dragged bullet point is moved over another droppable area', async () => {
+    // Arrange
+    await render(<BulletPoints {...getProps()} />);
+    const user = userEvent.setup();
+
+    const dragHandle = page.getByRole('button', {
+      name: 'Drag bullet point 1',
+    });
+
+    dragHandle.element().focus();
+    await user.keyboard(' ');
+
+    // Act
+    await user.keyboard('{ArrowDown}');
+
+    // Assert
+    const a11yElement = page.getByText(
+      'Draggable item 1 was moved over droppable area 2.',
+    );
+
+    await expect.element(a11yElement).toBeInTheDocument();
+  });
+
+  it('should announce "Draggable item [index + 1] was moved over droppable area [index + 1]." to screen readers when a dragged bullet point is moved back to its initial droppable area after being moved away', async () => {
+    // Arrange
+    await render(<BulletPoints {...getProps()} />);
+    const user = userEvent.setup();
+
+    const dragHandle = page.getByRole('button', {
+      name: 'Drag bullet point 1',
+    });
+
+    dragHandle.element().focus();
+    await user.keyboard(' ');
+    await user.keyboard('{ArrowDown}');
+
+    // Act
+    await user.keyboard('{ArrowUp}');
+
+    // Assert
+    const a11yElement = page.getByText(
+      'Draggable item 1 was moved over droppable area 1.',
+    );
+
+    await expect.element(a11yElement).toBeInTheDocument();
+  });
 
   it('should announce "Dragging was cancelled. Draggable item [index + 1] was put to its initial position." to screen readers when Escape is pressed during dragging', async () => {
     await render(<BulletPoints {...getProps()} />);
