@@ -12,10 +12,11 @@ import {
 
 import neverReached from '@/utils/neverReached';
 
+import getResumeHeaderLinksState from './getResumeHeaderLinksState';
 import Icon from './Icon';
 import ResumeSection from './ResumeSection';
 
-import type { Links, ResumeData, SectionId } from '@/types/resumeData';
+import type { ResumeData, SectionId } from '@/types/resumeData';
 import type { ReadonlyDeep } from 'type-fest';
 
 const styles = StyleSheet.create({
@@ -68,7 +69,12 @@ export default function ResumeDocument({
   activeSectionIds,
   data,
 }: ReadonlyDeep<ResumeDocumentProps>) {
-  const hasLinksSection = activeSectionIds.includes('links');
+  const { activeCustomLinks, hasVisibleLinks, shouldShowInlineEmail } =
+    getResumeHeaderLinksState(
+      activeSectionIds,
+      data.personal.email,
+      data.links,
+    );
 
   // ==========================================================================
   // CONTACT ELEMENTS
@@ -77,7 +83,7 @@ export default function ResumeDocument({
   const contactElements: ReactElement[] = [];
 
   // Email
-  if (!hasLinksSection && data.personal.email !== '') {
+  if (shouldShowInlineEmail) {
     contactElements.push(
       <Link
         href={`mailto:${data.personal.email}`}
@@ -98,17 +104,6 @@ export default function ResumeDocument({
   if (data.personal.address !== '') {
     contactElements.push(<Text key="address">{data.personal.address}</Text>);
   }
-
-  // ==========================================================================
-  // CUSTOM LINKS
-  // ==========================================================================
-
-  const activeCustomLinks = Object.entries(data.links).filter(
-    ([_, item]) => item.text !== '',
-  );
-  const hasVisibleLinks =
-    hasLinksSection &&
-    (data.personal.email !== '' || activeCustomLinks.length > 0);
 
   return (
     <Document>
@@ -148,9 +143,9 @@ export default function ResumeDocument({
                   </View>
                 )}
 
-                {activeCustomLinks.map(([type, item]) => (
+                {activeCustomLinks.map(({ item, type }) => (
                   <View key={type} style={styles.linksItem}>
-                    <Icon style={styles.linksIcon} type={type as keyof Links} />
+                    <Icon style={styles.linksIcon} type={type} />
                     <Link href={item.link} src={item.link}>
                       {item.text}
                     </Link>
