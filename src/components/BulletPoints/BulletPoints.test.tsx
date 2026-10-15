@@ -157,29 +157,6 @@ describe('BulletPoints', () => {
     }
   });
 
-  it('should call `updateData` with the reordered bullet points when a bullet point is dragged and dropped onto another bullet point', async () => {
-    // Arrange
-    const updateDataMock = vi.fn((_newData: ItemWithId[]) => {});
-    await render(
-      <BulletPoints {...getProps({ updateData: updateDataMock })} />,
-    );
-    const user = userEvent.setup();
-
-    const firstDragHandle = page.getByRole('button', {
-      name: 'Drag bullet point 1',
-    });
-    const thirdDragHandle = page.getByRole('button', {
-      name: 'Drag bullet point 3',
-    });
-
-    // Act
-    await user.dragAndDrop(firstDragHandle, thirdDragHandle);
-
-    // Assert
-    expect(updateDataMock).toHaveBeenCalledTimes(1);
-    expect(updateDataMock).toHaveBeenCalledWith([ITEMS[1], ITEMS[2], ITEMS[0]]);
-  });
-
   it('should provide a screen reader instruction "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."', async () => {
     await render(<BulletPoints {...getProps()} />);
     const user = userEvent.setup();

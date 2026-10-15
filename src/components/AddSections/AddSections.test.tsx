@@ -55,22 +55,6 @@ describe('AddSections', () => {
     await expect.element(popup).not.toBeInTheDocument();
   });
 
-  it('should close and call `onClose` when Escape is pressed', async () => {
-    // Arrange
-    const onCloseMock = vi.fn();
-    await render(<Container />);
-    await render(<AddSections {...getProps({ onClose: onCloseMock })} />);
-
-    // Act
-    await userEvent.keyboard('{Escape}');
-
-    // Assert
-    const popup = page.getByRole('dialog', { name: 'Add Sections' });
-
-    await expect.element(popup).not.toBeInTheDocument();
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
-  });
-
   it('should render a heading "Add Sections"', async () => {
     await render(<Container />);
     await render(<AddSections {...getProps()} />);

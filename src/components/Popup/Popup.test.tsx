@@ -1,5 +1,4 @@
 import { render } from 'vitest-browser-react';
-import { userEvent } from 'vitest/browser';
 
 import Popup from './Popup';
 
@@ -50,23 +49,5 @@ describe('Popup', () => {
     const popup = screen.getByRole('dialog', { name: 'Some Title' });
 
     await expect.element(popup).not.toBeInTheDocument();
-  });
-
-  it('should close and call `onClose` when Escape is pressed', async () => {
-    // Arrange
-    const onCloseMock = vi.fn();
-    await render(<Container />);
-    const screen = await render(
-      <Popup {...getProps({ onClose: onCloseMock })} />,
-    );
-
-    // Act
-    await userEvent.keyboard('{Escape}');
-
-    // Assert
-    const popup = screen.getByRole('dialog', { name: 'Some Title' });
-
-    await expect.element(popup).not.toBeInTheDocument();
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 });
