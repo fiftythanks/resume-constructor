@@ -3,15 +3,14 @@ import { renderHook } from 'vitest-browser-react';
 import getDefaultData from './getDefaultData';
 import useResumeData from './useResumeData';
 
-import type { WritableDraft } from 'immer';
-import type { ReadonlyDeep } from 'type-fest';
-
-import {
+import type {
   ItemWithId,
   ResumeData,
   ResumeDataWithOptionalIds,
   ResumeDataWithoutIds,
 } from '@/types/resumeData';
+import type { WritableDraft } from 'immer';
+import type { ReadonlyDeep } from 'type-fest';
 
 function stripOfIds(data: ReadonlyDeep<ResumeData>): ResumeDataWithoutIds {
   const newData: ResumeDataWithOptionalIds = structuredClone(

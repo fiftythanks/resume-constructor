@@ -3,7 +3,7 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-import { RefObject } from 'react';
+import type { RefObject } from 'react';
 
 import cloneDeep from 'lodash/cloneDeep';
 import { render } from 'vitest-browser-react';

@@ -1,4 +1,4 @@
-import { ChangeEvent, RefObject } from 'react';
+import type { ChangeEvent, RefObject } from 'react';
 
 import BulletPoints from '@/components/BulletPoints';
 

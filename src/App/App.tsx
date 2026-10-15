@@ -1,4 +1,5 @@
-import { RefObject, useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
+import type { RefObject } from 'react';
 
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { tabbable } from 'tabbable';

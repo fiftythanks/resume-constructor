@@ -1,10 +1,10 @@
-import { RefObject, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
 import {
   closestCenter,
   DndContext,
-  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -44,6 +44,7 @@ import projectsSrc from '@/assets/icons/sections/projects.svg';
 import skillsSrc from '@/assets/icons/sections/skills.svg';
 
 import type { SectionId, SectionIds } from '@/types/resumeData';
+import type { DragEndEvent } from '@dnd-kit/core';
 import type { ReadonlyDeep, Replace } from 'type-fest';
 
 import './Navbar.scss';

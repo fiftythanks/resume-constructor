@@ -19,6 +19,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "rootDir": "./",
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
     "types": [
       "node",
       "vite/client",
