@@ -483,6 +483,50 @@ describe('App', () => {
       });
     });
 
+    describe('Section tab reordering', () => {
+      it('should reorder section tabs when a draggable tab is dragged and dropped onto another draggable tab in editor mode', async () => {
+        // ARRANGE
+        const { fillAllBtn, navbar, toggleEditorModeBtn, user } =
+          await renderAppWithNavbarAndControlsExpanded();
+
+        await user.click(fillAllBtn);
+        await user.click(toggleEditorModeBtn);
+
+        const sourceTab = navbar.getByRole('tab', {
+          name: sectionTitles.education,
+        });
+        const targetTab = navbar.getByRole('tab', {
+          name: sectionTitles.skills,
+        });
+
+        // ACT
+        /**
+         * Draggable tabs run an infinite CSS shake animation in editor mode,
+         * so Playwright's layout stability check must be bypassed via `force`.
+         */
+        await user.dragAndDrop(sourceTab, targetTab, {
+          force: true,
+          steps: 5,
+        });
+
+        // ASSERT
+        const tabIds = navbar
+          .getByRole('tab')
+          .all()
+          .map((tab) => tab.element().id);
+
+        expect(tabIds).toEqual([
+          'personal',
+          'links',
+          'education',
+          'skills',
+          'experience',
+          'projects',
+          'certifications',
+        ]);
+      });
+    });
+
     describe('"Clear All" button', () => {
       it("should do nothing to the toolbar when there's just one section", async () => {
         // Arrange
