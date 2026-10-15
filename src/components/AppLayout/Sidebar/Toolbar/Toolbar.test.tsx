@@ -7,16 +7,11 @@ import { page, userEvent } from 'vitest/browser';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 
+import getControlledIds from './getControlledIds';
 import Toolbar from './Toolbar';
 
 import type { ToolbarProps } from './Toolbar';
-import type {
-  ResumeData,
-  SectionIds,
-  SectionIdsDeletable,
-  TabpanelIds,
-} from '@/types/resumeData';
-import type { ArraySplice } from 'type-fest';
+import type { ResumeData } from '@/types/resumeData';
 
 const DATA: ResumeData = {
   certifications: {
@@ -220,20 +215,7 @@ describe('Toolbar', () => {
     await expect.element(toolbar).toHaveClass('ToolbarClass');
   });
 
-  const deletableSectionIds: SectionIdsDeletable = possibleSectionIds.toSpliced(
-    0,
-    1,
-  ) as ArraySplice<SectionIds, 0, 1>;
-
-  type AppendSuffix<T extends SectionIds> = {
-    [K in keyof T]: `${T[K]}-tabpanel`;
-  };
-
-  const tabpanelIds: TabpanelIds = possibleSectionIds.map(
-    (sectionId) => `${sectionId}-tabpanel`,
-  ) as AppendSuffix<SectionIds>;
-
-  const allControlledIds = [...deletableSectionIds, ...tabpanelIds].join(' ');
+  const allControlledIds = getControlledIds();
 
   describe('Buttons', () => {
     describe('"Clear All" button', () => {
