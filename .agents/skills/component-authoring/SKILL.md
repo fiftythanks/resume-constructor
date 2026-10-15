@@ -18,10 +18,13 @@ Every component lives in its own dedicated directory under `src/components/<Comp
 
 ```text
 src/components/MyComponent/
-├── MyComponent.tsx         # Component definition and props interface
-├── MyComponent.scss        # Component-scoped BEM styles
-├── MyComponent.test.tsx    # Comprehensive Vitest + vitest-browser-react tests
-└── index.tsx               # Single-line barrel export
+├── MyComponent.tsx              # Component definition and props interface
+├── MyComponent.scss             # Component-scoped BEM styles
+├── MyComponent.test.tsx         # Component tests (happy-dom + @testing-library/react)
+├── MyComponent.browser.test.tsx # Optional real-browser tests (Vitest Browser Mode)
+├── someHelper.ts                # Optional extracted pure logic helper
+├── someHelper.test.ts           # Optional pure Node unit tests (environment: 'node')
+└── index.tsx                    # Single-line barrel export
 ```
 
 ### Barrel Export (`index.tsx`)
@@ -165,14 +168,16 @@ export default function MyComponent({
 
 ---
 
-## 4. Test Implementation Template (`MyComponent.test.tsx`)
+## 4. Test Implementation Templates (`MyComponent.test.tsx` & `MyComponent.browser.test.tsx`)
+
+### Component Tests (`MyComponent.test.tsx` — `happy-dom`)
 
 ```tsx
 import type { MouseEvent } from 'react';
 
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import type { Mock } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
-import { render } from 'vitest-browser-react';
 
 import MyComponent from './MyComponent';
 
@@ -183,20 +188,20 @@ describe('MyComponent', () => {
     handleClickMock = vi.fn();
   });
 
-  it('should render with accessible role and name', async () => {
+  it('should render with accessible role and name', () => {
     // ARRANGE & ACT
-    await render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
+    render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
 
     // ASSERT
-    const btn = page.getByRole('button', { name: /action/i });
-    await expect.element(btn).toBeInTheDocument();
+    const btn = screen.getByRole('button', { name: /action/i });
+    expect(btn).toBeInTheDocument();
   });
 
   it('should handle click interactions via userEvent', async () => {
     // ARRANGE
     const user = userEvent.setup();
-    await render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
-    const btn = page.getByRole('button', { name: /action/i });
+    render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
+    const btn = screen.getByRole('button', { name: /action/i });
 
     // ACT
     await user.click(btn);
@@ -207,15 +212,30 @@ describe('MyComponent', () => {
 });
 ```
 
+### Real-Browser Tests (`MyComponent.browser.test.tsx` — Vitest Browser Mode)
+
+Use `MyComponent.browser.test.tsx` strictly for behaviours requiring a real browser layout engine (`@dnd-kit` pointer/keyboard drag-and-drop, native `<dialog>` top-layer `showModal()`/`close()` and `Escape` dismissal, `tabbable` geometry visibility and viewport resizing):
+
+```tsx
+import { page, userEvent } from 'vitest/browser';
+import { render } from 'vitest-browser-react';
+
+import MyComponent from './MyComponent';
+```
+
 ### Key Test Rules:
 
-1. **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
-2. **Strict Single-Act Principle & Prohibition of Multiple Acts:** Every unit test must test a single, atomic behaviour. Never chain multiple `Act` and `Assert` sequences inside one test (`// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`). If testing multiple actions (e.g. focusing and reverse-tabbing, or navigating, adding and deleting), decompose them into separate, atomic test cases each with its own descriptive title. Each unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when verifying multiple facets of that same atomic action. Multi-act sequences are reserved exclusively for component-level acceptance user journeys and E2E workflows.
-3. **Accessible Queries:** Query elements strictly by accessible role (`page.getByRole('button', { name: /action/i })`), never by CSS class or arbitrary test ID.
-4. **User Event:** Always initialise `userEvent.setup()` from `vitest/browser` and await user actions.
-5. **Lucas da Costa Testing Patterns (see `testing-patterns` skill):**
+1. **Three-Tier Separation:**
+   - Extract pure logic into colocated `[a-z]*.ts` helpers (registered in `docs/astro.config.ts`) and test them in `[a-z]*.test.ts` (`unit` project, `environment: 'node'`).
+   - Test standard component rendering, ARIA attributes and user interactions in `MyComponent.test.tsx` (`component` project, `environment: 'happy-dom'`).
+   - Test real-browser layout and native top-layer interactions in `MyComponent.browser.test.tsx` (`browser` project, Playwright Chromium).
+2. **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
+3. **Strict Single-Act Principle & Prohibition of Multiple Acts:** Every unit test must test a single, atomic behaviour. Never chain multiple `Act` and `Assert` sequences inside one test (`// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`). If testing multiple actions (e.g. focusing and reverse-tabbing, or navigating, adding and deleting), decompose them into separate, atomic test cases each with its own descriptive title. Each unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when verifying multiple facets of that same atomic action. Multi-act sequences are reserved exclusively for component-level acceptance user journeys and E2E workflows.
+4. **Accessible Queries:** Query elements strictly by accessible role (`screen.getByRole('button', { name: /action/i })` or `page.getByRole('button', { name: /action/i })`), never by CSS class or arbitrary test ID.
+5. **User Event:** Always initialise `userEvent.setup()` and await user actions.
+6. **Lucas da Costa Testing Patterns (see `testing-patterns` skill):**
    - **Tight Assertions:** Never use loose matchers like `expect.any(...)` when an exact element reference is known. Always assert exact spy call counts (`toHaveBeenCalledTimes(n)`) and arguments (`toHaveBeenCalledWith(...)`).
-   - **Specialised DOM Matchers:** Always use `expect.element(...)` matchers (e.g. `toHaveFocus()`) rather than manual property checks on `document.activeElement`.
+   - **Specialised DOM Matchers:** Always use semantic DOM matchers (e.g. `toHaveFocus()`) rather than manual property checks on `document.activeElement`.
    - **Style Verification:** Verify that components apply their required BEM classes using `toHaveClass(...)`.
    - **Assertion Guarantees:** Use `expect.hasAssertions()` in asynchronous and event-driven tests.
    - **Component-Level Acceptance Scope:** Only author acceptance tests for complex stateful organisms, flow gates or compound widgets that represent a distinct user capability. Never author acceptance tests for presentational or leaf components, and never create dummy stateful wrappers inside test files to mimic external state machines.

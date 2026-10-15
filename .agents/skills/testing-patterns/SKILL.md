@@ -24,6 +24,14 @@ This skill provides comprehensive standards and patterns for writing automated t
 - **Single Responsibility & Focused Test Scopes (Chapter 3, §3.1.1):**
   Tests must be small and focused on a single facet of behaviour. When a test fails, the diagnostic feedback must be immediate and unambiguous, avoiding bloated tests where multiple unrelated concerns are mixed together.
 
+- **Three-Tier Test Architecture (`vitest.config.ts`):**
+  1. **Pure Node Unit Tests (`someTest.test.ts` — `unit` project, `environment: 'node'`):**
+     Matches `src/**/[a-z]*.test.ts` (excluding `use*.test.ts` and `*.browser.test.ts`). Pure functions and extractable component logic must live in colocated `.ts` files (registered in `docs/astro.config.ts`) and be tested in Node without any DOM overhead.
+  2. **Component & Hook Tests (`Component.test.tsx`, `useHook.test.ts` — `component` project, `environment: 'happy-dom'`):**
+     Matches `src/**/[A-Z]*.test.{ts,tsx}` and `src/**/use*.test.{ts,tsx}` (excluding `*.browser.test.{ts,tsx}`). Uses `@testing-library/react`, `@testing-library/user-event` and `@testing-library/jest-dom/vitest`.
+  3. **Browser Mode Component Tests (`Component.browser.test.tsx` — `browser` project, Playwright Chromium):**
+     Matches `src/**/*.browser.test.{ts,tsx}`. Uses `vitest-browser-react` (`await render`) and `vitest/browser` (`page`, `userEvent`, `await expect.element(...)`). Reserved strictly for behaviours that require a real browser engine (such as `@dnd-kit` pointer and keyboard drag-and-drop, native `<dialog>` top-layer `showModal()`/`close()` and `Escape` dismissal, `tabbable` geometry visibility and viewport resizing).
+
 ---
 
 ## 2. Writing Good, Tight Assertions (Chapter 3, §3.2)
@@ -45,7 +53,7 @@ This skill provides comprehensive standards and patterns for writing automated t
 ### C. Meaningful Assertions & Error Handling (§3.2.1)
 
 - Every assertion must be directly sensitive to the behaviour under test.
-- Never assert unrelated element presence (such as `await expect.element(button).toBeInTheDocument()`) as a proxy for verifying that an action executed without throwing an error. Wrap operations in explicit error assertions (e.g. `await expect(action).resolves.not.toThrow()`) or assert the resulting focus or state.
+- Never assert unrelated element presence (such as `expect(button).toBeInTheDocument()` or `await expect.element(button).toBeInTheDocument()`) as a proxy for verifying that an action executed without throwing an error. Wrap operations in explicit error assertions (e.g. `await expect(action).resolves.not.toThrow()`) or assert the resulting focus or state.
 
 ### D. Assertion Count Guarantees (§3.2.1)
 
@@ -55,26 +63,26 @@ This skill provides comprehensive standards and patterns for writing automated t
 
 ## 3. Specialised Custom DOM Matchers (Chapter 3, §3.2.3 & Chapter 6, §6.2.2)
 
-Always use `expect.element(...)` semantic matchers from `vitest/browser` instead of manually checking raw DOM properties:
+Always use semantic DOM matchers (`@testing-library/jest-dom/vitest` in `component` tests or `expect.element(...)` from `vitest/browser` in `browser` tests) instead of manually checking raw DOM properties:
 
-| ❌ Raw DOM Check (Loose / Poor Diffs)                | ✅ Semantic `expect.element` Matcher (Clear Diagnostic Diffs) |
-| :--------------------------------------------------- | :------------------------------------------------------------ |
-| `expect(document.activeElement).toBe(btn)`           | `await expect.element(btn).toHaveFocus()`                     |
-| `expect(document.activeElement).not.toBe(btn)`       | `await expect.element(btn).not.toHaveFocus()`                 |
-| `expect(node !== null).toBe(true)`                   | `await expect.element(node).toBeInTheDocument()`              |
-| `expect(el.getAttribute('aria-label')).toBe('x')`    | `await expect.element(el).toHaveAccessibleName('x')`          |
-| `expect(el.classList.contains('active')).toBe(true)` | `await expect.element(el).toHaveClass('active')`              |
-| `expect(btn.disabled).toBe(true)`                    | `await expect.element(btn).toBeDisabled()`                    |
+| ❌ Raw DOM Check (Loose / Poor Diffs)                | ✅ Semantic Matcher (`component` / `browser`)                                                 |
+| :--------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `expect(document.activeElement).toBe(btn)`           | `expect(btn).toHaveFocus()` / `await expect.element(btn).toHaveFocus()`                       |
+| `expect(document.activeElement).not.toBe(btn)`       | `expect(btn).not.toHaveFocus()` / `await expect.element(btn).not.toHaveFocus()`               |
+| `expect(node !== null).toBe(true)`                   | `expect(node).toBeInTheDocument()` / `await expect.element(node).toBeInTheDocument()`         |
+| `expect(el.getAttribute('aria-label')).toBe('x')`    | `expect(el).toHaveAccessibleName('x')` / `await expect.element(el).toHaveAccessibleName('x')` |
+| `expect(el.classList.contains('active')).toBe(true)` | `expect(el).toHaveClass('active')` / `await expect.element(el).toHaveClass('active')`         |
+| `expect(btn.disabled).toBe(true)`                    | `expect(btn).toBeDisabled()` / `await expect.element(btn).toBeDisabled()`                     |
 
 ---
 
 ## 4. Element Selection & Accessible Queries (Chapter 6, §6.2 & Chapter 7)
 
 - **Accessible Roles First:**
-  Query elements strictly by accessible role and accessible name using `page` from `vitest/browser`:
+  Query elements strictly by accessible role and accessible name using `screen` from `@testing-library/react` (in `component` tests) or `page` from `vitest/browser` (in `browser` tests):
   ```typescript
-  const submitBtn = page.getByRole('button', { name: 'Submit Application' });
-  const heading = page.getByRole('heading', { level: 2, name: 'Project 1' });
+  const submitBtn = screen.getByRole('button', { name: 'Submit Application' });
+  const heading = screen.getByRole('heading', { level: 2, name: 'Project 1' });
   ```
 - **Build Accessibility into Selectors:**
   Querying by role validates both that the element is present and that its semantic markup and ARIA attributes are accessible to assistive technologies.
@@ -87,12 +95,12 @@ Always use `expect.element(...)` semantic matchers from `vitest/browser` instead
 
 ## 5. Realistic User Event Simulation (Chapter 6, §6.3 & Chapter 7)
 
-- **Always Use `userEvent` from `vitest/browser`:**
-  Simulate user interactions using `userEvent.setup()` and `await user.click(...)`, `await user.keyboard(...)` or `await user.tab()`.
+- **Always Use `userEvent`:**
+  Simulate user interactions using `userEvent.setup()` (from `@testing-library/user-event` in `component` tests or `vitest/browser` in `browser` tests) and `await user.click(...)`, `await user.keyboard(...)` or `await user.tab()`.
 - **Avoid Programmatic Shortcuts Where Realistic Events Exist:**
   Prefer keyboard tabbing (`await user.tab()`) or user clicks over direct `.focus()` invocations when verifying keyboard navigation pathways.
-- **Native Browser Events via CDP:**
-  Tests run in real headless Chromium via Vitest Browser Mode (`@vitest/browser-playwright`) and `vitest-browser-react`. Always use `userEvent` from `vitest/browser` (which dispatches genuine browser events via Playwright CDP, including native `<dialog>` `Escape` dismissal) rather than synthetic `Event`/`KeyboardEvent` dispatching, unless constructing a synthetic React event payload directly for an isolated unit handler test (and document why in an explanatory comment).
+- **Native Browser Events via CDP (`*.browser.test.tsx`):**
+  Browser tests run in real headless Chromium via Vitest Browser Mode (`@vitest/browser-playwright`) and `vitest-browser-react`. In `*.browser.test.tsx`, always use `userEvent` from `vitest/browser` (which dispatches genuine browser events via Playwright CDP, including pointer drag-and-drop and native `<dialog>` `Escape` dismissal).
 
 ---
 

@@ -32,7 +32,10 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
 - **Architecture:** Strict separation of concerns (UI Kit vs Business Logic) combined with component colocation (tests, styles and logic kept together) for high maintainability.
 - **Build System:** **Vite 8 build pipeline** configured in TypeScript (`vite.config.ts`) and shared with Vitest (`vitest.config.ts`), powered by Rolldown and Oxc with native ESM transformation, `sass-embedded` compilation and static worker asset emission (`?url`).
 - **Strict Type Safety:** TypeScript application source code (`strict: true`, no implicit `any`, no unreachable code) enforcing deep immutability across component boundaries via `ReadonlyExcept` and `type-fest`'s `ReadonlyDeep`.
-- **Testing Strategy:** Over 600 automated unit and integration tests (12,000+ lines of **Vitest Browser Mode** and `vitest-browser-react` specs running in real headless Chromium via Playwright, accounting for over 60% of the codebase size), querying elements strictly by accessible roles and simulating realistic user interactions.
+- **Testing Strategy:** Over 600 automated unit, component and browser tests across a three-tier Vitest architecture (`vitest.config.ts`), accounting for over 60% of the codebase size:
+  - **Pure Node Unit Tests (`someTest.test.ts`):** Fast, zero-DOM Node tests verifying isolated utilities and pure component logic helpers.
+  - **Component & Hook Tests (`Component.test.tsx`, `useHook.test.ts`):** `happy-dom` suites powered by `@testing-library/react` and `@testing-library/user-event` verifying accessible roles, ARIA contracts and state transitions.
+  - **Real Browser Component Tests (`Component.browser.test.tsx`):** **Vitest Browser Mode** and `vitest-browser-react` specs running in real headless Chromium via Playwright for behaviours requiring a genuine browser layout engine (pointer and keyboard `@dnd-kit` drag-and-drop, native `<dialog>` top-layer `showModal()`/`close()` lifecycle, `tabbable` geometry visibility and viewport media queries).
   - **E2E & Automated Audits (Playwright):** Dockerised smoke and visual regression test suites verifying core user flows (data population, canvas rendering, PDF blob download) and automated `@axe-core/playwright` accessibility audits.
 - **Inclusive Design (A11y):** Built targeting WCAG 2.2 AA standards. All features, including complex interactions like drag & drop, are fully keyboard-navigable with focus management via `tabbable`, dynamic announcements via `aria-live="polite"` and explicit `htmlFor` form labeling.
 - **Rich Interactive Experience:** Implemented an accessible Drag & Drop interface using `@dnd-kit` for intuitive reordering of resume sections and list items:
@@ -50,15 +53,18 @@ The codebase follows **Component Colocation** and **Barrel Export** patterns to 
 ```text
 src/
 ├── components/                # Shared UI Kit (buttons, popups, toolbar)
-│   └── Button/                # Colocation: Logic, styles, tests and types
-│       ├── Button.tsx
-│       ├── Button.scss        # BEM styling
-│       ├── Button.test.tsx
+│   └── AddSections/           # Colocation: Logic, styles, tests and types
+│       ├── AddSections.tsx
+│       ├── AddSections.scss   # BEM styling
+│       ├── AddSections.test.tsx
+│       ├── AddSections.browser.test.tsx
+│       ├── getAddableSectionIds.ts
+│       ├── getAddableSectionIds.test.ts
 │       └── index.tsx          # Barrel export
 ├── pages/                     # Feature views (Education, Experience, Skills)
 ├── hooks/                     # Isolated business logic (custom hooks)
 │   ├── useResumeData/         # Complex state management logic
-│   └── useResumeData.test.ts  # Logic-only testing
+│   └── useResumeData.test.ts  # Hook testing
 ├── styles/                    # SCSS architecture (7-1 pattern adaptation)
 │   ├── base/                  # Typography, resets
 │   ├── utils/                 # Variables, mixins, functions

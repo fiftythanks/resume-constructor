@@ -19,7 +19,7 @@ bun install --frozen-lockfile
 # Start local development server (Vite dev server)
 bun start
 
-# Run unit and integration tests (Vitest Browser Mode)
+# Run unit, component and browser tests (Vitest)
 bun run test
 
 # Run type check
@@ -30,7 +30,7 @@ bun run build
 ```
 
 > [!IMPORTANT]
-> Never run bare `bun test`. Bun's native test runner does not launch Vitest Browser Mode or use the Vitest test configuration. Always run `bun run test` (for full suite) or `bun x vitest related --run --bail=1 <file> --passWithNoTests` (for targeted runs).
+> Never run bare `bun test`. Bun's native test runner does not use the three-tier Vitest project configuration (`unit`, `component` and `browser`). Always run `bun run test` (for the full suite) or `bun x vitest related --run --bail=1 <file> --passWithNoTests` (for targeted runs).
 
 ---
 
@@ -145,7 +145,7 @@ All scopes must be **strictly lowercase**.
 
 ## 5. Architectural & Coding Principles
 
-1. **Component Colocation:** Every component lives in its own folder under `src/components/<Name>/` containing `<Name>.tsx`, `<Name>.scss`, `<Name>.test.tsx` and a one-line `index.tsx` barrel export.
+1. **Component Colocation & Three-Tier Testing:** Every component lives in its own folder under `src/components/<Name>/` containing `<Name>.tsx`, `<Name>.scss`, `<Name>.test.tsx` (for `happy-dom` component tests), an optional `<Name>.browser.test.tsx` (for real-browser tests in Vitest Browser Mode), colocated pure helper modules (`someHelper.ts` + `someHelper.test.ts` running in pure Node without DOM) and a one-line `index.tsx` barrel export.
 2. **Deep Immutability:** Component props must use `ReadonlyExcept<Props, 'ref'>` imported from `@/types/ReadonlyExcept`. Nested state updates must use `immer` or `use-immer`.
 3. **Zero Redundant Effects:** Strictly adhere to `eslint-plugin-react-you-might-not-need-an-effect`. Derive state during render or inside event callbacks; never copy props to state or synchronise state via `useEffect`.
 4. **Accessibility First (WCAG 2.2 AA):** All form controls must have explicit `htmlFor` labels. Manage focus with `tabbable`, announce dynamic updates politely via `aria-live="polite"` and ensure full keyboard operable interactions.

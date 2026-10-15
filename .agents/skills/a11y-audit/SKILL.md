@@ -63,19 +63,23 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
 
 ## 2. Testing & Verification Checklist
 
-1. **Vitest Browser Mode + `vitest-browser-react`:**
+1. **Vitest Component (`happy-dom`) & Browser Mode (`vitest-browser-react`) Suites:**
    - Query elements strictly by accessible role and accessible name:
      ```tsx
+     // In Component.test.tsx (happy-dom):
+     expect(
+       screen.getByRole('button', { name: /delete section/i }),
+     ).toBeInTheDocument();
+
+     // In Component.browser.test.tsx (Vitest Browser Mode):
      await expect
        .element(page.getByRole('button', { name: /delete section/i }))
        .toBeInTheDocument();
      ```
    - Assert ARIA attributes directly:
      ```tsx
-     await expect.element(tab).toHaveAttribute('aria-selected', 'true');
-     await expect
-       .element(tabpanel)
-       .toHaveAttribute('aria-labelledby', tab.element().id);
+     expect(tab).toHaveAttribute('aria-selected', 'true');
+     expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
      ```
 2. **Automated Axe Audits in Playwright:**
    - Run Playwright E2E tests with `@axe-core/playwright` to catch automated WCAG regressions:

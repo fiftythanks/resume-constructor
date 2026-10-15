@@ -5,7 +5,7 @@
 - **Core Stack:** React 19, TypeScript (strict), SCSS + BEM, Vite, Vitest, Bun runtime/package manager.
 - **Domain:** Production-grade, zero-bootstrap resume generator implementing _The Tech Resume Inside Out_.
 - **Key Constraints:**
-  - Component colocation: `Component.tsx`, `Component.scss`, `Component.test.tsx`, `index.tsx` (barrel export).
+  - Component colocation: `Component.tsx`, `Component.scss`, `Component.test.tsx` (`happy-dom`), optional `Component.browser.test.tsx` (Vitest Browser Mode), optional colocated pure helper `someHelper.ts` + `someHelper.test.ts` (pure Node) and `index.tsx` (barrel export).
   - Strict separation: UI primitives (`src/components/`) decoupled from feature pages (`src/pages/`) and business logic (`src/hooks/`).
   - Accessibility-first (WCAG 2.2 AA): Keyboard operability, screen reader live announcements (`aria-live="polite"`) and focus management via `tabbable`.
   - Rendering parity: `@react-pdf/renderer` (Yoga engine Flexbox rules only) vs Live Preview DOM vs modal PDF.js canvas with interactive text layer overlay.
@@ -18,7 +18,7 @@
 - **Package Manager:** Always use Bun (`bun`).
 - **Running Tests:**
   - Run Vitest via `bun run test` (or `bun run test:ci`).
-  - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of Vitest Browser Mode.
+  - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of the three-tier Vitest project configuration (`unit`, `component` and `browser`).
   - For targeted test execution: `bun x vitest related --run --bail=1 <file> --passWithNoTests`.
 - **Linting & Formatting:**
   - ESLint: `bun x eslint <path> --fix`
@@ -122,21 +122,24 @@ Every file must strictly adhere to the automated sorting hierarchy:
 
 ---
 
-## 6. Testing Philosophy (Vitest Browser Mode + `vitest-browser-react`)
+## 6. Testing Philosophy (Three-Tier Vitest Architecture)
 
-- **Accessible Queries Only:** Query elements by accessible role (`page.getByRole('button', { name: /save/i })`), never by test ID or CSS class unless testing an aria-live region.
+- **Three-Tier Test Projects (`vitest.config.ts`):**
+  1. **`unit` (`environment: 'node'`, no DOM):** Matches `src/**/[a-z]*.test.ts` (excluding `use*.test.ts` and `*.browser.test.ts`). Used for pure utility functions and colocated pure component logic helpers. Whenever pure logic can be extracted from a component into a colocated `.ts` file, extract it, register it in `docs/astro.config.ts` and test it in a pure Node `.test.ts` suite.
+  2. **`component` (`environment: 'happy-dom'`):** Matches `src/**/[A-Z]*.test.{ts,tsx}` and `src/**/use*.test.{ts,tsx}` (excluding `*.browser.test.{ts,tsx}`). Uses `@testing-library/react`, `@testing-library/user-event` and `@testing-library/jest-dom/vitest` (`render`, `renderHook`, `screen`, `expect(element).toBeInTheDocument()`).
+  3. **`browser` (Vitest Browser Mode on Playwright Chromium):** Matches `src/**/*.browser.test.{ts,tsx}`. Uses `vitest-browser-react` (`await render`) and `vitest/browser` (`page`, `userEvent`, `await expect.element(...)`). Reserved strictly for behaviours that require a genuine browser layout engine and cannot be tested in `happy-dom` (such as `@dnd-kit` pointer and keyboard drag-and-drop coordinates, native `<dialog>` top-layer `showModal()`/`close()` and `Escape` dismissal, `tabbable` computed visibility and viewport resizing).
+- **Accessible Queries Only:** Query elements by accessible role (`screen.getByRole('button', { name: /save/i })` in `component` tests or `page.getByRole('button', { name: /save/i })` in `browser` tests), never by test ID or CSS class unless testing an aria-live region.
 - **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
 - **Strict Single-Act Principle & Prohibition of Multiple Acts:** Every unit test must test exactly one atomic behaviour. Chaining multiple `Act` and `Assert` sequences (e.g. `// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`) inside a single test is strictly prohibited (the "Multiple Act" / "Eager Test" anti-pattern). If a test exercises multiple discrete actions (such as focusing and tabbing, or navigating, adding and deleting), it MUST be decomposed into separate, atomic test cases each with its own descriptive title. A unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when checking multiple facets of that same atomic action. Multi-act sequences are reserved exclusively for full user journeys in end-to-end (E2E) integration workflows.
 - **Lucas da Costa Testing Standards (_Testing JavaScript Applications_):**
   - **Tight Assertions & No Loose Matchers (Section 3.2.2):** Assertions must be as strict and deterministic as possible. Never use loose matchers like `expect.any(...)` when an exact element reference or literal is known. Never use unverified generic calls like `.toHaveBeenCalled()` without specifying call count (`toHaveBeenCalledTimes(n)`) and expected arguments (`toHaveBeenCalledWith(...)`).
-  - **Semantic DOM Matchers over Raw DOM Checks (Section 3.2.3 & Section 6.2.2):** Always use `expect.element(...)` matchers (`toHaveFocus()`, `toBeInTheDocument()`, `toHaveAccessibleName()`, `toBeVisible()`) instead of checking raw DOM properties like `document.activeElement` or generic booleans.
+  - **Semantic DOM Matchers over Raw DOM Checks (Section 3.2.3 & Section 6.2.2):** Always use semantic DOM matchers (`expect(el).toHaveFocus()` / `await expect.element(el).toHaveFocus()`, `toBeInTheDocument()`, `toHaveAccessibleName()`, `toBeVisible()`) instead of checking raw DOM properties like `document.activeElement` or generic booleans.
   - **Sensitive and Meaningful Assertions (Section 3.2.1):** Every assertion must directly verify the intended outcome or side effect of the action. Do not assert unrelated element presence as a proxy for error-free execution; explicitly assert on behaviour, lack of thrown errors or resulting state changes. Use `expect.hasAssertions()` in asynchronous or event-driven test cases where conditional branches might otherwise cause tests to pass vacuously.
   - **Component Style & Class Verification (Section 8.3):** When components are styled with semantic or BEM classes, verify that the rendered DOM nodes apply their required CSS classes using `toHaveClass(...)`.
   - **Component-Level Acceptance Workflows (Section 8.4):** Only write component-level acceptance tests where behaviour, user intent and business risk intersect (complex stateful feature containers, flow gates and compound primitives). Never write acceptance tests for presentational or leaf components (`SectionItemHeader`, `Button`, dumb layout shells) and never create artificial stateful wrapper components inside test files to simulate state that lives in external hooks. Treat the boundary of an acceptance test as the boundary of a genuine user capability; leave broad multi-page journeys to Playwright E2E tests.
-- **User Event Setup:** Always initialise `const user = userEvent.setup()` from `vitest/browser` and `await user.click(...)`.
+- **User Event Setup:** Always initialise `const user = userEvent.setup()` (from `@testing-library/user-event` in `component` tests or `vitest/browser` in `browser` tests) and `await user.click(...)`.
 - **Strict Hygiene:** Never commit `describe.only` or `it.only` (`no-restricted-properties` lint rule).
 - **Mocking:** Explicitly type mocks with `Mock<Procedure>` imported from `'vitest'`.
-- **Vitest Browser Mode:** All unit and integration tests run inside real headless Chromium via `@vitest/browser-playwright` and `vitest-browser-react` (`await render`, `await renderHook`), providing genuine CSS layout, native `<dialog>` top-layer behaviour and real `tabbable` geometry checks without JSDOM polyfills.
 
 ---
 

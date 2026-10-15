@@ -33,7 +33,7 @@ bun x vitest related --run --bail=1 <modified-files> --passWithNoTests
 ```
 
 > [!IMPORTANT]
-> Never run bare `bun test`. Bun's native test runner does not launch Vitest Browser Mode or use the Vitest setup. Always run `bun run test` (for full suite) or `bun x vitest` (for targeted test runs).
+> Never run bare `bun test`. Bun's native test runner does not use the three-tier Vitest project configuration (`unit`, `component` and `browser`). Always run `bun run test` (for the full suite) or `bun x vitest` (for targeted test runs).
 
 ---
 
