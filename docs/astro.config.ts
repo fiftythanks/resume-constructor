@@ -76,6 +76,7 @@ export default defineConfig({
             '../src/components/AppLayout/index.tsx',
             '../src/components/AppLayout/Sidebar/Toolbar/getControlledIds.ts',
             '../src/components/BulletPoints/index.tsx',
+            '../src/components/BulletPoints/bulletPointsDnd.ts',
             '../src/components/Preview/index.tsx',
             '../src/components/Preview/getResumePdfFileName.ts',
             '../src/components/SectionItemHeader/index.tsx',
