@@ -1,4 +1,3 @@
-import { useRef, useState } from 'react';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
@@ -83,19 +82,12 @@ export default function BulletPoints({
   handleKeyDownOnFirstElement,
   handleFocusOnFirstElement,
 }: BulletPointsProps) {
-  const [_, setIsDragging] = useState(false);
-  const wasDraggedAwayFromItsInitialPosition = useRef(false);
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
-  function handleDragStart() {
-    setIsDragging(true);
-  }
 
   function handleDragEnd(e: ReadonlyDeep<DragEndEvent>) {
     const { active, over } = e;
@@ -104,14 +96,9 @@ export default function BulletPoints({
     if (newData !== null) {
       updateData(newData);
     }
-
-    setIsDragging(false);
   }
 
-  const announcements = createBulletPointAnnouncements(
-    data,
-    wasDraggedAwayFromItsInitialPosition,
-  );
+  const announcements = createBulletPointAnnouncements(data);
 
   const bulletPointsClassName = clsx([
     className,
@@ -136,7 +123,6 @@ export default function BulletPoints({
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
         sensors={sensors}
         onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
       >
         <SortableContext
           items={data.map((item) => item.id)}

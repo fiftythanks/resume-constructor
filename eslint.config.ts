@@ -9,13 +9,12 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import nodePlugin from 'eslint-plugin-n';
 import perfectionist from 'eslint-plugin-perfectionist';
 import react from 'eslint-plugin-react';
-import * as reactHooks from 'eslint-plugin-react-hooks';
+import reactHooks from 'eslint-plugin-react-hooks';
 import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need-an-effect';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-// TODO: Update the signature (this one is deprecated).
-export default tseslint.config([
+export default tseslint.config(
   {
     ignores: [
       'dist/**',
@@ -33,7 +32,6 @@ export default tseslint.config([
     plugins: {
       js,
       react,
-      reactHooks,
       jsxA11y,
       n: nodePlugin,
       'import-x': importX,
@@ -48,7 +46,7 @@ export default tseslint.config([
       importX.configs['flat/recommended'],
       nodePlugin.configs['flat/recommended'],
       perfectionist.configs['recommended-natural'],
-      reactHooks.configs['recommended-latest'],
+      reactHooks.configs.flat['recommended-latest'],
       reactYouMightNotNeedAnEffect.configs.recommended,
     ],
     languageOptions: {
@@ -101,6 +99,7 @@ export default tseslint.config([
       'n/no-unsupported-features/node-builtins': [
         'error',
         {
+          ignores: ['import.meta.dirname'],
           version: '>=22.16.0',
         },
       ],
@@ -254,6 +253,9 @@ export default tseslint.config([
           destructuredArrayIgnorePattern: '^_',
         },
       ],
+
+      'react-hooks/refs': 'off',
+      'react-hooks/immutability': 'off',
     },
     settings: {
       'import-x/resolver-next': [
@@ -267,7 +269,7 @@ export default tseslint.config([
         '@typescript-eslint/parser': ['.mts', '.ts', '.tsx'],
       },
       react: {
-        version: 'detect',
+        version: '19.3',
       },
     },
   },
@@ -319,4 +321,4 @@ export default tseslint.config([
     extends: [json.configs.recommended],
   },
   eslintConfigPrettier,
-]);
+);
