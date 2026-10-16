@@ -117,7 +117,7 @@ For detailed implementation literature, design patterns and comprehensive exampl
 
 Follow the four-phase workflow to ensure high-quality, deliberate implementation:
 
-1. **Explore:** Read code, understand existing patterns and investigate dependencies without editing files. Use subagents for large codebase explorations to keep main context clean.
+1. **Explore:** Read code, understand existing patterns and investigate dependencies without editing files. Prefer Language Server Protocol tools (`lsp_goto_definition`, `lsp_hover` and `lsp_find_references` via `typescript-lsp`) for semantic navigation and type inspection over reading entire source files. Use subagents for large codebase explorations to keep main context clean.
 2. **Plan & Spec Interview:** For non-trivial tasks or ambiguous requirements, interview the user using `ask_question` to clarify design choices, edge cases and trade-offs. Formulate a structured plan artifact and obtain approval before coding.
 3. **Implement & Verify:** Implement changes adhering strictly to architectural invariants. Execute all quality gates (type checking, linters, tests and visual parity) and present concrete verification output.
 4. **Commit:** Create atomic, well-scoped Conventional Commits matching project standards upon milestone completion.
@@ -129,6 +129,7 @@ Follow the four-phase workflow to ensure high-quality, deliberate implementation
 Before concluding any turn or claiming task completion, execute and pass all verification gates:
 
 1. **Static Analysis Gate:**
+   - Instant LSP diagnostics: use `lsp_diagnostics` for sub-second feedback during editing.
    - Type-check: `bun x tsc --noEmit`
    - Linter: `bun x eslint <modified-files> --fix`
    - Styles: `bun x stylelint "src/**/*.scss" --fix` (if styles modified)

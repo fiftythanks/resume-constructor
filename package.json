@@ -76,6 +76,7 @@
     "type-fest": "^5.10.0",
     "typescript": "6.0.3",
     "typescript-eslint": "^8.71.1",
+    "typescript-language-server": "^6.0.2",
     "vite": "^8.3.4",
     "vitest": "^5.0.4",
     "vitest-browser-react": "^2.3.0"
