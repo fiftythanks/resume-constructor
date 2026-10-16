@@ -71,6 +71,11 @@ The document preview architecture comprises three distinct rendering modes:
   ```bash
   bun x vitest run src/components/AppLayout/AppLayout.test.tsx
   ```
+- Use Playwright MCP tools for live visual inspection and breakpoint verification:
+  - `browser_navigate`: Navigate to local preview server.
+  - `browser_resize`: Test specific responsive breakpoints (e.g. mobile `375x667`, desktop `1440x900`).
+  - `browser_snapshot`: Capture accessibility trees to verify DOM order and ARIA states.
+  - `browser_take_screenshot`: Capture visual page state across breakpoints to confirm layout parity.
 - Run E2E tests in Playwright's deterministic Docker container to prevent font rendering differences across host OS environments:
   ```bash
   bun run e2e

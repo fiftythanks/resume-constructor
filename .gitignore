@@ -136,6 +136,7 @@ dist
 /playwright/.cache/
 /playwright/.auth/
 /.vitest/
+/.playwright-mcp/
 
 # Local internal notes
 /notes/

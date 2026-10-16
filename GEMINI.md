@@ -139,7 +139,7 @@ Before concluding any turn or claiming task completion, execute and pass all ver
    - Run targeted tests: `bun x vitest related --run --bail=1 <modified-files> --passWithNoTests`.
    - Full suite before milestones: `bun run test:ci`.
 3. **Visual Parity Gate:**
-   - For UI, layout or styling changes, verify visual rendering parity across `@react-pdf/renderer` (Yoga engine Flexbox rules only), Live Preview DOM and modal PDF.js canvas with interactive text layer.
+   - For UI, layout or styling changes, verify visual rendering parity across `@react-pdf/renderer` (Yoga engine Flexbox rules only), Live Preview DOM and modal PDF.js canvas with interactive text layer. Use Playwright MCP tools (`browser_snapshot`, `browser_take_screenshot` and `browser_resize`) against the running application to inspect accessibility snapshots and visual rendering.
 4. **Typography & Prose Gate:**
    - Scan all added comments, docstrings and commit messages for Oxford commas (zero `, and` or `, or`).
    - Verify traditional British English and double quotes in prose.
