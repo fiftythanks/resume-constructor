@@ -108,7 +108,12 @@ export default function MyComponent({
      - Never use `MutableRef` or `MutableRefObject` (`useRef` returns `RefObject<T>` where `.current` is mutable).
      - Never use `forwardRef` (`ref` is a standard component prop in React 19).
      - Never use `defaultProps` (use ES6 default parameter values).
-   - Check your work for modern React 19 idioms and deprecated APIs before committing. If uncertain about 2026 React 19 or TypeScript idioms, search web documentation to verify.
+   - Check your work for modern React 19 idioms and deprecated APIs before committing. When checking modern React 19, React Compiler or Immer idioms, query the Context7 MCP server rather than web search, following official Context7 best practice tips:
+     - **Direct Library ID Lookup:** Bypass library matching by supplying known Context7 IDs directly to `query-docs` (e.g. `/react/react` or `/websites/react_dev` for React 19; `/websites/immer_js` for Immer).
+     - **Explicit Version Targeting:** Explicitly mention the target release in queries (e.g. "React 19 ref as prop", "React Compiler ref access during render") to avoid legacy answers.
+     - **Scoped Single Concepts:** Keep each query focused on a single API concept rather than broad topics (e.g. "use-immer update function examples" rather than "immer state").
+     - **Language Ranking:** Always pass `language: 'TypeScript'` to prioritise TypeScript signatures and type definitions.
+     - **Tool Call Bounds:** Limit tool calls to at most 3 attempts per query, adopting the best match returned.
 3. **Event Handler Parameter Naming:** In all React event handlers and callbacks (`onChange`, `onClick`, `onKeyDown`, `onFocus` etc.), always name the event parameter `e`, never `event`.
 4. **Documentation Parity & Starlight TypeDoc:** Whenever authoring a new component, hook or utility, register its entry point in `docs/astro.config.ts` under `starlightTypeDoc.entryPoints`.
 5. **Import Ordering:** Must follow the `eslint-plugin-perfectionist` groups:
