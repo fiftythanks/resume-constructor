@@ -14,7 +14,7 @@ Follow this runbook after making changes or when diagnosing failing builds, comm
 ## 1. Fast Feedback Verification Sequence
 
 > [!TIP]
-> Before running CLI checks, use the `typescript-lsp` MCP server's `lsp_diagnostics` tool for sub-50ms language server diagnostics on modified files directly in context.
+> Before running CLI checks, use the `typescript-lsp` MCP server's `lsp_diagnostics` tool and the `eslint` MCP server's `lint-files` tool for instant in-context diagnostics on modified files.
 
 Always execute the checks in this sequence:
 

@@ -130,6 +130,7 @@ Before concluding any turn or claiming task completion, execute and pass all ver
 
 1. **Static Analysis Gate:**
    - Instant LSP diagnostics: use `lsp_diagnostics` for sub-second feedback during editing.
+   - Fast lint diagnostics: use `lint-files` tool (via `eslint` MCP server) to inspect diagnostics across modified files in context before executing CLI repairs.
    - Type-check: `bun x tsc --noEmit`
    - Linter: `bun x eslint <modified-files> --fix`
    - Styles: `bun x stylelint "src/**/*.scss" --fix` (if styles modified)
