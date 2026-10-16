@@ -2,181 +2,151 @@
 
 ## 1. Project Overview & Architectural Principles
 
-- **Core Stack:** React 19, TypeScript (strict), SCSS + BEM, Vite, Vitest, Bun runtime/package manager.
+- **Core Stack:** React 19, React Compiler (`babel-plugin-react-compiler`), TypeScript (strict), SCSS + BEM, Vite 8, Vitest 5, Bun runtime/package manager.
 - **Domain:** Production-grade, zero-bootstrap resume generator implementing _The Tech Resume Inside Out_.
-- **Key Constraints:**
-  - Component colocation: `Component.tsx`, `Component.scss`, `Component.test.tsx` (`happy-dom`), optional `Component.browser.test.tsx` (Vitest Browser Mode), optional colocated pure helper `someHelper.ts` + `someHelper.test.ts` (pure Node) and `index.tsx` (barrel export).
-  - Strict separation: UI primitives (`src/components/`) decoupled from feature pages (`src/pages/`) and business logic (`src/hooks/`).
-  - Accessibility-first (WCAG 2.2 AA): Keyboard operability, screen reader live announcements (`aria-live="polite"`) and focus management via `tabbable`.
-  - Rendering parity: `@react-pdf/renderer` (Yoga engine Flexbox rules only) vs Live Preview DOM vs modal PDF.js canvas with interactive text layer overlay.
-  - Documentation parity & Starlight TypeDoc: Whenever a component, hook, utility or feature page is created, its entry point MUST be added to `starlightTypeDoc.entryPoints` in `docs/astro.config.ts`. Automatic discovery is not supported by TypeDoc; explicit registration is mandatory for every export.
+- **Rendering Parity:** Layout parity across `@react-pdf/renderer` (Yoga engine Flexbox rules only), Live Preview DOM and modal PDF.js canvas with interactive text layer overlay (worker loaded via `pdfjs-dist/build/pdf.worker.min.mjs?url`).
+- **Colocated Pure Helper Pattern:** Extract pure business logic, identifier derivations and header calculations into `someHelper.ts` + `someHelper.test.ts` (tested under Tier 1 `unit` in pure Node), export via barrel `index.tsx` and register in TypeDoc.
+- **Documentation Parity & Starlight TypeDoc:** Whenever a component, hook, utility or pure helper is created, its entry point MUST be added to `starlightTypeDoc.entryPoints` in `docs/astro.config.ts`. Automatic discovery is not supported by TypeDoc; explicit registration is mandatory for every export.
+- **Architectural Separation:** UI primitives (`src/components/`) decoupled from feature pages (`src/pages/`) and business logic (`src/hooks/`).
+- **Accessibility-First (WCAG 2.2 AA):** Keyboard operability, screen reader live announcements (`aria-live="polite"`) and focus management via `tabbable`.
 
 ---
 
-## 2. Bun Environment & Tooling Execution
+## 2. Environment & Tooling Execution
 
 - **Package Manager:** Always use Bun (`bun`).
+- **Dev Server:** `bun start` (`vite` with local HTTPS and LAN access via `@vitejs/plugin-basic-ssl` and `server: { host: true }`). Production build: `bun run build`.
 - **Running Tests:**
-  - Run Vitest via `bun run test` (or `bun run test:ci`).
+  - Full suite: `bun run test` (or `bun run test:ci`).
   - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of the three-tier Vitest project configuration (`unit`, `component` and `browser`).
-  - For targeted test execution: `bun x vitest related --run --bail=1 <file> --passWithNoTests`.
+  - Targeted test execution: `bun x vitest related --run --bail=1 <file> --passWithNoTests`.
 - **Linting & Formatting:**
-  - ESLint: `bun x eslint <path> --fix`
+  - Type-check: `bun x tsc --noEmit`
+  - ESLint: `bun x eslint <path> --fix` (enforces import and JSX prop sorting via `eslint-plugin-perfectionist`)
   - Stylelint: `bun x stylelint "src/**/*.scss" --fix`
   - Prettier: `bun x prettier --write <path>`
-  - Type-check: `bun x tsc --noEmit`
-- **Build & Dev:**
-  - Dev server: `bun start` (`vite`)
-  - Production build: `bun run build` (`vite build`)
 
 ---
 
 ## 3. TypeScript & React 19 Standards
 
-- **Strict Typing:**
-  - No `any` unless strictly justified for low-level generic utilities.
-  - No floating promises: `@typescript-eslint/no-floating-promises` is an error. Always `await` or explicitly `void`.
-  - Exhaustive switch / union checks: use `neverReached(value)` from `@/utils/neverReached`.
-  - Path alias: Use `@/*` pointing to `src/*`.
-  - **Avoid Type Assertions As Much As Possible:**
-    - Type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) bypass TypeScript's type checker and must be avoided as much as possible.
-    - Rely on natural type inference, exhaustive checks, discriminating unions and runtime type narrowing (such as `typeof`, `instanceof`, null/undefined checks or type predicates) instead of forcing types with assertions.
-    - If a type assertion cannot be avoided with reasonable effort, you MUST document why the assertion was necessary in an explanatory comment immediately preceding it.
-- **Modern React 19 Standards & Deprecated Code Removal:**
-  - The codebase runs strictly on React 19 (current year 2026).
-  - Deprecated React APIs, types and legacy patterns are strictly forbidden:
-    - Never use `MutableRef` or `MutableRefObject` (in React 19, `useRef` returns `RefObject<T>` whose `.current` property is mutable).
-    - Never use `forwardRef` (in React 19, `ref` is a standard component prop).
-    - Never use `defaultProps` (use ES6 default parameter values instead).
-  - Agents MUST audit their changes for modern React 19 idioms and deprecated APIs before committing. If uncertain about 2026 React 19 or TypeScript idioms, agents MUST search web documentation before proceeding.
-- **Event Handler Parameter Naming:**
-  - In all React event handlers and callback functions (`onChange`, `onClick`, `onKeyDown`, `onFocus` etc.), the event parameter MUST always be named `e`, never `event`.
-- **Deep Immutability Pattern:**
-  - Component props MUST use `ReadonlyExcept<Props, 'ref'>` imported from `@/types/ReadonlyExcept`.
-  - Deep immutability is enforced across component boundaries.
-- **React Patterns & Zero Redundant Effects:**
-  - Adhere strictly to `eslint-plugin-react-you-might-not-need-an-effect`.
-  - Never use `useEffect` for state synchronisation, transformations or event reactions. Calculate derived state during render or update state inside event callbacks.
-  - State mutations: Use `immer` / `use-immer` for nested state updates.
-- **Form Controls & A11y:**
-  - All form controls MUST have explicit labels: `jsx-a11y/label-has-associated-control` enforces `asserts: 'htmlFor'`. Never rely on implicit wrapping alone.
-- **Comment Standards & Typography:**
-  - All multiline comments MUST use JSDoc-style block comments (`/** ... */`) with leading asterisks on continuation lines, never consecutive single-line (`//`) comments.
-  - Single-line comments (`//`) are strictly reserved for standalone, single-line remarks. Consecutive single-line comments are permitted only when representing distinct annotations (e.g. separate `// TODO:` or `// DILEMMA:` entries).
-  - Comment, commit message and documentation typography must strictly adhere to project standards: traditional British English, double quotes (`"..."`) for natural language, spaced em-rules ("—"), unspaced en-rules ("–") and forward slashes ("/") surrounded by spaces only when separating compound words.
-  - **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma (serial comma) under any circumstances in commit messages, code comments, docstrings or documentation. In lists of three or more items, never place a comma before the coordinating conjunction ("and" or "or").
-    - Correct: `"apples, oranges and bananas"` ✔️
-    - Incorrect: `"apples, oranges, and bananas"` ❌
-    - Correct: `"Education, Experience or Projects"` ✔️
-    - Incorrect: `"Education, Experience, or Projects"` ❌
-    - Always perform a dedicated search for `, and` and `, or` across your written text before committing.
+- **TypeScript Configuration (`tsconfig.json`):**
+  - `"erasableSyntaxOnly": true`: ECMAScript type annotations proposal; enums and runtime namespaces are forbidden.
+  - `"verbatimModuleSyntax": true`: Enforces `import type { ... }` for all type imports.
+  - Strict typing: No `any` unless strictly justified for low-level generic utilities. No floating promises (`@typescript-eslint/no-floating-promises`).
+  - Exhaustive checks: use `neverReached(value)` from `@/utils/neverReached`.
+  - Path alias: `@/*` pointing to `src/*`.
+  - **Avoid Type Assertions:** Type assertions (`as Type`, `!` operator) bypass TypeScript and are forbidden unless strictly unavoidable. If an assertion cannot be avoided with reasonable effort, document why in an explanatory comment immediately preceding it.
+- **React 19 & React Compiler Standards:**
+  - Deprecated React APIs strictly forbidden: no `forwardRef` (use standard `ref` prop), no `defaultProps` (use ES6 default parameters), no `MutableRef` or `MutableRefObject` (use `RefObject<T>`).
+  - Automatic memoisation via React Compiler: avoid manual `useMemo` / `useCallback` unless profiling demonstrates necessity.
+  - Event handler parameter naming: event parameter MUST always be named `e`, never `event`.
+  - Deep immutability: Component props MUST use `ReadonlyExcept<Props, 'ref'>` imported from `@/types/ReadonlyExcept`.
+  - Zero redundant effects (`eslint-plugin-react-you-might-not-need-an-effect`): derive state during render or inside event callbacks; never use `useEffect` for state synchronisation.
+  - State mutations: Use `immer` / `use-immer` for nested updates.
+  - Form controls: All form controls MUST have explicit labels (`jsx-a11y/label-has-associated-control` with `asserts: 'htmlFor'`).
 
 ---
 
 ## 4. SCSS & BEM Methodology
 
-- **Component-Level Blocks:**
-  - Use React BEM convention: `BlockName-ElementName_modifierName_modifierValue`.
-  - Example: `.Button`, `.Button_paddingInline_none`, `.Button_width_full`.
-- **Global / Shared Blocks (`src/styles/blocks/`):**
-  - Use traditional BEM convention: `block-name__element-name_modifier-name_modifier-value`.
-- **Stylelint Constraints:**
-  - Nesting depth must not exceed 3 levels (`max-nesting-depth: 3`).
-  - Property ordering strictly follows `stylelint-config-concentric-order`.
-  - Global CSS custom properties (defined in `src/styles/base/_custom-properties.scss`) are used for theme tokens.
-- **Responsive Strategy:**
-  - Internal component scaling MUST use CSS Container Queries (`@container`).
-  - `@media` queries are reserved exclusively for macro-layout changes in `AppLayout`.
-- **SCSS vs CSS Comment Standards:**
-  - **Sass/SCSS-only constructs** (e.g. Sass `$variables`, `@mixin`, `@function` and Sass control directives): Because these constructs are compiled away and do not exist in the final CSS output, comments documenting them MUST use silent comments (`//`), even when spanning multiple lines. This ensures notes on Sass-specific internals are stripped and never leak into the compiled CSS bundle.
-  - **Native CSS constructs** (e.g. CSS rules, BEM selectors, property declarations, CSS custom properties `--*`, `@keyframes` and `@container` queries): Because these constructs exist directly in the final CSS output, comments documenting them MUST use standard CSS comments (`/* ... */`) so documentation remains attached to the actual CSS code in the compiled stylesheet.
+- **Component-Level Blocks:** React BEM convention (`BlockName-ElementName_modifierName_modifierValue`).
+- **Global / Shared Blocks (`src/styles/blocks/`):** Traditional BEM (`block-name__element-name_modifier-name_modifier-value`).
+- **Stylelint Constraints:** Maximum nesting depth of 3 levels (`max-nesting-depth: 3`). Property ordering strictly follows `stylelint-config-concentric-order`. Global CSS custom properties (`src/styles/base/_custom-properties.scss`) for theme tokens.
+- **Responsive Strategy:** Component internal scaling MUST use CSS Container Queries (`@container`). `@media` queries reserved exclusively for macro-layout in `AppLayout`.
+- **SCSS vs CSS Comments:**
+  - Sass-only constructs (`$variables`, `@mixin`, `@function`): use silent comments (`//`).
+  - Native CSS constructs (rules, BEM selectors, `--*` properties, `@keyframes`, `@container`): use standard CSS comments (`/* ... */`).
 
 ---
 
-## 5. Import & Code Ordering (`eslint-plugin-perfectionist`)
+## 5. Domain Skills Routing
 
-Every file must strictly adhere to the automated sorting hierarchy:
+For detailed implementation literature, design patterns and comprehensive examples, consult on-demand skills:
 
-### Import Sorting Groups:
-
-1. `react` (`^react$`, `^react-dom$`)
-2. `builtin` (Node built-ins: `fs`, `path`, etc.)
-3. `external` (npm dependencies: `vitest-browser-react`, `clsx`, `tabbable`, etc.)
-4. `hooks` (`^@/hooks/.*`)
-5. `layout` (`^@/layout/.*`)
-6. `pages` (`^@/pages/.*`)
-7. `components` (`^@/components/.*`)
-8. `utils` (`^@/utils/.*`)
-9. Relative (`['parent', 'sibling', 'index']`)
-10. `assets` (`^@/assets/.*`)
-11. `style` (`./*.scss`, etc.)
-12. `type` (`import type { ... }`)
-13. `unknown`
-
-### JSX Props Sorting:
-
-1. `shorthand-prop` (e.g., `disabled`, `required`)
-2. `unknown` (standard props: `id`, `name`, `type`, etc.)
-3. `callback` (`^on[A-Z].+`, e.g., `onChange`, `onClick`)
-4. `multiline-prop` (props spanning multiple lines)
+- **Testing patterns & literature:** `.agents/skills/testing-patterns/SKILL.md`
+- **Component authoring, React 19 & SCSS BEM:** `.agents/skills/component-authoring/SKILL.md`
+- **Accessibility & keyboard navigation:** `.agents/skills/a11y-audit/SKILL.md`
+- **Responsive scaling & AppLayout:** `.agents/skills/responsive-scaling/SKILL.md`
+- **Code hygiene & automated fixes:** `.agents/skills/code-hygiene-verifier/SKILL.md`
 
 ---
 
 ## 6. Testing Philosophy (Three-Tier Vitest Architecture)
 
 - **Three-Tier Test Projects (`vitest.config.ts`):**
-  1. **`unit` (`environment: 'node'`, no DOM):** Matches `src/**/[a-z]*.test.ts` (excluding `use*.test.ts` and `*.browser.test.ts`). Used for pure utility functions and colocated pure component logic helpers. Whenever pure logic can be extracted from a component into a colocated `.ts` file, extract it, register it in `docs/astro.config.ts` and test it in a pure Node `.test.ts` suite.
-  2. **`component` (`environment: 'happy-dom'`):** Matches `src/**/[A-Z]*.test.{ts,tsx}` and `src/**/use*.test.{ts,tsx}` (excluding `*.browser.test.{ts,tsx}`). Uses `@testing-library/react`, `@testing-library/user-event` and `@testing-library/jest-dom/vitest` (`render`, `renderHook`, `screen`, `expect(element).toBeInTheDocument()`).
-  3. **`browser` (Vitest Browser Mode on Playwright Chromium):** Matches `src/**/*.browser.test.{ts,tsx}`. Uses `vitest-browser-react` (`await render`) and `vitest/browser` (`page`, `userEvent`, `await expect.element(...)`). Reserved strictly for behaviours that require a genuine browser layout engine and cannot be tested in `happy-dom` (such as `@dnd-kit` pointer and keyboard drag-and-drop coordinates, native `<dialog>` top-layer `showModal()`/`close()` and `Escape` dismissal, `tabbable` computed visibility and viewport resizing).
-- **Accessible Queries Only:** Query elements by accessible role (`screen.getByRole('button', { name: /save/i })` in `component` tests or `page.getByRole('button', { name: /save/i })` in `browser` tests), never by test ID or CSS class unless testing an aria-live region.
-- **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
-- **Strict Single-Act Principle & Prohibition of Multiple Acts:** Every unit test must test exactly one atomic behaviour. Chaining multiple `Act` and `Assert` sequences (e.g. `// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`) inside a single test is strictly prohibited (the "Multiple Act" / "Eager Test" anti-pattern). If a test exercises multiple discrete actions (such as focusing and tabbing, or navigating, adding and deleting), it MUST be decomposed into separate, atomic test cases each with its own descriptive title. A unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when checking multiple facets of that same atomic action. Multi-act sequences are reserved exclusively for full user journeys in end-to-end (E2E) integration workflows.
-- **Lucas da Costa Testing Standards (_Testing JavaScript Applications_):**
-  - **Tight Assertions & No Loose Matchers (Section 3.2.2):** Assertions must be as strict and deterministic as possible. Never use loose matchers like `expect.any(...)` when an exact element reference or literal is known. Never use unverified generic calls like `.toHaveBeenCalled()` without specifying call count (`toHaveBeenCalledTimes(n)`) and expected arguments (`toHaveBeenCalledWith(...)`).
-  - **Semantic DOM Matchers over Raw DOM Checks (Section 3.2.3 & Section 6.2.2):** Always use semantic DOM matchers (`expect(el).toHaveFocus()` / `await expect.element(el).toHaveFocus()`, `toBeInTheDocument()`, `toHaveAccessibleName()`, `toBeVisible()`) instead of checking raw DOM properties like `document.activeElement` or generic booleans.
-  - **Sensitive and Meaningful Assertions (Section 3.2.1):** Every assertion must directly verify the intended outcome or side effect of the action. Do not assert unrelated element presence as a proxy for error-free execution; explicitly assert on behaviour, lack of thrown errors or resulting state changes. Use `expect.hasAssertions()` in asynchronous or event-driven test cases where conditional branches might otherwise cause tests to pass vacuously.
-  - **Component Style & Class Verification (Section 8.3):** When components are styled with semantic or BEM classes, verify that the rendered DOM nodes apply their required CSS classes using `toHaveClass(...)`.
-  - **Component-Level Acceptance Workflows (Section 8.4):** Only write component-level acceptance tests where behaviour, user intent and business risk intersect (complex stateful feature containers, flow gates and compound primitives). Never write acceptance tests for presentational or leaf components (`SectionItemHeader`, `Button`, dumb layout shells) and never create artificial stateful wrapper components inside test files to simulate state that lives in external hooks. Treat the boundary of an acceptance test as the boundary of a genuine user capability; leave broad multi-page journeys to Playwright E2E tests.
-- **User Event Setup:** Always initialise `const user = userEvent.setup()` (from `@testing-library/user-event` in `component` tests or `vitest/browser` in `browser` tests) and `await user.click(...)`.
-- **Strict Hygiene:** Never commit `describe.only` or `it.only` (`no-restricted-properties` lint rule).
-- **Mocking:** Explicitly type mocks with `Mock<Procedure>` imported from `'vitest'`.
+  1. **`unit` (`environment: 'node'`, no DOM):** Matches `src/**/[a-z]*.test.ts` (excluding `use*.test.ts` and `*.browser.test.ts`). Used for pure utility functions and colocated pure component logic helpers (`someHelper.ts` + `someHelper.test.ts`).
+  2. **`component` (`environment: 'happy-dom'`):** Matches `src/**/[A-Z]*.test.{ts,tsx}` and `src/**/use*.test.{ts,tsx}` (excluding `*.browser.test.{ts,tsx}`). Uses `@testing-library/react` and `@testing-library/user-event` for rendering, accessibility contracts and hooks.
+  3. **`browser` (Vitest Browser Mode on Playwright headless Chromium):** Matches `src/**/*.browser.test.{ts,tsx}`. Uses `vitest-browser-react` (`await render`) and `vitest/browser` (`page`, `userEvent.setup()`, `await expect.element(...)`). Reserved strictly for behaviours requiring a genuine browser engine: pointer/keyboard drag-and-drop coordinates, native `<dialog>` top-layer mechanics (`showModal()`, `close()`, `Escape`), focus geometry and viewport resizing.
+- **Accessible Queries Only:** Query elements by accessible role (`screen.getByRole(...)` in `component` tests or `page.getByRole(...)` in `browser` tests), never by test ID or CSS class unless testing an aria-live region.
+- **AAA Test Structure & Single-Act Principle:**
+  - Strict Arrange, Act and Assert separation separated by empty lines or explicit comments (`// ARRANGE`, `// ACT`, `// ASSERT`).
+  - Strict Single-Act Principle: every test verifies exactly one atomic action. Chaining multiple Act/Assert pairs inside a unit test is prohibited.
+- **Testing Quality Standards (see `.agents/skills/testing-patterns/SKILL.md`):**
+  - **Tight Assertions:** Exact element references and literals only; never use unverified calls like `.toHaveBeenCalled()` without call count (`toHaveBeenCalledTimes(n)`) and arguments (`toHaveBeenCalledWith(...)`).
+  - **Semantic DOM Matchers:** Always use semantic matchers (`toHaveFocus()`, `toBeInTheDocument()`, `toHaveAccessibleName()`, `toBeVisible()`) over raw DOM properties or generic booleans.
+  - **Meaningful Assertions:** Assert directly on outcomes and state changes; use `expect.hasAssertions()` in asynchronous branches.
+  - **BEM Class Verification:** Verify rendered DOM nodes apply required BEM classes using `toHaveClass(...)`.
+  - **Acceptance Scope:** Component-level acceptance tests are reserved for compound stateful containers; presentational leaf components require unit/component tests only.
+- **User Event Setup:** Initialise `const user = userEvent.setup()` (from `@testing-library/user-event` in `component` tests or `vitest/browser` in `browser` tests) and `await user.click(...)` or `await user.dragAndDrop(...)`.
+- **Hygiene & Mocking:** Never commit `describe.only` or `it.only`. Explicitly type mocks with `Mock<Procedure>` from `'vitest'`.
 
 ---
 
-## 7. Git & Commit Message Standards (Conventional Commits)
+## 7. Git, Commits & Typography
 
-Strictly adhere to the project conventions defined in `CONTRIBUTING.md`:
-
-- **Atomic Feature Integrity:** Every commit MUST be complete in itself and fully functional. A commit must contain the code change, its comprehensive tests, related refactors and documentation updates together so that every individual commit builds cleanly (`bun x tsc --noEmit`), passes all tests (`bun run test:ci`) and preserves git bisectability. Incomplete commits that introduce broken intermediate states, lack tests or defer related refactors are strictly forbidden.
-- **Commit Format:** `<tag>(<scope>): <subject>` (or `<tag>: <subject>` for broad chores or docs).
-- **Subject Length:** First line MUST NOT exceed 50 characters (`<= 50`).
-- **Separation:** Exactly one blank line between the subject and body.
-- **Body Line Length:** Every body line MUST NOT exceed 80 characters (`<= 80`).
-- **Code Symbols in Body:** Enclose all identifiers, component names, filenames, directory paths, props and attributes in backticks in the commit body (not the first line).
-- **Spelling & Style:** Write all commit messages and code comments in traditional British English ("optimise", "initialise", "behaviour", "centre", "colour") and strictly NO Oxford comma.
-- **Quotation Marks in Prose vs Code:** In documentation, commit messages and code comments, ALWAYS use double quotes (`"..."`) for quotes and natural language punctuation (do NOT use British-style single quotation marks in prose). Single quotes (`'...'`) are strictly reserved for code implementation (TypeScript, JavaScript and SCSS). Enclose all code symbols, identifiers and file paths in backticks (`` `...` ``).
-- **Dash Typography:** Em-rules ("—") must ALWAYS be separated by spaces from the surrounding text (e.g. "word — word"), but must not be separated by spaces from surrounding brackets if inside brackets. En-rules ("–"), representing ranges and similar things, must NOT have any spaces surrounding them (e.g. "1–10", "lines 20–35", "2020–2024").
-- **Slash Typography:** A forward slash ("/") must ONLY be surrounded by spaces if it separates compound words (e.g. "word combination / another combination"). When separating single words, terms, identifiers or paths, no spaces are permitted (e.g. "`Sidebar`/`Navbar`", "Prev/Next/Add/Delete", "true/false").
+- **Conventional Commits:** Atomic feature integrity following `CONTRIBUTING.md`. Every commit must be complete in itself, build cleanly (`bun x tsc --noEmit`) and pass all tests (`bun run test:ci`).
+- **Commit Format:** `<tag>(<scope>): <subject>` where subject line is `<= 50` characters, followed by exactly one blank line and body wrapped at `<= 80` characters with code symbols enclosed in backticks.
 - **Allowed Tags:** `feat`, `fix`, `refactor`, `test`, `docs`, `chore`.
 - **Allowed Scopes:** Strictly lowercase:
   - Components: `app`, `applayout`, `sidebar`, `navbar`, `toolbar`, `preview`, `addsections`, `components`.
   - Pages: `personal`, `education`, `experience`, `projects`, `skills`, `certifications`, `links`, `pages`.
   - Core: `hooks`, `utils`, `types`, `styles`.
   - Tooling/Infra: `vite`, `ts`, `vitest`, `eslint`, `prettier`, `stylelint`, `playwright`, `e2e`, `husky`, `ci`, `package`, `readme`, `docs`, `agents`.
+- **Decoupled Commit Phase:** Git commits belong strictly to Phase 4 (Commit) of the engineering workflow. Create commits only after all quality gates pass AND a logical milestone is completed or explicitly requested by the user. Never commit intermediate exploratory or incomplete states.
+- **Typography & Prose Invariants:**
+  - Traditional British English spelling ("optimise", "initialise", "behaviour", "centre", "colour").
+  - Double quotes (`"..."`) for natural language and prose; single quotes (`'...'`) strictly for code (TypeScript, SCSS). Enclose all code identifiers in backticks (`` `...` ``).
+  - Spaced em-rules (" — ") for parenthetical thoughts; unspaced en-rules ("–") for ranges (e.g. "1–10", "2020–2024"). Slashes (" / ") surrounded by spaces only when separating compound words.
+  - **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma under any circumstances in commit messages, code comments, docstrings or documentation. In lists of three or more items, never place a comma before the coordinating conjunction ("and" or "or"). Perform a search for `, and` and `, or` across written text before committing.
+- **Code Comments:** Multiline comments MUST use JSDoc-style block comments (`/** ... */`) with leading asterisks. Standalone `//` comments reserved for single-line remarks or distinct annotations (e.g. `// TODO:`).
 
 ---
 
-## 8. Gemini 3.8 Flash Agent Verification Checklist
+## 8. Four-Phase Engineering Workflow
 
-Before finishing any task or concluding a turn:
+Follow the four-phase workflow to ensure high-quality, deliberate implementation:
 
-1. Run `bun x tsc --noEmit` to verify type safety.
-2. Check for modern React 19 standards: verify zero deprecated APIs or types (no `MutableRefObject`, no `forwardRef`, no `defaultProps`). Search web documentation if unsure.
-3. Verify event handler parameter naming: ensure all event parameters are named `e`, never `event`.
-4. If a component, hook, utility or page was created, verify its entry point is registered in `docs/astro.config.ts`.
-5. Run `bun x eslint <modified-files> --fix` to ensure zero lint errors and perfectionist order compliance.
-6. Run `bun x stylelint <modified-scss-files> --fix` if styles were changed.
-7. Run `bun x vitest related --run --bail=1 <modified-files> --passWithNoTests`.
-8. **Prose & Typography Audit:** Scan all added comments, docstrings and commit messages for Oxford commas (search for `, and` / `, or`) and remove them. Verify traditional British English and double quotes.
-9. If errors occur, diagnose using: `[Error Source] -> [Attempted Fix] -> [Result]`.
-10. Once all verification checks pass cleanly, create an atomic git commit for the completed change following the commit conventions in section 7 before concluding the task.
+1. **Explore:** Read code, understand existing patterns and investigate dependencies without editing files. Use subagents for large codebase explorations to keep main context clean.
+2. **Plan & Spec Interview:** For non-trivial tasks or ambiguous requirements, interview the user using `ask_question` to clarify design choices, edge cases and trade-offs. Formulate a structured plan artifact and obtain approval before coding.
+3. **Implement & Verify:** Implement changes adhering strictly to architectural invariants. Execute all quality gates (type checking, linters, tests and visual parity) and present concrete verification output.
+4. **Commit:** Create atomic, well-scoped Conventional Commits matching project standards upon milestone completion.
+
+---
+
+## 9. Quality Gates, Verification & Context Protocol
+
+Before concluding any turn or claiming task completion, execute and pass all verification gates:
+
+1. **Static Analysis Gate:**
+   - Type-check: `bun x tsc --noEmit`
+   - Linter: `bun x eslint <modified-files> --fix`
+   - Styles: `bun x stylelint "src/**/*.scss" --fix` (if styles modified)
+   - TypeDoc registration: verify all created components, hooks, helpers or utilities are registered in `docs/astro.config.ts`.
+2. **Automated Testing Gate:**
+   - Run targeted tests: `bun x vitest related --run --bail=1 <modified-files> --passWithNoTests`.
+   - Full suite before milestones: `bun run test:ci`.
+3. **Visual Parity Gate:**
+   - For UI, layout or styling changes, verify visual rendering parity across `@react-pdf/renderer` (Yoga engine Flexbox rules only), Live Preview DOM and modal PDF.js canvas with interactive text layer.
+4. **Typography & Prose Gate:**
+   - Scan all added comments, docstrings and commit messages for Oxford commas (zero `, and` or `, or`).
+   - Verify traditional British English and double quotes in prose.
+5. **Operational Verification Principles:**
+   - **Evidence-Based Output:** Always show concrete command output evidence (command executed, exit code, test pass/fail counts and linter output) rather than asserting success in prose.
+   - **Root Cause Diagnosis:** When diagnosing failures, address the underlying cause; never suppress errors, bypass type checks or apply speculative patches.
+   - **Adversarial Subagent Review:** For non-trivial feature implementations or multi-file diffs, dispatch a fresh-context subagent to review the git diff against task requirements before declaring completion.
+   - **Session Verification Gating:** For autonomous runs, gate stopping conditions using `/goal` criteria and deterministic pre-commit checks (`bun run test:ci`, `bun x tsc --noEmit`).
+   - **Context Compaction Survival Rules:** When compacting context, always preserve:
+     - The complete list of modified, created and deleted files.
+     - Active architectural decisions, invariant constraints and user-specified requirements.
+     - Active test and verification commands, targeted test paths and failure diagnostic state.
