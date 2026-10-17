@@ -121,7 +121,7 @@ Follow the four-phase workflow to ensure high-quality, deliberate implementation
 
 1. **Explore:** Read code, understand existing patterns and investigate dependencies without editing files. Prefer Language Server Protocol tools (`lsp_goto_definition`, `lsp_hover` and `lsp_find_references` via `typescript-lsp`) for semantic navigation and type inspection over reading entire source files. For structural syntax search across files without dumping entire source files into context, use `ast-grep` MCP server tools (`find_code`, `find_code_by_rule` and `dump_syntax_tree`). Discover and examine test coverage with `vitest` MCP server tools (`set_project_root` and `list_tests`). When verifying external library APIs, framework idioms or modern patterns (such as React 19, `immer` or `@dnd-kit`), use Context7 (`resolve-library-id` and `query-docs`) following official best practice tips: supply known library IDs directly (e.g. `/react/react`, `/websites/immer_js`) to bypass discovery, specify explicit target versions, scope queries to single concepts, rank with `language: 'TypeScript'` and avoid using Context7 for internal business logic. For deep upstream monorepo inspection, algorithms or source code lookups across dependencies (such as `@dnd-kit`, `pdfjs-dist` or `@react-pdf/renderer`), query the `gitmcp-docs` MCP server (`search_generic_documentation`, `search_generic_code` and `match_common_libs_owner_repo_mapping`). Use subagents for large codebase explorations to keep main context clean.
 2. **Plan & Spec Interview:** For non-trivial tasks or ambiguous requirements, interview the user using `ask_question` to clarify design choices, edge cases and trade-offs. Formulate a structured plan artifact and obtain approval before coding.
-3. **Implement & Verify:** Implement changes adhering strictly to architectural invariants. Execute all quality gates (type checking, linters, tests and visual parity) and present concrete verification output.
+3. **Implement & Verify:** Implement changes adhering strictly to architectural invariants. Execute all quality gates (type checking, linters, tests, accessibility audits and visual parity) and present concrete verification output.
 4. **Commit:** Create atomic, well-scoped Conventional Commits matching project standards upon milestone completion.
 
 ---
@@ -143,10 +143,12 @@ Before concluding any turn or claiming task completion, execute and pass all ver
    - Full suite before milestones: `bun run test:ci`.
 3. **Visual Parity Gate:**
    - For UI, layout or styling changes, verify visual rendering parity across `@react-pdf/renderer` (Yoga engine Flexbox rules only), Live Preview DOM and modal PDF.js canvas with interactive text layer. Use Playwright MCP tools (`browser_snapshot`, `browser_take_screenshot` and `browser_resize`) against the running application to inspect accessibility snapshots and visual rendering.
-4. **Typography & Prose Gate:**
+4. **Accessibility Audit Gate:**
+   - For UI, template or styling changes, run automated WCAG 2.2 Level AA accessibility audits via `a11y` MCP server tools (`audit_webpage` and `get_summary`) against the live Vite server (`http://127.0.0.1:5173`). Inspect violations by severity (`critical`, `serious`, `moderate` and `minor`), remediate offending markup and ensure zero accessibility regressions prior to executing end-to-end suites.
+5. **Typography & Prose Gate:**
    - Scan all added comments, docstrings and commit messages for Oxford commas (zero `, and` or `, or`).
    - Verify traditional British English and double quotes in prose.
-5. **Operational Verification Principles:**
+6. **Operational Verification Principles:**
    - **Evidence-Based Output:** Always show concrete command output evidence (command executed, exit code, test pass/fail counts and linter output) rather than asserting success in prose.
    - **Root Cause Diagnosis:** When diagnosing failures, address the underlying cause; never suppress errors, bypass type checks or apply speculative patches.
    - **Adversarial Subagent Review:** For non-trivial feature implementations or multi-file diffs, dispatch a fresh-context subagent to review the git diff against task requirements before declaring completion.

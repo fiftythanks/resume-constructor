@@ -81,10 +81,14 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
      expect(tab).toHaveAttribute('aria-selected', 'true');
      expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
      ```
-2. **Automated Axe Audits in Playwright:**
+2. **In-Loop Accessibility Audits (`a11y` MCP Server):**
+   - Leverage `a11y-mcp` tools for rapid in-loop WCAG 2.2 AA diagnostics against the active Vite dev server (`http://127.0.0.1:5173`):
+     - `get_summary`: Fast overview of total issues broken down by severity (`critical`, `serious`, `moderate` and `minor`) alongside passed rule counts.
+     - `audit_webpage`: Detailed report filtered by specific WCAG criteria (`tags: ['wcag2a', 'wcag2aa']`) with optional HTML snippets (`includeHtml: true`) to pinpoint offending DOM nodes and remediation guidance.
+3. **Automated Axe Audits in Playwright:**
    - Run Playwright E2E tests with `@axe-core/playwright` to catch automated WCAG regressions:
      ```bash
      bun run e2e
      ```
-3. **Contrast Standards:**
+4. **Contrast Standards:**
    - Verify all text and interactive icons against WCAG 2.2 AA (minimum 4.5:1 for normal text, 3:1 for large text and UI components).
