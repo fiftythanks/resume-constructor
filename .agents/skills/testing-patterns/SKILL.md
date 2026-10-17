@@ -32,6 +32,16 @@ This skill provides comprehensive standards and patterns for writing automated t
   3. **Browser Mode Component Tests (`Component.browser.test.tsx` — `browser` project, Playwright Chromium):**
      Matches `src/**/*.browser.test.{ts,tsx}`. Uses `vitest-browser-react` (`await render`) and `vitest/browser` (`page`, `userEvent`, `await expect.element(...)`). Reserved strictly for behaviours that require a real browser engine (such as `@dnd-kit` pointer and keyboard drag-and-drop, native `<dialog>` top-layer `showModal()`/`close()` and `Escape` dismissal, `tabbable` geometry visibility and viewport resizing).
 
+- **Autonomous Test Execution via `vitest` MCP Server:**
+  For rapid in-context test feedback without invoking full subprocess overhead:
+  1. Initialise the project root once per session using `set_project_root({ path: '<absolute-workspace-path>' })`.
+  2. Discover test paths with `list_tests()` or `list_tests({ project: 'unit' })`.
+  3. Execute targeted test suites using `run_tests`:
+     - Run specific test file: `run_tests({ target: 'src/components/BulletPoints/bulletPointsDnd.test.ts', project: 'unit' })`.
+     - Run targeted directory: `run_tests({ target: 'src/components/Button', project: 'component' })`.
+     - Inspect code coverage on demand: `analyze_coverage()`.
+  4. Always verify before milestone commits with the full determinism gate `bun run test:ci`.
+
 ---
 
 ## 2. Writing Good, Tight Assertions (Chapter 3, §3.2)

@@ -19,7 +19,9 @@
 - **Running Tests:**
   - Full suite: `bun run test` (or `bun run test:ci`).
   - **CRITICAL:** Do NOT run bare `bun test` because it invokes Bun's native test runner instead of the three-tier Vitest project configuration (`unit`, `component` and `browser`).
-  - Targeted test execution: `bun x vitest related --run --bail=1 <file> --passWithNoTests`.
+  - Targeted test execution:
+    - Autonomous / interactive debugging: Use `vitest` MCP server tools (`set_project_root` with the workspace absolute path, then `run_tests` with `project: 'unit' | 'component' | 'browser'` and `target: '<file-or-dir>'`).
+    - CLI fallback: `bun x vitest related --run --bail=1 <file> --passWithNoTests`.
 - **Linting & Formatting:**
   - Type-check: `bun x tsc --noEmit`
   - ESLint: `bun x eslint <path> --fix` (enforces import and JSX prop sorting via `eslint-plugin-perfectionist`)
@@ -117,7 +119,7 @@ For detailed implementation literature, design patterns and comprehensive exampl
 
 Follow the four-phase workflow to ensure high-quality, deliberate implementation:
 
-1. **Explore:** Read code, understand existing patterns and investigate dependencies without editing files. Prefer Language Server Protocol tools (`lsp_goto_definition`, `lsp_hover` and `lsp_find_references` via `typescript-lsp`) for semantic navigation and type inspection over reading entire source files. When verifying external library APIs, framework idioms or modern patterns (such as React 19, `immer` or `@dnd-kit`), use Context7 (`resolve-library-id` and `query-docs`) following official best practice tips: supply known library IDs directly (e.g. `/react/react`, `/websites/immer_js`) to bypass discovery, specify explicit target versions, scope queries to single concepts, rank with `language: 'TypeScript'` and avoid using Context7 for internal business logic. Use subagents for large codebase explorations to keep main context clean.
+1. **Explore:** Read code, understand existing patterns and investigate dependencies without editing files. Prefer Language Server Protocol tools (`lsp_goto_definition`, `lsp_hover` and `lsp_find_references` via `typescript-lsp`) for semantic navigation and type inspection over reading entire source files. Discover and examine test coverage with `vitest` MCP server tools (`set_project_root` and `list_tests`). When verifying external library APIs, framework idioms or modern patterns (such as React 19, `immer` or `@dnd-kit`), use Context7 (`resolve-library-id` and `query-docs`) following official best practice tips: supply known library IDs directly (e.g. `/react/react`, `/websites/immer_js`) to bypass discovery, specify explicit target versions, scope queries to single concepts, rank with `language: 'TypeScript'` and avoid using Context7 for internal business logic. Use subagents for large codebase explorations to keep main context clean.
 2. **Plan & Spec Interview:** For non-trivial tasks or ambiguous requirements, interview the user using `ask_question` to clarify design choices, edge cases and trade-offs. Formulate a structured plan artifact and obtain approval before coding.
 3. **Implement & Verify:** Implement changes adhering strictly to architectural invariants. Execute all quality gates (type checking, linters, tests and visual parity) and present concrete verification output.
 4. **Commit:** Create atomic, well-scoped Conventional Commits matching project standards upon milestone completion.
@@ -136,7 +138,7 @@ Before concluding any turn or claiming task completion, execute and pass all ver
    - Styles: `bun x stylelint "src/**/*.scss" --fix` (if styles modified)
    - TypeDoc registration: verify all created components, hooks, helpers or utilities are registered in `docs/astro.config.ts`.
 2. **Automated Testing Gate:**
-   - Run targeted tests: `bun x vitest related --run --bail=1 <modified-files> --passWithNoTests`.
+   - Targeted tests: run in-context via `vitest` MCP server (`set_project_root` then `run_tests` targeting `target: '<file-or-dir>'` and corresponding `project: 'unit' | 'component' | 'browser'`) or CLI `bun x vitest related --run --bail=1 <modified-files> --passWithNoTests`.
    - Full suite before milestones: `bun run test:ci`.
 3. **Visual Parity Gate:**
    - For UI, layout or styling changes, verify visual rendering parity across `@react-pdf/renderer` (Yoga engine Flexbox rules only), Live Preview DOM and modal PDF.js canvas with interactive text layer. Use Playwright MCP tools (`browser_snapshot`, `browser_take_screenshot` and `browser_resize`) against the running application to inspect accessibility snapshots and visual rendering.

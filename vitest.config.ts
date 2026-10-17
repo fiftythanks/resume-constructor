@@ -3,6 +3,10 @@ import { defineConfig, mergeConfig } from 'vitest/config';
 
 import viteConfig from './vite.config.ts';
 
+const isJsonReporter =
+  process.argv.some((arg) => arg.includes('json')) ||
+  process.env.VITEST_MCP_OPTIMIZED === '1';
+
 export default mergeConfig(
   viteConfig,
   defineConfig({
@@ -12,6 +16,7 @@ export default mergeConfig(
     test: {
       clearMocks: true,
       globals: true,
+      ...(isJsonReporter ? { reporters: [['json', { stdout: true }]] } : {}),
       projects: [
         {
           extends: true,
