@@ -14,7 +14,7 @@ Follow this runbook after making changes or when diagnosing failing builds, comm
 ## 1. Fast Feedback Verification Sequence
 
 > [!TIP]
-> Before running CLI checks, use the `typescript-lsp` MCP server's `lsp_diagnostics` tool and the `eslint` MCP server's `lint-files` tool for instant in-context diagnostics on modified files.
+> Before running CLI checks, use `typescript-lsp` (`lsp_diagnostics`) and `eslint` (`lint-files`) for instant in-context diagnostics on modified files, alongside `ast-grep` (`find_code` or `find_code_by_rule`) for AST-level syntax queries and anti-pattern detection across files.
 
 Always execute the checks in this sequence:
 
@@ -181,6 +181,17 @@ Whenever creating a component, hook, utility or feature page, its entry point MU
 - **Avoid Type Assertions:** Type assertions (using `as Type`, `<Type>` and the non-null assertion operator `!`) bypass TypeScript's static analysis and must be avoided as much as possible.
 - **Narrow Instead of Asserting:** Use natural type inference, discriminating unions and runtime type narrowing (`typeof`, `instanceof`, `Array.isArray`, null checks or custom type guards) to let the compiler safely refine types.
 - **Documented Exceptions Only:** If a type assertion cannot be avoided with reasonable effort (e.g. interacting with third-party libraries lacking accurate types or certain delegated DOM event targets), the rationale MUST be documented in an explanatory comment immediately preceding the assertion explaining why it was necessary.
+
+---
+
+### L. Structural Code Inspection with `ast-grep`
+
+Use `ast-grep` MCP tools (`find_code`, `find_code_by_rule` and `dump_syntax_tree`) to inspect and enforce syntax rules across the codebase:
+
+- **Detecting Non-Null Assertions:** Search pattern `$EXPR!` to identify unverified type assertions.
+- **Enforcing React 19 Standards:** Search for legacy `forwardRef($COMPONENT)` or `$COMPONENT.defaultProps = $PROPS` to prevent deprecated patterns.
+- **Event Handler Parameter Naming:** Search for `($event) => $$$` to catch violations of the `e` parameter naming requirement.
+- **Rule Prototyping:** Use `dump_syntax_tree` to view AST nodes or `test_match_code_rule` to test inline rules before running scans.
 
 ---
 
