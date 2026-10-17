@@ -123,6 +123,11 @@ export default function MyComponent({
 7. **No Redundant Effects:** Do not introduce `useEffect` for state synchronisation or derived values. Calculate values directly during render.
 8. **Accessible Labeling:** If creating form controls, ensure inputs have an explicit `id` and corresponding `<label htmlFor={id}>`.
 9. **Avoid Type Assertions:** Avoid TypeScript type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) as much as possible. Rely on natural type inference, discriminating unions and runtime type narrowing (`typeof`, `instanceof` or custom type guards). If an assertion cannot be avoided with reasonable effort, document why it was necessary in an explanatory comment directly preceding it.
+10. **Upstream Source Code Investigation via `gitmcp-docs`:**
+    - When implementing intricate library integrations (such as `@dnd-kit/core` sensors, collision detection or `pdfjs-dist` canvas rendering pipelines), use the `gitmcp-docs` MCP server to inspect upstream implementations directly:
+      - **Library Slug Resolution:** Use `match_common_libs_owner_repo_mapping` to resolve packages to their canonical repository (e.g. `dnd-kit` to `clauderic/dnd-kit`).
+      - **Algorithm & Source Search:** Use `search_generic_code` to review sensor definitions, keyboard coordinates or event handling logic without cloning external repositories.
+      - **Documentation Search:** Use `search_generic_documentation` for targeted queries on configuration options and migration notes.
 
 ---
 
