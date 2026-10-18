@@ -311,7 +311,6 @@ describe('SectionItemHeader', () => {
         <SectionItemHeader
           {...getMockSectionItemHeaderProps({
             addItem: addItemMock,
-            updateScreenReaderAnnouncement: undefined,
           })}
         />,
       );

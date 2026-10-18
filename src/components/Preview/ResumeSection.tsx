@@ -109,7 +109,7 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>CERTIFICATES, SKILLS & INTERESTS</Text>
-          <View style={style}>
+          <View style={style || {}}>
             {data.certificates !== '' && (
               <Text>
                 <Text style={styles.bold}>Certificates:</Text>{' '}
@@ -134,11 +134,11 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>EDUCATION</Text>
-          <View style={style}>
+          <View style={style || {}}>
             {data.degrees.map((degree, i) => (
               <View
                 key={degree.id}
-                style={i > 0 ? styles.degree : undefined}
+                style={i > 0 ? styles.degree : {}}
                 wrap={false}
               >
                 <View style={styles.degreeHeader}>
@@ -175,13 +175,9 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>WORK EXPERIENCE</Text>
-          <View style={style}>
+          <View style={style || {}}>
             {data.jobs.map((job, i) => (
-              <View
-                key={job.id}
-                style={i > 0 ? styles.job : undefined}
-                wrap={false}
-              >
+              <View key={job.id} style={i > 0 ? styles.job : {}} wrap={false}>
                 <View style={styles.jobHeader}>
                   <View>
                     {job.companyName !== '' && (
@@ -216,11 +212,11 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>PROJECTS</Text>
-          <View style={style}>
+          <View style={style || {}}>
             {data.projects.map((project, i) => (
               <View
                 key={project.id}
-                style={i > 0 ? styles.project : undefined}
+                style={i > 0 ? styles.project : {}}
                 wrap={false}
               >
                 <Text>
@@ -262,7 +258,7 @@ export default function ResumeSection({
       return (
         <>
           <Text style={styles.bold}>TECHNICAL SKILLS</Text>
-          <View style={style}>
+          <View style={style || {}}>
             {data.languages.length > 0 && joinSkills(data.languages) !== '' && (
               <Text>
                 <Text style={styles.bold}>Languages:</Text>

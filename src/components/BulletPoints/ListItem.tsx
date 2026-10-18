@@ -24,7 +24,7 @@ export interface ListItemProps {
   id: string;
   index: number;
   name: string;
-  placeholder?: string;
+  placeholder?: string | undefined;
   value: string;
 }
 

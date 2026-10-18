@@ -10,6 +10,11 @@ describe('AppbarIconButton', () => {
   const getProps = (
     overrides: Partial<AppbarIconButtonProps> = {},
   ): AppbarIconButtonProps => ({
+    /**
+     * NOTE: If you decide to make this prop `undefined` by default, make sure
+     * you update tests that rely on the default value being defined. There are
+     * at least two such tests.
+     */
     alt: 'Alternative text',
     onClick: vi.fn(),
     iconSrc: 'path/to/icon.jpg',
@@ -20,7 +25,7 @@ describe('AppbarIconButton', () => {
     const props = getProps();
     render(<AppbarIconButton {...props} />);
 
-    const btn = screen.getByRole('button', { name: props.alt });
+    const btn = screen.getByRole('button', { name: props.alt! });
 
     expect(btn).toBeInTheDocument();
   });
@@ -29,7 +34,7 @@ describe('AppbarIconButton', () => {
     const props = getProps({ 'aria-label': 'Close Dialog' });
     render(<AppbarIconButton {...props} />);
 
-    const btn = screen.getByRole('button', { name: props['aria-label'] });
+    const btn = screen.getByRole('button', { name: props['aria-label']! });
 
     expect(btn).toBeInTheDocument();
   });
@@ -48,7 +53,7 @@ describe('AppbarIconButton', () => {
     const user = userEvent.setup();
     render(<AppbarIconButton {...props} />);
 
-    const btn = screen.getByRole('button', { name: props.alt });
+    const btn = screen.getByRole('button', { name: props.alt! });
     await user.click(btn);
 
     expect(props.onClick).toHaveBeenCalledTimes(1);

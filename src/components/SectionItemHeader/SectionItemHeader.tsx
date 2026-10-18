@@ -37,7 +37,7 @@ export interface SectionItemHeaderProps {
   ref?: Ref<HTMLElement>;
   showNextItem: () => void;
   showPreviousItem: () => void;
-  updateScreenReaderAnnouncement?: (announcement: string) => void;
+  updateScreenReaderAnnouncement?: ((announcement: string) => void) | undefined;
 }
 
 /**

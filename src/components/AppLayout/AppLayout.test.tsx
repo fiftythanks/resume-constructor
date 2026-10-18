@@ -284,7 +284,9 @@ describe('AppLayout', () => {
     });
 
     it('should not render an "Open Next Section" button when the opened section is the last one', () => {
-      renderAppLayout(getProps({ openedSectionId: possibleSectionIds.at(-1) }));
+      renderAppLayout(
+        getProps({ openedSectionId: possibleSectionIds.at(-1)! }),
+      );
 
       const btn = screen.queryByRole('button', { name: 'Open Next Section' });
 
