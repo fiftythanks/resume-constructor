@@ -192,7 +192,7 @@ export default function Navbar({
   }
 
   /**
-   * The `personal` item isn't draggable, and has to be added to the DOM
+   * The `personal` item isn't draggable and has to be added to the DOM
    * separately.
    */
   const draggableSectionIds = activeSectionIds.filter(

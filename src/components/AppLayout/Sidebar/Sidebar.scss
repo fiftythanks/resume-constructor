@@ -14,9 +14,9 @@
     --sidebar-gap: var(--navbar-toolbar-gap);
 
     display: flex;
+    container-type: size;
     width: 100%;
     height: var(--appbar-item-size);
-    container-type: size;
 
     &-Item {
       &_hidden {

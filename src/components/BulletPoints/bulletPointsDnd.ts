@@ -10,7 +10,7 @@ export interface DragOriginState {
 
 /**
  * Computes the reordered bullet points array when a drag operation finishes
- * over a different target item, or returns `null` when no reordering should
+ * over a different target item or returns `null` when no reordering should
  * occur.
  */
 export function reorderBulletPoints(

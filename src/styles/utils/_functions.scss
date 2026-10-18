@@ -5,7 +5,7 @@
 
 /// Determines whether an arbitrary Sass value is a valid CSS length unit.
 ///
-/// Validates absolute units via Sass unit compatibility, and checks dynamic
+/// Validates absolute units via Sass unit compatibility and checks dynamic
 /// relative units against a strict whitelist.
 ///
 /// @param {*} $value - The value to test.
@@ -79,7 +79,7 @@
 /// accessible hit target thresholds (e.g. WCAG 2.5.5 / 2.5.8).
 ///
 /// Divides the deficit by two for symmetrical layout spacing. Resolves
-/// absolute dimensions at compile time, or defers dynamic relative lengths
+/// absolute dimensions at compile time or defers dynamic relative lengths
 /// (rem, em, vw, etc.) to runtime CSS via `max()` and `calc()`.
 ///
 /// @param {Number} $visible-length - Current element dimension (width or

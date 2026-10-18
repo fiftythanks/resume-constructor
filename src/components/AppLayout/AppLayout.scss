@@ -3,7 +3,7 @@
 @layer blocks {
   .AppLayout {
     /**
-     * `--title-height` is 2.75rem because the title is 1.75rem, and it seems that
+     * `--title-height` is 2.75rem because the title is 1.75rem and it seems that
      * 0.5ram block padding is the best choice here, at least to my eye.
      */
     --title-height: 2.75rem;

@@ -199,7 +199,7 @@ export default function useAppState() {
    *
    * If the opened section is deleted, two outcomes are possible:
    *
-   * - The deleted section is the last active section, and then the section
+   * - The deleted section is the last active section and then the section
    * before it is opened automatically.
    * - Otherwise, the next section is opened.
    */

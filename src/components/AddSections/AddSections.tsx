@@ -37,7 +37,7 @@ export default function AddSections({
   onClose,
 }: ReadonlyDeep<AddSectionsProps>) {
   /**
-   * The `onClose` function changes a state, and this change
+   * The `onClose` function changes a state and this change
    * results in the closing of the popup. So in some contexts, for
    * readability, it's better to call the function `closePopup`, which
    * I will do. It's entirely the same function, but its name conveys
