@@ -1,13 +1,19 @@
 ---
 name: responsive-scaling
 description: >-
-  Use this skill when implementing responsive adaptations for medium and large screens,
-  working on AppLayout, modifying sidebar/navbar visibility or working with preview rendering.
+  Use this skill when implementing responsive macro-layouts, CSS Container Queries (@container) and
+  viewport adaptations. Applies to modifying AppLayout responsive shell behaviour, toggling mobile drawer
+  navigation versus docked desktop sidebars and writing container queries for internal component scaling.
+  For live interactive inspection, use Playwright MCP tools (browser_resize). Do NOT use for authoring automated
+  regression tests (use testing-patterns) or standard component markup (use component-authoring).
 ---
 
-# Responsive Scaling & Parity Execution Guide
+# Responsive Scaling Guide
 
-This skill guides responsive adaptations, macro-layout rules and rendering engine parity.
+This skill guides responsive macro-layout rules, component scaling via CSS Container Queries and viewport adaptations.
+
+> [!NOTE]
+> When implementing multi-breakpoint container queries with custom container names or container units (`cqw`, `cqh`), read `references/container-query-patterns.md`.
 
 ---
 
@@ -15,7 +21,7 @@ This skill guides responsive adaptations, macro-layout rules and rendering engin
 
 ### Macro-Layout (`AppLayout` only)
 
-- Global `@media` queries are **strictly restricted** to macro-layout adjustments in `AppLayout` (e.g. mobile drawer vs desktop docking sidebar).
+- Global `@media` queries are **strictly restricted** to macro-layout adjustments in `AppLayout` (e.g. mobile drawer navigation versus desktop docked sidebar).
 - Do **not** inject `@media` breakpoints inside leaf or child components (`Button`, `ListItem`, `Degree`, `Job`, etc.).
 
 ### Component Scaling (Container Queries)
@@ -38,45 +44,26 @@ This skill guides responsive adaptations, macro-layout rules and rendering engin
 
 ---
 
-## 2. Rendering Engine Parity & PDF Constraints
-
-The document preview architecture comprises three distinct rendering modes:
-
-1. **DOM Live Preview (Pure JSX):** Fast, non-blocking DOM preview for live interactive editing.
-2. **React-PDF Generation (`@react-pdf/renderer`):** Document compilation powered by the **Yoga layout engine** generating binary PDF blobs with preloaded fonts.
-3. **On-Demand Canvas & Interactive Text Layer (`pdfjs-dist`):** High-DPI canvas rasterisation inside the native `<dialog>` preview modal with an aligned, invisible `pdfjsLib.TextLayer` DOM overlay enabling text selection and copying.
-
-### Yoga Constraints:
-
-- **Flexbox Only:** Yoga does not parse CSS Grid, container queries or `clamp()` math.
-- **Static Dimensions:** Use static or percentage-based dimensions for resume document elements. Fluid typography (`clamp()`) is permitted **only** in the outer application shell, never inside the resume document preview.
-- **Universal Primitives:** Keep resume document components strictly decoupled from application shell components. Primitives rendered inside the resume document must remain 100% compliant with Yoga Flexbox rules.
-
----
-
-## 3. DOM Integrity & Accessibility (WCAG 2.4.3)
+## 2. DOM Integrity & Accessibility (WCAG 2.4.3)
 
 1. **Focus Order & DOM Alignment:**
    - The DOM sequence must match the visual layout: `<aside>` -> `<nav>` -> `<main>`.
    - Never use CSS Grid `grid-column`/`grid-row` to reorder elements visually in a way that diverges from the DOM tab order.
-2. **Dynamic ARIA State Syncing:**
+2. **Dynamic ARIA State Synchronisation:**
    - When the mobile navbar toggle button is hidden at desktop breakpoints (`display: none` at `>= 768px`), ensure the desktop sidebar navigation state explicitly forces `aria-expanded="true"`.
    - Ensure screen reader announcements (`aria-live="polite"`) accurately reflect desktop mode transitions.
 
 ---
 
-## 4. Verification & Testing
+## 3. Verification & Live Inspection
 
 - Validate layout behaviour in Vitest:
   ```bash
   bun x vitest run src/components/AppLayout/AppLayout.test.tsx
   ```
 - Use Playwright MCP tools for live visual inspection and breakpoint verification:
-  - `browser_navigate`: Navigate to local preview server.
+  - `browser_navigate`: Navigate to local preview server (`http://127.0.0.1:5173`).
   - `browser_resize`: Test specific responsive breakpoints (e.g. mobile `375x667`, desktop `1440x900`).
   - `browser_snapshot`: Capture accessibility trees to verify DOM order and ARIA states.
-  - `browser_take_screenshot`: Capture visual page state across breakpoints to confirm layout parity.
-- Run E2E tests in Playwright's deterministic Docker container to prevent font rendering differences across host OS environments:
-  ```bash
-  bun run e2e
-  ```
+  - `browser_take_screenshot`: Capture visual page state across breakpoints to confirm layout behaviour.
+- For authoring automated regression tests, invoke the `testing-patterns` skill (Vitest Browser Mode or Playwright E2E).

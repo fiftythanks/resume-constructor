@@ -1,0 +1,50 @@
+// Concentric property ordering reference for Stylelint in Resume Constructor.
+// Order groups: Positioning -> Box Model -> Typography -> Visual -> Misc.
+
+.ExampleBlock {
+  /* 1. Positioning */
+  position: relative;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+
+  /* 2. Box Model & Dimensions */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+
+  /* 3. Typography */
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--text-color);
+
+  /* 4. Visual */
+  background-color: var(--background-color);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+  opacity: 1;
+
+  /* 5. Animation & Misc */
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 0.2s ease-in-out;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}

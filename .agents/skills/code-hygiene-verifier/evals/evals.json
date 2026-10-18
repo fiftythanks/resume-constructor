@@ -1,0 +1,78 @@
+{
+  "skillName": "code-hygiene-verifier",
+  "description": "Benchmark evaluation suite for code-hygiene-verifier skill",
+  "cases": [
+    {
+      "id": "chv-train-01",
+      "split": "train",
+      "description": "Run TypeScript static verification to detect compiler errors",
+      "prompt": "Verify type safety across the repository and report any type errors.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "bun run verify --types",
+          "description": "Uses modular verify runner with --types flag"
+        },
+        {
+          "type": "excludes-text",
+          "value": "bun test",
+          "description": "Never runs bare bun test"
+        }
+      ]
+    },
+    {
+      "id": "chv-train-02",
+      "split": "train",
+      "description": "Sort imports and JSX props via perfectionist rules",
+      "prompt": "Fix import order and JSX prop sorting violations automatically across modified files.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "bun run verify --lint",
+          "description": "Executes ESLint with automated fixes"
+        },
+        {
+          "type": "contains-text",
+          "value": "perfectionist",
+          "description": "References perfectionist sorting rules"
+        }
+      ]
+    },
+    {
+      "id": "chv-val-01",
+      "split": "validation",
+      "description": "Detect unregistered public exports in TypeDoc config",
+      "prompt": "Check documentation parity to ensure newly created components are registered in docs/astro.config.ts.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "bun run verify --docs",
+          "description": "Executes TypeDoc documentation parity check"
+        },
+        {
+          "type": "contains-text",
+          "value": "starlightTypeDoc.entryPoints",
+          "description": "Verifies presence in starlightTypeDoc entry points"
+        }
+      ]
+    },
+    {
+      "id": "chv-val-02",
+      "split": "validation",
+      "description": "Audit and remediate Oxford comma violations in documentation and comments",
+      "prompt": "Run prose linter to detect and repair Oxford commas in comments and markdown.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "bun run verify --prose",
+          "description": "Executes prose style linter"
+        },
+        {
+          "type": "excludes-regex",
+          "value": ",\\s+(and|or)\\b",
+          "description": "Verified prose must be free of Oxford commas"
+        }
+      ]
+    }
+  ]
+}

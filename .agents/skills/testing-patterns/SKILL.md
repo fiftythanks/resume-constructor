@@ -1,15 +1,21 @@
 ---
 name: testing-patterns
 description: >-
-  Use this skill when designing, writing, reviewing or refactoring unit,
-  integration and component-level tests. Enforces test design principles
-  and testing practices from Lucas da Costa's "Testing JavaScript Applications"
-  (Manning Publications).
+  Use this skill when designing, writing, reviewing or refactoring automated tests across the
+  three-tier Vitest suite (pure Node unit, happy-dom component and Playwright Chromium browser tests).
+  Enforces Lucas da Costa testing principles, tight assertions, semantic matchers, strict Arrange-Act-Assert
+  separation and the Single-Act Principle. Do NOT use for authoring component JSX or SCSS (use component-authoring)
+  or diagnosing static linter errors across existing files (use code-hygiene-verifier).
 ---
 
 # Testing Patterns & Guidelines (Lucas da Costa)
 
 This skill provides comprehensive standards and patterns for writing automated tests across the codebase, directly implementing the methodology, techniques and hygiene rules from _Testing JavaScript Applications_ by Lucas da Costa (Manning Publications).
+
+> [!NOTE]
+>
+> - When selecting assertions for DOM elements, read `references/matchers-cheatsheet.md` for the complete semantic matcher matrix.
+> - When authoring Vitest Browser Mode tests requiring direct Chrome DevTools Protocol or Playwright page geometry, read `references/browser-mode-cdp.md`.
 
 ---
 

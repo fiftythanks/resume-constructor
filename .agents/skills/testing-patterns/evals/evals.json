@@ -1,0 +1,98 @@
+{
+  "skillName": "testing-patterns",
+  "description": "Benchmark evaluation suite for testing-patterns skill following Lucas da Costa principles",
+  "cases": [
+    {
+      "id": "tp-train-01",
+      "split": "train",
+      "description": "Pure unit test in Node environment with AAA structure and tight literal assertions",
+      "prompt": "Design a unit test for deriveFullName.ts under environment node with explicit Arrange, Act and Assert comments.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "// ARRANGE",
+          "description": "Includes explicit Arrange comment"
+        },
+        {
+          "type": "contains-text",
+          "value": "// ACT",
+          "description": "Includes explicit Act comment"
+        },
+        {
+          "type": "contains-text",
+          "value": "// ASSERT",
+          "description": "Includes explicit Assert comment"
+        },
+        {
+          "type": "excludes-text",
+          "value": "expect.any(",
+          "description": "Avoids loose expect.any matchers when exact values are known"
+        }
+      ]
+    },
+    {
+      "id": "tp-train-02",
+      "split": "train",
+      "description": "Component test using accessible queries and semantic DOM matchers",
+      "prompt": "Author a component test for EducationForm verifying form inputs using screen.getByRole and userEvent.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "screen.getByRole(",
+          "description": "Queries elements by accessible role"
+        },
+        {
+          "type": "contains-text",
+          "value": "userEvent.setup()",
+          "description": "Initialises userEvent with setup"
+        },
+        {
+          "type": "excludes-regex",
+          "value": "expect\\([^)]+\\)\\.toBe\\((true|false)\\)",
+          "description": "Uses semantic matchers rather than raw boolean comparisons"
+        }
+      ]
+    },
+    {
+      "id": "tp-val-01",
+      "split": "validation",
+      "description": "Vitest Browser Mode test verifying native dialog dismissal and expect.element assertions",
+      "prompt": "Author DeleteConfirmModal.browser.test.tsx using vitest-browser-react and page.getByRole.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "from 'vitest-browser-react'",
+          "description": "Imports render from vitest-browser-react"
+        },
+        {
+          "type": "contains-text",
+          "value": "expect.element(",
+          "description": "Uses expect.element locator assertions in Browser Mode"
+        },
+        {
+          "type": "contains-text",
+          "value": "page.getByRole(",
+          "description": "Uses page.getByRole to query elements in browser page"
+        }
+      ]
+    },
+    {
+      "id": "tp-val-02",
+      "split": "validation",
+      "description": "Assert BEM classes on rendered DOM nodes",
+      "prompt": "Verify Button component applies primary variant BEM modifier class upon render.",
+      "assertions": [
+        {
+          "type": "contains-text",
+          "value": "toHaveClass(",
+          "description": "Verifies BEM modifier application via toHaveClass"
+        },
+        {
+          "type": "excludes-text",
+          "value": "describe.only",
+          "description": "No focused test execution left in suites"
+        }
+      ]
+    }
+  ]
+}

@@ -1,13 +1,19 @@
 ---
 name: a11y-audit
 description: >-
-  Use this skill when auditing or implementing accessibility features, keyboard navigation,
-  screen reader announcements, ARIA patterns or testing with @axe-core/playwright.
+  Use this skill when auditing or implementing WCAG 2.2 Level AA accessibility compliance, keyboard navigation,
+  focus management and screen reader support. Applies to associating form controls with labels (htmlFor),
+  implementing modal focus traps with tabbable, managing dynamic screen reader announcements via aria-live="polite",
+  and adding keyboard controls to @dnd-kit sortable lists. Do NOT use for visual responsive layout (use responsive-scaling)
+  or unit test design (use testing-patterns).
 ---
 
 # Accessibility (A11y) Implementation & Audit Guide
 
 This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operability and screen reader compatibility.
+
+> [!NOTE]
+> When implementing accessible keyboard reordering on `@dnd-kit` sortable containers, read `references/dnd-kit-keyboard.md` for custom sensor and announcement contracts.
 
 ---
 
@@ -50,6 +56,7 @@ This project enforces strict **WCAG 2.2 Level AA** compliance, keyboard operabil
   </span>
   ```
 - Use `updateScreenReaderAnnouncement('...')` provided by `useAppState()`.
+- **Prose Style:** Omit Oxford commas in lists within screen reader announcements.
 
 ### D. Accessible Drag & Drop (`@dnd-kit`)
 

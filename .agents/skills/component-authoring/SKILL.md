@@ -1,14 +1,23 @@
 ---
 name: component-authoring
 description: >-
-  Use this skill when creating, modifying or refactoring React components in this codebase.
-  Enforces component colocation, ReadonlyExcept props pattern, React 19 standards,
-  accessible HTML markup and BEM SCSS styling.
+  Use this skill when creating, refactoring or scaffolding React 19 components and feature pages.
+  Applies component colocation in src/components/, the ReadonlyDeep props pattern (or ReadonlyExcept when
+  excepting refs), React 19 standards and component-scoped BEM SCSS styling. For styling ResumeDocument.tsx,
+  references Yoga Flexbox rules. Do NOT use for authoring test suites (use testing-patterns), diagnosing
+  static type or lint errors across existing files (use code-hygiene-verifier) or configuring responsive
+  macro-layout (use responsive-scaling).
 ---
 
 # Component Authoring Workflow
 
 When authoring or modifying components in this project, adhere strictly to the following structure and architectural principles.
+
+> [!NOTE]
+>
+> - When scaffolding a new component from scratch, read `references/component-template.tsx` for the exact boilerplate structure.
+> - When structuring SCSS properties, read `references/concentric-order.scss` to ensure compliance with Stylelint concentric order rules.
+> - When authoring styles for the `@react-pdf/renderer` document in `ResumeDocument.tsx`, read `references/react-pdf-yoga.md` for supported Flexbox properties.
 
 ---
 
@@ -35,225 +44,42 @@ export { default } from './MyComponent';
 
 ---
 
-## 2. Component Implementation Template (`MyComponent.tsx`)
+## 2. Component Implementation Standards
 
-```tsx
-import type {
-  MouseEventHandler,
-  ReactNode,
-  RefCallback,
-  RefObject,
-} from 'react';
-
-import { clsx } from 'clsx';
-
-import './MyComponent.scss';
-
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
-
-export interface MyComponentProps {
-  children?: ReactNode;
-  className?: string;
-  elements?: string | string[];
-  id?: string;
-  modifiers?: string | string[];
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  ref?: RefCallback<HTMLButtonElement> | RefObject<HTMLButtonElement | null>;
-}
-
-type ReadonlyMyComponentProps = ReadonlyExcept<MyComponentProps, 'ref'>;
-
-/**
- * Detailed JSDoc comment explaining component purpose, accessibility behaviour
- * and usage examples.
- */
-export default function MyComponent({
-  children,
-  className,
-  elements,
-  id,
-  modifiers,
-  onClick,
-  ref,
-  ...rest
-}: ReadonlyMyComponentProps) {
-  const componentClassName = clsx(
-    'MyComponent',
-    className,
-    elements,
-    modifiers,
-  );
-
-  return (
-    <button
-      className={componentClassName}
-      id={id}
-      onClick={onClick}
-      ref={ref}
-      type="button"
-      {...rest}
-    >
-      {children}
-    </button>
-  );
-}
-```
-
-### Key Rules:
-
-1. **Deep Immutability:** Always type props using `ReadonlyExcept<MyComponentProps, 'ref'>` imported from `@/types/ReadonlyExcept`.
-2. **Modern React 19 Standards & Deprecated Code Removal:**
-   - The codebase strictly runs on React 19.
-   - Deprecated React APIs, types and legacy patterns are strictly forbidden:
-     - Never use `MutableRef` or `MutableRefObject` (`useRef` returns `RefObject<T>` where `.current` is mutable).
-     - Never use `forwardRef` (`ref` is a standard component prop in React 19).
-     - Never use `defaultProps` (use ES6 default parameter values).
-   - Check your work for modern React 19 idioms and deprecated APIs before committing. When checking modern React 19, React Compiler or Immer idioms, query the Context7 MCP server rather than web search, following official Context7 best practice tips:
-     - **Direct Library ID Lookup:** Bypass library matching by supplying known Context7 IDs directly to `query-docs` (e.g. `/react/react` or `/websites/react_dev` for React 19; `/websites/immer_js` for Immer).
-     - **Explicit Version Targeting:** Explicitly mention the target release in queries (e.g. "React 19 ref as prop", "React Compiler ref access during render") to avoid legacy answers.
-     - **Scoped Single Concepts:** Keep each query focused on a single API concept rather than broad topics (e.g. "use-immer update function examples" rather than "immer state").
-     - **Language Ranking:** Always pass `language: 'TypeScript'` to prioritise TypeScript signatures and type definitions.
-     - **Tool Call Bounds:** Limit tool calls to at most 3 attempts per query, adopting the best match returned.
-3. **Event Handler Parameter Naming:** In all React event handlers and callbacks (`onChange`, `onClick`, `onKeyDown`, `onFocus` etc.), always name the event parameter `e`, never `event`.
-4. **Documentation Parity & Starlight TypeDoc:** Whenever authoring a new component, hook or utility, register its entry point in `docs/astro.config.ts` under `starlightTypeDoc.entryPoints`.
-5. **Import Ordering:** Must follow the `eslint-plugin-perfectionist` groups:
-   `react` -> `builtin` -> `external` -> `hooks` (`@/hooks/.*`) -> `layout` (`@/layout/.*`) -> `pages` (`@/pages/.*`) -> `components` (`@/components/.*`) -> `utils` (`@/utils/.*`) -> relative imports -> `assets` (`@/assets/.*`) -> `style` (`./*.scss`) -> `type` (`import type ...`) -> `unknown`.
-6. **JSX Props Ordering:**
-   `shorthand-prop` (e.g. `disabled`) -> `unknown` (e.g. `className`, `id`) -> `callback` (e.g. `onClick`) -> `multiline-prop`.
-7. **No Redundant Effects:** Do not introduce `useEffect` for state synchronisation or derived values. Calculate values directly during render.
-8. **Accessible Labeling:** If creating form controls, ensure inputs have an explicit `id` and corresponding `<label htmlFor={id}>`.
-9. **Avoid Type Assertions:** Avoid TypeScript type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) as much as possible. Rely on natural type inference, discriminating unions and runtime type narrowing (`typeof`, `instanceof` or custom type guards). If an assertion cannot be avoided with reasonable effort, document why it was necessary in an explanatory comment directly preceding it.
-10. **Upstream Source Code Investigation via `gitmcp-docs`:**
-    - When implementing intricate library integrations (such as `@dnd-kit/core` sensors, collision detection or `pdfjs-dist` canvas rendering pipelines), use the `gitmcp-docs` MCP server to inspect upstream implementations directly:
-      - **Library Slug Resolution:** Use `match_common_libs_owner_repo_mapping` to resolve packages to their canonical repository (e.g. `dnd-kit` to `clauderic/dnd-kit`).
-      - **Algorithm & Source Search:** Use `search_generic_code` to review sensor definitions, keyboard coordinates or event handling logic without cloning external repositories.
-      - **Documentation Search:** Use `search_generic_documentation` for targeted queries on configuration options and migration notes.
+1. **Deep Immutability & Props Typing:**
+   - **Default:** Always type component props using `ReadonlyDeep<MyComponentProps>` imported from `'type-fest'`.
+   - **Exception:** Only use `ReadonlyExcept<MyComponentProps, 'ref'>` (imported from `@/types/ReadonlyExcept`) when a specific prop (such as a callback ref or `RefObject`) must be excepted from deep immutability.
+2. **React 19 Standards:**
+   - In React 19, `ref` is a standard prop. Deprecated APIs (`forwardRef`, `defaultProps`, `MutableRefObject`) are forbidden.
+   - Use `RefObject<T>` for mutable refs.
+3. **Event Handler Parameter Naming:**
+   - In all React event handlers and callbacks (`onChange`, `onClick`, `onKeyDown`, `onFocus`), always name the event parameter `e`, never `event`.
+4. **Documentation Parity & Starlight TypeDoc:**
+   - Whenever authoring a new component, hook, helper or utility, register its entry point in `docs/astro.config.ts` under `starlightTypeDoc.entryPoints`.
+5. **Zero Redundant Effects:**
+   - Do not introduce `useEffect` for state synchronisation or derived values. Calculate values directly during render.
+6. **Accessible Controls:**
+   - Form controls must have an explicit `id` and associated `<label htmlFor={id}>`.
+7. **Avoid Type Assertions:**
+   - Avoid `as Type`, `<Type>` and `!` operators. Rely on discriminated unions, runtime narrowing (`typeof`, `instanceof`) or custom type guards. If strictly unavoidable, document why with an explanatory comment directly preceding it.
+8. **Test Delegation:**
+   - For all test authoring (unit, component or browser tiers), invoke the `testing-patterns` skill.
 
 ---
 
-## 3. SCSS Styling Guidelines (`MyComponent.scss`)
+## 3. SCSS Styling Guidelines
 
 1. **BEM Naming:**
    - Block: `.MyComponent`
    - Elements: `.MyComponent-Header`, `.MyComponent-Body`
    - Modifiers: `.MyComponent_variant_primary`, `.MyComponent_size_large`
 2. **Nesting Depth:** Maximum nesting depth is **3** (`max-nesting-depth: 3`).
-3. **Property Ordering:** Strictly follow concentric ordering (Positioning -> Box Model -> Typography -> Visual -> Misc):
-
-   ```scss
-   .MyComponent {
-     display: flex;
-     flex-direction: column;
-     border: 0;
-     border-radius: 5px;
-     background-color: var(--secondary-color);
-     padding: 1rem;
-     color: var(--text-color);
-
-     &:hover {
-       cursor: pointer;
-     }
-
-     &_variant {
-       &_primary {
-         background-color: var(--button-bgc-main);
-       }
-     }
-   }
-   ```
-
-4. **Responsive Strategy:** Use `@container` for internal component layout shifts. Do not use `@media` inside UI components.
-5. **SCSS vs CSS Comment Standards:**
-   - **Sass/SCSS-only constructs** (e.g. Sass `$variables`, `@mixin`, `@function` and Sass control directives): Because these constructs are compiled away and do not exist in the final CSS output, comments documenting them must use silent comments (`//`), even when spanning multiple lines. This ensures notes on Sass-specific internals are stripped and never leak into the compiled CSS bundle.
-   - **Native CSS constructs** (e.g. CSS rules, BEM selectors, property declarations, CSS custom properties `--*`, `@keyframes` and `@container` queries): Because these constructs exist directly in the final CSS output, comments documenting them must use standard CSS comments (`/* ... */`) so documentation remains attached to the actual CSS code in the compiled stylesheet.
-6. **Comment & Typography Standards:**
-   - Multiline JSDoc blocks (`/** ... */`) with leading asterisks on continuation lines.
+3. **Concentric Ordering:** Positioning -> Box Model -> Typography -> Visual -> Misc (see `references/concentric-order.scss`).
+4. **Responsive Strategy:** Use `@container` for internal component layout shifts. Never use `@media` inside UI components.
+5. **SCSS vs CSS Comments:**
+   - Sass-only constructs (`$variables`, `@mixin`, `@function`): Use silent comments (`//`).
+   - Native CSS constructs (rules, selectors, properties, `--*` tokens, `@container`): Use standard CSS comments (`/* ... */`).
+6. **Typography & Prose Invariants:**
    - Traditional British English spelling ("optimise", "initialise", "behaviour", "centre", "colour").
-   - Double quotes (`"..."`) for natural language and prose punctuation.
-   - Spaced em-rules ("—"), unspaced en-rules ("–") for ranges and forward slashes ("/") surrounded by spaces only when separating compound words.
-   - **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma in code comments, docstrings or commit messages.
-     - Correct: `"apples, oranges and bananas"` ✔️
-     - Incorrect: `"apples, oranges, and bananas"` ❌
-     - Perform a search for `, and` and `, or` across written comments before completing work.
-
----
-
-## 4. Test Implementation Templates (`MyComponent.test.tsx` & `MyComponent.browser.test.tsx`)
-
-### Component Tests (`MyComponent.test.tsx` — `happy-dom`)
-
-```tsx
-import type { MouseEvent } from 'react';
-
-import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import type { Mock } from 'vitest';
-
-import MyComponent from './MyComponent';
-
-describe('MyComponent', () => {
-  let handleClickMock: Mock<(e: MouseEvent<HTMLButtonElement>) => void>;
-
-  beforeEach(() => {
-    handleClickMock = vi.fn();
-  });
-
-  it('should render with accessible role and name', () => {
-    // ARRANGE & ACT
-    render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
-
-    // ASSERT
-    const btn = screen.getByRole('button', { name: /action/i });
-    expect(btn).toBeInTheDocument();
-  });
-
-  it('should handle click interactions via userEvent', async () => {
-    // ARRANGE
-    const user = userEvent.setup();
-    render(<MyComponent onClick={handleClickMock}>Action</MyComponent>);
-    const btn = screen.getByRole('button', { name: /action/i });
-
-    // ACT
-    await user.click(btn);
-
-    // ASSERT
-    expect(handleClickMock).toHaveBeenCalledTimes(1);
-  });
-});
-```
-
-### Real-Browser Tests (`MyComponent.browser.test.tsx` — Vitest Browser Mode)
-
-Use `MyComponent.browser.test.tsx` strictly for behaviours requiring a real browser layout engine (`@dnd-kit` pointer/keyboard drag-and-drop, native `<dialog>` top-layer `showModal()`/`close()` and `Escape` dismissal, `tabbable` geometry visibility and viewport resizing):
-
-```tsx
-import { page, userEvent } from 'vitest/browser';
-import { render } from 'vitest-browser-react';
-
-import MyComponent from './MyComponent';
-```
-
-### Key Test Rules:
-
-1. **Three-Tier Separation:**
-   - Extract pure logic into colocated `[a-z]*.ts` helpers (registered in `docs/astro.config.ts`) and test them in `[a-z]*.test.ts` (`unit` project, `environment: 'node'`).
-   - Test standard component rendering, ARIA attributes and user interactions in `MyComponent.test.tsx` (`component` project, `environment: 'happy-dom'`).
-   - Test real-browser layout and native top-layer interactions in `MyComponent.browser.test.tsx` (`browser` project, Playwright Chromium).
-2. **AAA Test Structure (Arrange, Act and Assert):** Every test must clearly follow the Arrange-Act-Assert pattern. Tests must be separated by empty lines into three distinct stages (Arrange, Act and Assert). Whenever a test is not clearly divided by empty lines into these three stages, each stage must be explicitly announced with a comment (`// ARRANGE`, `// ACT` and `// ASSERT`). While the stages themselves must be distinct, the code _within_ each stage (especially Arrange or Assert) does not need to be a single contiguous block. Empty lines are welcome and encouraged inside an Arrange, Act or Assert block to separate distinct parts of logic for better readability.
-3. **Strict Single-Act Principle & Prohibition of Multiple Acts:** Every unit test must test a single, atomic behaviour. Never chain multiple `Act` and `Assert` sequences inside one test (`// ARRANGE` -> `// ACT` -> `// ASSERT` -> `// ACT` -> `// ASSERT`). If testing multiple actions (e.g. focusing and reverse-tabbing, or navigating, adding and deleting), decompose them into separate, atomic test cases each with its own descriptive title. Each unit test must contain exactly one `Act` phase; multiple assertions within that single `Assert` phase are encouraged when verifying multiple facets of that same atomic action. Multi-act sequences are reserved exclusively for component-level acceptance user journeys and E2E workflows.
-4. **Accessible Queries:** Query elements strictly by accessible role (`screen.getByRole('button', { name: /action/i })` or `page.getByRole('button', { name: /action/i })`), never by CSS class or arbitrary test ID.
-5. **User Event:** Always initialise `userEvent.setup()` and await user actions.
-6. **Lucas da Costa Testing Patterns (see `testing-patterns` skill):**
-   - **Tight Assertions:** Never use loose matchers like `expect.any(...)` when an exact element reference is known. Always assert exact spy call counts (`toHaveBeenCalledTimes(n)`) and arguments (`toHaveBeenCalledWith(...)`).
-   - **Specialised DOM Matchers:** Always use semantic DOM matchers (e.g. `toHaveFocus()`) rather than manual property checks on `document.activeElement`.
-   - **Style Verification:** Verify that components apply their required BEM classes using `toHaveClass(...)`.
-   - **Assertion Guarantees:** Use `expect.hasAssertions()` in asynchronous and event-driven tests.
-   - **Component-Level Acceptance Scope:** Only author acceptance tests for complex stateful organisms, flow gates or compound widgets that represent a distinct user capability. Never author acceptance tests for presentational or leaf components, and never create dummy stateful wrappers inside test files to mimic external state machines.
-
-### Verification Step:
-
-Run targeted test verification:
-
-```bash
-bun x vitest related --run --bail=1 src/components/MyComponent/MyComponent.tsx --passWithNoTests
-```
+   - Double quotes (`"..."`) for natural language and prose punctuation. Single quotes (`'...'`) for code syntax. Backticks (`` `...` ``) for code symbols.
+   - **Oxford Comma Style:** Omit the Oxford comma in lists of three or more items in comments and documentation.
