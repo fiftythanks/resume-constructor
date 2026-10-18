@@ -21,6 +21,7 @@
     "rootDir": "./",
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
+    "exactOptionalPropertyTypes": true,
     "types": [
       "node",
       "vite/client",
