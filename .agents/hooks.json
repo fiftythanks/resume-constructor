@@ -1,0 +1,55 @@
+{
+  "command-safety": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/command-safety.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "context-injection": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "./hooks/session-start.sh",
+        "timeout": 5
+      }
+    ],
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "./hooks/pre-invocation.sh",
+        "timeout": 5
+      }
+    ]
+  },
+  "post-edit-hygiene": {
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/post-edit-hygiene.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "stop-gate": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "./hooks/stop-gate.sh",
+        "timeout": 60
+      }
+    ]
+  }
+}
