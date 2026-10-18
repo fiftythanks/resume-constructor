@@ -27,6 +27,8 @@
   - ESLint: `bun x eslint <path> --fix` (enforces import and JSX prop sorting via `eslint-plugin-perfectionist`)
   - Stylelint: `bun x stylelint "src/**/*.scss" --fix`
   - Prettier: `bun x prettier --write <path>`
+- **MCP Tooling Suite:** Coding agents leverage 9 specialised MCP servers (`typescript-lsp`, `eslint`, `vitest`, `ast-grep`, `playwright`, `a11y`, `context7`, `gitmcp-docs` and `react-pdf`) for token-efficient LSP diagnostics, linting, tests, AST search, browser automation and documentation.
+- **Lifecycle Hooks (`.agents/hooks.json`):** Workspace lifecycle hooks transparently enforce safety invariants. Bare `bun test` commands are automatically rewritten to `bun run test` preserving flags, destructive git commands (`reset --hard|--merge`, force push) are blocked, turn reminders are injected on every turn and pre-completion Stop quality gates are executed.
 
 ---
 
@@ -62,15 +64,17 @@
 
 ---
 
-## 5. Domain Skills Routing
+## 5. Domain Skills Routing & Skill Suite
 
-For detailed implementation literature, design patterns and comprehensive examples, consult on-demand skills:
+For detailed implementation literature, design patterns, progressive disclosure references and benchmark evaluations, consult on-demand skills:
 
-- **Testing patterns & literature:** `.agents/skills/testing-patterns/SKILL.md`
-- **Component authoring, React 19 & SCSS BEM:** `.agents/skills/component-authoring/SKILL.md`
-- **Accessibility & keyboard navigation:** `.agents/skills/a11y-audit/SKILL.md`
-- **Responsive scaling & AppLayout:** `.agents/skills/responsive-scaling/SKILL.md`
-- **Code hygiene & automated fixes:** `.agents/skills/code-hygiene-verifier/SKILL.md`
+- **Component authoring (`component-authoring`):** Authoring and refactoring React 19 components, ReadonlyDeep props (and ReadonlyExcept for refs), React BEM SCSS styling and Yoga Flexbox rules for PDF generation. Progressive disclosure references: `references/component-template.tsx`, `references/concentric-order.scss` and `references/react-pdf-yoga.md`.
+- **Testing patterns (`testing-patterns`):** Designing and reviewing tests across the three-tier Vitest suite (`unit`, `component` and `browser`) implementing Lucas da Costa's testing methodology, tight assertions and the Single-Act Principle. Progressive disclosure references: `references/matchers-cheatsheet.md` and `references/browser-mode-cdp.md`.
+- **Responsive scaling (`responsive-scaling`):** Implementing responsive macro-layouts in `AppLayout` and micro-layouts via CSS Container Queries (`@container`) with live Playwright inspection. Progressive disclosure reference: `references/container-query-patterns.md`.
+- **Accessibility audits (`a11y-audit`):** Enforcing WCAG 2.2 AA compliance, explicit label associations, focus trapping with `tabbable`, polite live announcements and `@dnd-kit` keyboard controls. Progressive disclosure reference: `references/dnd-kit-keyboard.md`.
+- **Code hygiene & verification (`code-hygiene-verifier`):** Operational runbook for executing the modular `bun run verify` suite (`--types`, `--lint`, `--styles`, `--tests`, `--docs`, `--prose`) and fast in-context MCP diagnostics. Progressive disclosure reference: `references/perfectionist-rules.md`.
+
+Validate the entire skill suite against agentskills.io benchmark standards via `bun run eval:skills`.
 
 ---
 
@@ -110,7 +114,7 @@ For detailed implementation literature, design patterns and comprehensive exampl
   - Traditional British English spelling ("optimise", "initialise", "behaviour", "centre", "colour").
   - Double quotes (`"..."`) for natural language and prose; single quotes (`'...'`) strictly for code (TypeScript, SCSS). Enclose all code identifiers in backticks (`` `...` ``).
   - Spaced em-rules (" — ") for parenthetical thoughts; unspaced en-rules ("–") for ranges (e.g. "1–10", "2020–2024"). Slashes (" / ") surrounded by spaces only when separating compound words.
-  - **CRITICAL — STRICT OXFORD COMMA PROHIBITION:** Never use the Oxford comma under any circumstances in commit messages, code comments, docstrings or documentation. In lists of three or more items, never place a comma before the coordinating conjunction ("and" or "or"). Perform a search for `, and` and `, or` across written text before committing.
+  - **Oxford Comma Style:** Omit the Oxford (serial) comma before coordinating conjunctions ("and", "or") in lists of three or more items (e.g. write "apples, oranges and bananas", not "apples, oranges, and bananas"). This applies strictly to serial item enumerations in commit messages, docstrings, code comments and documentation. Commas separating compound clauses or parenthetical phrases are standard grammar and remain unaffected.
 - **Code Comments:** Multiline comments MUST use JSDoc-style block comments (`/** ... */`) with leading asterisks. Standalone `//` comments reserved for single-line remarks or distinct annotations (e.g. `// TODO:`).
 
 ---
@@ -128,7 +132,7 @@ Follow the four-phase workflow to ensure high-quality, deliberate implementation
 
 ## 9. Quality Gates, Verification & Context Protocol
 
-Before concluding any turn or claiming task completion, execute and pass all verification gates:
+Before concluding any turn or claiming task completion, execute and pass all verification gates (which are also enforced deterministically by the `Stop` lifecycle hook in `.agents/hooks/stop-gate.sh`):
 
 1. **Static Analysis Gate:**
    - Instant LSP diagnostics: use `lsp_diagnostics` for sub-second feedback during editing.
@@ -146,9 +150,10 @@ Before concluding any turn or claiming task completion, execute and pass all ver
 4. **Accessibility Audit Gate:**
    - For UI, template or styling changes, run automated WCAG 2.2 Level AA accessibility audits via `a11y` MCP server tools (`audit_webpage` and `get_summary`) against the live Vite server (`http://127.0.0.1:5173`). Inspect violations by severity (`critical`, `serious`, `moderate` and `minor`), remediate offending markup and ensure zero accessibility regressions prior to executing end-to-end suites.
 5. **Typography & Prose Gate:**
-   - Scan all added comments, docstrings and commit messages for Oxford commas (zero `, and` or `, or`).
-   - Verify traditional British English and double quotes in prose.
+   - Verify traditional British English and double quotes in prose via `bun run lint:prose`.
+   - Adhere to the Oxford comma omission style for item lists in written prose.
 6. **Operational Verification Principles:**
+   - **Automated Stop Gate (`.agents/hooks/stop-gate.sh`):** Antigravity's `Stop` lifecycle hook automatically verifies prose style (`bun run lint:prose`), TypeDoc documentation parity (`bun run check:docs`), static type safety (`bun x tsc --noEmit`) and targeted Vitest tests before permitting turn completion.
    - **Evidence-Based Output:** Always show concrete command output evidence (command executed, exit code, test pass/fail counts and linter output) rather than asserting success in prose.
    - **Root Cause Diagnosis:** When diagnosing failures, address the underlying cause; never suppress errors, bypass type checks or apply speculative patches.
    - **Adversarial Subagent Review:** For non-trivial feature implementations or multi-file diffs, dispatch a fresh-context subagent to review the git diff against task requirements before declaring completion.

@@ -6,7 +6,7 @@ Thank you for contributing to **Resume Constructor**! This repository follows a 
 
 ## 1. Prerequisites & Environment
 
-This project requires the **Bun** runtime (v1.1+). `bun.lock` is strictly enforced.
+This project requires the **Bun** runtime (v1.2+). `bun.lock` is strictly enforced.
 
 ```bash
 # Clone the repository
@@ -16,11 +16,19 @@ cd resume-constructor
 # Install dependencies (respecting lockfile)
 bun install --frozen-lockfile
 
+# Install Playwright browser dependencies (for Vitest browser mode & E2E)
+bun x playwright install --with-deps chromium
+
 # Start local development server (Vite dev server)
 bun start
 
 # Run unit, component and browser tests (Vitest)
 bun run test
+
+# Run tier-specific test suites
+bun x vitest --project=unit
+bun x vitest --project=component
+bun x vitest --project=browser
 
 # Run type check
 bun x tsc --noEmit
@@ -151,6 +159,7 @@ All scopes must be **strictly lowercase**.
 4. **Accessibility First (WCAG 2.2 AA):** All form controls must have explicit `htmlFor` labels. Manage focus with `tabbable`, announce dynamic updates politely via `aria-live="polite"` and ensure full keyboard operable interactions.
 5. **Styling & BEM:** Component styles use React BEM (`BlockName-ElementName_modifierName_modifierValue`). Internal component scaling relies on CSS Container Queries (`@container`), reserving `@media` exclusively for macro-layout shifts in `AppLayout`.
 6. **Avoid Type Assertions:** Avoid TypeScript type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) as much as possible. Rely on natural type inference, proper type declarations and runtime type narrowing (such as `instanceof`, `typeof` or type guards). If an assertion cannot be avoided with reasonable effort, the rationale must be documented with an in-code comment explaining why it was necessary.
+7. **Documentation Parity (Starlight TypeDoc):** Whenever a component, hook, utility function or pure helper is created, its entry point MUST be added to `starlightTypeDoc.entryPoints` in `docs/astro.config.ts`. TypeDoc requires explicit registration for all exports; automatic directory discovery is not supported.
 
 ---
 
@@ -177,3 +186,34 @@ bun run test
 # 6. Verify production build
 bun run build
 ```
+
+---
+
+## 7. Agentic Development & MCP Tooling
+
+This repository is optimised for autonomous AI coding agents (such as Antigravity) adhering to the Model Context Protocol (MCP) and lifecycle hooks architecture.
+
+### Model Context Protocol (MCP) Servers
+
+To prevent token exhaustion and eliminate blind whole-file rewrites, coding agents connect to 9 specialised MCP servers:
+
+| MCP Server       | Invocation / Transport                        | Primary Role                                                                                                                                                        |
+| :--------------- | :-------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `typescript-lsp` | `bunx -y lsp-mcp-server`                      | Sub-second LSP diagnostics (`lsp_diagnostics`), symbol definitions (`lsp_goto_definition`), type hovering (`lsp_hover`) and references without reading entire files |
+| `eslint`         | `bun x mcp` (`@eslint/mcp`)                   | In-context file linting and diagnostic inspection (`lint-files`)                                                                                                    |
+| `vitest`         | `bun x @djankies/vitest-mcp`                  | Test discovery and targeted project execution (`run_tests`) across `unit`, `component` and `browser` tiers                                                          |
+| `ast-grep`       | `uvx ast-grep-server`                         | Structural code search and AST pattern matching (`find_code`, `find_code_by_rule`)                                                                                  |
+| `playwright`     | `bun x playwright-mcp --headless`             | Headless browser DOM snapshots (`browser_snapshot`), accessibility tree verification and screenshot capture                                                         |
+| `a11y`           | `bun x a11y-mcp`                              | Automated WCAG 2.2 AA accessibility audits (`audit_webpage`, `get_summary`) against the live Vite server                                                            |
+| `context7`       | `bun x context7-mcp`                          | Real-time documentation queries for external libraries (`react`, `immer`, `@dnd-kit`)                                                                               |
+| `gitmcp-docs`    | `bun x mcp-remote https://gitmcp.io/docs`     | Deep monorepo inspection and upstream source lookup across external dependencies                                                                                    |
+| `react-pdf`      | Streamable HTTP (`https://react-pdf.org/mcp`) | Upstream layout documentation and Yoga engine Flexbox guidance                                                                                                      |
+
+### Antigravity Lifecycle Hooks
+
+Deterministic agent workflows are governed by lifecycle hooks declared in [`.agents/hooks.json`](.agents/hooks.json):
+
+1. **Command Safety (`PreToolUse`):** Automatically rewrites accidental `bun test` commands to `bun run test` (preserving all flags and arguments), while denying dangerous operations such as `git reset --hard`, force pushes and unconstrained deletions (`.agents/hooks/command-safety.sh`).
+2. **Context Injection (`SessionStart`, `PreInvocation`):** Injects workspace invariants, testing commands and typography constraints directly into model context (`.agents/hooks/session-start.sh`, `.agents/hooks/pre-invocation.sh`).
+3. **Editor Hygiene (`PostToolUse`):** Returns fast sub-5ms acknowledgements to avoid editor tool coordinate offset corruption (`.agents/hooks/post-edit-hygiene.sh`).
+4. **Stop Quality Gate (`Stop`):** Runs static type checking (`bun x tsc --noEmit`), targeted Vitest tests, Oxford comma scans and Starlight TypeDoc parity audits on all modified files before allowing turn completion (`.agents/hooks/stop-gate.sh`).

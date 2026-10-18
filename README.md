@@ -1,12 +1,21 @@
+# Resume Constructor
+
+A TypeScript application designed to create software-engineering resumes based on principles from the book _The Tech Resume Inside Out_.
+
+**[Open Live Demo](https://resume-constructor.sholokhov.dev)**
+
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
-
 ![Test Coverage](https://img.shields.io/badge/Tests-11.7k%2B_Lines-2ea44f?logo=vitest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-E2E-45ba4b?logo=playwright&logoColor=white)
 ![Style](https://img.shields.io/badge/Style-SCSS_%2B_BEM-hotpink?logo=sass&logoColor=white)
 ![Accessibility](https://img.shields.io/badge/A11y-WCAG_2.2-blueviolet?logo=w3c&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+
+This is the **capstone project** for The Odin Project (frontend curriculum), demonstrating a **production-grade development workflow** without relying on bootstrapping tools like Create React App.
+
+---
 
 ## Mobile Experience
 
@@ -16,14 +25,6 @@
 |                                         **1. Clean Editor**                                          |                                      **2. Intuitive UI**                                      |                                       **3. Professional Output**                                       |
 | :--------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------: |
 | <img src="./.github/assets/personal.jpg" width="280" alt="Clean form for entering personal details"> | <img src="./.github/assets/ui.jpg" width="280" alt="Easy to navigate and use user interface"> | <img src="./.github/assets/preview.jpg" width="280" alt="High-quality PDF preview before downloading"> |
-
-# Resume Constructor
-
-A TypeScript application designed to create software-engineering resumes based on principles from the book _The Tech Resume Inside Out_.
-
-**[Open Live Demo](https://resume-constructor.sholokhov.dev)**
-
-This is the **capstone project** for The Odin Project (frontend curriculum), demonstrating a **production-grade development workflow** without relying on bootstrapping tools like Create React App.
 
 ---
 
@@ -37,12 +38,13 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
   - **Component & Hook Tests (`Component.test.tsx`, `useHook.test.ts`):** `happy-dom` suites powered by `@testing-library/react` and `@testing-library/user-event` verifying accessible roles, ARIA contracts and state transitions.
   - **Real Browser Component Tests (`Component.browser.test.tsx`):** **Vitest Browser Mode** and `vitest-browser-react` specs running in real headless Chromium via Playwright for behaviours requiring a genuine browser layout engine (pointer and keyboard `@dnd-kit` drag-and-drop, native `<dialog>` top-layer `showModal()`/`close()` lifecycle, `tabbable` geometry visibility and viewport media queries).
   - **E2E & Automated Audits (Playwright):** Dockerised smoke and visual regression test suites verifying core user flows (data population, canvas rendering, PDF blob download) and automated `@axe-core/playwright` accessibility audits.
-- **Inclusive Design (A11y):** Built targeting WCAG 2.2 AA standards. All features, including complex interactions like drag & drop, are fully keyboard-navigable with focus management via `tabbable`, dynamic announcements via `aria-live="polite"` and explicit `htmlFor` form labeling.
+- **Inclusive Design (A11y):** Built targeting WCAG 2.2 AA standards. All features, including complex interactions like drag & drop, are fully keyboard-navigable with focus management via `tabbable`, dynamic announcements via `aria-live="polite"` and explicit `htmlFor` form labelling.
 - **Rich Interactive Experience:** Implemented an accessible Drag & Drop interface using `@dnd-kit` for intuitive reordering of resume sections and list items:
   - **Visual Feedback:** Edit-mode shake indicator communicating draggable state.
   - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
   - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
 - **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal, with an aligned invisible DOM text layer overlay (`pdfjsLib.TextLayer`) enabling text selection and copying. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF.
+- **Agentic Engineering & Tooling:** Accelerated by 9 specialized Model Context Protocol (MCP) servers (`typescript-lsp`, `eslint`, `vitest`, `ast-grep`, `playwright`, `a11y`, `context7`, `gitmcp-docs` and `react-pdf`) enabling in-context diagnostics, structural search, browser snapshots and documentation queries without context window exhaustion, governed by Antigravity lifecycle hooks (`.agents/hooks.json`).
 
 ---
 
@@ -86,6 +88,7 @@ src/
   - **Stylelint:** Configured with `stylelint-config-sass-guidelines` for best practices and `concentric-order` for consistent property sorting. Explicitly enforces a **strict nesting limit (max-depth: 3)** to prevent high specificity issues and maintain readable stylesheets.
   - **Prettier:** Ensures consistent formatting across all file types.
   - **Husky & lint-staged:** Pre-commit hooks that prevent unformatted or broken code from entering the repository.
+  - **Agentic Lifecycle Hooks:** Deterministic workspace lifecycle hooks (`.agents/hooks.json`) intercepting risky shell commands, maintaining editor file state, injecting turn context and executing rigorous Stop verification gates.
 
 ### Documentation & Roadmap
 
@@ -104,7 +107,7 @@ Comprehensive technical documentation, architecture deep dives and the complete 
 
 ### Setup & Development
 
-_Bun (v1.1+) is required. The repository uses `bun.lock` and relies on Bun runtime scripts for local development, testing and building._
+_Bun (v1.2+) is required. The repository uses `bun.lock` and relies on Bun runtime scripts for local development, testing and building._
 
 ```Bash
 # Clone the repository

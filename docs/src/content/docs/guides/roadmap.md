@@ -79,7 +79,7 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 ### Local Storage Synchronisation
 
 - **Current State:** Resume data is stored solely in React memory. Accidental tab closures or browser restarts result in complete data loss.
-- **Planned Evolution:** Add a debounced `localStorage` synchronization layer in `src/App/App.tsx` with automatic draft recovery and snapshot history.
+- **Planned Evolution:** Add a debounced `localStorage` synchronisation layer in `src/App/App.tsx` with automatic draft recovery and snapshot history.
 - **Source:** `src/App/App.tsx:32`
 
 ### Decomposition of `useAppState` & Zero-Effect Architecture
@@ -176,7 +176,7 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ### APCA Contrast Auditing
 
-- **Planned Evolution:** Audit color palettes against the Accessible Perceptual Contrast Algorithm (APCA) to ensure optimal reading comfort.
+- **Planned Evolution:** Audit colour palettes against the Accessible Perceptual Contrast Algorithm (APCA) to ensure optimal reading comfort.
 - **Source:** `src/App/App.tsx:51–52`
 
 ### Native Dialogs & Invoker Commands API
