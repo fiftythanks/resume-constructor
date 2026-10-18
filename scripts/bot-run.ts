@@ -223,7 +223,7 @@ Review summary: "${latestReview.body}"
 ${inlineContext ? `Inline Comments:\n${inlineContext}\n` : ''}
 Your mission:
 1. Examine the review feedback and modify the codebase in this worktree to address every requested change.
-2. Adhere strictly to GEMINI.md (traditional British English, ReadonlyExcept, accessible queries, zero redundant effects).
+2. Adhere strictly to AGENTS.md (traditional British English, ReadonlyExcept, accessible queries, zero redundant effects).
 3. Run verification: bun x tsc --noEmit && bun x eslint <modified> --fix && bun x vitest related --run --bail=1 <modified> --passWithNoTests.
 4. Make atomic, bite-sized git commits following Conventional Commits (<=50 char subject, <=80 char body).
 5. Push the branch to the PR using: bun run scripts/gh-app.ts push
@@ -275,7 +275,7 @@ async function main(): Promise<void> {
 TASK:
 ${taskDescription}
 
-CRITICAL OPERATIONAL RULES (GEMINI.md):
+CRITICAL OPERATIONAL RULES (AGENTS.md):
 1. Workspace Isolation: Operate strictly within this worktree. Never attempt to switch to other branches outside this feature branch.
 2. Code Standards: React 19, TypeScript strict, ReadonlyExcept props, SCSS with BEM, no redundant effects.
 3. Verification Battery:

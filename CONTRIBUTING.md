@@ -144,7 +144,7 @@ All scopes must be **strictly lowercase**.
 - `package`: Dependency manifests and runtime updates (`package.json`, `bun.lock`)
 - `readme`: Root repository documentation (`README.md`)
 - `docs`: Documentation portal, guides and configuration (`docs/`)
-- `agents`: AI instructions and skills (`GEMINI.md`, `.agents/skills/`)
+- `agents`: AI instructions and skills (`AGENTS.md`, `.agents/skills/`)
 
 > [!NOTE]
 > Unscoped commits (`chore: ...`, `refactor: ...`) are permitted for broad changes spanning multiple domains (e.g. `chore: update dependencies`).
