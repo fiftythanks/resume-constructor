@@ -5,8 +5,7 @@
   "main": "index.tsx",
   "type": "module",
   "scripts": {
-    "test": "vitest --passWithNoTests",
-    "test:ci": "vitest run --passWithNoTests",
+    "test": "vitest --typecheck --passWithNoTests",
     "e2e": "docker run --rm -u $(id -u):$(id -g) --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble npx playwright test",
     "e2e:update": "docker run --rm -u $(id -u):$(id -g) --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble npx playwright test --update-snapshots",
     "start-g": "BROWSER=google-chrome-stable vite --open",
@@ -105,7 +104,7 @@
     "src/**/*.{mjs,js,jsx,mts,ts,tsx}": [
       "eslint --fix",
       "prettier --write --ignore-unknown",
-      "vitest related --run --bail=1 --passWithNoTests"
+      "vitest related --run --bail=1 --typecheck --passWithNoTests"
     ],
     "docs/**/*.{ts,tsx}": [
       "eslint --fix",

@@ -33,9 +33,6 @@ jobs:
           bun install --frozen-lockfile
           bun install --frozen-lockfile --cwd docs
 
-      - name: Type check
-        run: bun x tsc --noEmit
-
       - name: Lint JavaScript & TypeScript
         run: bun x eslint .
 
@@ -45,6 +42,7 @@ jobs:
       - name: Install Playwright Chromium
         run: bun x playwright install --with-deps chromium
 
+      # `--typecheck` flag passed, so `tsc --noEmit` is redundant.
       - name: Run Vitest tests
         run: bun run test:ci
 
