@@ -23,7 +23,7 @@ export default mergeConfig(
           test: {
             environment: 'node',
             exclude: ['src/**/use*.test.ts', 'src/**/*.browser.test.ts'],
-            include: ['src/**/[a-z]*.test.ts'],
+            include: ['src/**/[a-z]*.test.ts', 'src/types/[A-Z]*.test-d.ts'],
             name: 'unit',
           },
         },
