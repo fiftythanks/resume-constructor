@@ -2,13 +2,18 @@ import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import useLastComponentBeforeTabpanel from './useLastComponentBeforeTabpanel';
+import useLastComponentBeforeTabpanel, {
+  resetLastComponentBeforeTabpanel,
+} from './useLastComponentBeforeTabpanel';
 
 import type { SectionId } from '@/types/resumeData';
 
 // The hook must not only cache the last component but handle the corresponding keyboard navigation as well, because otherwise a lot of boilerplate will be duplicated across all the tabpanels.
 
 describe('useLastComponentBeforeTabpanel', () => {
+  beforeEach(() => {
+    resetLastComponentBeforeTabpanel();
+  });
   describe('handleKeyboard', () => {
     it('should not interrupt the default behaviour of Shift + Tab if the last component is of the relevant type, but its ID does not match the passed to the hook ID', async () => {
       // ARRANGE
@@ -152,6 +157,57 @@ describe('useLastComponentBeforeTabpanel', () => {
       });
 
       expect(irrelevantBtn).toHaveFocus();
+    });
+
+    it('should focus the active section tab on Shift + Tab if focus originated from a different section tab', async () => {
+      // ARRANGE
+      const activeSectionId: SectionId = 'education';
+      const initialSectionId: SectionId = 'projects';
+      const { result } = renderHook(() =>
+        useLastComponentBeforeTabpanel(activeSectionId),
+      );
+      const user = userEvent.setup();
+
+      render(
+        <>
+          <button
+            aria-label="Initial Section Tab"
+            id={initialSectionId}
+            type="button"
+          />
+          <input
+            type="text"
+            onFocus={(e) =>
+              result.current.captureLastComponentBeforeTabpanel(e)
+            }
+            onKeyDown={(e) =>
+              result.current.focusLastComponentBeforeTabpanel(e)
+            }
+          />
+          <button
+            aria-label="Active Section Tab"
+            id={activeSectionId}
+            type="button"
+          />
+        </>,
+      );
+
+      const initialTab = screen.getByRole('button', {
+        name: 'Initial Section Tab',
+      });
+      initialTab.focus();
+
+      await user.tab();
+
+      // ACT
+      await user.tab({ shift: true });
+
+      // ASSERT
+      const activeTab = screen.getByRole('button', {
+        name: 'Active Section Tab',
+      });
+
+      expect(activeTab).toHaveFocus();
     });
   });
 });
