@@ -145,3 +145,6 @@ dist
 .astro/
 docs/src/content/docs/api/
 
+# Serena local runtime data
+/.serena/*
+!/.serena/project.yml
