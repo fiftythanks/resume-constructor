@@ -11,7 +11,7 @@ The most important dimension. If the value isn't clear, nothing else matters.
 **Painkiller vs. Vitamin:**
 
 - **Painkiller:** Solves an acute, frequent problem. Users will actively seek this out. They'll switch from their current solution. Signs: people describe the problem with emotion, they've built workarounds, they'll pay for a solution.
-- **Vitamin:** Nice to have. Makes something marginally better. Users won't go out of their way. Signs: people nod politely, say "that's cool," then don't change behavior.
+- **Vitamin:** Nice to have. Makes something marginally better. Users won't go out of their way. Signs: people nod politely, say "that's cool" and then don't change behaviour.
 
 **Questions to ask:**
 
@@ -35,14 +35,14 @@ Can you actually build this? Not just technically, but practically.
 
 - Does the core technology exist and work reliably?
 - What's the hardest technical problem? Is it a known-hard problem or a novel one?
-- Are there dependencies on third parties, APIs, or data sources you don't control?
-- What's the minimum technical stack needed? (If the answer is "a lot," that's a signal.)
+- Are there dependencies on third parties, APIs or data sources you don't control?
+- What's the minimum technical stack needed? (If the answer is "a lot", that's a signal.)
 
 **Resource feasibility:**
 
 - What's the minimum team/effort to build an MVP?
-- Does it require specialized expertise you don't have?
-- Are there regulatory, legal, or compliance requirements?
+- Does it require specialised expertise you don't have?
+- Are there regulatory, legal or compliance requirements?
 
 **Time-to-value:**
 
@@ -70,7 +70,7 @@ What makes this genuinely different? Not better — _different_.
 **Types of differentiation (strongest to weakest):**
 
 1. **New capability:** Does something that was previously impossible
-2. **10x improvement:** So much better on a key dimension that it changes behavior
+2. **10x improvement:** So much better on a key dimension that it changes behaviour
 3. **New audience:** Brings an existing capability to people who were excluded
 4. **New context:** Works in a situation where existing solutions fail
 5. **Better UX:** Same capability, dramatically simpler experience
@@ -100,7 +100,7 @@ Example: "Users prefer self-serve over talking to a person" — if wrong, you ne
 
 ### Might Be True (Nice to Have)
 
-Assumptions about secondary features or optimizations. Don't validate these until the core is proven.
+Assumptions about secondary features or optimisations. Don't validate these until the core is proven.
 
 Example: "Users will want to share their results with teammates" — a growth feature, not a core value proposition.
 
@@ -122,5 +122,5 @@ When defining MVP scope for the chosen direction:
 1. **One job, done well.** The MVP should nail exactly one user job. Not three jobs done partially.
 2. **The riskiest assumption first.** The MVP's primary purpose is to test the assumption most likely to be wrong.
 3. **Time-box, not feature-list.** "What can we build and test in [timeframe]?" is better than "What features do we need?"
-4. **The 'Not Doing' list is mandatory.** Explicitly name what you're cutting and why. This prevents scope creep and forces honest prioritization.
+4. **The "Not Doing" list is mandatory.** Explicitly name what you're cutting and why. This prevents scope creep and forces honest prioritisation.
 5. **If it's not embarrassing, you waited too long.** The first version should feel incomplete to the builder. If it doesn't, you over-built.

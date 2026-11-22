@@ -1,20 +1,20 @@
 ---
 name: performance-optimization
-description: Optimizes application performance across frontend, backend, queries, and databases. Use when performance requirements exist, when you suspect performance regressions, when Core Web Vitals or load times need improvement, when N+1 query patterns need fixing, or when profiling reveals bottlenecks.
+description: Optimises application performance across frontend, backend, queries and databases. Use when performance requirements exist, when you suspect performance regressions, when Core Web Vitals or load times need improvement, when N+1 query patterns need fixing or when profiling reveals bottlenecks.
 ---
 
-# Performance Optimization
+# Performance Optimisation
 
 ## Overview
 
-Measure before optimizing. Performance work without measurement is guessing — and guessing leads to premature optimization that adds complexity without improving what matters. Diagnose first; only authorised remediation proceeds to a fix and re-measurement.
+Measure before optimising. Performance work without measurement is guessing — and guessing leads to premature optimisation that adds complexity without improving what matters. Diagnose first; only authorised remediation proceeds to a fix and re-measurement.
 
 Under the [root authority](../../../AGENTS.md#authority), an audit or review ends at findings and recommendations. Change only a measured bottleneck covered by a user-approved implementation and testing plan. Evidence that a fix is worth trying is not permission to try it.
 
 ## When to Use
 
 - Performance requirements exist in the spec (load time budgets, response time SLAs)
-- Users or monitoring report slow behavior
+- Users or monitoring report slow behaviour
 - Core Web Vitals indicate a possible problem or miss an applicable approved budget
 - You suspect a change introduced a regression
 - Building features that handle large datasets or high traffic
@@ -31,7 +31,7 @@ These are [industry reference bands](../../references/performance-checklist.md#c
 | **INP** (Interaction to Next Paint) | ≤ 200ms | ≤ 500ms           | > 500ms |
 | **CLS** (Cumulative Layout Shift)   | ≤ 0.1   | ≤ 0.25            | > 0.25  |
 
-## The Optimization Workflow
+## The Optimisation Workflow
 
 ```
 1. MEASURE  → Use supplied evidence or an authorised baseline; otherwise name the next measurement
@@ -121,26 +121,26 @@ Common diagnostic leads by category. Test the cause against evidence; these symp
 
 | Symptom            | Likely Cause                                         | Investigation                    |
 | ------------------ | ---------------------------------------------------- | -------------------------------- |
-| Slow API responses | N+1 queries, missing indexes, unoptimized queries    | Check database query log         |
+| Slow API responses | N+1 queries, missing indexes, unoptimised queries    | Check database query log         |
 | Memory growth      | Leaked references, unbounded caches, large payloads  | Heap snapshot analysis           |
 | CPU spikes         | Synchronous heavy computation, regex backtracking    | CPU profiling                    |
 | High latency       | Missing caching, redundant computation, network hops | Trace requests through the stack |
 
 ### Step 3: Fix the Bottleneck
 
-For remediation, require both a measured bottleneck and a user-approved implementation and testing plan for the change. For an audit, report the evidence, observed versus potential impact and the smallest recommendation or next measurement, then stop. The anti-patterns below give diagnostic leads and link to worked fixes in [references/optimization-patterns.md](references/optimization-patterns.md). Open only the pattern relevant to the finding; a worked fix is not permission to apply it.
+For remediation, require both a measured bottleneck and a user-approved implementation and testing plan for the change. For an audit, report the evidence, observed versus potential impact and the smallest recommendation or next measurement, then stop. The anti-patterns below give diagnostic leads and link to worked fixes in [`references/optimization-patterns.md`](references/optimization-patterns.md). Open only the pattern relevant to the finding; a worked fix is not permission to apply it.
 
 **Backend**
 
 - **N+1 queries.** One query per row is the most common backend bottleneck. Fetch the relation in the same query (join/include) instead of in the loop. [Pattern](references/optimization-patterns.md#n1-queries-backend).
 - **Unbounded data fetching.** Bound the result when the collection can grow, even if the endpoint does not paginate. A small, inherently bounded list need not be paginated. When paginating, use a limit and a unique deterministic total order. Add a tie-breaker only if the chosen sort can tie: a primary key alone already qualifies, but timestamps that happen to be distinct today do not. An offset can still shift when rows change between page requests. [Pattern](references/optimization-patterns.md#unbounded-data-fetching).
 - **Queries that ignore their index.** "Add an index" is the guess; `EXPLAIN ANALYZE` is the measurement on an authorised target (it executes the query). A `Seq Scan` may mean an index is missing or unusable, or the scan is cheaper. A large `rows=` error may reflect stale statistics, skew or correlated predicates even with fresh statistics. A `Sort` may reflect an ordering mismatch or a cheaper overall plan. Check the cause before proposing `ANALYZE` or an index. Index for the shape of the query (in the linked example, the equality column comes before the sort column). A plain index often will not help a dominant value (consider a partial index for the rare value), a leading wildcard (consider trigram or full-text) or a function applied to the column (consider an expression index, as in `WHERE lower(email) = ?`). Compare before/after plans and representative read timings, and weigh the write cost; revert an owned experiment without a defensible benefit. [Pattern](references/optimization-patterns.md#queries-that-ignore-their-index).
-- **Connection pool exhaustion.** Signature: _every_ endpoint slows at once, time is spent waiting for a connection rather than executing, and the database shows mostly idle sessions. One pool per process, sized so `instances × max` stays under the database's connection ceiling. Bigger is not faster; it relocates the queue to the database where it is harder to see. With unbounded instance counts (serverless, autoscaling), multiplex through a proxy (pgbouncer, RDS Proxy) instead of raising `max`. [Pattern](references/optimization-patterns.md#connection-pool-exhaustion).
-- **Missing caching.** Cache what is expensive to produce and read far more often than it changes; caching an already-fast query adds a network hop and a staleness bug in exchange for nothing. Pick the layer deliberately (in-process, shared, CDN). Every input that changes the response belongs in the key (tenant, locale, permissions, feature flags): a key that omits the viewer is how one user's data gets served to another. For shared HTTP caching, confirm that reuse is explicitly permitted, applicable HTTP rules allow it and the representation matches the request. Verify recipient eligibility independently of the cache key. Separately, use `immutable` only when the representation's bytes at that URL are guaranteed not to change throughout the advertised freshness lifetime, whether caching is public or private. The worked example guarantees this with content addressing; a public version URL that is never reused for different bytes can also qualify. Cache private responses only when privacy and freshness requirements permit it. Choose one invalidation strategy (TTL, event or tag based, versioned keys) and state the acceptable staleness window explicitly. Guard hot keys against the stampede: serve stale while one request recomputes, or coalesce concurrent misses behind a single in-flight promise. Never cache what must be fresh (balances, permissions, inventory at checkout). [Pattern](references/optimization-patterns.md#missing-caching-backend); request coalescing, write strategies, and negative caching in `../../references/performance-checklist.md`.
+- **Connection pool exhaustion.** Signature: _Every_ endpoint slows at once. Requests spend the extra time waiting for a connection rather than executing and the database shows mostly idle sessions. One pool per process, sized so `instances × max` stays under the database's connection ceiling. Bigger is not faster; it relocates the queue to the database where it is harder to see. With unbounded instance counts (serverless, autoscaling), multiplex through a proxy (pgbouncer, RDS Proxy) instead of raising `max`. [Pattern](references/optimization-patterns.md#connection-pool-exhaustion).
+- **Missing caching.** Cache what is expensive to produce and read far more often than it changes; caching an already-fast query adds a network hop and a staleness bug in exchange for nothing. Pick the layer deliberately (in-process, shared, CDN). Every input that changes the response belongs in the key (tenant, locale, permissions, feature flags): a key that omits the viewer is how one user's data gets served to another. For shared HTTP caching, confirm that reuse is explicitly permitted, applicable HTTP rules allow it and the representation matches the request. Verify recipient eligibility independently of the cache key. Separately, use `immutable` only when the representation's bytes at that URL are guaranteed not to change throughout the advertised freshness lifetime, whether caching is public or private. The worked example guarantees this with content addressing; a public version URL that is never reused for different bytes can also qualify. Cache private responses only when privacy and freshness requirements permit it. Choose one invalidation strategy (TTL, event or tag based, versioned keys) and state the acceptable staleness window explicitly. Guard hot keys against the stampede: serve stale while one request recomputes, or coalesce concurrent misses behind a single in-flight promise. Never cache what must be fresh (balances, permissions, inventory at checkout). [Pattern](references/optimization-patterns.md#missing-caching-backend); request coalescing, write strategies and negative caching in `../../references/performance-checklist.md`.
 
 **Frontend**
 
-- **Missing image optimization.** Reserve space with dimensions to avoid layout shifts. For an LCP image, avoid lazy loading; consider `fetchpriority="high"`, modern formats (AVIF, WebP) through `<picture>` and `srcset`/`sizes` where useful. For off-screen images, consider `loading="lazy"` and `decoding="async"`. [Pattern](references/optimization-patterns.md#missing-image-optimization-frontend).
+- **Missing image optimisation.** Reserve space with dimensions to avoid layout shifts. For an LCP image, avoid lazy loading; consider `fetchpriority="high"`, modern formats (AVIF, WebP) through `<picture>` and `srcset`/`sizes` where useful. For off-screen images, consider `loading="lazy"` and `decoding="async"`. [Pattern](references/optimization-patterns.md#missing-image-optimisation-frontend).
 - **Unnecessary re-renders.** A fresh object or function prop can defeat the default `React.memo` comparison because it has a different reference. Hoisting a constant can preserve that boundary; hoisting alone does not stop an ordinary child rendering with its parent. Find where identity is observed and profile the work saved before introducing `React.memo` or `useMemo`, which have costs of their own. [Pattern](references/optimization-patterns.md#unnecessary-re-renders-react).
 - **Large bundle size.** Modern bundlers tree-shake ESM named imports on their own; the real gains are route-level code splitting and lazy-loading heavy, rarely-used features behind `Suspense`. Profile before changing import styles. [Pattern](references/optimization-patterns.md#large-bundle-size).
 
@@ -150,7 +150,7 @@ A fix is a hypothesis until you re-measure. The decisions below apply to an auth
 
 **Re-measure the way you measured the baseline:** same command, target, conditions and fixed sampling budget (wall-clock, sample count or request count). A baseline taken on a cold cache against a result taken on a warm one measures the cache, not your change. A comparable synthetic result supports a claim about the tested conditions, not a field improvement.
 
-**Change one thing at a time.** Three optimizations landed together produce one number, and you cannot attribute it. If they must ship together, measure each in isolation first.
+**Change one thing at a time.** Three optimisations landed together produce one number, and you cannot attribute it. If they must ship together, measure each in isolation first.
 
 **Beat the noise, not just the mean.** Repeat the measurement and compare the delta against run-to-run variance. A 3% gain inside ±5% variance is not a gain; it is a different sample.
 
@@ -172,7 +172,7 @@ Then decide, strictly:
 
 Revert only your own experimental changes. If they cannot be separated from other work, stop and report the conflict rather than undoing someone else's edits.
 
-**Correctness gates the metric.** The required tests stay green _and_ the number moves. An "optimization" that wins by dropping work the product needed (skipping a validation, caching something that must be fresh, removing an `await` that was load-bearing) is a regression, not a win. When a change could affect the standard preview or PDF, compare selected content, typography, geometry, line wrapping and pagination under [Product](../../../docs/reference/product.md#previewexport-parity), and exercise affected [accessibility](../../../docs/reference/accessibility.md) requirements. A browser trace does not verify exported PDF parity or accessibility. Do not require PDF evidence for unrelated work.
+**Correctness gates the metric.** The required tests stay green _and_ the number moves. An "optimisation" that wins by dropping work the product needed (skipping a validation, caching something that must be fresh, removing an `await` that was load-bearing) is a regression, not a win. When a change could affect the standard preview or PDF, compare selected content, typography, geometry, line wrapping and pagination under [Product](../../../docs/reference/product.md#previewexport-parity), and exercise affected [accessibility](../../../docs/reference/accessibility.md) requirements. A browser trace does not verify exported PDF parity or accessibility. Do not require PDF evidence for unrelated work.
 
 #### Log every attempt, including the reverted ones
 
@@ -180,8 +180,8 @@ Reverted work leaves no trace in git history, which is exactly why the same dead
 
 | Idea                         | Baseline → Result                      | Verdict  | Why                                                                 |
 | ---------------------------- | -------------------------------------- | -------- | ------------------------------------------------------------------- |
-| Memoize the row component    | Local interaction timing 240ms → 235ms | reverted | Inside noise (±15ms); the experiment did not show a gain.           |
-| Virtualize the list          | Local interaction timing 240ms → 90ms  | kept     | Long tasks gone from the trace; required correctness checks passed. |
+| Memoise the row component    | Local interaction timing 240ms → 235ms | reverted | Inside noise (±15ms); the experiment did not show a gain.           |
+| Virtualise the list          | Local interaction timing 240ms → 90ms  | kept     | Long tasks gone from the trace; required correctness checks passed. |
 | Preconnect to the API origin | Lab LCP 2.8s → 2.8s                    | reverted | Already same-origin.                                                |
 
 Use the existing task or verification record, or a PR description if a PR is already authorised. Keep this ledger whether or not a commit is made; commit-message evidence for a kept permanent fix is additional. No new repository file is required. What matters is that the next person (or the next agent) reads it before proposing an experiment and doesn't re-run one that already failed.
@@ -219,11 +219,11 @@ npx --package=@lhci/cli lhci autorun
 
 ## See Also
 
-For detailed performance checklists, optimization commands, and anti-pattern reference, see `../../references/performance-checklist.md`.
+For detailed performance checklists, optimisation commands and the anti-pattern reference, see `../../references/performance-checklist.md`.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                         | Reality                                                                                                                                                                                                                                                 |
+| Rationalisation                                         | Reality                                                                                                                                                                                                                                                 |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "We'll optimize later"                                  | Record supported findings and their next measurements; fix only the measured bottleneck under an approved implementation and testing plan.                                                                                                              |
 | "It's fast on my machine"                               | A local result covers its test conditions. Use representative hardware and networks for a local claim and comparable field data for a population claim.                                                                                                 |
@@ -252,10 +252,10 @@ For detailed performance checklists, optimization commands, and anti-pattern ref
 - Material bundle growth on an affected path without a reported assessment weighing its user-facing cost against the gain, even if the growth itself is measured and explained
 - An applicable approved guard lacking required evidence, or new thresholds, CI, tooling or telemetry introduced without approval
 - Manual memoisation without a measured benefit, or assuming stable props alone stop an ordinary child rendering
-- Optimizations kept without a re-measurement that justifies them
-- Several optimizations bundled into one measurement, so no single change can be attributed
+- Optimisations kept without a re-measurement that justifies them
+- Several optimisations bundled into one measurement, so no single change can be attributed
 - A "win" that drops required behaviour (including affected preview/PDF parity or accessibility) or relies on changing test expectations, removing coverage or bypassing checks without approval
-- The same failed optimization attempted more than once because nobody recorded the first attempt
+- The same failed optimisation attempted more than once because nobody recorded the first attempt
 
 ## Verification
 

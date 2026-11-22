@@ -1,19 +1,19 @@
 ---
 name: planning-and-task-breakdown
-description: Breaks work into ordered tasks. Use when you have a spec or clear requirements and need to break work into implementable tasks. Use when a task feels too large to start, when you need to estimate scope, or when parallel work is possible.
+description: Breaks work into ordered tasks. Use when you have a spec or clear requirements and need to break work into implementable tasks. Use when a task feels too large to start, when you need to estimate scope or when parallel work is possible.
 ---
 
 # Planning and Task Breakdown
 
 ## Overview
 
-Decompose work into small, verifiable tasks with explicit acceptance criteria. Good task breakdown is the difference between an agent that completes work reliably and one that produces a tangled mess. Every task should be small enough to implement, test, and verify in a single focused session.
+Decompose work into small, verifiable tasks with explicit acceptance criteria. Good task breakdown is the difference between an agent that completes work reliably and one that produces a tangled mess. Every task should be small enough to implement, test and verify in a single focused session.
 
 ## When to Use
 
 - You have a spec and need to break it into implementable units
 - A task feels too large or vague to start
-- Work needs to be parallelized across multiple agents or sessions
+- Work needs to be parallelised across multiple agents or sessions
 - You need to communicate scope to a human
 - The implementation order isn't obvious
 
@@ -30,7 +30,7 @@ Before writing any code, enter native plan mode when an execution plan is needed
 - Map dependencies between components
 - Note risks and unknowns
 
-**Do NOT write code during planning.** Produce the native execution plan described in [Output Files](#output-files), not implementation. Native planning permits only allowed local artifacts; submit the completed plan through `xd://propose` for the user's decision.
+**Do NOT write code during planning.** Produce the native execution plan described in [Output Files](#output-files), not implementation. Native planning permits only allowed local artefacts; submit the completed plan through `xd://propose` for the user's decision.
 
 ### Step 2: Identify the Dependency Graph
 
@@ -130,9 +130,9 @@ Add explicit checkpoints to the execution plan where the work needs them. A huma
 | Size   | Estimated files | Scope                                                             | Example                              |
 | ------ | --------------- | ----------------------------------------------------------------- | ------------------------------------ |
 | **XS** | 1               | Single function or config change                                  | Add a validation rule                |
-| **S**  | 1-2             | One component or endpoint                                         | Add a new API endpoint               |
-| **M**  | 3-5             | One feature slice                                                 | User registration flow               |
-| **L**  | 5-8             | Multi-component feature                                           | Search with filtering and pagination |
+| **S**  | 1–2             | One component or endpoint                                         | Add a new API endpoint               |
+| **M**  | 3–5             | One feature slice                                                 | User registration flow               |
+| **L**  | 5–8             | Multi-component feature                                           | Search with filtering and pagination |
 | **XL** | 8+              | Several slices or one indivisible change (e.g. an atomic cutover) | —                                    |
 
 An agent performs best on S and M tasks. Use file counts to estimate scope and prompt inspection, not to block completion or require an exception.
@@ -150,10 +150,10 @@ Split genuinely separate outcomes into independently verifiable tasks. Keep a de
 
 - **Requirements and durable work items:** GitHub Issues hold durable project work items, their requirements, acceptance criteria and overall status. An issue may contain requirements or link to a repository specification; its existence or open status does not approve either the requirements or an implementation plan. Small ad-hoc requests need no issue or fabricated specification when the request and approved plan provide sufficient requirements.
 - **Execution plan:** Write the implementation and verification plan to `local://<slug>-plan.md`. Record the selected requirement source, issue URL when one exists, scope of execution (the next task or the whole remaining plan) and planned next steps. Include `Source spec:` with the actual location when a specification exists. Include acceptance criteria, dependency order, verification, relevant ownership boundaries and checkpoints. Repository specifications and design rationale remain appropriate at their existing or explicitly chosen locations when useful beyond the session.
-- **Approval and continuity:** Reuse approval only when it demonstrably covers the current requirements, plan and intended actions; approval never silently changes the execution scope. Resolve a source mismatch or ambiguous selection rather than silently replacing a plan. A session-local URI is not a public GitHub link or durable documentation; if another context cannot reach the artifact, transfer the relevant plan and approval evidence using the [context engineering handoff guidance](../context-engineering/SKILL.md).
+- **Approval and continuity:** Reuse approval only when it demonstrably covers the current requirements, plan and intended actions; approval never silently changes the execution scope. Resolve a source mismatch or ambiguous selection rather than silently replacing a plan. A session-local URI is not a public GitHub link or durable documentation; if another context cannot reach the artefact, transfer the relevant plan and approval evidence using the [context engineering hand-off guidance](../context-engineering/SKILL.md).
 - **Existing backlog:** Keep the current Markdown backlog until the user chooses to migrate it. When an item moves to an issue, link to it rather than maintaining competing status lists. Do not create, update or close issues merely to fulfil this planning procedure.
 
-**Never overwrite an incomplete plan or unrelated draft or specification.** If the user asks to revise or extend the same work, update the selected plan as authorised. For different work, preserve the existing artifact and resolve any destination conflict before writing. Never bulk-close or delete another plan's open tracker items to make room.
+**Never overwrite an incomplete plan or unrelated draft or specification.** If the user asks to revise or extend the same work, update the selected plan as authorised. For different work, preserve the existing artefact and resolve any destination conflict before writing. Never bulk-close or delete another plan's open tracker items to make room.
 
 ### Task List Target
 
@@ -208,17 +208,17 @@ Execution scope: [next task or whole remaining plan]
 
 The task list records the approved execution steps; session task status tracks their progress.
 
-## Parallelization Opportunities
+## Parallelisation Opportunities
 
 When multiple agents or sessions are available:
 
 - **Safe to parallelise:** Independent feature slices, tests for already implemented features and documentation, provided tasks have separate write ownership and can be checked independently. Treat shared writable fixtures, generated indexes and outputs as shared state.
 - **Must be sequential:** Database migrations, shared state changes, dependency chains
-- **Needs coordination:** Features that share an API contract (define the contract first, then parallelize)
+- **Needs coordination:** Features that share an API contract (define the contract first, then parallelise)
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                               | Reality                                                                                                         |
+| Rationalisation                               | Reality                                                                                                         |
 | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | "I'll figure it out as I go"                  | That's how you end up with a tangled mess and rework. 10 minutes of planning saves hours.                       |
 | "The tasks are obvious"                       | Write them down anyway. Explicit tasks surface hidden dependencies and forgotten edge cases.                    |

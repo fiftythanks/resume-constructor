@@ -21,6 +21,8 @@ The import accounts for 53 paths in the pinned `agents/`, `commands/`,
 `references/` and `skills/` trees, with local paths under `.agents/`.
 The local review tooling in `.agents/scripts/` is outside this import.
 
+The following counts describe the initial import, before later language edits.
+
 - **Converted (9):** Upstream `commands/*.toml` became native OMP Markdown
   definitions in `commands/`. The `build`, `code-simplify`, `constraints`,
   `planning`, `ship`, `spec`, `test` and `webperf` basenames stayed the same.

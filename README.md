@@ -44,7 +44,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
   - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
   - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
 - **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal, with an aligned invisible DOM text layer overlay (`pdfjsLib.TextLayer`) enabling text selection and copying. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF.
-- **Agent tooling:** See [AGENTS.md](AGENTS.md) for agent workflows and the [verification reference](docs/reference/verification.md#diagnostic-tools) for diagnostic tools.
+- **Agent tooling:** See [`AGENTS.md`](AGENTS.md) for agent workflows and the [verification reference](docs/reference/verification.md#diagnostic-tools) for diagnostic tools.
 
 ---
 

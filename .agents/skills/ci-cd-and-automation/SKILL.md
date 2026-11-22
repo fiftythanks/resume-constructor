@@ -1,6 +1,6 @@
 ---
 name: ci-cd-and-automation
-description: Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, or establish deployment strategies.
+description: Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI or establish deployment strategies.
 ---
 
 # CI/CD and Automation
@@ -238,7 +238,7 @@ if (featureFlags.isEnabled('new-checkout-flow', { userId })) {
 return renderLegacyCheckout();
 ```
 
-**Flag lifecycle:** Create → Enable for testing → Canary → Full rollout → Remove the flag and dead code. Flags that live forever become technical debt — set a cleanup date when you create them.
+**Flag lifecycle:** Create → Enable for testing → Canary → Full rollout → Remove the flag and dead code. Flags that live forever become technical debt — set a clean-up date when you create them.
 
 ### Staged Rollouts
 
@@ -315,7 +315,7 @@ CI test jobs should never receive production secrets. Give any approved deployme
 
 ## Automation Beyond CI
 
-### Dependabot / Renovate
+### Dependabot/Renovate
 
 Illustrative npm update policy, not an instruction to enable a bot or approve dependency changes.
 
@@ -341,7 +341,7 @@ Where the team has a Build Cop, make the CI failure owner explicit. Investigate 
 - **Branch protection:** Where applicable, inspect effective repository settings, including bypasses, and available enforcement evidence: failing required statuses must block merges and `main` must reject force-pushes. A review-only rule, workflow trigger or green status proves neither. Use read-only evidence; do not attempt a merge or force-push to check.
 - **Merge:** The user merges. Do not enable auto-merge or merge because checks passed.
 
-## CI Optimization
+## CI Optimisation
 
 When measured CI time exceeds an agreed target, identify the bottleneck. Consider the following options without changing required coverage or gates:
 
@@ -355,7 +355,7 @@ Slow CI pipeline?
 │   └── Filter only demonstrably unrelated jobs, subject to the approved check scope
 ├── Use matrix builds
 │   └── Shard test suites across multiple runners
-├── Optimize the test suite
+├── Optimise the test suite
 │   └── Remove avoidable work; changing when required tests run needs approval
 └── Use larger runners
     └── GitHub-hosted larger runners or self-hosted for CPU-heavy builds
@@ -393,11 +393,11 @@ jobs:
       - run: npm test -- --coverage
 ```
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                   | Reality                                                                                                      |
+| Rationalisation                   | Reality                                                                                                      |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| "CI is too slow"                  | Measure the bottleneck and optimise it (see CI Optimization), rather than bypassing the gate.                |
+| "CI is too slow"                  | Measure the bottleneck and optimise it (see CI Optimisation), rather than bypassing the gate.                |
 | "This change is trivial, skip CI" | Small changes can break builds. Apply the configured checks for the approved scope.                          |
 | "The test is flaky, just re-run"  | Flaky tests mask real bugs and waste everyone's time. Fix the flakiness.                                     |
 | "We'll add CI later"              | Report the risk when approved gates lack enforcement; adding or changing a pipeline requires scope approval. |

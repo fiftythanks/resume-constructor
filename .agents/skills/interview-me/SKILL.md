@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: Extracts what the user actually wants instead of what they think they should want. Achieves this through one-question-at-a-time interview until ~95% confidence about the underlying intent. Use when an ask is underspecified ("build me X" without "for whom" or "why now"), when the user explicitly invokes ("interview me", "grill me", "are we sure?", "stress-test my thinking"), or when you catch yourself silently filling in ambiguous requirements before any plan, spec, or code exists.
+description: Extracts what the user actually wants instead of what they think they should want. Achieves this through one-question-at-a-time interview until ~95% confidence about the underlying intent. Use when an ask is underspecified ("build me X" without "for whom" or "why now"), when the user explicitly invokes ("interview me", "grill me", "are we sure?", "stress-test my thinking") or when you catch yourself silently filling in ambiguous requirements before any plan, spec or code exists.
 ---
 
 # Interview Me
@@ -9,9 +9,9 @@ description: Extracts what the user actually wants instead of what they think th
 
 What people ask for and what they actually want are different things. They ask for "a dashboard" because that's what one asks for, not because a dashboard solves their problem. They say "make it faster" without a number to hit.
 
-The cheapest moment to find this gap is before any plan, spec, or code exists. Once you've started building, switching costs are real, and the user will rationalize the wrong thing into a "good enough" thing. The misfit gets locked in.
+The cheapest moment to find this gap is before any plan, spec or code exists. Once you've started building, switching costs are real, and the user will rationalise the wrong thing into a "good enough" thing. The misfit gets locked in.
 
-This skill closes the gap before it costs anything. The other Define-phase skills assume you already know roughly what you want: `idea-refine` generates variations from an idea, `spec-driven-development` writes the requirements down, `doubt-driven-development` stress-tests a plan after you've drafted one. Interview-me is the part before all of those, where you ask one question at a time, with your best guess attached, until you can predict what the user is going to say before they say it.
+This skill closes the gap before it costs anything. The other Define-phase skills assume you already know roughly what you want: `idea-refine` generates variations from an idea, `spec-driven-development` writes the requirements down, `doubt-driven-development` stress-tests a plan after you've drafted one. `interview-me` is the part before all of those, where you ask one question at a time, with your best guess attached, until you can predict what the user is going to say before they say it.
 
 ## When to Use
 
@@ -20,7 +20,7 @@ Apply this skill when:
 - The ask is missing at least one of: **who** the user is, **why** they want it, what **success** looks like, what the binding **constraint** is
 - The request is conventional rather than specific ("build me X", "make it faster") and you can't unpack the convention without guessing
 - You're tempted to start with assumptions you haven't surfaced
-- The user hasn't said which value they're optimizing for when two reasonable ones are in tension (simplicity vs. flexibility, cost vs. speed)
+- The user hasn't said which value they're optimising for when two reasonable ones are in tension (simplicity vs. flexibility, cost vs. speed)
 - The user explicitly invokes: "interview me", "grill me", "before we start, are we sure?", "stress-test my thinking"
 
 **When NOT to use:**
@@ -33,11 +33,11 @@ Apply this skill when:
 
 ## Loading Constraints
 
-This skill needs a live, responsive user. **Do not invoke in non-interactive contexts** like CI pipelines, scheduled runs, `/loop`, or autonomous-loop. If you're in one of those and the ask is underspecified, flag that as a blocker for the user instead of guessing.
+This skill needs a live, responsive user. **Do not invoke in non-interactive contexts** like CI pipelines, scheduled runs, `/loop` or autonomous-loop. If you're in one of those and the ask is underspecified, flag that as a blocker for the user instead of guessing.
 
 ## The Process
 
-### Step 1: Hypothesize, with a confidence number
+### Step 1: Hypothesise, with a confidence number
 
 Before asking anything, write down your current best read of what the user wants in **one sentence**, plus an honest confidence number (0–100%):
 
@@ -126,7 +126,7 @@ If they correct you, fold the correction in and restate. Loop until you get an e
 When the user confirms the statement of intent with an explicit "yes":
 
 1. **Deliver the confirmed Statement of Intent.**
-2. **Offer downstream paths** (offer to save it to `docs/intent/[topic].md`, draft a spec with `spec-driven-development`, or move to task planning after the spec).
+2. **Offer downstream paths** (offer to save it to `docs/intent/[topic].md`, draft a spec with `spec-driven-development` or move to task planning after the spec).
 3. **STOP YOUR TURN IMMEDIATELY.** Do NOT invoke tools or start downstream work in this turn. Hand control back to the user to choose the next step.
 
 ### The 95% Confidence Stop
@@ -141,9 +141,9 @@ This is a checkable test, not a vibe. It also has a floor: if you've gone severa
 
 ## Output
 
-The output of this skill is a **confirmed statement of intent**: the restate from Step 4, with an explicit yes from Step 5. That's the deliverable. Specs, plans, and task lists are downstream; they consume the intent this skill produces.
+The output of this skill is a **confirmed statement of intent**: the restate from Step 4, with an explicit yes from Step 5. That's the deliverable. Specs, plans and task lists are downstream; they consume the intent this skill produces.
 
-If the user wants the intent to persist (a multi-session project, a handoff to another collaborator), offer to save it to `docs/intent/[topic].md`. Only save if they confirm.
+If the user wants the intent to persist (a multi-session project, a hand-off to another collaborator), offer to save it to `docs/intent/[topic].md`. Only save if they confirm.
 
 ## Example
 
@@ -183,19 +183,19 @@ User: First one actually. I literally don't have a list. They're spread across d
 Agent: <continues>
 ```
 
-Two questions in, the agent has discovered the actual ask isn't "a dashboard." It's "a list." Different artifact, different scope, different work. The dashboard would have been wrong.
+Two questions in, the agent has discovered the actual ask isn't "a dashboard." It's "a list." Different artefact, different scope, different work. The dashboard would have been wrong.
 
 ## Interaction with Other Skills
 
 - **`idea-refine`**: downstream. If the confirmed intent is "I want X but I don't know how to scope it," hand off to `idea-refine` to generate variations against the now-explicit intent.
 - **`spec-driven-development`**: downstream. If the confirmed intent is concrete ("I want X for Y users with Z success criteria"), hand off to `spec-driven-development` to write it down.
 - **`planning-and-task-breakdown`**: two hops downstream of this skill (after the spec).
-- **`doubt-driven-development`**: opposite end of the timeline. Interview-me is pre-decision intent extraction; doubt-driven is post-decision artifact review. Both catch divergence, but at different moments.
-- **`source-driven-development`**: orthogonal. Interview-me clarifies what the user wants; SDD verifies framework facts. They don't compete.
+- **`doubt-driven-development`**: opposite end of the timeline. `interview-me` is pre-decision intent extraction; `doubt-driven-development` is post-decision artefact review. Both catch divergence, but at different moments.
+- **`source-driven-development`**: orthogonal. `interview-me` clarifies what the user wants; SDD verifies framework facts. They don't compete.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                           | Reality                                                                                                                                                                       |
+| Rationalisation                                           | Reality                                                                                                                                                                       |
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "The ask is clear enough"                                 | If you can't write the user's desired outcome in one sentence right now, the ask isn't clear. Run Step 1 before deciding.                                                     |
 | "Asking too many questions wastes their time"             | Time wasted by 4–6 targeted questions is small. Time wasted by building the wrong thing is enormous, and the user is the one bearing that cost.                               |
@@ -211,10 +211,10 @@ Two questions in, the agent has discovered the actual ask isn't "a dashboard." I
 - Three or more questions in a single message: that's batching, not interviewing
 - A question without your hypothesis attached: that's surveying, not committing
 - Accepting "whatever you think is best" as a terminal answer
-- Producing a spec, plan, or task list before the user has explicitly confirmed your restate
+- Producing a spec, plan or task list before the user has explicitly confirmed your restate
 - Invoking tools or starting downstream work immediately upon intent confirmation instead of stopping the turn
 - Questions framed as "what would be best practice?" instead of "what do you actually want?"
-- The user gives a sophistication-signaling answer ("scalable", "clean", "modern") and you accept it without probing whether it's what they actually want
+- The user gives a sophistication-signalling answer ("scalable", "clean", "modern") and you accept it without probing whether it's what they actually want
 - Three or more rounds without your confidence visibly rising: you're asking the wrong questions, step back and reframe
 - A confidence number below ~70% with no reason attached: the user can't help close the gap if they don't know what's missing
 - Saving the intent doc before the user has confirmed (the doc itself implies a yes the user didn't give)
@@ -222,14 +222,14 @@ Two questions in, the agent has discovered the actual ask isn't "a dashboard." I
 
 ## Verification
 
-After applying interview-me:
+After applying `interview-me`:
 
 - [ ] An explicit hypothesis with a confidence number was stated in the first turn
 - [ ] Every confidence number below ~70% was accompanied by a one-line reason (what's still unresolved or missing)
 - [ ] Questions were asked one at a time, each with the agent's guess attached
-- [ ] At least one "what would you actually want if you didn't have to justify it?" probe ran when the user gave a sophistication-signaling or convention-signaling answer
-- [ ] A concrete restate (Outcome / User / Why now / Success / Constraint / Out of scope) was written back to the user
+- [ ] At least one "what would you actually want if you didn't have to justify it?" probe ran when the user gave a sophistication-signalling or convention-signalling answer
+- [ ] A concrete restate (Outcome, User, Why now, Success, Constraint and Out of scope) was written back to the user
 - [ ] The user confirmed the restate with an explicit yes (not "whatever you think," not "sounds good," not silence)
 - [ ] At the stop point, the agent could predict reactions to the next three questions it would ask
 - [ ] Upon receiving explicit confirmation, stopped the turn immediately without invoking tools or starting downstream work
-- [ ] Any handoff to a downstream skill (`idea-refine`, `spec-driven-development`) was framed in terms of the confirmed intent, not the original underspecified ask
+- [ ] Any hand-off to a downstream skill (`idea-refine`, `spec-driven-development`) was framed in terms of the confirmed intent, not the original underspecified ask

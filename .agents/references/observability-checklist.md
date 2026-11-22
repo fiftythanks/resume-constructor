@@ -39,7 +39,7 @@ Telemetry without a question is noise. Before instrumenting anything:
 - [ ] Required **USE** metrics cover the relevant resources (queues, pools, hosts): Utilisation, Saturation, Errors
 - [ ] Latency is a histogram; p50/p95/p99 queryable — never an average
 - [ ] All labels come from small, fixed sets (route template, status class, provider name)
-- [ ] No unbounded label values: no user IDs, tenant IDs, emails, raw URLs, request IDs, or error message text
+- [ ] No unbounded label values: no user IDs, tenant IDs, emails, raw URLs, request IDs or error message text
 - [ ] Status codes grouped by class (`5xx`, not `503`)
 - [ ] Queue depth and processing duration tracked where required for worker/queue health
 

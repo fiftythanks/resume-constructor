@@ -71,7 +71,7 @@ If time to first byte appears to constrain the selected load, use the network wa
 #### Query plans
 
 - [ ] `EXPLAIN ANALYZE` captured **before** the fix, not just after — it is the baseline
-- [ ] `Seq Scan` on a large table understood: index missing, unusable, or genuinely not worth it
+- [ ] `Seq Scan` on a large table understood: index missing, unusable or genuinely not worth it
 - [ ] Estimated vs actual `rows=` within an order of magnitude (if not, refresh statistics before touching indexes)
 - [ ] No `Sort` node that a composite index could absorb
 - [ ] Plan re-checked after the change — an index that did not change the plan gets reverted
@@ -93,7 +93,7 @@ If time to first byte appears to constrain the selected load, use the network wa
 - [ ] `instances × pool max` stays under the database's `max_connections`
 - [ ] `connectionTimeoutMillis` set so exhaustion fails fast instead of queueing forever
 - [ ] Exhaustion diagnosed before resizing: find what holds connections (long transactions, missing `await`, leaked clients)
-- [ ] Serverless / autoscaling fronted by a multiplexing proxy (pgbouncer, RDS Proxy) rather than a larger pool
+- [ ] Serverless or autoscaling deployments fronted by a multiplexing proxy (PgBouncer, RDS Proxy) rather than a larger pool
 
 ### API
 
@@ -155,9 +155,9 @@ For a shared cache, the same idea needs a distributed lock, or `stale-while-reva
 - [ ] Read/write ratio justifies the cache (re-read far more often than written)
 - [ ] Cache key includes every input the response varies on: tenant, viewer, locale, permissions, feature flags
 - [ ] No per-user data cached under a key that does not identify the user
-- [ ] One invalidation strategy chosen (TTL, event/tag, or versioned keys), not an accidental mix
+- [ ] One invalidation strategy chosen (TTL, event/tag or versioned keys), not an accidental mix
 - [ ] Acceptable staleness window written down, not implied by whatever TTL was typed
-- [ ] Stampede protection on hot keys (coalescing, lock, or `stale-while-revalidate`)
+- [ ] Stampede protection on hot keys (coalescing, lock or `stale-while-revalidate`)
 - [ ] Negative results cached with a shorter TTL; origin errors never cached
 - [ ] Eviction policy and memory ceiling set (an unbounded cache is a memory leak)
 - [ ] Hit rate monitored — a cache nobody measures is an assumption, and a low hit rate is pure overhead
@@ -213,19 +213,19 @@ onINPWithAttribution(({ value, attribution }) => {
 
 ## Common Anti-Patterns
 
-| Anti-Pattern                      | Impact                                         | Fix                                                                               |
-| --------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------- |
-| N+1 queries                       | Linear DB load growth                          | Use joins, includes, or batch loading                                             |
-| Unbounded queries                 | Memory exhaustion, timeouts                    | Always paginate, add LIMIT                                                        |
-| Missing indexes                   | Slow reads as data grows                       | Add indexes for filtered/sorted columns                                           |
-| Indexing without reading the plan | Write cost paid, read gain unproven            | `EXPLAIN ANALYZE` before and after; revert if the plan is unchanged               |
-| Redundant / unused indexes        | Every write pays for them                      | Audit usage stats, drop what nothing reads                                        |
-| Connection pool per request       | Exhausts `max_connections` under load          | One pool per process; proxy for serverless                                        |
-| Cache key missing the viewer      | One user's data served to another              | Key on tenant, viewer, locale, permissions                                        |
-| Unbounded cache                   | Memory leak wearing an optimization's clothing | Set eviction policy and a memory ceiling                                          |
-| Cache stampede on a hot key       | Origin takes full concurrent load at expiry    | Coalesce misses, or `stale-while-revalidate`                                      |
-| Layout thrashing                  | Jank, dropped frames                           | Batch DOM reads, then batch writes                                                |
-| Unoptimized images                | Slow LCP, wasted bandwidth                     | Use WebP, responsive sizes, lazy load                                             |
-| Large bundles                     | Slow Time to Interactive                       | Code split, tree shake, audit deps                                                |
-| Blocking main thread              | Poor INP, unresponsive UI                      | Chunk long tasks with `scheduler.yield()` / `yieldToMain`, offload to Web Workers |
-| Memory leaks                      | Growing memory, eventual crash                 | Clean up listeners, intervals, refs                                               |
+| Anti-Pattern                      | Impact                                         | Fix                                                                                |
+| --------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------- |
+| N+1 queries                       | Linear DB load growth                          | Use joins, includes or batch loading                                               |
+| Unbounded queries                 | Memory exhaustion, timeouts                    | Always paginate and add `LIMIT`                                                    |
+| Missing indexes                   | Slow reads as data grows                       | Add indexes for filtered/sorted columns                                            |
+| Indexing without reading the plan | Write cost paid, read gain unproven            | `EXPLAIN ANALYZE` before and after; revert if the plan is unchanged                |
+| Redundant or unused indexes       | Every write pays for them                      | Audit usage stats, drop what nothing reads                                         |
+| Connection pool per request       | Exhausts `max_connections` under load          | One pool per process; proxy for serverless                                         |
+| Cache key missing the viewer      | One user's data served to another              | Key on tenant, viewer, locale, permissions                                         |
+| Unbounded cache                   | Memory leak wearing an optimisation's clothing | Set eviction policy and a memory ceiling                                           |
+| Cache stampede on a hot key       | Origin takes full concurrent load at expiry    | Coalesce misses, or `stale-while-revalidate`                                       |
+| Layout thrashing                  | Jank, dropped frames                           | Batch DOM reads, then batch writes                                                 |
+| Unoptimised images                | Slow LCP, wasted bandwidth                     | Use WebP, responsive sizes, lazy load                                              |
+| Large bundles                     | Slow Time to Interactive                       | Code split, tree shake, audit deps                                                 |
+| Blocking main thread              | Poor INP, unresponsive UI                      | Chunk long tasks with `scheduler.yield()` or `yieldToMain`, offload to Web Workers |
+| Memory leaks                      | Growing memory, eventual crash                 | Clean up listeners, intervals, refs                                                |

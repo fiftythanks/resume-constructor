@@ -1,6 +1,6 @@
 ---
 name: idea-refine
-description: Refines raw ideas into sharp, actionable concepts through structured divergent and convergent thinking. Use when an idea is still vague, when you need to stress-test assumptions before committing to a plan, or when you want to expand options before converging on one. Triggers on "ideate", "refine this idea", or "stress-test my plan".
+description: Refines raw ideas into sharp, actionable concepts through structured divergent and convergent thinking. Use when an idea is still vague, when you need to stress-test assumptions before committing to a plan or when you want to expand options before converging on one. Triggers on "ideate", "refine this idea" or "stress-test my plan".
 ---
 
 # Idea Refine
@@ -19,9 +19,9 @@ Refines raw ideas into sharp, actionable concepts worth building through structu
 
 ## How It Works
 
-1.  **Understand & Expand (Divergent):** Restate the idea, ask sharpening questions, and generate variations.
-2.  **Evaluate & Converge:** Cluster ideas, stress-test them, and surface hidden assumptions.
-3.  **Sharpen & Ship:** Produce a concrete markdown one-pager moving work forward.
+1.  **Understand & Expand (Divergent):** Restate the idea, ask sharpening questions and generate variations.
+2.  **Evaluate & Converge:** Cluster ideas, stress-test them and surface hidden assumptions.
+3.  **Sharpen & Ship:** Produce a concrete Markdown one-pager moving work forward.
 
 ## Usage
 
@@ -36,7 +36,7 @@ bash <skill-dir>/scripts/idea-refine.sh
 
 ## Output
 
-The final output is a markdown one-pager saved to `docs/ideas/[idea-name].md` (after user confirmation), containing:
+The final output is a Markdown one-pager saved to `docs/ideas/[idea-name].md` (after user confirmation), containing:
 
 - Problem Statement
 - Recommended Direction
@@ -67,7 +67,7 @@ When the user invokes this skill with an idea (`$ARGUMENTS`), guide them through
 
 1. **Restate the idea** as a crisp "How Might We" problem statement. This forces clarity on what's actually being solved.
 
-2. **Ask 3-5 sharpening questions** — no more. Focus on:
+2. **Ask 3–5 sharpening questions** — no more. Focus on:
    - Who is this for, specifically?
    - What does success look like?
    - What are the real constraints (time, tech, resources)?
@@ -76,7 +76,7 @@ When the user invokes this skill with an idea (`$ARGUMENTS`), guide them through
 
    Use OMP's `ask` to gather input on material trade-offs that shape the exploration, such as which audience to prioritise or which constraint is binding. Ask only for missing input; keep open factual questions in conversation. An explicit submission counts as the user's choice even if it matches the recommendation; a timeout that returns defaults leaves the choice unanswered. Understand who this is for and what success looks like before generating variations, then get the user's reaction to those variations before converging.
 
-3. **Generate 5-8 idea variations** using these lenses:
+3. **Generate 5–8 idea variations** using these lenses:
    - **Inversion:** "What if we did the opposite?"
    - **Constraint removal:** "What if budget/time/tech weren't factors?"
    - **Audience shift:** "What if this were for [different user]?"
@@ -95,7 +95,7 @@ Read `frameworks.md` in this skill directory for additional ideation frameworks 
 
 After the user reacts to Phase 1 (indicates which ideas resonate, pushes back, adds context), shift to convergent mode:
 
-1. **Cluster** the ideas that resonated into 2-3 distinct directions. Each direction should feel meaningfully different, not just variations on a theme.
+1. **Cluster** the ideas that resonated into 2–3 distinct directions. Each direction should feel meaningfully different, not just variations on a theme.
 
 2. **Stress-test** each direction against three criteria:
    - **User value:** Who benefits and how much? Is this a painkiller or a vitamin?
@@ -111,11 +111,11 @@ After the user reacts to Phase 1 (indicates which ideas resonate, pushes back, a
 
    This is where most ideation fails. Don't skip it.
 
-**Be honest, not supportive.** If an idea is weak, say so with kindness. A good ideation partner is not a yes-machine. Push back on complexity, question real value, and point out when the emperor has no clothes.
+**Be honest, not supportive.** If an idea is weak, say so with kindness. A good ideation partner is not a yes-machine. Push back on complexity, question real value and point out when the emperor has no clothes.
 
 #### Phase 3: Sharpen & Ship
 
-Produce a concrete artifact — a markdown one-pager that moves work forward:
+Produce a concrete artefact — a Markdown one-pager that moves work forward:
 
 ```markdown
 # [Idea Name]
@@ -126,7 +126,7 @@ Produce a concrete artifact — a markdown one-pager that moves work forward:
 
 ## Recommended Direction
 
-[The chosen direction and why — 2-3 paragraphs max]
+[The chosen direction and why — 2–3 paragraphs max]
 
 ## Key Assumptions to Validate
 
@@ -155,7 +155,7 @@ Ask the user if they'd like to save this to `docs/ideas/[idea-name].md` (or a lo
 
 ### Anti-patterns to Avoid
 
-- **Don't generate 20+ ideas.** Quality over quantity. 5-8 well-considered variations beat 20 shallow ones.
+- **Don't generate 20+ ideas.** Quality over quantity. 5–8 well-considered variations beat 20 shallow ones.
 - **Don't be a yes-machine.** Push back on weak ideas with specificity and kindness.
 - **Don't skip "who is this for."** Every good idea starts with a person and their problem.
 - **Don't produce a plan without surfacing assumptions.** Untested assumptions are the #1 killer of good ideas.
@@ -165,15 +165,15 @@ Ask the user if they'd like to save this to `docs/ideas/[idea-name].md` (or a lo
 
 ### Tone
 
-Direct, thoughtful, slightly provocative. You're a sharp thinking partner, not a facilitator reading from a script. Channel the energy of "that's interesting, but what if..." -- always pushing one step further without being exhausting.
+Direct, thoughtful, slightly provocative. You're a sharp thinking partner, not a facilitator reading from a script. Channel the energy of "that's interesting, but what if..." — always pushing one step further without being exhausting.
 
 Read `examples.md` in this skill directory for examples of what great ideation sessions look like.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                  | Reality                                                                                         |
+| Rationalisation                                  | Reality                                                                                         |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| I'll generate 20+ ideas to cover all bases       | 5-8 well-considered variations beat 20 shallow ones. Quality over quantity.                     |
+| I'll generate 20+ ideas to cover all bases       | 5–8 well-considered variations beat 20 shallow ones. Quality over quantity.                     |
 | The user just needs encouragement, not critique  | A yes-machine produces weak ideas. Push back with specificity and kindness.                     |
 | Who this is for is obvious — no need to ask      | Every good idea starts with a person and their problem. Skipping it means designing for nobody. |
 | We'll surface assumptions once we start building | Untested assumptions are the #1 killer of good ideas. Surface them before committing.           |
@@ -181,7 +181,7 @@ Read `examples.md` in this skill directory for examples of what great ideation s
 
 ## Red Flags
 
-- Generating 20+ shallow variations instead of 5-8 considered ones
+- Generating 20+ shallow variations instead of 5–8 considered ones
 - Skipping the "who is this for" question
 - No assumptions surfaced before committing to a direction
 - Yes-machining weak ideas instead of pushing back with specificity
@@ -198,5 +198,5 @@ After completing an ideation session:
 - [ ] Multiple directions were explored, not just the first idea
 - [ ] Hidden assumptions are explicitly listed with validation strategies
 - [ ] A "Not Doing" list makes trade-offs explicit
-- [ ] The output is a concrete artifact (markdown one-pager), not just conversation
+- [ ] The output is a concrete artefact (Markdown one-pager), not just conversation
 - [ ] The user confirmed the final direction before any implementation work

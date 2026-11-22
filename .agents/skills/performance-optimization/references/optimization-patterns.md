@@ -1,8 +1,8 @@
-# Optimization Patterns
+# Optimisation Patterns
 
 Worked fixes for the anti-patterns named in [Step 3](../SKILL.md#step-3-fix-the-bottleneck) of the `performance-optimization` skill. Open only the section relevant to the selected finding. These cross-stack examples can inform a recommendation; apply a fix only to a measured bottleneck covered by a user-approved implementation and testing plan. An audit stops at findings.
 
-Checklists, measurement commands, TTFB diagnosis, and caching read/write strategies live in `../../../references/performance-checklist.md`. Use the measurement and tooling examples only for separately authorised work, not as audit setup.
+Checklists, measurement commands, TTFB diagnosis and caching read/write strategies live in `../../../references/performance-checklist.md`. Use the measurement and tooling examples only for separately authorised work, not as audit setup.
 
 ## N+1 Queries (Backend)
 
@@ -74,7 +74,7 @@ Repeat `EXPLAIN ANALYZE` and compare representative timings. Keep the index only
 
 ## Connection Pool Exhaustion
 
-The signature is distinctive: **every** endpoint slows at once, the slow time is spent waiting for a connection rather than executing, and the database reports mostly idle sessions.
+The signature is distinctive: **Every** endpoint slows at once. Requests spend the extra time waiting for a connection rather than executing and the database reports mostly idle sessions.
 
 ```typescript
 // BAD: a pool per request or per module — under serverless this multiplies
@@ -89,7 +89,7 @@ const pool = new Pool({
 
 **Bigger is not faster.** A pool larger than what the database can execute concurrently just relocates the queue from your app to the database, where it is harder to see. When instance count is unbounded (serverless, autoscaling), a proxy that multiplexes connections (pgbouncer, RDS Proxy) is the fix, not a higher `max`.
 
-## Missing Image Optimization (Frontend)
+## Missing Image Optimisation (Frontend)
 
 ```html
 <!-- BAD: No dimensions, no format optimization -->
@@ -226,7 +226,7 @@ function App() {
 
 ## Missing Caching (Backend)
 
-Cache what is expensive to produce and read far more often than it changes. Caching a query that was already fast adds a network hop, a staleness bug, and an eviction policy to maintain, in exchange for nothing.
+Cache what is expensive to produce and read far more often than it changes. Caching a query that was already fast adds a network hop, a staleness bug and an eviction policy to maintain, in exchange for nothing.
 
 **Pick the layer deliberately:**
 
@@ -234,7 +234,7 @@ Cache what is expensive to produce and read far more often than it changes. Cach
 | ------------------------- | ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | In-process (`Map`, LRU)   | One instance      | Small, hot, per-instance staleness is acceptable             | Each instance drifts independently; invalidation reaches only one              |
 | Shared (Redis, Memcached) | All instances     | Instances must agree, or the value is expensive to recompute | A network hop, and another service to run and monitor                          |
-| CDN / edge                | Everyone, per URL | Responses are public and identical for a given key           | Invalidation is the hard part; assume you cannot recall a bad response quickly |
+| CDN/edge                  | Everyone, per URL | Responses are public and identical for a given key           | Invalidation is the hard part; assume you cannot recall a bad response quickly |
 
 ```typescript
 // Cache frequently-read, rarely-changed data
@@ -285,6 +285,6 @@ app.get('/api/public/units', (_req, res) => {
 | Event or tag based                    | Fresh on write, but writers now have to know the cache topology                         |
 | Versioned keys (`user:42:profile:v7`) | Never invalidate, just stop reading old keys. Costs memory until eviction               |
 
-**Guard against the stampede.** A hot key expires, every concurrent request misses together, and the origin takes the full load at once, which is how a cache turns into an outage instead of preventing one. Serve stale while a single request recomputes (`stale-while-revalidate`), or coalesce concurrent misses behind one in-flight promise so N waiters cause one recompute.
+**Guard against the stampede.** When a hot key expires, every concurrent request misses and the origin takes the full load at once, which is how a cache turns into an outage instead of preventing one. Serve stale while a single request recomputes (`stale-while-revalidate`), or coalesce concurrent misses behind one in-flight promise so N waiters cause one recompute.
 
-**Do not cache:** anything whose staleness is a correctness bug (balances, permissions, inventory at checkout), or per-user data under a key that does not identify the user. See `../../../references/performance-checklist.md#caching-strategies` for request coalescing, write strategies, negative caching, and the cache checklist.
+**Do not cache:** anything whose staleness is a correctness bug (balances, permissions, inventory at checkout), or per-user data under a key that does not identify the user. See `../../../references/performance-checklist.md#caching-strategies` for request coalescing, write strategies, negative caching and the cache checklist.

@@ -11,11 +11,11 @@ For changed behaviour, establish a test that fails for the intended reason befor
 
 ## When to Use
 
-- Implementing any new logic or behavior
+- Implementing any new logic or behaviour
 - A bug report arrives or a bug fix is requested (use the Prove-It pattern for behavioural bug fixes)
 - Modifying existing functionality
 - Adding edge case handling
-- Any change that could break existing behavior
+- Any change that could break existing behaviour
 - Adding tests for existing behaviour, refactoring without changing behaviour or running existing tests
 
 **When NOT to use the RED → GREEN → REFACTOR cycle:** Pure configuration changes, documentation updates or static content changes that have no behavioural impact.
@@ -24,13 +24,13 @@ For changed behaviour, establish a test that fails for the intended reason befor
 
 ## Discover the Stack First
 
-The TDD cycle is universal; the commands are not. Before writing the first test, discover how _this_ repository tests, and use its commands for every RED, GREEN, and verification step:
+The TDD cycle is universal; the commands are not. Before writing the first test, discover how _this_ repository tests, and use its commands for every RED, GREEN and verification step:
 
 - **Language and build system** — `package.json`, `pom.xml`/`build.gradle`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `Gemfile`, a `Makefile`
-- **Checked-in wrappers** — prefer `./gradlew`, `./mvnw`, `make test`, or a repo script over globally installed tools
+- **Checked-in wrappers** — prefer `./gradlew`, `./mvnw`, `make test` or a repo script over globally installed tools
 - **Test framework and configuration** — and how it runs a single focused test vs the full suite
-- **Existing conventions** — where tests live, how files are named, what patterns neighboring tests follow
-- **Documented commands** — README, CONTRIBUTING, and CI workflows show the commands that actually gate merges
+- **Existing conventions** — where tests live, how files are named, what patterns neighbouring tests follow
+- **Documented commands** — `README`, `CONTRIBUTING` and CI workflows show the commands that actually gate merges
 
 Run the repository's focused-test command during the loop and its full-suite command before completion of an implementation, including `/test` for an approved feature or bug fix. Never assume a default like `npm test` — a Gradle, Cargo or pytest project has its own equivalent. A focused checkpoint does not replace the final suite. Reuse a successful check at the same scope and state, including a `/build` checkpoint, unless a relevant change invalidates it.
 
@@ -101,7 +101,7 @@ With tests green, assess whether an in-scope refactor would improve the code wit
 - Extract shared logic
 - Improve naming
 - Remove duplication
-- Optimize if necessary
+- Optimise if necessary
 
 Run affected tests after every refactor step to confirm nothing broke.
 
@@ -170,7 +170,7 @@ Invest testing effort according to the pyramid — most tests should be small an
  ╱──────────────────╲
 ```
 
-**The Beyonce Rule:** If you liked it, you should have put a test on it. Infrastructure changes, refactoring, and migrations are not responsible for catching your bugs — your tests are. If a change breaks your code and you didn't have a test for it, that's on you.
+**The Beyonce Rule:** If you liked it, you should have put a test on it. Infrastructure changes, refactoring and migrations are not responsible for catching your bugs — your tests are. If a change breaks your code and you didn't have a test for it, that's on you.
 
 ### Test Sizes (Resource Model)
 
@@ -182,7 +182,7 @@ Beyond the pyramid levels, classify tests by what resources they consume:
 | **Medium** | Multi-process OK, localhost only, no external services | Seconds      | API tests with test DB, component tests                |
 | **Large**  | Multi-machine OK, external services allowed            | Minutes      | E2E tests, performance benchmarks, staging integration |
 
-Small tests should make up the vast majority of your suite. They're fast, reliable, and easy to debug when they fail.
+Small tests should make up the vast majority of your suite. They're fast, reliable and easy to debug when they fail.
 
 ### Decision Guide
 
@@ -201,7 +201,7 @@ Is it a critical user flow that must work end-to-end?
 
 ### Test State, Not Interactions
 
-Assert on the _outcome_ of an operation, not on which methods were called internally. Tests that verify method call sequences break when you refactor, even if the behavior is unchanged.
+Assert on the _outcome_ of an operation, not on which methods were called internally. Tests that verify method call sequences break when you refactor, even if the behaviour is unchanged.
 
 ```typescript
 // Good: Tests what the function does (state-based)
@@ -252,13 +252,13 @@ Use the simplest test double that gets the job done. The more your tests use rea
 Preference order (most to least preferred):
 1. Real implementation  → Highest confidence, catches real bugs
 2. Fake                 → In-memory version of a dependency (e.g., fake DB)
-3. Stub                 → Returns canned data, no behavior
+3. Stub                 → Returns canned data, no behaviour
 4. Mock (interaction)   → Verifies method calls — use sparingly
 ```
 
-**Use mocks only when:** the real implementation is too slow, non-deterministic, or has side effects you can't control (external APIs, email sending). Over-mocking creates tests that pass while production breaks.
+**Use mocks only when:** the real implementation is too slow, non-deterministic or has side effects you can't control (external APIs, email sending). Over-mocking creates tests that pass while production breaks.
 
-For crash or rollback behavior, exercise the real boundary: an injected exception is not process termination, and a mocked transaction call is not a database rollback.
+For crash or rollback behaviour, exercise the real boundary: an injected exception is not process termination, and a mocked transaction call is not a database rollback.
 
 ### Use the Arrange-Act-Assert Pattern
 
@@ -315,14 +315,14 @@ describe('TaskService', () => {
 
 ## Test Anti-Patterns to Avoid
 
-| Anti-Pattern                          | Problem                                                    | Fix                                                                                                                        |
-| ------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Testing implementation details        | Tests break when refactoring even if behavior is unchanged | Test inputs and outputs, not internal structure                                                                            |
-| Flaky tests (timing, order-dependent) | Erode trust in the test suite                              | Use deterministic assertions, isolate test state                                                                           |
-| Testing framework code                | Wastes time testing third-party behavior                   | Only test YOUR code                                                                                                        |
-| Snapshot abuse                        | Large snapshots nobody reviews, break on any change        | Use snapshots sparingly and review every change                                                                            |
-| No test isolation                     | Tests pass individually but fail together                  | Each test sets up and tears down its own state                                                                             |
-| Mocking everything                    | Tests pass but production breaks                           | Prefer real implementations > fakes > stubs > mocks. Mock only at boundaries where real deps are slow or non-deterministic |
+| Anti-Pattern                          | Problem                                                     | Fix                                                                                                                        |
+| ------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Testing implementation details        | Tests break when refactoring even if behaviour is unchanged | Test inputs and outputs, not internal structure                                                                            |
+| Flaky tests (timing, order-dependent) | Erode trust in the test suite                               | Use deterministic assertions, isolate test state                                                                           |
+| Testing framework code                | Wastes time testing third-party behaviour                   | Only test YOUR code                                                                                                        |
+| Snapshot abuse                        | Large snapshots nobody reviews, break on any change         | Use snapshots sparingly and review every change                                                                            |
+| No test isolation                     | Tests pass individually but fail together                   | Each test sets up and tears down its own state                                                                             |
+| Mocking everything                    | Tests pass but production breaks                            | Prefer real implementations > fakes > stubs > mocks. Mock only at boundaries where real deps are slow or non-deterministic |
 
 ## Browser Testing with DevTools
 
@@ -338,12 +338,12 @@ Consider independent regression-test design when separation from the intended fi
 
 For JavaScript/TypeScript testing patterns illustrating these principles — Vitest, React Testing Library, Supertest, Playwright — see `../../references/testing-patterns.md`. The principles transfer to any ecosystem; the syntax and tools there are JS/TS-specific.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                    | Reality                                                                                                                                                                                                                                                                                                                                          |
+| Rationalisation                                    | Reality                                                                                                                                                                                                                                                                                                                                          |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| "I'll write tests after the code works"            | You won't. And tests written after the fact test implementation, not behavior.                                                                                                                                                                                                                                                                   |
-| "This is too simple to test"                       | Simple code gets complicated. The test documents the expected behavior.                                                                                                                                                                                                                                                                          |
+| "I'll write tests after the code works"            | You won't. And tests written after the fact test implementation, not behaviour.                                                                                                                                                                                                                                                                  |
+| "This is too simple to test"                       | Simple code gets complicated. The test documents the expected behaviour.                                                                                                                                                                                                                                                                         |
 | "Tests slow me down"                               | Tests slow you down now. They speed you up every time you change the code later.                                                                                                                                                                                                                                                                 |
 | "I tested it manually"                             | Manual testing doesn't persist. Tomorrow's change might break it with no way to know.                                                                                                                                                                                                                                                            |
 | "The code is self-explanatory"                     | Tests ARE the specification. They document what the code should do, not what it does.                                                                                                                                                                                                                                                            |
@@ -357,8 +357,8 @@ For JavaScript/TypeScript testing patterns illustrating these principles — Vit
 - Treating a first-run pass as RED for a proposed behaviour change
 - "All tests pass" but no tests were actually run
 - Behavioural bug fixes without a reproduction test failing for the intended reason before the fix
-- Tests that test framework behavior instead of application behavior
-- Test names that don't describe the expected behavior
+- Tests that test framework behaviour instead of application behaviour
+- Test names that don't describe the expected behaviour
 - Skipping tests to make the suite pass
 - Repeating a successful check for reassurance without a relevant change or a separately scoped diagnostic
 
@@ -366,11 +366,11 @@ For JavaScript/TypeScript testing patterns illustrating these principles — Vit
 
 After completing any implementation:
 
-- [ ] Every new behavior has a corresponding test
+- [ ] Every new behaviour has a corresponding test
 - [ ] The full suite passes, run with the repository's own test command (`npm test`, `./gradlew test`, `pytest`, `go test ./...`, ...)
 - [ ] For an approved behavioural bug fix, the same regression test failed for the intended reason before the fix and passed afterwards
 - [ ] For an authorised build, tooling or harness repair, the formerly blocked operation succeeds; if the failure prevented a behavioural assertion from running, the same unchanged assertion is exercised and its actual result reported
-- [ ] Test names describe the behavior being verified
+- [ ] Test names describe the behaviour being verified
 - [ ] Check and account for all skipped or disabled tests in the final suite, including pre-existing ones. Record authorised exceptions; an applicable check not run without such an exception remains unmet even if the suite exits zero. A sibling deliberately filtered during a focused run is not evidence of a final-suite skip.
 - [ ] Coverage hasn't decreased (if tracked)
 

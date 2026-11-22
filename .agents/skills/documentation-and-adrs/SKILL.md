@@ -1,20 +1,20 @@
 ---
 name: documentation-and-adrs
-description: Records decisions and documentation, and detects when documentation has drifted from the code it describes. Use when you need to document an architecture decision (ADR) or the reasoning behind a design choice, when changing public APIs, shipping features, when docs may be stale or out of sync with the code they describe, when working out which module docs are still accurate, or when setting up a check so docs cannot silently go out of date again.
+description: Records decisions and documentation, and detects when documentation has drifted from the code it describes. Use when you need to document an architecture decision (ADR) or the reasoning behind a design choice, when changing public APIs, shipping features, when docs may be stale or out of sync with the code they describe, when working out which module docs are still accurate or when setting up a check so docs cannot silently go out of date again.
 ---
 
 # Documentation and ADRs
 
 ## Overview
 
-Document decisions, not just code. The most valuable documentation captures the _why_ — the context, constraints, and trade-offs that led to a decision. Code shows _what_ was built; documentation explains _why it was built this way_ and _what alternatives were considered_. This context is essential for future humans and agents working in the codebase.
+Document decisions, not just code. The most valuable documentation captures the _why_ — the context, constraints and trade-offs that led to a decision. Code shows _what_ was built; documentation explains _why it was built this way_ and _what alternatives were considered_. This context is essential for future humans and agents working in the codebase.
 
 ## When to Use
 
 - Making a significant architectural decision
 - Choosing between competing approaches
 - Adding or changing a public API
-- Shipping a feature that changes user-facing behavior
+- Shipping a feature that changes user-facing behaviour
 - Onboarding new team members (or agents) to the project
 - When you find yourself explaining the same thing repeatedly
 
@@ -26,18 +26,18 @@ ADRs capture the reasoning behind significant technical decisions. They're the h
 
 ### When to Write an ADR
 
-- Choosing a framework, library, or major dependency
+- Choosing a framework, library or major dependency
 - Designing a data model or database schema
 - Selecting an authentication strategy
 - Deciding on an API architecture (REST vs. GraphQL vs. tRPC)
-- Choosing between build tools, hosting platforms, or infrastructure
+- Choosing between build tools, hosting platforms or infrastructure
 - Any decision that would be expensive to reverse
 
 ### Match the existing convention first
 
-Before creating an ADR, inspect the available repository context for an established convention — existing ADRs, project instructions, and ADR-related configuration or tooling (e.g. an `.adr-dir` file). An established convention overrides the defaults below. Match:
+Before creating an ADR, inspect the available repository context for an established convention — existing ADRs, project instructions and ADR-related configuration or tooling (e.g. an `.adr-dir` file). An established convention overrides the defaults below. Match:
 
-- **Location and format** — e.g. `docs/adr/*.md`, `Documentation/Decisions/*.rst`, a MADR layout, or an `adr-tools` setup. Match the existing directory, file extension, and markup (Markdown vs reStructuredText).
+- **Location and format** — e.g. `docs/adr/*.md`, `Documentation/Decisions/*.rst`, a MADR layout or an `adr-tools` setup. Match the existing directory, file extension and markup (Markdown vs reStructuredText).
 - **Numbering and naming** — continue the existing sequence and filename pattern (`ADR-004-Title.rst`, `0004-title.md`, …); don't restart at 001 or introduce a second scheme.
 - **Section headings** — reuse the project's heading set rather than imposing this template's.
 
@@ -88,7 +88,7 @@ Use PostgreSQL with Prisma ORM.
 ### MySQL
 
 - Pros: Mature, widely supported
-- Cons: PostgreSQL has better JSON support, full-text search, and ecosystem tooling
+- Cons: PostgreSQL has better JSON support, full-text search and ecosystem tooling
 - Rejected: PostgreSQL is the better fit for our feature requirements
 
 ## Consequences
@@ -96,7 +96,7 @@ Use PostgreSQL with Prisma ORM.
 - Prisma provides type-safe database access and migration management
 - We can use PostgreSQL's full-text search instead of adding Elasticsearch
 - Team needs PostgreSQL knowledge (standard skill, low risk)
-- Hosting on managed service (Supabase, Neon, or RDS)
+- Hosting on managed service (Supabase, Neon or RDS)
 ```
 
 ### ADR Lifecycle
@@ -186,7 +186,7 @@ export async function createTask(input: CreateTaskInput): Promise<Task> {
 }
 ```
 
-### OpenAPI / Swagger for REST APIs
+### OpenAPI/Swagger for REST APIs
 
 Cross-stack illustration for a REST service:
 
@@ -279,9 +279,9 @@ Special consideration for AI agent context:
 
 After checking the technical content, review the prose for the people who will use it. Clearer wording must not change the decision or its limits.
 
-1. Mark the details that must survive the edit: names, numbers and units, commands, paths, links, conditions, trade-offs, and uncertainty. Check them against the available code and decision context; flag anything you cannot substantiate.
-2. Replace stock introductions, promotional adjectives, and repeated summaries with the concrete information the reader needs. Do not replace an unsupported claim with an invented example or a stronger guarantee. Keep necessary technical repetition and the project's established terminology.
-3. Compare the edited document with the original and its sources. Restore any lost qualifier or caveat, verify command and code examples still work as documented, and explain any unresolved factual question rather than polishing it away.
+1. Mark the details that must survive the edit: names, numbers and units, commands, paths, links, conditions, trade-offs and uncertainty. Check them against the available code and decision context; flag anything you cannot substantiate.
+2. Replace stock introductions, promotional adjectives and repeated summaries with the concrete information the reader needs. Do not replace an unsupported claim with an invented example or a stronger guarantee. Keep necessary technical repetition and the project's established terminology.
+3. Compare the edited document with the original and its sources. Restore any lost qualifier or caveat, verify command and code examples still work as documented and explain any unresolved factual question rather than polishing it away.
 
 ## Documentation Drift
 
@@ -296,14 +296,14 @@ Matching hashes, a newer commit and no recorded change are chronology clues, not
 
 Check the exact claim against the current source, configuration, observed behaviour or recorded decision as appropriate, including uncommitted changes. Report it as current when the relevant evidence supports it and stale when the evidence contradicts it. If the evidence needed to decide is unavailable, report "can't tell" and name what is missing. Missing history alone neither proves nor disproves the claim.
 
-When you correct a doc that has a change log, append a dated entry that says why it changed. Never rewrite or collapse earlier entries: git keeps the old text, but the log is the only record of the reasons.
+When you correct a doc that has a change log, append a dated entry that says why it changed. Never rewrite or collapse earlier entries: Git keeps the old text, but the log is the only record of the reasons.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                              | Reality                                                                                                                        |
+| Rationalisation                              | Reality                                                                                                                        |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| "The code is self-documenting"               | Code shows what. It doesn't show why, what alternatives were rejected, or what constraints apply.                              |
-| "We'll write docs when the API stabilizes"   | APIs stabilize faster when you document them. The doc is the first test of the design.                                         |
+| "The code is self-documenting"               | Code shows what. It doesn't show why, what alternatives were rejected or what constraints apply.                               |
+| "We'll write docs when the API stabilizes"   | APIs stabilise faster when you document them. The doc is the first test of the design.                                         |
 | "Nobody reads docs"                          | Agents do. Future engineers do. Your 3-months-later self does.                                                                 |
 | "ADRs are overhead"                          | A 10-minute ADR prevents a 2-hour debate about the same decision six months later.                                             |
 | "Comments get outdated"                      | Comments on _why_ are stable. Comments on _what_ get outdated — that's why you only write the former.                          |
@@ -315,7 +315,7 @@ When you correct a doc that has a change log, append a dated entry that says why
 - Affected public contracts or internal exports without documentation of their relevant guarantees
 - README that neither explains how to run the project nor directs readers to the maintained setup
 - Commented-out code instead of deletion
-- TODO comments that have been there for weeks
+- `TODO` comments that have been there for weeks
 - A second decision-record collection introduced despite an established convention
 - Documentation that restates the code instead of explaining intent
 - A change log that has been rewritten rather than appended to
@@ -331,6 +331,6 @@ After documenting:
 - [ ] Known gotchas are documented inline where they matter
 - [ ] No commented-out code remains
 - [ ] Affected agent-facing guidance is current and accurate against `AGENTS.md`, the relevant project references and the authoritative source or configuration.
-- [ ] Prose edits preserve source details, decision trade-offs, and qualifiers without adding unsupported guarantees
+- [ ] Prose edits preserve source details, decision trade-offs and qualifiers without adding unsupported guarantees
 - [ ] Where the corrected document has a change log, a dated entry explains the correction without rewriting earlier entries.
 - [ ] Each drift conclusion follows from evidence about the exact claim in the current state. Contradicted claims are stale; unavailable verification is reported as "can't tell" with the missing evidence.

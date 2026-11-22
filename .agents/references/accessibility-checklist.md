@@ -29,32 +29,32 @@ Quick checks for the [WCAG 2.2 AA web target](../../docs/reference/accessibility
 - [ ] Icon-only buttons have a meaningful name, for example `aria-label="Close dialog"`, and a recognisable icon.
 - [ ] Page has one `<h1>` and headings don't skip levels
 - [ ] Meaningful status changes that do not move focus are available to assistive technology, with urgency suited to the message. Do not announce a drag item as moved over its own starting position on pickup.
-- [ ] Tables have `<th>` headers with scope
+- [ ] Tables have `<th>` headers with `scope`
 
 ### Visual
 
 - [ ] Text contrast ≥ 4.5:1 for normal text or ≥ 3:1 for large text (at least 18pt / 24 CSS px, or 14pt / about 18.67 CSS px when bold). Do not round a failing contrast ratio up to the threshold.
 - [ ] Visual information needed to identify controls and their states has at least 3:1 contrast against adjacent colours where WCAG non-text contrast applies.
-- [ ] Color is not the only way to convey information
+- [ ] Colour is not the only way to convey information
 - [ ] Text resizable to 200% without breaking layout
 - [ ] No content that flashes more than 3 times per second
 
 ### Forms
 
 - [ ] Give each field, including optional fields, an associated visible label or clear visible context that identifies its purpose. Provide any instructions needed to enter the value.
-- [ ] Required fields indicated (not by color alone)
+- [ ] Required fields indicated (not by colour alone)
 - [ ] Error messages specific and associated with the field
-- [ ] Error state visible by more than color (icon, text, border)
-- [ ] Form submission errors summarized and focusable
-- [ ] Known fields use autocomplete (for example `type="email" autocomplete="email"`)
+- [ ] Error state visible by more than colour (icon, text, border)
+- [ ] Form submission errors summarised and focusable
+- [ ] Known fields use the `autocomplete` attribute (for example `type="email" autocomplete="email"`)
 
 ### Content
 
 - [ ] Language declared (`<html lang="en">`)
 - [ ] Page has a descriptive `<title>`
-- [ ] Links distinguish from surrounding text (not by color alone)
+- [ ] Links are distinguishable from surrounding text (not by colour alone)
 - [ ] Drag functionality has a single-pointer alternative without dragging (for example, Move Up and Move Down buttons), unless dragging is essential or the behaviour is determined by the user agent and not modified by the author. Keyboard access alone is not a pointer alternative.
-- [ ] Pointer targets meet [WCAG 2.2 AA target size](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html): each can contain an axis-aligned 24 × 24 CSS px square, or an exception applies. For the spacing exception, place a 24 CSS px diameter circle at the centre of the bounding box of each undersized target. It must not intersect another target or the circle of another undersized target. Other exceptions: an equivalent conforming control on the same page, an inline target in a sentence or constrained by non-target text line height, size set by the user agent and not modified by the author, or essential or legally required presentation.
+- [ ] Pointer targets meet [WCAG 2.2 AA target size](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html): each can contain an axis-aligned 24 × 24 CSS px square, or an exception applies. For the spacing exception, place a 24 CSS px diameter circle at the centre of the bounding box of each undersized target. It must not intersect another target or the circle of another undersized target. Other exceptions apply if the page offers an equivalent conforming control; the target is inline in a sentence or its size is constrained by non-target text line height; the user agent sets the size and the author does not modify it; or the presentation is essential or legally required.
 - [ ] On touch displays, check targets against the [project’s touch target minimum](../../docs/reference/accessibility.md).
 - [ ] Meaningful empty states (not blank screens)
 
@@ -182,7 +182,7 @@ Keep a status region mounted before updating its text, for example to "Retrying�
 | ---------------------------- | ------------------------------------ | -------------------------------------------- |
 | `div` as button              | Not focusable, no keyboard support   | Use `<button>`                               |
 | Missing `alt` text           | Images invisible to screen readers   | Add descriptive `alt`                        |
-| Color-only states            | Invisible to color-blind users       | Add icons, text, or patterns                 |
+| Colour-only states           | Invisible to colour-blind users      | Add icons, text or patterns                  |
 | Autoplaying media            | Disorienting, can't be stopped       | Add controls, don't autoplay                 |
 | Custom dropdown with no ARIA | Unusable by keyboard/screen reader   | Use native `<select>` or proper ARIA listbox |
 | Removing focus outlines      | Users can't see where they are       | Style outlines, don't remove them            |

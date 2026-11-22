@@ -19,7 +19,7 @@ See the [project test scripts](../../package.json), [Vitest project configuratio
 - [Common Assertions](#common-assertions)
 - [Mocking Patterns](#mocking-patterns)
 - [React/Component Testing](#reactcomponent-testing)
-- [API / Integration Testing](#api--integration-testing)
+- [API Integration Testing](#api-integration-testing)
 - [E2E Testing (Playwright)](#e2e-testing-playwright)
 - [Test Anti-Patterns](#test-anti-patterns)
 
@@ -191,7 +191,7 @@ describe('TaskForm', () => {
 
 For examples of the boundary in this repository, compare the [AddSections component test](../../src/components/AddSections/AddSections.test.tsx), which queries the rendered dialog by role and name in `happy-dom`, with the [AddSections browser test](../../src/components/AddSections/AddSections.browser.test.tsx), which sends Escape and verifies dismissal in Chromium.
 
-## API / Integration Testing
+## API Integration Testing
 
 Illustrative Supertest example with a hypothetical API; Supertest is not part of the project stack.
 

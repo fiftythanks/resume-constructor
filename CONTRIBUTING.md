@@ -167,13 +167,13 @@ All scopes must be **strictly lowercase**.
 
 Run `bun run test:ci` for non-interactive Vitest tests and `bun run verify` for the full verification sequence. See [`package.json`](package.json) for individual checks and the [verification reference](docs/reference/verification.md) for evidence requirements.
 
-Git hooks run staged checks and fixers before committing and run `verify` before pushing. For agent work, follow the independent review and local hand-off requirements in [AGENTS.md](AGENTS.md#authority) before publication.
+Git hooks run staged checks and fixers before committing and run `verify` before pushing. For agent work, follow the independent review and local hand-off requirements in [`AGENTS.md`](AGENTS.md#authority) before publication.
 
 ---
 
 ## 7. Agentic Development & MCP Tooling
 
-For agent workflows and currently supported diagnostics, start with [AGENTS.md](AGENTS.md) and the [verification reference](docs/reference/verification.md#diagnostic-tools).
+For agent workflows and currently supported diagnostics, start with [`AGENTS.md`](AGENTS.md) and the [verification reference](docs/reference/verification.md#diagnostic-tools).
 
 ### Model Context Protocol (MCP) Servers
 

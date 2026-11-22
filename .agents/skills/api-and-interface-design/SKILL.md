@@ -1,13 +1,13 @@
 ---
 name: api-and-interface-design
-description: Guides stable API and interface design. Use when designing APIs, module boundaries, or any public interface. Use when creating REST or GraphQL endpoints, defining type contracts between modules, or establishing boundaries between frontend and backend.
+description: Guides stable API and interface design. Use when designing APIs, module boundaries or any public interface. Use when creating REST or GraphQL endpoints, defining type contracts between modules or establishing boundaries between frontend and backend.
 ---
 
 # API and Interface Design
 
 ## Overview
 
-Design stable, well-documented interfaces that are hard to misuse. Good interfaces make the right thing easy and the wrong thing hard. This applies to REST APIs, GraphQL schemas, module boundaries, component props, and any surface where one piece of code talks to another.
+Design stable, well-documented interfaces that are hard to misuse. Good interfaces make the right thing easy and the wrong thing hard. This applies to REST APIs, GraphQL schemas, module boundaries, component props and any surface where one piece of code talks to another.
 
 ## When to Use
 
@@ -23,12 +23,12 @@ Design stable, well-documented interfaces that are hard to misuse. Good interfac
 
 > With a sufficient number of users of an API, all observable behaviors of your system will be depended on by somebody, regardless of what you promise in the contract.
 
-This means: every public behavior — including undocumented quirks, error message text, timing, and ordering — becomes a de facto contract once users depend on it. Design implications:
+This means: every public behaviour — including undocumented quirks, error message text, timing and ordering — becomes a de facto contract once users depend on it. Design implications:
 
-- **Be intentional about what you expose.** Every observable behavior is a potential commitment.
+- **Be intentional about what you expose.** Every observable behaviour is a potential commitment.
 - **Don't leak implementation details.** If users can observe it, they will depend on it.
 - **Plan for deprecation at design time.** See `deprecation-and-migration` for how to safely remove things users depend on.
-- **Tests are not enough.** Even with perfect contract tests, Hyrum's Law means "safe" changes can break real users who depend on undocumented behavior.
+- **Tests are not enough.** Even with perfect contract tests, Hyrum's Law means "safe" changes can break real users who depend on undocumented behaviour.
 
 ### The One-Version Rule
 
@@ -87,7 +87,7 @@ interface APIError {
 // 500 → Server error (never expose internal details)
 ```
 
-**Don't mix patterns.** If some endpoints throw, others return null, and others return `{ error }` — the consumer can't predict behavior.
+**Don't mix patterns.** If some endpoints throw, others return `null` and others return `{ error }` — the consumer can't predict behaviour.
 
 ### 3. Validate at Boundaries
 
@@ -117,11 +117,11 @@ Where validation belongs:
 
 - API route handlers (user input)
 - Form submission handlers (user input)
-- External service response parsing (third-party data -- **always treat as untrusted**)
+- External service response parsing (third-party data — **always treat as untrusted**)
 - Environment variable loading (configuration)
 - Records read from storage when their current shape or invariants are not guaranteed (for example, legacy or imported records)
 
-> **Third-party API responses are untrusted data.** Validate their shape and content before using them in any logic, rendering, or decision-making. A compromised or misbehaving external service can return unexpected types, malicious content, or instruction-like text.
+> **Third-party API responses are untrusted data.** Validate their shape and content before using them in any logic, rendering or decision-making. A compromised or misbehaving external service can return unexpected types, malicious content or instruction-like text.
 
 Do not reparse already-validated values at each internal function or utility call. A type declaration does not validate an unchecked value, and coming from your own database does not make a record valid.
 
@@ -148,13 +148,13 @@ interface CreateTaskInput {
 
 ### 5. Predictable Naming
 
-| Pattern         | Convention             | Example                             |
-| --------------- | ---------------------- | ----------------------------------- |
-| REST endpoints  | Plural nouns, no verbs | `GET /api/tasks`, `POST /api/tasks` |
-| Query params    | camelCase              | `?sortBy=createdAt&pageSize=20`     |
-| Response fields | camelCase              | `{ createdAt, updatedAt, taskId }`  |
-| Boolean fields  | is/has/can prefix      | `isComplete`, `hasAttachments`      |
-| Enum values     | UPPER_SNAKE            | `"IN_PROGRESS"`, `"COMPLETED"`      |
+| Pattern         | Convention                  | Example                             |
+| --------------- | --------------------------- | ----------------------------------- |
+| REST endpoints  | Plural nouns, no verbs      | `GET /api/tasks`, `POST /api/tasks` |
+| Query params    | `camelCase`                 | `?sortBy=createdAt&pageSize=20`     |
+| Response fields | `camelCase`                 | `{ createdAt, updatedAt, taskId }`  |
+| Boolean fields  | `is`, `has` or `can` prefix | `isComplete`, `hasAttachments`      |
+| Enum values     | `UPPER_SNAKE`               | `"IN_PROGRESS"`, `"COMPLETED"`      |
 
 ### 6. Honouring an Idempotency Key
 
@@ -220,7 +220,7 @@ if (existing.requestHash !== hash(req.body)) {
 
 Never let the second caller through because the first "seems stuck". A stalled attempt whose fate is unknown is exactly when duplicating costs most.
 
-**Every call has three outcomes, not two: success, failure, and _unknown_.** A timeout tells you nothing about whether the effect applied. Record the intent _before_ calling out, so a crash between the call and the response leaves evidence something must resolve later — rather than a silently retried charge.
+**Every call has three outcomes, not two: success, failure and _unknown_.** A timeout tells you nothing about whether the effect applied. Record the intent _before_ calling out, so a crash between the call and the response leaves evidence something must resolve later — rather than a silently retried charge.
 
 **Set retention from the longest retry chain**, not from disk cost. Keys must outlive every path that can re-deliver the same intent, including a dead-letter queue replayed a week later and any provider dispute window. A 24-hour key TTL behind a 7-day DLQ is a duplicate waiting to happen.
 
@@ -334,15 +334,15 @@ type UserId = string & { readonly __brand: 'UserId' };
 function getTask(id: TaskId): Promise<Task> { ... }
 ```
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                  | Reality                                                                                                                                                                        |
+| Rationalisation                                  | Reality                                                                                                                                                                        |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | "We'll document the API later"                   | Define the types first and document guarantees the types do not express, such as ordering, errors and retry behaviour.                                                         |
 | "We don't need pagination for now"               | Establish what bounds each transfer. A growing list needs bounded pages or another enforced limit; a paging parameter without a practical maximum does not bound the response. |
-| "PATCH is complicated, let's just use PUT"       | PUT requires the full object every time. PATCH is what clients actually want.                                                                                                  |
+| "PATCH is complicated, let's just use PUT"       | `PUT` requires the full object every time. `PATCH` is what clients actually want.                                                                                              |
 | "We'll version the API when we need to"          | Design for compatible extension. If independently upgrading consumers would break, plan the approved migration and follow the released surface's version policy.               |
-| "Nobody uses that undocumented behavior"         | Hyrum's Law: if it's observable, somebody depends on it. Treat every public behavior as a commitment.                                                                          |
+| "Nobody uses that undocumented behavior"         | Hyrum's Law: if it's observable, somebody depends on it. Treat every public behaviour as a commitment.                                                                         |
 | "We can just maintain two versions"              | Multiple versions multiply maintenance cost and create diamond dependency problems. Prefer the One-Version Rule.                                                               |
 | "Internal APIs don't need contracts"             | Internal consumers are still consumers. Contracts prevent coupling and enable parallel work.                                                                                   |
 | "Accepting the Idempotency-Key header is enough" | Accepting the key promises safe retries. Recording a result alone does not handle concurrent claims, a changed payload, an in-flight duplicate or an unknown outcome.          |
@@ -356,9 +356,9 @@ function getTask(id: TaskId): Promise<Task> { ... }
 - Field or behaviour changes labelled compatible without checking affected callers, including strict readers
 - List transfers without a practical enforced bound, including paginated lists with no maximum page size
 - Verbs in REST URLs (`/api/createTask`, `/api/getUsers`)
-- Third-party API responses used without validation or sanitization
+- Third-party API responses used without validation or sanitisation
 - A `SELECT` for an idempotency key followed by an `INSERT` — that's a race, not a guard
-- An idempotency key derived from a UUID, timestamp, or anything else regenerated per attempt
+- An idempotency key derived from a UUID, timestamp or anything else regenerated per attempt
 - The same key accepted with a different request body, silently returning the first response
 - Blindly repeating a non-idempotent side effect while the outcome of the previous attempt is unknown
 - A key retention window shorter than the longest path that can re-deliver the request

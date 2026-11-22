@@ -1,17 +1,17 @@
 ---
 name: git-workflow-and-versioning
-description: Structures git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, splitting uncommitted work in a messy working tree into clean atomic commits, opening or reviewing a pull request (PR), pushing to a remote, or when you need to organize work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging, or writing a changelog. Use when asked to write a commit message or a changelog entry for a change, or to split a change into commits, even when the diff is pasted inline and the message seems easy to write from it.
+description: Structures Git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, splitting uncommitted work in a messy working tree into clean atomic commits, opening or reviewing a pull request (PR), pushing to a remote or when you need to organise work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging or writing a changelog. Use when asked to write a commit message or a changelog entry for a change, or to split a change into commits, even when the diff is pasted inline and the message seems easy to write from it.
 ---
 
 # Git Workflow and Versioning
 
 ## Overview
 
-Git is your safety net. Treat commits as save points, branches as sandboxes, and history as documentation. With AI agents generating code at high speed, disciplined version control is the mechanism that keeps changes manageable, reviewable, and reversible.
+Git is your safety net. Treat commits as save points, branches as sandboxes and history as documentation. With AI agents generating code at high speed, disciplined version control is the mechanism that keeps changes manageable, reviewable and reversible.
 
 ## When to Use
 
-Always. Every code change flows through git.
+Always. Every code change flows through Git.
 
 A request for a commit message, version recommendation or changelog entry is a request for that output, not authorisation to stage, commit, tag, push, publish or merge. For implementation, follow the approved scope and the [root authority](../../../AGENTS.md#authority) for atomic local commits, independent review, local acceptance and publication. The user merges into `main`.
 
@@ -30,7 +30,7 @@ main ──●──●──●──●──●──●──●──●─
 This is the recommended default. Teams using gitflow or long-lived branches can adapt the principles (atomic commits, small changes, descriptive messages) to their branching model — the commit discipline matters more than the specific branching strategy.
 
 - **Dev branches are costs.** Every day a branch lives, it accumulates merge risk.
-- **Release branches are acceptable.** When you need to stabilize a release while main moves forward.
+- **Release branches are acceptable.** When you need to stabilise a release while `main` moves forward.
 - **Feature flags > long branches.** Prefer deploying incomplete work behind flags rather than keeping it on a branch for weeks.
 
 ### 1. Commit Early, Commit Often
@@ -148,7 +148,7 @@ refactor/<short-description>  → refactor/auth-module
 
 ## Working with Worktrees
 
-For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
+For parallel AI agent work, use Git worktrees to run multiple branches simultaneously:
 
 Illustrative example with existing topic branches:
 
@@ -195,7 +195,7 @@ Use an owned scratch worktree when you need to reproduce the last known-good sta
 
 ## Change Summaries
 
-After any modification, provide a structured summary. This makes review easier, documents scope discipline, and surfaces unintended changes:
+After any modification, provide a structured summary. This makes review easier, documents scope discipline and surfaces unintended changes:
 
 ```
 CHANGES MADE:
@@ -232,7 +232,7 @@ Use the existing hooks: [`pre-commit`](../../../.husky/pre-commit) runs the conf
 ## Handling Generated Files
 
 - **Commit generated files** only if the project expects them (e.g., `package-lock.json`, Prisma migrations)
-- **Don't commit** build output (`dist/`, `.next/`), environment files (`.env`), or IDE config (`.vscode/settings.json` unless shared)
+- **Don't commit** build output (`dist/`, `.next/`), environment files (`.env`) or IDE config (`.vscode/settings.json` unless shared)
 - **Have a `.gitignore`** that covers: `node_modules/`, `dist/`, `.env`, `.env.local`, `*.pem`
 
 ## Using Git for Debugging
@@ -288,7 +288,7 @@ A recommendation does not establish a release mechanism or permit tagging, pushi
 
 ### Keep a changelog written for humans
 
-A changelog is not `git log`. It's the curated, consumer-facing answer to "what changed and do I care?" — grouped by `Added / Changed / Fixed / Deprecated / Removed / Security`, newest on top, every entry phrased around user impact, not internal mechanics.
+A changelog is not `git log`. It's the curated, consumer-facing answer to "what changed and do I care?" — grouped under Added, Changed, Fixed, Deprecated, Removed and Security, newest on top, every entry phrased around user impact, not internal mechanics.
 
 Illustrative changelog: `./guides/task-list-migration.md` is the relative link to the example project's migration guide, not a file in this repository.
 
@@ -310,9 +310,9 @@ Illustrative changelog: `./guides/task-list-migration.md` is the relative link t
 
 Write the entry in the same change that makes the change, while the impact is fresh — not reconstructed from commit archaeology at release time. For a consumer-facing migration, summarise the impact and link to the single procedure prepared with the `deprecation-and-migration` skill. State removal terms only when approved; a version recommendation does not create a deprecation window. [`/ship`](../../commands/ship.md) assesses release readiness separately without deploying or publishing.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                             | Reality                                                                                                                                                      |
+| Rationalisation                             | Reality                                                                                                                                                      |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | "I'll commit when the feature is done"      | Commit each independently verifiable outcome with its tests. Keep a single indivisible cutover together.                                                     |
 | "The message doesn't matter"                | Messages are documentation. Future you (and future agents) will need to understand what changed and why.                                                     |
@@ -328,10 +328,10 @@ Write the entry in the same change that makes the change, while the impact is fr
 
 - Unrelated changes accumulating, or one outcome split from its tests or callers
 - Commit messages like "fix", "update", "misc"
-- Formatting changes mixed with behavior changes
+- Formatting changes mixed with behaviour changes
 - No `.gitignore` in the project
-- Committing `node_modules/`, `.env`, or build artifacts
-- Long-lived branches that diverge significantly from main
+- Committing `node_modules/`, `.env` or build artefacts
+- Long-lived branches that diverge significantly from `main`
 - Force-pushing to shared branches
 - Wholesale rollback in a shared checkout or commit actions on advice-only requests
 - A breaking public change shipped under a minor or patch version on a stable SemVer surface
@@ -346,7 +346,7 @@ For every commit:
 - [ ] Message explains why and follows the configured Conventional Commit rules.
 - [ ] Focused checks for the changed contract pass, and any staged fixer changes have been reviewed.
 - [ ] Staged contents have been inspected and contain only intended work and no secrets; unrelated staged, unstaged and untracked work is preserved.
-- [ ] No formatting-only changes mixed with behavior changes
+- [ ] No formatting-only changes mixed with behaviour changes
 - [ ] `.gitignore` covers standard exclusions
 
 For a version recommendation or release:

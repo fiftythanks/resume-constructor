@@ -2,7 +2,7 @@
 
 Code patterns and decision aids for the `security-and-hardening` skill. The skill states each rule; this file shows one concrete implementation of it. Open the section you need when you reach that code — it is not meant to be read top to bottom.
 
-Shared checklists (threat modeling, pre-commit checks, security headers, CORS, the package-manager matrix, install-script gate, and the OWASP quick-reference tables) live in `../../../references/security-checklist.md`.
+Shared checklists (threat modelling, pre-commit checks, security headers, CORS, the package-manager matrix, install-script gate and the OWASP quick-reference tables) live in `../../../references/security-checklist.md`.
 
 ## OWASP Top 10 Prevention Patterns
 
@@ -177,9 +177,9 @@ async function assertSafeUrl(raw: string): Promise<URL> {
 await fetch(await assertSafeUrl(req.body.webhookUrl), { redirect: 'error' });
 ```
 
-The `range() !== 'unicast'` check covers loopback, link-local `169.254.169.254` (cloud metadata, the #1 SSRF target), private, and unique-local ranges across IPv4 and IPv6.
+The `range() !== 'unicast'` check covers loopback, link-local `169.254.169.254` (cloud metadata, the #1 SSRF target), private and unique-local ranges across IPv4 and IPv6.
 
-**Caveat — this still has a TOCTOU gap.** `fetch` resolves DNS again after the check, so an attacker using a short-TTL record can rebind to an internal IP between validation and connection. For high-risk surfaces, resolve once and connect to the pinned IP, or put a filtering agent in front (`request-filtering-agent` / `ssrf-req-filter`).
+**Caveat — this still has a TOCTOU gap.** `fetch` resolves DNS again after the check, so an attacker using a short-TTL record can rebind to an internal IP between validation and connection. For high-risk surfaces, resolve once and connect to the pinned IP, or put a filtering agent in front (`request-filtering-agent` or `ssrf-req-filter`).
 
 ## Input Validation Patterns
 
@@ -233,11 +233,11 @@ function validateUpload(file: UploadedFile) {
 
 ### Destructive Operations on Derived Paths
 
-A delete, move, or overwrite is only as safe as the value that names its target. Reading that value from the kernel, a job payload, or a sibling service proves where it _arrived from_, not who _wrote_ it — another process's command line is as attacker-controlled as a form field. A shape check ("absolute path, at least one directory deep") proves well-formedness and gets mistaken for authorization; that is how a cleanup routine deletes the root instead of the leaf.
+A delete, move or overwrite is only as safe as the value that names its target. Reading that value from the kernel, a job payload or a sibling service proves where it _arrived from_, not who _wrote_ it — another process's command line is as attacker-controlled as a form field. A shape check ("absolute path, at least one directory deep") proves well-formedness and gets mistaken for authorisation; that is how a cleanup routine deletes the root instead of the leaf.
 
 Before a destructive call, require all three: the resolved target sits under an **allowlisted root** (compare after resolving symlinks, never on the raw string); it is at least one level **below** that root, so a root is never itself the target; and it carries **evidence that it is yours**, read _before_ the operation and before any teardown that removes it — otherwise "absent" and "not mine" are indistinguishable. On refusal, report the reason without the target or a native error that could reveal it, then stop: a cleanup that falls back to a broader default path is the failure this guards against. Worked example in `../../../references/security-checklist.md#destructive-path-operations`.
 
-Two limits, because the check reads stronger than it is. A marker inside the tree is self-attestation — anything that can write there can write the marker — so the expected owner has to come from authenticated state, and the marker needs integrity protection (restrictive ownership, or a MAC) before it counts as authorization. And resolving a path and then operating on the _name_ is a check/use race wherever an untrusted process can swap an ancestor: on a shared volume, hold the target by descriptor and use no-follow, beneath-the-root operations, or make sure the hierarchy cannot change for the duration.
+Two limits, because the check reads stronger than it is. A marker inside the tree is self-attestation — anything that can write there can write the marker — so the expected owner has to come from authenticated state, and the marker needs integrity protection (restrictive ownership, or a MAC) before it counts as authorisation. And resolving a path and then operating on the _name_ is a check/use race wherever an untrusted process can swap an ancestor: on a shared volume, hold the target by descriptor and use no-follow, beneath-the-root operations, or make sure the hierarchy cannot change for the duration.
 
 ## Dependency Audit Triage
 
@@ -334,7 +334,7 @@ Classify personal data as you add fields, so export and deletion requests can fi
 
 | Class              | Examples                                                              | Handling                                                                                                                                                                     |
 | ------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Non-personal**   | Aggregates, anonymized counts                                         | Normal handling                                                                                                                                                              |
+| **Non-personal**   | Aggregates, anonymised counts                                         | Normal handling                                                                                                                                                              |
 | **Personal (PII)** | Name, email, IP, device/user IDs                                      | Minimise, restrict access and support applicable export/deletion requirements                                                                                                |
 | **Sensitive**      | Health, finance, location, biometrics, gov IDs, anything about minors | Apply tighter access controls than for ordinary personal data. Check applicable lawful-basis and handling requirements and assess the need for encryption and audit logging. |
 

@@ -12,14 +12,14 @@ Give each specialist:
 
 - The authorised scope, permitted actions and expected result, distinguishing investigation or review from editing.
 - The relevant project instructions, applicable procedures and requirements, with references to their authoritative sources.
-- The artifact or repository state to examine, dependencies and ownership boundaries.
+- The artefact or repository state to examine, dependencies and ownership boundaries.
 - The evidence needed to assess the result, including source locations, actual check outcomes and unresolved questions.
 
 For parallel edits, establish non-overlapping ownership and shared contracts before dispatch. Different files alone do not establish independence. The working agent owns integration and ensures that verification covers the integrated result.
 
 Give concurrent browser work separate pages and output paths; sequence conflicting operations on a shared page or mutable tool session. Separate agent contexts do not establish isolation of a shared MCP connection or its resources.
 
-For independent review, supply the artifact, contract and relevant evidence without the author's preferred conclusion. Select the perspectives the work needs rather than enlisting every available persona.
+For independent review, supply the artefact, contract and relevant evidence without the author's preferred conclusion. Select the perspectives the work needs rather than enlisting every available persona.
 
 Specialists return findings with supporting evidence, any changes made, actual verification results and unresolved limitations or decisions. The working agent checks findings against the source and resolves conflicts through evidence, not vote counts. If the examined state has changed, verify the affected claims before relying on them. Failed or incomplete work remains visible under [Verification](../../docs/reference/verification.md); a successful agent return is not proof of completion.
 
@@ -31,7 +31,7 @@ Keep summaries concise but traceable to the underlying evidence and approval rec
 
 ### 1. Direct work (no delegation)
 
-The working agent handles the authorised task directly. This is the default unless independent scrutiny, context isolation or substantial separable work justifies delegation. One task may involve several artifacts, perspectives or skills.
+The working agent handles the authorised task directly. This is the default unless independent scrutiny, context isolation or substantial separable work justifies delegation. One task may involve several artefacts, perspectives or skills.
 
 **Examples of specialist perspectives, not runtime invocation syntax:**
 
@@ -49,7 +49,7 @@ A saved prompt packages a recurring procedure with the applicable skills. Saves 
 
 **Use when:** the same procedure happens repeatedly with the same setup.
 
-**Example:** a saved review prompt identifies the artifact, contract and applicable review procedure.
+**Example:** a saved review prompt identifies the artefact, contract and applicable review procedure.
 
 Packaging a procedure does not itself create another agent or authorise another lifecycle phase. Check the active harness when invocation support matters; this reference does not establish installed commands or agent types.
 
@@ -59,7 +59,7 @@ Packaging a procedure does not itself create another agent or authorise another 
 
 ### 3. Parallel fan-out with merge
 
-Independent assignments run concurrently. The working agent synthesises findings or integrates owned changes. Reviewers may examine the same artifact; implementers may work on separable parts of an authorised change.
+Independent assignments run concurrently. The working agent synthesises findings or integrates owned changes. Reviewers may examine the same artefact; implementers may work on separable parts of an authorised change.
 
 **Use when:** independent scrutiny, context isolation or substantial separable work justifies the coordination overhead.
 
@@ -105,7 +105,7 @@ For context-heavy investigation, use a research specialist when focused findings
 
 ## Worked example: competing-hypothesis debugging
 
-Independent review assesses an artifact against a contract. Competing-hypothesis debugging seeks observations that distinguish possible explanations.
+Independent review assesses an artefact against a contract. Competing-hypothesis debugging seeks observations that distinguish possible explanations.
 
 ### The scenario
 
@@ -122,7 +122,7 @@ Plausible causes to investigate; several may contribute:
 
 1. Identify observations or checks that would distinguish the explanations, including evidence that could contradict each one.
 2. Investigate directly or delegate bounded, separable questions under the delegation contract. Do not prescribe a fixed team or enlist every persona.
-3. Compare findings against the same relevant artifact state. Initial independent reports can be challenged afterwards, but shared reasoning is collaboration, not additional independent corroboration.
+3. Compare findings against the same relevant artefact state. Initial independent reports can be challenged afterwards, but shared reasoning is collaboration, not additional independent corroboration.
 4. Resolve disagreements with targeted evidence. Direct peer messaging is optional: the working agent can reconcile reports and arrange authorised follow-up investigation.
 5. Present the supported diagnosis, evidence, surviving alternatives and limitations. Agreement between investigators is not proof; if evidence is insufficient, report the diagnosis as unresolved.
 
@@ -207,7 +207,7 @@ Patterns can combine. Apply the delegation contract and human-directed progressi
 Add a new entry only after:
 
 1. You've used the pattern at least twice in real work
-2. You can name a concrete artifact in this repo that demonstrates it
+2. You can name a concrete artefact in this repo that demonstrates it
 3. You can explain why an existing pattern wouldn't have worked
 4. You can describe its anti-pattern shadow (what people will mistakenly build instead)
 

@@ -1,6 +1,6 @@
 ---
 name: incremental-implementation
-description: Delivers changes incrementally in thin, verifiable slices. Use when implementing any feature or change that touches more than one file, or when picking up the next task from a plan. Use when rolling a change out behind a feature flag, when you're about to write a large amount of code at once, or when a task feels too big to land in one step.
+description: Delivers changes incrementally in thin, verifiable slices. Use when implementing any feature or change that touches more than one file, or when picking up the next task from a plan. Use when rolling a change out behind a feature flag, when you're about to write a large amount of code at once or when a task feels too big to land in one step.
 ---
 
 # Incremental Implementation
@@ -104,7 +104,7 @@ SIMPLICITY CHECK:
 ✓ Three form components
 ```
 
-Three similar lines of code is better than a premature abstraction. Implement the naive, obviously-correct version first. Optimize only after correctness is proven with tests.
+Three similar lines of code is better than a premature abstraction. Implement the naive, obviously-correct version first. Optimise only after correctness is proven with tests.
 
 ### Rule 0.5: Scope Discipline
 
@@ -116,7 +116,7 @@ Do NOT:
 - Refactor imports in files you're not modifying
 - Remove comments you don't fully understand
 - Add features not in the spec because they "seem useful"
-- Modernize syntax in files you're only reading
+- Modernise syntax in files you're only reading
 
 If you notice something worth improving outside your task scope, note it — don't fix it:
 
@@ -131,7 +131,7 @@ NOTICED BUT NOT TOUCHING:
 
 Each increment changes one logical thing. Don't mix concerns:
 
-**Bad:** One commit that adds a new component, refactors an existing one, and updates the build config.
+**Bad:** One commit that adds a new component, refactors an existing one and updates the build config.
 
 **Good:** Three separate commits — one for each change.
 
@@ -157,7 +157,7 @@ This can keep incomplete work hidden when increments are merged. It does not aut
 
 ### Rule 4: Safe Defaults
 
-New code should default to safe, conservative behavior:
+New code should default to safe, conservative behaviour:
 
 ```typescript
 // Safe: disabled by default, opt-in
@@ -203,11 +203,11 @@ After each increment, apply [Testing](../../../docs/reference/testing.md) and [V
 
 **Note:** Run each verification command after a change that could affect it. Reuse successful results at the same scope and state; do not rerun for reassurance. For an authorised comparative diagnostic on an already characterised baseline, state the hypothesis, change a relevant precondition and record the discriminating result separately. Keep the valid clean result as the checkpoint; the diagnostic does not invalidate or replace it and does not authorise a fix.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                      | Reality                                                                                                                                                      |
+| Rationalisation                                      | Reality                                                                                                                                                      |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| "I'll test it all at the end"                        | Bugs compound. A bug in Slice 1 makes Slices 2-5 wrong. Test each slice.                                                                                     |
+| "I'll test it all at the end"                        | Bugs compound. A bug in Slice 1 makes Slices 2–5 wrong. Test each slice.                                                                                     |
 | "It's faster to do it all at once"                   | It _feels_ faster until something breaks and you can't find which of 500 changed lines caused it.                                                            |
 | "These changes are too small to commit separately"   | Small commits are free. Large commits hide bugs and make rollbacks painful.                                                                                  |
 | "I'll add the feature flag later"                    | Keep incomplete work hidden. If the approved rollout uses a flag, add it before the feature can become visible.                                              |

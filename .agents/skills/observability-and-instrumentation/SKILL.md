@@ -19,7 +19,7 @@ Observability answers "what is the system doing and why?" using evidence from ou
 **NOT for:**
 
 - Diagnosing a failure happening right now — use the `debugging-and-error-recovery` skill (observability is what makes that skill fast next time)
-- Profiling and optimizing measured slowness — use the `performance-optimization` skill
+- Profiling and optimising measured slowness — use the `performance-optimization` skill
 - Launch-day monitoring checklists and rollback triggers — see the `shipping-and-launch` skill; this skill covers the instrumentation that feeds them
 
 ## Process
@@ -91,7 +91,7 @@ app.use((req, res, next) => {
 });
 ```
 
-**When one log stream includes runs from several entry points, name the entry point.** This applies even if one worker writes every line or the runs serve just one customer; a functioning single-entry stream does not need a new origin field. A correlation ID identifies a run; it does not say which code path started it. The same job reached by a scheduler, by a replay endpoint, and by a manual CLI run produces interchangeable lines in one sink, so attributing a line falls back to elimination — cross-reading the scheduler's history, the process table, a deploy log — and that argument holds only as long as those external records happen to still exist. Stamp the entry point where the run starts, next to the correlation ID, and propagate both the same way:
+**When one log stream includes runs from several entry points, name the entry point.** This applies even if one worker writes every line or the runs serve just one customer; a functioning single-entry stream does not need a new origin field. A correlation ID identifies a run; it does not say which code path started it. The same job reached by a scheduler, by a replay endpoint and by a manual CLI run produces interchangeable lines in one sink, so attributing a line falls back to elimination — cross-reading the scheduler's history, the process table, a deploy log — and that argument holds only as long as those external records happen to still exist. Stamp the entry point where the run starts, next to the correlation ID, and propagate both the same way:
 
 ```typescript
 // One helper for every entry point: the run's own logger carries both fields.
@@ -209,9 +209,9 @@ Instrumentation is code; it can be wrong. Exercise each applicable signal in an 
 - Follow a request across the approved boundaries → check span continuity and the required sampling outcome, including an error and any upstream drops.
 - Exercise each new alert through an authorised test route → verify delivery and the runbook link without lowering live thresholds or paging on-call by default.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                            | Reality                                                                                                                                                 |
+| Rationalisation                                            | Reality                                                                                                                                                 |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "I'll add logging after it works"                          | If the release requires approved visibility, build and verify it alongside the feature. If existing evidence suffices, add nothing.                     |
 | "More logs = more observability"                           | Unstructured noise makes incidents slower, not faster. Three queryable events beat three hundred prose lines.                                           |
@@ -226,7 +226,7 @@ Instrumentation is code; it can be wrong. Exercise each applicable signal in an 
 - An operational question requires visibility that the available evidence does not provide
 - Log lines built by string interpolation instead of structured fields
 - Request-scoped events cannot be linked across the authorised boundaries
-- One log stream fed by a scheduler, a webhook, and manual runs, with no field naming which one produced the line
+- One log stream fed by a scheduler, a webhook and manual runs, with no field naming which one produced the line
 - Metrics labelled with user IDs, raw URLs or error message text
 - Latency tracked as an average with no percentiles
 - Alerts that fire daily and get acknowledged without action
@@ -244,7 +244,7 @@ For each required signal, record the observed output or the missing/failed check
 - [ ] No raw errors, personal data, secrets, raw URLs or request/response bodies in actual output from any approved sink
 - [ ] Required RED/USE metrics exist with bounded labels; latency histograms support p95/p99
 - [ ] Applicable traces remain continuous across approved boundaries and meet the end-to-end sampling requirement
-- [ ] Each new alert is symptom-based, has a justified threshold and runbook, and was exercised through an authorised test route
+- [ ] Each new alert is symptom-based and has a justified threshold and a runbook. Each was exercised through an authorised test route
 - [ ] An induced failure can be diagnosed from the required telemetry without reading the source
 
 For the at-a-glance version of this list, including the pre-launch instrumentation gate, see `../../references/observability-checklist.md`.

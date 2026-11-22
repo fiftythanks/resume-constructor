@@ -37,7 +37,7 @@ Structure context from most persistent to most transient:
 
 ### Level 1: Rules Files
 
-Use the existing [AGENTS.md](../../../AGENTS.md) and its conditional pointers. Agent-specific procedures and references belong under `.agents/`; shared project standards belong under `docs/reference/`.
+Use the existing [`AGENTS.md`](../../../AGENTS.md) and its conditional pointers. Agent-specific procedures and references belong under `.agents/`; shared project standards belong under `docs/reference/`.
 
 Consult current configuration for commands, versions and enforced settings, as required by [Documentation](../../../docs/reference/documentation.md). Propose genuinely missing conventions in the appropriate source under [root authority](../../../AGENTS.md#authority).
 
@@ -102,13 +102,13 @@ A fresh session is safe at a completed task boundary, not at an arbitrary token 
 4. the exact verification commands and outcomes, with the relevant source, configuration and environment baseline;
 5. unresolved questions, risks and required approvals.
 
-When notes-backed context tools are available, keep a compact working record in their notebook, with pointers to the canonical artifacts and evidence. Save it before requesting a context-window rollover; the rollover request is not itself a save or commit receipt. A rollover continues the authorised task rather than creating a new session or granting another lifecycle phase.
+When notes-backed context tools are available, keep a compact working record in their notebook, with pointers to the canonical artefacts and evidence. Save it before requesting a context-window rollover; the rollover request is not itself a save or commit receipt. A rollover continues the authorised task rather than creating a new session or granting another lifecycle phase.
 
 Commit the completed task only when the user or repository workflow authorises it. Otherwise, leave the working tree intact and record that the changes are uncommitted.
 
 In the fresh session, read the rules, spec, plan, task status and actual `git status` before acting. Re-run verification when its recorded baseline is missing or the relevant source, configuration or environment has changed. Resolve claimed approvals against their source records before relying on them.
 
-An external harness may automate exit and restart between these boundaries. That loop must treat the artifacts and repository state as the source of truth, preserve human approval gates and distinguish a completed task from a crashed process. The skill defines the handoff contract; process supervision and model selection belong to the harness. Restarting resumes authorised work under [root authority](../../../AGENTS.md#authority), rather than selecting another lifecycle phase.
+An external harness may automate exit and restart between these boundaries. That loop must treat the artefacts and repository state as the source of truth, preserve human approval gates and distinguish a completed task from a crashed process. The skill defines the handover contract; process supervision and model selection belong to the harness. Restarting resumes authorised work under [root authority](../../../AGENTS.md#authority), rather than selecting another lifecycle phase.
 
 ## Context Packing Strategies
 
@@ -310,7 +310,7 @@ The 5,000/2,000-line figures are rules of thumb, not limits: retain the requirem
 
 ## Common Rationalisations
 
-| Rationalization                               | Reality                                                                                                                      |
+| Rationalisation                               | Reality                                                                                                                      |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | "The agent should figure out the conventions" | It can't read your mind. Record unwritten conventions in the appropriate project instructions — 10 minutes that saves hours. |
 | "I'll just correct it when it goes wrong"     | Prevention is cheaper than correction. Upfront context prevents drift.                                                       |

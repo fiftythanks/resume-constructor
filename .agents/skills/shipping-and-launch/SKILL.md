@@ -1,6 +1,6 @@
 ---
 name: shipping-and-launch
-description: Prepares production launches. Use when preparing to deploy to production, or when asking what needs to be in place before shipping. Use when you need a pre-launch checklist, when setting up monitoring, when planning a staged rollout, or when you need a rollback strategy.
+description: Prepares production launches. Use when preparing to deploy to production, or when asking what needs to be in place before shipping. Use when you need a pre-launch checklist, when setting up monitoring, when planning a staged rollout or when you need a rollback strategy.
 ---
 
 # Shipping and Launch
@@ -14,7 +14,7 @@ The goal is a safe release with clear success criteria, applicable monitoring an
 - Deploying a feature to production for the first time
 - Releasing a significant change to users
 - Migrating data or infrastructure
-- Opening a beta or early access program
+- Opening a beta or early access programme
 - Assessing readiness for a named change and release target
 
 Identify the change/base and intended target. Use [Verification](../../../docs/reference/verification.md) and [orchestration](../../references/orchestration-patterns.md) as in [`/ship`](../../commands/ship.md). Reuse independent code-review evidence only if it still covers the selected state. Required review needs a satisfactory outcome with no unresolved required findings. An adverse verdict does not clear the gate by existing; record any explicit release-specific waiver as a waiver of the unmet gate, not as technical approval. Seek additional test or security perspectives only for actual risks or evidence gaps; direct inspection does not satisfy a required independent pass.
@@ -29,7 +29,7 @@ Apply approved checks to the named release. Generic service examples do not auth
 
 - [ ] Applicable tests, builds and static checks required for this checkpoint passed. Require a warning-free build unless the user explicitly approved a different warning policy for the target. Assessing a warning does not satisfy the gate: resolve warnings that breach the policy and produce a matching passing build, or record an explicit release-specific waiver of the unmet gate, not a pass. Record failed and unexecuted checks separately.
 - [ ] Required independent review covers this state and has a satisfactory outcome with no unresolved required findings; findings, limitations and any explicit release waiver are recorded separately
-- [ ] No TODO comments that should be resolved before launch
+- [ ] No `TODO` comments that should be resolved before launch
 - [ ] No `console.log` debugging statements in production code
 - [ ] Error handling covers expected failure modes
 
@@ -38,7 +38,7 @@ Apply approved checks to the named release. Generic service examples do not auth
 - [ ] No secrets in code or version control
 - [ ] Matching native dependency advisory audit evidence for every installation boundary this release involves shows no critical or high vulnerabilities
 - [ ] Input validation on all user-facing endpoints
-- [ ] Authentication and authorization checks in place
+- [ ] Authentication and authorisation checks in place
 - [ ] Security headers configured (CSP, HSTS, etc.)
 - [ ] Rate limiting on authentication endpoints
 - [ ] CORS configured to specific origins (not wildcard)
@@ -49,7 +49,7 @@ Bind audit evidence to the release dependency state and relevant lockfiles. An a
 
 - [ ] Assess Core Web Vitals against any approved release budget. Use the [industry bands](../../references/performance-checklist.md#core-web-vitals-targets) for diagnosis, not as a release gate. If evidence required by a budget is missing, report the check as unmet.
 - [ ] No N+1 queries in critical paths
-- [ ] Images optimized (compression, responsive sizes, lazy loading)
+- [ ] Images optimised (compression, responsive sizes, lazy loading)
 - [ ] Bundle size within budget
 - [ ] Database queries have appropriate indexes
 - [ ] Caching configured for static assets and repeated queries
@@ -76,7 +76,7 @@ Use [Accessibility](../../../docs/reference/accessibility.md) for the editor and
 
 ### Documentation
 
-- [ ] README updated with any new setup requirements
+- [ ] `README` updated with any new setup requirements
 - [ ] API documentation current
 - [ ] ADRs written for any architectural decisions
 - [ ] Changelog updated
@@ -137,9 +137,9 @@ Example for a target with staging, flags and approved production signals. Use th
    └── 24-hour monitoring window
 
 4. CANARY rollout (flag ON for 5% of users)
-   └── Monitor error rates, latency, user behavior
+   └── Monitor error rates, latency and user behaviour
    └── Evaluate absolute criteria directly and compare with a baseline for relative criteria
-   └── 24-48 hour monitoring window
+   └── 24–48 hours of monitoring
    └── Advance only if the target's agreed criteria are met
 
 5. GRADUAL increase (25% -> 50% -> 100%)
@@ -181,7 +181,7 @@ Application metrics:
 └── Key business metrics (conversion, engagement)
 
 Infrastructure metrics:
-├── CPU and memory utilization
+├── CPU and memory utilisation
 ├── Database connection pool usage
 ├── Disk space
 ├── Network latency
@@ -268,7 +268,7 @@ If the agreed canary burn-rate trigger is breached, take the specified action ev
 
 ## Rollback Strategy
 
-Require real recovery evidence for the intended target before recommending `GO`. Identify the recovery action, responsible operator, affected artefact and configuration and the evidence from a representative rehearsal. A Git revert and push change source history; they do not establish which artefact is serving or recover data written by the new version. Check old/new data compatibility and recovery of affected data in the rehearsal. If reverting would be unsafe, require a verified forward recovery path. Report timing only when observed and identify what the rehearsal did not cover.
+Require real recovery evidence for the intended target before recommending `GO`. Identify the recovery action, responsible operator, affected artefact and configuration and the evidence from a representative rehearsal. Running `git revert` and `git push` changes source history but does not establish which artefact is serving or recover data written by the new version. Check old/new data compatibility and recovery of affected data in the rehearsal. If reverting would be unsafe, require a verified forward recovery path. Report timing only when observed and identify what the rehearsal did not cover.
 
 ```markdown
 ## Rollback Plan for [Feature/Release]
@@ -301,9 +301,9 @@ Require real recovery evidence for the intended target before recommending `GO`.
 - For accessibility verification before launch, see `../../references/accessibility-checklist.md`
 - For the alerting rules and SLO-tied thresholds, see `observability-and-instrumentation`
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                  | Reality                                                                                                                                                                        |
+| Rationalisation                                  | Reality                                                                                                                                                                        |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | "It works in staging, it'll work in production"  | Staging is not proof of production behaviour. Verify the critical flow and applicable signals after an authorised launch.                                                      |
 | "We don't need feature flags for this"           | Assess the recovery path for this change. An approved flag can reduce exposure, but an unrelated flag adds complexity and does not recover data.                               |

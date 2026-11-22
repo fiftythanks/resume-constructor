@@ -1,13 +1,13 @@
 ---
 name: code-review-and-quality
-description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch. Use when asked to review a diff or a pull request, even when the diff is pasted inline and the review looks quick to do from reading it.
+description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch. Use when asked to review a diff or a pull request, even when the diff is pasted inline and the review looks quick to do from reading it.
 ---
 
 # Code Review and Quality
 
 ## Overview
 
-Multi-dimensional code review with quality gates. Every change gets reviewed before merge — no exceptions. Review covers five axes: correctness, readability, architecture, security, and performance.
+Multi-dimensional code review with quality gates. Every change gets reviewed before merge — no exceptions. Review covers five axes: correctness, readability, architecture, security and performance.
 
 **The approval standard:** Recommend approval when the change improves overall code health, meets the authorised contract and project conventions, has the evidence required for this scope and checkpoint and leaves no unresolved Critical or Required findings. Don't block a change because it isn't exactly how you would have written it. A technical recommendation is not human acceptance and cannot waive a required check or review under the [root authority](../../../AGENTS.md#authority).
 
@@ -31,7 +31,7 @@ Does the code do what it claims to do?
 - Are edge cases handled (null, empty, boundary values)?
 - Are error paths handled (not just the happy path)?
 - Does it pass all tests? Are the tests actually testing the right things?
-- Are there off-by-one errors, race conditions, or state inconsistencies?
+- Are there off-by-one errors, race conditions or state inconsistencies?
 
 ### 2. Readability & Simplicity
 
@@ -39,13 +39,13 @@ Can another engineer (or agent) understand this code without the author explaini
 
 - Are names descriptive and consistent with project conventions? (No `temp`, `data`, `result` without context)
 - Is the control flow straightforward (avoid nested ternaries, deep callbacks)?
-- Is the code organized logically (related code grouped, clear module boundaries)?
+- Is the code organised logically (related code grouped, clear module boundaries)?
 - Are there any "clever" tricks that should be simplified?
 - **Could this be done in fewer lines?** (1000 lines where 100 suffice is a failure)
-- **Are abstractions earning their complexity?** (Don't generalize until the third use case)
+- **Are abstractions earning their complexity?** (Don't generalise until the third use case)
 - Would comments help clarify non-obvious intent? (But don't comment obvious code.)
-- Are there dead code artifacts: no-op variables (`_unused`), backwards-compat shims, or `// removed` comments?
-- **Is a new conditional bolted onto an unrelated flow?** That's a design smell, not a nit — push the logic into its own helper, state, or policy instead of tangling an existing path.
+- Are there dead code artefacts: no-op variables (`_unused`), backwards-compat shims or `// removed` comments?
+- **Is a new conditional bolted onto an unrelated flow?** That's a design smell, not a nit — push the logic into its own helper, state or policy instead of tangling an existing path.
 - **Do repeated conditionals on the same shape appear?** They signal a missing model or dispatcher. A "temporary" branch is usually permanent debt.
 
 ### 3. Architecture
@@ -57,18 +57,18 @@ Does the change fit the system's design?
 - Is there code duplication that should be shared?
 - Are dependencies flowing in the right direction (no circular dependencies)?
 - Is the abstraction level appropriate (not over-engineered, not too coupled)?
-- **Does this refactor reduce complexity or just relocate it?** Count the concepts a reader must hold to follow the change. If a "cleaner" version leaves that count unchanged, it isn't cleaner — prefer the restructuring that makes whole branches, modes, or layers disappear over one that re-centralizes the same logic. Prefer deleting an abstraction to polishing it.
-- **Is feature-specific logic leaking into a shared or general-purpose module?** Keep logic in its owning layer, reuse the existing canonical helper instead of a near-duplicate, and don't normalize architectural drift.
+- **Does this refactor reduce complexity or just relocate it?** Count the concepts a reader must hold to follow the change. If a "cleaner" version leaves that count unchanged, it isn't cleaner — prefer the restructuring that makes whole branches, modes or layers disappear over one that re-centralises the same logic. Prefer deleting an abstraction to polishing it.
+- **Is feature-specific logic leaking into a shared or general-purpose module?** Keep logic in its owning layer, reuse the existing canonical helper instead of a near-duplicate and don't normalise architectural drift.
 - **Are type boundaries explicit?** Question gratuitous `any`/`unknown`/optional/casts and silent fallbacks that paper over an unclear invariant — making the boundary explicit often makes the surrounding control flow simpler.
 
 ### 4. Security
 
 For detailed security guidance, see `security-and-hardening`. Does the change introduce vulnerabilities?
 
-- Is user input validated and sanitized?
-- Are secrets kept out of code, logs, and version control?
-- Is authentication/authorization checked where needed?
-- Are SQL queries parameterized (no string concatenation)?
+- Is user input validated and sanitised?
+- Are secrets kept out of code, logs and version control?
+- Is authentication/authorisation checked where needed?
+- Are SQL queries parameterised (no string concatenation)?
 - Are outputs encoded to prevent XSS?
 - Are dependencies from trusted sources with no known vulnerabilities?
 - Is data from external sources (APIs, logs, user content, config files) treated as untrusted?
@@ -76,7 +76,7 @@ For detailed security guidance, see `security-and-hardening`. Does the change in
 
 ### 5. Performance
 
-For detailed profiling and optimization, see `performance-optimization`. Does the change introduce performance problems?
+For detailed profiling and optimisation, see `performance-optimization`. Does the change introduce performance problems?
 
 - Any N+1 query patterns?
 - Any unbounded loops or unconstrained data fetching?
@@ -102,7 +102,7 @@ Prefer the remedy that removes moving pieces over one that spreads the same comp
 
 ## Change Sizing
 
-Small, focused changes are easier to review, faster to merge, and safer to deploy. Use these figures as prompts to inspect, not limits:
+Small, focused changes are easier to review, faster to merge and safer to deploy. Use these figures as prompts to inspect, not limits:
 
 ```
 ~100 lines changed   → Good. Reviewable in one sitting.
@@ -125,7 +125,7 @@ Small, focused changes are easier to review, faster to merge, and safer to deplo
 
 **When large changes are acceptable:** A coherent change may be large, whether it adds or replaces behaviour. For complete file deletions or automated refactoring, review can often focus on intent and evidence rather than inspecting every line individually.
 
-**Separate refactoring from feature work** when each is independently verifiable. Keep a refactor with the feature when separating it would break an authorised checkpoint. Small related cleanups (variable renaming) can be included at reviewer discretion.
+**Separate refactoring from feature work** when each is independently verifiable. Keep a refactor with the feature when separating it would break an authorised checkpoint. Small related clean-ups (variable renaming) can be included at reviewer discretion.
 
 ## Change Descriptions
 
@@ -133,9 +133,9 @@ Every change needs a description that stands alone in version control history.
 
 **First line:** Short, imperative, standalone. "Delete the FizzBuzz RPC" not "Deleting the FizzBuzz RPC." Must be informative enough that someone searching history can understand the change without reading the diff.
 
-**Body:** What is changing and why. Include context, decisions, and reasoning not visible in the code itself. Link to bug numbers, benchmark results, or design docs where relevant. Acknowledge approach shortcomings when they exist.
+**Body:** What is changing and why. Include context, decisions and reasoning not visible in the code itself. Link to bug numbers, benchmark results or design docs where relevant. Acknowledge approach shortcomings when they exist.
 
-**Anti-patterns:** "Fix bug," "Fix build," "Add patch," "Moving code from A to B," "Phase 1," "Add convenience functions."
+**Anti-patterns:** "Fix bug", "Fix build", "Add patch", "Moving code from A to B", "Phase 1" and "Add convenience functions".
 
 ## Review Process
 
@@ -146,7 +146,7 @@ Before looking at code, understand the intent:
 ```
 - What is this change trying to accomplish?
 - What spec or task does it implement?
-- What is the expected behavior change?
+- What is the expected behaviour change?
 ```
 
 ### Step 2: Review the Tests First
@@ -155,7 +155,7 @@ Tests reveal intent and coverage:
 
 ```
 - Do tests exist for the change?
-- Do they test behavior (not implementation details)?
+- Do they test behaviour (not implementation details)?
 - Are edge cases covered?
 - Do tests have descriptive names?
 - Would the tests catch a regression if the code changed?
@@ -176,7 +176,7 @@ For each file changed:
 5. Performance: Any bottlenecks?
 ```
 
-### Step 4: Categorize Findings
+### Step 4: Categorise Findings
 
 Before reporting a finding, check it against the callers, guards and tests that reach the changed code, and drop it if they rule it out. Label defects that already exist in the base separately from regressions this change introduces. Zero findings is a valid result; do not invent one.
 
@@ -256,7 +256,7 @@ CODE ORPHANED BY THIS CHANGE:
 Slow reviews block entire teams. The cost of context-switching to review is less than the waiting cost imposed on others.
 
 - **Respond promptly** within the review's agreed constraints.
-- **Prioritize fast individual responses** over quick final approval. Quick feedback reduces frustration even if multiple rounds are needed
+- **Prioritise fast individual responses** over quick final approval. Quick feedback reduces frustration even if multiple rounds are needed
 - **Large changes:** Look for an independently verifiable outcome to split off. For an indivisible change, report any specific review gap rather than demanding an arbitrary split.
 
 ## Handling Disagreements
@@ -268,11 +268,11 @@ When resolving review disputes, apply this hierarchy:
 3. **Software design** must be evaluated on engineering principles, not personal preference
 4. **Codebase consistency** is acceptable if it doesn't degrade overall health
 
-**Don't accept "I'll clean it up later."** Require cleanup made necessary by the change. Report surrounding issues separately without expanding the task or automatically filing issues. Refer deliberate debt or a proposed deferral to the user under the root authority; unresolved Critical and Required findings still prevent technical approval.
+**Don't accept "I'll clean it up later."** Require the clean-up made necessary by the change. Report surrounding issues separately without expanding the task or automatically filing issues. Refer deliberate debt or a proposed deferral to the user under the root authority; unresolved Critical and Required findings still prevent technical approval.
 
 ## Honesty in Review
 
-When reviewing code — whether written by you, another agent, or a human:
+When reviewing code — whether written by you, another agent or a human:
 
 - **Don't rubber-stamp.** "LGTM" without evidence of review helps no one.
 - **Don't soften real issues.** "This might be a minor concern" when it's a bug that will hit production is dishonest.
@@ -289,18 +289,18 @@ Part of code review is dependency review:
 1. Does the existing stack solve this? (Often it does.)
 2. How large is the dependency? (Check bundle impact.)
 3. Is it actively maintained? (Check last commit, open issues.)
-4. Does it have known vulnerabilities? Identify the installation boundary that owns the lockfile and verify its package manager from project configuration and CI. Use matching advisory evidence for that boundary and resolved lockfile, not an npm audit for a Bun workspace or results from another package boundary.
-5. What's the license? (Must be compatible with the project.)
+4. Does it have known vulnerabilities? Identify the installation boundary that owns the lockfile and verify its package manager from project configuration and CI. Use matching advisory evidence for that boundary and resolved lockfile, not an `npm audit` for a Bun workspace or results from another package boundary.
+5. What's the licence? (Must be compatible with the project.)
 
 **Rule:** Prefer standard library and existing utilities over new dependencies. Every dependency is a liability.
 
 **Upgrading an existing dependency** is a code change like any other, and the riskiest upgrades are the ones merged in bulk with a message like "bump deps." Review them with the same discipline:
 
-1. **Read the changelog, not just the version number.** Semver is a promise the maintainer may not have kept — a "patch" can carry a behavioral change. For a major bump, read the migration notes and find what breaks.
+1. **Read the changelog, not just the version number.** Semver is a promise the maintainer may not have kept — a "patch" can carry a behavioural change. For a major bump, read the migration notes and find what breaks.
 2. **One dependency per change.** Upgrade and merge them individually (or in small related groups). When a bulk bump breaks the build, you've lost which package did it; a single-package change makes the cause obvious and the revert clean.
-3. **Let the tests decide.** The upgrade is verified by a green suite before _and_ after, not by "it installed." If coverage around the dependency's behavior is thin, that gap is the real finding — add a test first.
+3. **Let the tests decide.** The upgrade is verified by a green suite before _and_ after, not by "it installed." If coverage around the dependency's behaviour is thin, that gap is the real finding — add a test first.
 4. **Mind the transitive graph.** Most installed packages are ones nobody chose directly. Review the lockfile diff, not just `package.json`; a single direct bump can pull in dozens of indirect changes.
-5. **Keep the lockfile honest.** Commit it, review its diff, and never hand-edit it. The lockfile is the thing that actually pins what ships.
+5. **Keep the lockfile honest.** Commit it, review its diff and never hand-edit it. The lockfile is the thing that actually pins what ships.
 
 For advisory triage and supply-chain risk (typosquatting, compromised maintainers), follow [Dependencies and supply chain](../security-and-hardening/SKILL.md#dependencies-and-supply-chain). Separate known advisories, reachability and remedies. A review is not an install or a release and does not authorise a new registry query. Before release, the native advisory audit against each relevant committed lockfile still applies; reuse matching evidence and report missing or blocked evidence as such.
 
@@ -364,18 +364,18 @@ For advisory triage and supply-chain risk (typosquatting, compromised maintainer
 - For detailed security review guidance, see `../../references/security-checklist.md`
 - For diagnostic prompts, see `../../references/performance-checklist.md`; use `performance-optimization` to assess matching evidence and distinguish findings from possible remedies.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                  | Reality                                                                                                                                                                       |
+| Rationalisation                                  | Reality                                                                                                                                                                       |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "It works, that's good enough"                   | Working code that's unreadable, insecure, or architecturally wrong creates debt that compounds.                                                                               |
+| "It works, that's good enough"                   | Working code that's unreadable, insecure or architecturally wrong creates debt that compounds.                                                                                |
 | "I wrote it, so I know it's correct"             | Authorship is not evidence. Review the change on its merits and use fresh context when independence is required.                                                              |
-| "We'll clean it up later"                        | Require change-related cleanup. Report unrelated issues separately and leave user-owned deferrals to the user.                                                                |
+| "We'll clean it up later"                        | Require change-related clean-up. Report unrelated issues separately and leave user-owned deferrals to the user.                                                               |
 | "AI-generated code is probably fine"             | AI code needs more scrutiny, not less. It's confident and plausible, even when wrong.                                                                                         |
-| "The tests pass, so it's good"                   | Tests are necessary but not sufficient. They don't catch architecture problems, security issues, or readability concerns.                                                     |
+| "The tests pass, so it's good"                   | Tests are necessary but not sufficient. They don't catch architecture problems, security issues or readability concerns.                                                      |
 | "The refactor makes it cleaner"                  | Relocating complexity isn't reducing it. If the reader still holds the same number of concepts, the structure didn't improve — look for the version where branches disappear. |
 | "It's only a small addition to this file"        | A small diff can still tangle a new responsibility with an existing flow. Judge the resulting structure, not the count.                                                       |
-| "It's just a version bump"                       | A bump is a behavior change you didn't write. Read the changelog; semver doesn't guarantee no breakage.                                                                       |
+| "It's just a version bump"                       | A bump is a behaviour change you didn't write. Read the changelog; semver doesn't guarantee no breakage.                                                                      |
 | "I'll upgrade everything in one PR to save time" | A bulk bump that breaks the build hides which package did it. One dependency per change keeps the cause and the revert clean.                                                 |
 
 ## Red Flags
@@ -387,13 +387,13 @@ For advisory triage and supply-chain risk (typosquatting, compromised maintainer
 - A large change with a specific unreviewed part or distinct outcomes that could be verified separately
 - No regression tests with bug fix PRs
 - Review comments without severity labels — makes it unclear what's required vs optional
-- Deferring change-related cleanup on the author's say-so
+- Deferring change-related clean-up on the author's say-so
 - A refactor that moves code around without reducing the number of concepts a reader must hold
 - Growth of an already-large file that tangles distinct responsibilities
 - New conditionals scattered into unrelated code paths (a missing abstraction)
 - A bespoke helper that duplicates an existing canonical one, or feature logic placed in a shared module
 - A bulk "bump dependencies" PR with no changelog review and no per-package isolation
-- A lockfile change that's hand-edited, uncommitted, or merged without reviewing its diff
+- A lockfile change that's hand-edited, uncommitted or merged without reviewing its diff
 
 ## Verification
 
@@ -403,6 +403,6 @@ After review is complete:
 - [ ] Applicable checks for the scope and checkpoint are supported by evidence; failed or unavailable required proof is reported as unmet
 - [ ] Required independent review is satisfied or reported as unmet, separately from human acceptance
 - [ ] The verification story is documented (what changed, evidence inspected, checks run and limitations)
-- [ ] Dependency upgrades were reviewed against their changelog, isolated per package, and verified by a green suite with the lockfile diff reviewed
+- [ ] Dependency upgrades were reviewed against their changelog, isolated per package and verified by a green suite with the lockfile diff reviewed
 
 **Presumptive blockers:** surface and propose the simpler design for each of these; escalate to Required only when the change actively makes structure worse: a refactor that relocates complexity instead of reducing it; growth that tangles distinct responsibilities in an already-large file; feature logic added to a shared module; a near-duplicate of an existing canonical helper; a silent fallback that hides an unclear invariant.

@@ -1,13 +1,13 @@
 ---
 name: spec-driven-development
-description: Creates specs before coding. Use when starting a new project, feature, or significant change and no specification exists yet. Use when drafting a PRD or requirements document with objectives and scope, or when requirements are unclear, ambiguous, or only exist as a vague idea. Use when a single requirement spans several independently testable capabilities and needs decomposing into a capability map of modules before specifying. Use when evolving a shipped spec — scoping a V1, deferring ideas to a V2 backlog, or writing a follow-up spec for a change to an existing feature.
+description: Creates specs before coding. Use when starting a new project, feature or significant change and no specification exists yet. Use when drafting a PRD or requirements document with objectives and scope, or when requirements are unclear, ambiguous or only exist as a vague idea. Use when a single requirement spans several independently testable capabilities and needs decomposing into a capability map of modules before specifying. Use when evolving a shipped spec — scoping a V1, deferring ideas to a V2 backlog or writing a follow-up spec for a change to an existing feature.
 ---
 
 # Spec-Driven Development
 
 ## Overview
 
-Write a structured specification before writing any code. The spec is the shared source of truth between you and the human engineer — it defines what we're building, why, and how we'll know it's done. Code without a spec is guessing.
+Write a structured specification before writing any code. The spec is the shared source of truth between you and the human engineer — it defines what we're building, why and how we'll know it's done. Code without a spec is guessing.
 
 ## When to Use
 
@@ -17,7 +17,7 @@ Write a structured specification before writing any code. The spec is the shared
 - You're about to make an architectural decision
 - The task would take more than 30 minutes to implement
 
-**When NOT to use:** Single-line fixes, typo corrections, or changes where requirements are unambiguous and self-contained.
+**When NOT to use:** Single-line fixes, typo corrections or changes where requirements are unambiguous and self-contained.
 
 ## The Gated Workflow
 
@@ -58,11 +58,11 @@ Most requests describe one capability. If this one does, skip this phase and go 
 Build order: identity → billing, notifications → reporting
 ```
 
-- **Stable module ids.** Kebab-case, chosen once, never renamed mid-initiative. Specs, plans, and downstream commands select work by these ids instead of guessing which spec is active.
+- **Stable module ids.** Kebab-case, chosen once, never renamed mid-initiative. Specs, plans and downstream commands select work by these ids instead of guessing which spec is active.
 - **Dependency direction, no cycles.** Arrows point one way. If two modules each need the other, they are one module.
 - **Interfaces live at the boundary.** The map records that `billing` depends on `identity`; the contract between them belongs in the provider module's spec (see `api-and-interface-design` for designing it).
 
-**The map is gated like every phase.** The human reviews module boundaries, dependency direction, and build order before any module spec is written. Getting the map wrong is expensive; reviewing ten lines is not.
+**The map is gated like every phase.** The human reviews module boundaries, dependency direction and build order before any module spec is written. Getting the map wrong is expensive; reviewing ten lines is not.
 
 **Then recurse per module.** Specify each module in dependency order, scoped to its objective, boundaries and success criteria. Preserve the approved map as the index of module ids and specs. Use agreed locations and existing project conventions within the mode and scope boundary above.
 
@@ -106,7 +106,7 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
    docs/          → Documentation
    ```
 
-4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and examples of good output.
+4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules and examples of good output.
 
 5. **Testing Strategy** — What framework, where tests live, coverage expectations, which test levels for which concerns.
 
@@ -165,8 +165,8 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 
 **External spec tools:** This workflow is format-agnostic. If the project
 already uses OpenSpec or another specification system, keep that system's
-artifact format and storage conventions instead of creating a duplicate
-`SPEC.md`. This skill owns the clarification, content, and approval gates; the
+artefact format and storage conventions instead of creating a duplicate
+`SPEC.md`. This skill owns the clarification, content and approval gates; the
 external tool owns how the approved spec is represented.
 
 Resolve the destination before writing in every branch. Preserve existing unrelated specifications and drafts; `SPEC.md` is a default only when absent. For issue-based work, use the selected issue and linked requirements without automatically publishing or overwriting an issue or duplicating its content in a repository spec. A source's existence does not establish approval.
@@ -183,7 +183,7 @@ REFRAMED SUCCESS CRITERIA:
 → Are these the right targets?
 ```
 
-This lets you loop, retry, and problem-solve toward a clear goal rather than guessing what "faster" means.
+This lets you loop, retry and problem-solve toward a clear goal rather than guessing what "faster" means.
 
 **Approve requirements before relying on them.** Summarise new or changed requirements and open questions, then obtain explicit human approval before implementation depends on them. Reuse prior approval only when it demonstrably covers the selected requirements. Follow [project authority](../../../AGENTS.md#authority) for progression and scope; approval of requirements is distinct from approval of an execution plan. A command invocation or silence is not approval.
 
@@ -230,7 +230,7 @@ Execute tasks one at a time following [incremental implementation](../incrementa
 
 ## Keeping the Spec Alive
 
-The spec is a living document, not a one-time artifact:
+The spec is a living document, not a one-time artefact:
 
 - **Update when decisions change** — If you discover the data model needs to change, update the spec first, then implement.
 - **Update when scope changes** — Features added or cut should be reflected in the spec.
@@ -281,9 +281,9 @@ Save it alongside the original when that is the agreed destination (e.g. `SPEC-p
 
 After the change ships, fold the outcome into the original spec (per Keeping the Spec Alive) so it stays the source of truth for what exists, and mark the delta implemented by changing its `Status:` line to `Status: implemented`. The original spec always describes the current system; delta specs describe transitions.
 
-## Common Rationalizations
+## Common Rationalisations
 
-| Rationalization                                                    | Reality                                                                                                                                                                                                  |
+| Rationalisation                                                    | Reality                                                                                                                                                                                                  |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "This is simple, I don't need a spec"                              | Simple tasks don't need _long_ specs, but they still need acceptance criteria. A two-line spec is fine.                                                                                                  |
 | "I'll write the spec after I code it"                              | That's documentation, not specification. The spec's value is in forcing clarity _before_ code.                                                                                                           |
@@ -293,7 +293,7 @@ After the change ships, fold the outcome into the original spec (per Keeping the
 | "This idea is good, I'll fold it into the current spec"            | Mid-build scope growth is how V1 slips. Park it under Out of Scope (Deferred) — captured without expanding the current cycle.                                                                            |
 | "The feature already has a spec, I'll just edit it for the change" | A shipped spec describes what exists. A delta spec keeps the change reviewable on its own; the original gets updated after the change ships, not before.                                                 |
 | "It's one big feature; splitting it is overhead"                   | If acceptance criteria cluster into independently testable groups, a monolithic spec forces every downstream task to reason over the whole contract. A ten-line capability map is the cheap alternative. |
-| "I'll decompose during planning"                                   | Planning slices tasks within a spec. By then the oversized artifact already exists — module boundaries and dependency direction must be decided before the spec is written, not after.                   |
+| "I'll decompose during planning"                                   | Planning slices tasks within a spec. By then the oversized artefact already exists — module boundaries and dependency direction must be decided before the spec is written, not after.                   |
 
 ## Red Flags
 
@@ -312,12 +312,12 @@ After the change ships, fold the outcome into the original spec (per Keeping the
 
 Before proceeding to implementation, confirm:
 
-- [ ] The spec covers all six core areas (a full spec; a delta spec covers only the areas the change affects — at minimum objective, success criteria, and boundary deltas — and inherits the rest from the original)
+- [ ] The spec covers all six core areas (a full spec; a delta spec covers only the areas the change affects — at minimum objective, success criteria and boundary deltas — and inherits the rest from the original)
 - [ ] The human has explicitly approved the selected new or changed requirements; any reused approval covers them
 - [ ] The execution plan and intended implementation scope have the separate approval required by project authority
 - [ ] Success criteria are specific and testable
-- [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The approved requirements are available in the agreed repository artifact, issue content or locally drafted requirements in an approved execution plan
+- [ ] Boundaries (Always / Ask First / Never) are defined
+- [ ] The approved requirements are available in the agreed repository artefact, issue content or locally drafted requirements in an approved execution plan
 - [ ] Ideas cut from this version are captured under Out of Scope (Deferred), not silently dropped or silently included
 - [ ] If this is a change to a shipped spec, it is a delta spec referencing the original, not a rewrite of it
 - [ ] If the request bundles several independently testable capabilities, a capability map (module ids, dependency direction, build order) was approved before any module spec was written

@@ -13,7 +13,7 @@ Read the affected callers and tests. Check relevant history when needed to under
 
 ## Decide whether to edit
 
-An assessment stays read-only. For a request to simplify, edit only if an approved implementation **and testing** plan covers the target under [AGENTS.md](../../../AGENTS.md#authority). Otherwise, propose the smallest useful edit and how to prove it preserves behaviour, then stop.
+An assessment stays read-only. For a request to simplify, edit only if an approved implementation **and testing** plan covers the target under [`AGENTS.md`](../../../AGENTS.md#authority). Otherwise, propose the smallest useful edit and how to prove it preserves behaviour, then stop.
 
 Apply the project's [TypeScript and React](../../../docs/reference/typescript-react.md) conventions. Preserve observable outputs and types, error delivery, side effects and their order, public APIs and product contracts. Refactoring is not permission to fix a bug, weaken a test or discard unrelated work. A record of `{count}` values is not equivalent to a `Map` of numbers. Removing `async` can turn a rejected promise into a synchronous throw.
 
