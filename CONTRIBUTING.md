@@ -159,39 +159,21 @@ All scopes must be **strictly lowercase**.
 4. **Accessibility First (WCAG 2.2 AA):** All form controls must have explicit `htmlFor` labels. Manage focus with `tabbable`, announce dynamic updates politely via `aria-live="polite"` and ensure full keyboard operable interactions.
 5. **Styling & BEM:** Component styles use React BEM (`BlockName-ElementName_modifierName_modifierValue`). Internal component scaling relies on CSS Container Queries (`@container`), reserving `@media` exclusively for macro-layout shifts in `AppLayout`.
 6. **Avoid Type Assertions:** Avoid TypeScript type assertions (`as Type`, `<Type>` and the non-null assertion operator `!`) as much as possible. Rely on natural type inference, proper type declarations and runtime type narrowing (such as `instanceof`, `typeof` or type guards). If an assertion cannot be avoided with reasonable effort, the rationale must be documented with an in-code comment explaining why it was necessary.
-7. **Documentation Parity (Starlight TypeDoc):** Whenever a component, hook, utility function or pure helper is created, its entry point MUST be added to `starlightTypeDoc.entryPoints` in `docs/astro.config.ts`. TypeDoc requires explicit registration for all exports; automatic directory discovery is not supported.
+7. **API documentation:** TypeDoc discovers exported symbols automatically. See [Documentation](docs/reference/documentation.md) for what to document.
 
 ---
 
-## 6. Verification Sequence Before Submitting a PR
+## Checks and local review
 
-Before opening a pull request, verify your changes pass all local hygiene checks:
+Run `bun run test:ci` for non-interactive Vitest tests and `bun run verify` for the full verification sequence. See [`package.json`](package.json) for individual checks and the [verification reference](docs/reference/verification.md) for evidence requirements.
 
-```bash
-# 1. Verify TypeScript types
-bun x tsc --noEmit
-
-# 2. Check and fix ESLint errors
-bun x eslint . --fix
-
-# 3. Check and fix SCSS style issues
-bun x stylelint "src/**/*.scss" --fix
-
-# 4. Verify formatting
-bun x prettier --write .
-
-# 5. Run full test suite
-bun run test
-
-# 6. Verify production build
-bun run build
-```
+Git hooks run staged checks and fixers before committing and run `verify` before pushing. For agent work, follow the independent review and local hand-off requirements in [AGENTS.md](AGENTS.md#authority) before publication.
 
 ---
 
 ## 7. Agentic Development & MCP Tooling
 
-This repository is optimised for autonomous AI coding agents (such as Antigravity) adhering to the Model Context Protocol (MCP) and lifecycle hooks architecture.
+For agent workflows and currently supported diagnostics, start with [AGENTS.md](AGENTS.md) and the [verification reference](docs/reference/verification.md#diagnostic-tools).
 
 ### Model Context Protocol (MCP) Servers
 
@@ -208,12 +190,3 @@ To prevent token exhaustion and eliminate blind whole-file rewrites, coding agen
 | `context7`       | `bun x context7-mcp`                          | Real-time documentation queries for external libraries (`react`, `immer`, `@dnd-kit`)                                                                               |
 | `gitmcp-docs`    | `bun x mcp-remote https://gitmcp.io/docs`     | Deep monorepo inspection and upstream source lookup across external dependencies                                                                                    |
 | `react-pdf`      | Streamable HTTP (`https://react-pdf.org/mcp`) | Upstream layout documentation and Yoga engine Flexbox guidance                                                                                                      |
-
-### Antigravity Lifecycle Hooks
-
-Deterministic agent workflows are governed by lifecycle hooks declared in [`.agents/hooks.json`](.agents/hooks.json):
-
-1. **Command Safety (`PreToolUse`):** Automatically rewrites accidental `bun test` commands to `bun run test` (preserving all flags and arguments), while denying dangerous operations such as `git reset --hard`, force pushes and unconstrained deletions (`.agents/hooks/command-safety.sh`).
-2. **Context Injection (`SessionStart`, `PreInvocation`):** Injects workspace invariants, testing commands and typography constraints directly into model context (`.agents/hooks/session-start.sh`, `.agents/hooks/pre-invocation.sh`).
-3. **Editor Hygiene (`PostToolUse`):** Returns fast sub-5ms acknowledgements to avoid editor tool coordinate offset corruption (`.agents/hooks/post-edit-hygiene.sh`).
-4. **Stop Quality Gate (`Stop`):** Runs static type checking (`bun x tsc --noEmit`), targeted Vitest tests, Oxford comma scans and Starlight TypeDoc parity audits on all modified files before allowing turn completion (`.agents/hooks/stop-gate.sh`).

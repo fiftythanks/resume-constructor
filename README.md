@@ -44,7 +44,7 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
   - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
   - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
 - **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal, with an aligned invisible DOM text layer overlay (`pdfjsLib.TextLayer`) enabling text selection and copying. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF.
-- **Agentic Engineering & Tooling:** Accelerated by 9 specialized Model Context Protocol (MCP) servers (`typescript-lsp`, `eslint`, `vitest`, `ast-grep`, `playwright`, `a11y`, `context7`, `gitmcp-docs` and `react-pdf`) enabling in-context diagnostics, structural search, browser snapshots and documentation queries without context window exhaustion, governed by Antigravity lifecycle hooks (`.agents/hooks.json`).
+- **Agent tooling:** See [AGENTS.md](AGENTS.md) for agent workflows and the [verification reference](docs/reference/verification.md#diagnostic-tools) for diagnostic tools.
 
 ---
 
@@ -88,7 +88,6 @@ src/
   - **Stylelint:** Configured with `stylelint-config-sass-guidelines` for best practices and `concentric-order` for consistent property sorting. Explicitly enforces a **strict nesting limit (max-depth: 3)** to prevent high specificity issues and maintain readable stylesheets.
   - **Prettier:** Ensures consistent formatting across all file types.
   - **Husky & lint-staged:** Pre-commit hooks that prevent unformatted or broken code from entering the repository.
-  - **Agentic Lifecycle Hooks:** Deterministic workspace lifecycle hooks (`.agents/hooks.json`) intercepting risky shell commands, maintaining editor file state, injecting turn context and executing rigorous Stop verification gates.
 
 ### Documentation & Roadmap
 

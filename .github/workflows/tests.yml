@@ -33,27 +33,11 @@ jobs:
           bun install --frozen-lockfile
           bun install --frozen-lockfile --cwd docs
 
-      - name: Lint JavaScript & TypeScript
-        run: bun x eslint .
-
-      - name: Lint Styles
-        run: bun x stylelint "src/**/*.scss"
-
       - name: Install Playwright Chromium
         run: bun x playwright install --with-deps chromium
 
-      # `--typecheck` flag passed, so `tsc --noEmit` is redundant.
-      - name: Run Vitest tests
-        run: bun run test:ci
-
-      - name: Verify production build
-        run: bun run build
-
-      - name: Check documentation diagnostics
-        run: bun run docs:check
-
-      - name: Verify documentation build & link integrity
-        run: bun run docs:build
+      - name: Verify project
+        run: bun run verify
 
       # --- PLAYWRIGHT BYPASS (Medium-to-Large-Screen Refactor) ---
       # Playwright E2E and visual regression tests are temporarily disabled
