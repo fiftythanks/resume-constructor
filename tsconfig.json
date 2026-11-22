@@ -42,7 +42,6 @@
     "playwright.config.ts",
     "prettier.config.js",
     "src",
-    "scripts",
     "stylelint.config.js",
     "vite.config.ts",
     "vitest.config.ts",
