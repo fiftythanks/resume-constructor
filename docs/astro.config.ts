@@ -14,8 +14,7 @@ export default defineConfig({
     mermaid(),
     starlight({
       title: 'Resume Constructor',
-      description:
-        'Technical architecture, zero-bootstrap engineering and API reference.',
+      description: 'Developer guides and API reference for Resume Constructor.',
       social: [
         {
           icon: 'github',

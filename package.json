@@ -1,7 +1,7 @@
 {
   "name": "resume-constructor",
   "version": "1.0.0",
-  "description": "A TypeScript application designed to create software-engineering resumes based on principles from the book The Tech Resume Inside Out.",
+  "description": "A TypeScript application for automatically generating standard software engineering CVs from user-provided content.",
   "main": "index.tsx",
   "type": "module",
   "scripts": {

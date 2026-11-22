@@ -1,26 +1,22 @@
 # Resume Constructor
 
-A TypeScript application designed to create software-engineering resumes based on principles from the book _The Tech Resume Inside Out_.
+Automatically generate a standard software engineering CV from your content.
 
 **[Open Live Demo](https://resume-constructor.sholokhov.dev)**
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
-![Test Coverage](https://img.shields.io/badge/Tests-11.7k%2B_Lines-2ea44f?logo=vitest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-E2E-45ba4b?logo=playwright&logoColor=white)
 ![Style](https://img.shields.io/badge/Style-SCSS_%2B_BEM-hotpink?logo=sass&logoColor=white)
-![Accessibility](https://img.shields.io/badge/A11y-WCAG_2.2-blueviolet?logo=w3c&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
-
-This is the **capstone project** for The Odin Project (frontend curriculum), demonstrating a **production-grade development workflow** without relying on bootstrapping tools like Create React App.
 
 ---
 
 ## Mobile Experience
 
 > [!IMPORTANT]
-> The tablet and desktop versions with live preview are currently under development. The mobile version is complete, though. Below are screenshots of the mobile interface for demonstration purposes.
+> Tablet and desktop live-preview work is proposed, including the possible layouts described in the roadmap. The screenshots below show the mobile interface.
 
 |                                         **1. Clean Editor**                                          |                                      **2. Intuitive UI**                                      |                                       **3. Professional Output**                                       |
 | :--------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------: |
@@ -30,27 +26,19 @@ This is the **capstone project** for The Odin Project (frontend curriculum), dem
 
 ### Key Engineering Highlights
 
-- **Architecture:** Strict separation of concerns (UI Kit vs Business Logic) combined with component colocation (tests, styles and logic kept together) for high maintainability.
-- **Build System:** **Vite 8 build pipeline** configured in TypeScript (`vite.config.ts`) and shared with Vitest (`vitest.config.ts`), powered by Rolldown and Oxc with native ESM transformation, `sass-embedded` compilation and static worker asset emission (`?url`).
-- **Strict Type Safety:** TypeScript application source code (`strict: true`, no implicit `any`, no unreachable code) enforcing deep immutability across component boundaries via `ReadonlyExcept` and `type-fest`'s `ReadonlyDeep`.
-- **Testing Strategy:** Over 600 automated unit, component and browser tests across a three-tier Vitest architecture (`vitest.config.ts`), accounting for over 60% of the codebase size:
-  - **Pure Node Unit Tests (`someTest.test.ts`):** Fast, zero-DOM Node tests verifying isolated utilities and pure component logic helpers.
-  - **Component & Hook Tests (`Component.test.tsx`, `useHook.test.ts`):** `happy-dom` suites powered by `@testing-library/react` and `@testing-library/user-event` verifying accessible roles, ARIA contracts and state transitions.
-  - **Real Browser Component Tests (`Component.browser.test.tsx`):** **Vitest Browser Mode** and `vitest-browser-react` specs running in real headless Chromium via Playwright for behaviours requiring a genuine browser layout engine (pointer and keyboard `@dnd-kit` drag-and-drop, native `<dialog>` top-layer `showModal()`/`close()` lifecycle, `tabbable` geometry visibility and viewport media queries).
-  - **E2E & Automated Audits (Playwright):** Dockerised smoke and visual regression test suites verifying core user flows (data population, canvas rendering, PDF blob download) and automated `@axe-core/playwright` accessibility audits.
-- **Inclusive Design (A11y):** Built targeting WCAG 2.2 AA standards. All features, including complex interactions like drag & drop, are fully keyboard-navigable with focus management via `tabbable`, dynamic announcements via `aria-live="polite"` and explicit `htmlFor` form labelling.
-- **Rich Interactive Experience:** Implemented an accessible Drag & Drop interface using `@dnd-kit` for intuitive reordering of resume sections and list items:
-  - **Visual Feedback:** Edit-mode shake indicator communicating draggable state.
-  - **Full Keyboard Support:** Complete sensor support for keyboard reordering via Space and Arrow keys.
-  - **Screen Reader Compatibility:** Dynamic announcements across live regions for item pickup, movement, drop and cancellation.
-- **Document Rendering Pipeline:** Utilises `@react-pdf/renderer` to generate the document binary and `pdfjs-dist` to rasterise it onto an HTML `<canvas>` inside a native `<dialog>` modal, with an aligned invisible DOM text layer overlay (`pdfjsLib.TextLayer`) enabling text selection and copying. This bypasses inconsistent browser-embedded PDF viewer toolbars (such as Firefox) whilst ensuring 1:1 visual parity with the exported PDF.
-- **Agent tooling:** See [`AGENTS.md`](AGENTS.md) for agent workflows and the [verification reference](docs/reference/verification.md#diagnostic-tools) for diagnostic tools.
+- **Architecture:** Reusable UI, feature composition and business logic are separated, with meaningful extracted logic and its tests colocated. See the [TypeScript and React reference](docs/reference/typescript-react.md).
+- **Build System:** Vite and Vitest configuration lives in [`vite.config.ts`](vite.config.ts) and [`vitest.config.ts`](vitest.config.ts).
+- **Type Safety:** Deep immutability is the default through `ReadonlyDeep`. `ReadonlyExcept` is available for legitimate mutable exceptions such as refs; it is not required for every component.
+- **Testing Strategy:** Pure logic runs in Node, component and hook contracts run in a simulated DOM, and browser-dependent interactions such as native dialogs, focus geometry and drag-and-drop run in Chromium. Playwright also provides E2E and visual tests. See the [testing reference](docs/reference/testing.md) and [`vitest.config.ts`](vitest.config.ts).
+- **Inclusive Design:** Create and organise your CV with keyboard controls, clear labels and managed focus. The web editor and preview target WCAG 2.2 AA; see the [accessibility reference](docs/reference/accessibility.md) for current support and limitations.
+- **Document Rendering Pipeline:** `@react-pdf/renderer` generates a PDF Blob for download and preview. Inside a native `<dialog>` modal, `pdfjs-dist` renders PDF pages to canvas with an aligned text layer for selection and copying. Matching the preview to the exported PDF is a product requirement, not a guarantee of pixel equality; see the [product reference](docs/reference/product.md).
+- **Export Goals:** Accessible exported CVs and verified Applicant Tracking System (ATS) compatibility remain future goals, not established capabilities. Selectable text and links alone do not establish document accessibility.
 
 ---
 
 ### Project Structure & Organisation
 
-The codebase follows **Component Colocation** and **Barrel Export** patterns to ensure scalability.
+The codebase uses component colocation where useful. Extracted pure logic and its tests live together; barrel exports are not mandatory.
 
 ```text
 src/
@@ -64,7 +52,7 @@ src/
 │       ├── getAddableSectionIds.test.ts
 │       └── index.tsx          # Barrel export
 ├── pages/                     # Feature views (Education, Experience, Skills)
-├── hooks/                     # Isolated business logic (custom hooks)
+├── hooks/                     # Reusable stateful logic
 │   ├── useResumeData/         # Complex state management logic
 │   └── useResumeData.test.ts  # Hook testing
 ├── styles/                    # SCSS architecture (7-1 pattern adaptation)
@@ -80,14 +68,8 @@ src/
 - **Styling:** SCSS + BEM.
   - _Why?_ Chosen over utility-first frameworks (Tailwind) to maintain strict control over the cascade, isolate component styles and ensure precise print layouts.
 - **State Management:** Custom hooks.
-- **Quality Control:**
-  - **ESLint Evolution:** Originally implemented with Airbnb’s JavaScript Style Guide, then migrated to a custom **flat config** setup tailored specifically for the TypeScript transition.
-  - **Code Hygiene:** Leverages `eslint-plugin-perfectionist` with **custom import groups** that mirror the project’s folder structure (Components, Hooks, Pages, Utils), reducing cognitive load.
-  - **React Best Practices:** Integrates `eslint-plugin-react-you-might-not-need-an-effect` to prevent anti-patterns and encourage derived state over redundant effects.
-  - **Accessibility Linting:** `eslint-plugin-jsx-a11y` with strict settings to catch non-semantic markup or missing ARIA labels during development.
-  - **Stylelint:** Configured with `stylelint-config-sass-guidelines` for best practices and `concentric-order` for consistent property sorting. Explicitly enforces a **strict nesting limit (max-depth: 3)** to prevent high specificity issues and maintain readable stylesheets.
-  - **Prettier:** Ensures consistent formatting across all file types.
-  - **Husky & lint-staged:** Pre-commit hooks that prevent unformatted or broken code from entering the repository.
+- **Quality Control:** ESLint, Stylelint, Prettier, Husky and lint-staged support the workflow; executable settings and commands live in the [configuration](package.json). See the [verification reference](docs/reference/verification.md) for the distinction between checks and review.
+  - The ESLint setup originally used Airbnb's JavaScript Style Guide before moving to a custom flat configuration for TypeScript.
 
 ### Documentation & Roadmap
 
@@ -96,13 +78,9 @@ Comprehensive technical documentation, architecture deep dives and the complete 
 - **Documentation Portal:** [docs.resume-constructor.sholokhov.dev](https://docs.resume-constructor.sholokhov.dev)
 - **Detailed Roadmap & Technical Decisions:** [docs.resume-constructor.sholokhov.dev/guides/roadmap](https://docs.resume-constructor.sholokhov.dev/guides/roadmap)
 
-#### Major Planned Milestones
+#### Proposed Roadmap
 
-1. **Responsive Multi-Screen Workspace:** Unified desktop sidebar, side-by-side editing and live preview pane for tablet and desktop viewports (`@media (min-width: 768px)`). Mobile remains a focused single-column editor with the modal pre-download preview.
-2. **Pure JSX Live Preview (Tablet/Desktop):** Instant DOM preview engine providing typing feedback on wider viewports without canvas overhead while retaining the pre-download PDF inspection modal.
-3. **Data Persistence & Draft Recovery:** Automatic `localStorage` synchronisation with snapshot history.
-4. **Form Ergonomics & Semantic Fieldsets:** Refactoring item cards to semantic `<fieldset>` elements, skills input modernisation and consolidating contact sections.
-5. **Internationalisation (i18n):** Multilingual resume support and Cyrillic font subset loading.
+The backlog includes responsive multi-screen editing and a possible DOM live preview, draft recovery, form ergonomics and internationalisation. Layout, breakpoints and preview architecture are proposals requiring design approval rather than approved implementations. See the [roadmap](https://docs.resume-constructor.sholokhov.dev/guides/roadmap) for details.
 
 ### Setup & Development
 
@@ -118,7 +96,7 @@ bun install
 # Run development server
 bun start
 
-# Run unit and integration tests (11.7k+ lines coverage)
+# Run interactive Vitest tests
 bun run test
 
 # Run E2E tests

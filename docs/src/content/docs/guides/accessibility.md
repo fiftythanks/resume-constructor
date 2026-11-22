@@ -1,9 +1,9 @@
 ---
 title: Inclusive Design & Accessibility (WCAG 2.2 AA)
-description: Accessibility architecture, focus management, roving tabindex, dialog traps and polite live announcements in Resume Constructor.
+description: Keyboard navigation, focus management, announcements and export accessibility in Resume Constructor.
 ---
 
-Accessibility is treated as a core architectural constraint rather than a post-development checklist. Resume Constructor conforms strictly to the **WCAG 2.2 Level AA** standard, ensuring that every user interface element is fully operable via keyboard, announces dynamic state changes to assistive technologies and preserves focus continuity across modal and tab boundaries.
+WCAG 2.2 Level AA is the target for the editor and preview interaction, not a claim of verified conformance. The patterns below describe existing mechanisms, not proof that every interaction has been audited. See the [accessibility reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/accessibility.md) and [testing reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/testing.md).
 
 ```mermaid
 flowchart TD
@@ -34,12 +34,12 @@ The primary section navigation implements the **W3C WAI-ARIA Tabs Pattern**:
 
 ## 2. Modal Dialog Focus Trapping (`Popup`)
 
-The modal primitive in `src/components/Popup/` complies with the **W3C APG Modal Dialog Pattern**:
+The modal primitive in `src/components/Popup/` uses patterns from the **W3C APG Modal Dialog Pattern**:
 
 - **Native Dialog Semantics:** Built using the native HTML `<dialog>` element rendered via React portals into `#popup-root`.
 - **Attributes:** Configured with `aria-modal="true"` and `aria-labelledby="<id>-title"`.
 - **Focus Containment via `tabbable`:** When opened, focus is immediately shifted to the first interactive element. Pressing `Tab` or `Shift+Tab` cycles strictly within the modal boundaries.
-- **Real Browser Verification:** Automated unit and integration tests run inside headless Chromium via Vitest Browser Mode (`@vitest/browser-playwright`), verifying native `<dialog>` top-layer rendering, `Escape` dismissal and `tabbable`'s full visual geometry checks without JSDOM workarounds.
+- **Browser-Sensitive Behaviour:** Native dialog mechanics and focus geometry need browser evidence. Other tests use Node or a simulated DOM as appropriate; not all unit and integration tests run in Chromium.
 - **Dismissal & Focus Restoration:** Pressing `Escape` or clicking the close button dismisses the dialog and returns keyboard focus to the originating trigger element.
 
 ---
@@ -58,11 +58,19 @@ When a keyboard user tabs from the navbar into an open tabpanel, focus lands on 
 
 ## 4. Screen Reader Live Announcements
 
-Dynamic UI updates — such as section activations, deletions and reordering operations — are communicated non-disruptively using an `aria-live="polite"` live region located in `src/App/App.tsx`:
+The application uses an `aria-live="polite"` region in `src/App/App.tsx` for dynamic UI updates such as section activations, deletions and reordering. Polite announcements wait for the current screen reader utterance; other interactions may require a different urgency.
 
-- **Polite Politeness Setting:** Uses `aria-live="polite"` so announcements are spoken once the screen reader finishes its current utterance, avoiding aggressive interruptions.
+- **Live Region:** The existing polite region communicates contextual changes.
 - **Dynamic Diffing:** `useAppState` calculates set symmetric differences between previous and current section states, dispatching contextual announcements such as:
   - `"Section Work Experience was added."`
   - `"Section Personal Details was opened."`
   - `"Editor Mode on. To move focus to tabs for editing, press Tab."`
 - **Drag-and-Drop Feedback:** Detailed feedback announces when sortable items are picked up, moved over target positions, dropped or cancelled.
+
+Initial drag feedback should not misleadingly suggest that an item has moved over itself; the implementation context is `src/components/BulletPoints/bulletPointsDnd.ts`.
+
+## 5. Exported CV Accessibility
+
+Accessible exported CVs are a future goal distinct from web accessibility. Semantic structure and meaningful reading order are needed; selectable text, metadata and working links alone do not establish them.
+
+On 14 November 2026, a synthetic probe using `@react-pdf/renderer` 4.9.0 and `pdfjs-dist` 6.4.299 extracted text and a link but found no PDF structure tree or heading/list roles. This is evidence of a current semantic export gap in that representative output, not a test of an actual CV template or proof that accessible PDF generation is impossible. The [accessibility reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/accessibility.md) records the scope and limitations.

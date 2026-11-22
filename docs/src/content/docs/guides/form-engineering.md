@@ -3,7 +3,7 @@ title: Form Engineering & Section Architecture
 description: Granular analysis of form controls, accessibility semantics, dynamic pagination and drag-and-drop mechanics in Resume Constructor.
 ---
 
-The editing interface of Resume Constructor is structured around seven domain sections, each mapped to a dedicated tabpanel in the application shell. Rather than relying on generic form wrappers, every page is custom-built to balance strict WCAG 2.2 AA accessibility, atomic state mutations via Immer and tactile keyboard operability.
+The editing interface is organised around section tabpanels in the application shell. Its forms combine explicit labels, state updates and keyboard interaction. WCAG 2.2 AA is a web target rather than a claim of complete conformance; see the [accessibility reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/accessibility.md) and [TypeScript and React reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/typescript-react.md).
 
 ```mermaid
 flowchart LR
@@ -21,26 +21,13 @@ Every section component is bound to the sidebar navigation using explicit WAI-AR
 
 - **Tabpanel Binding:** The root element of each page is a `<section>` element marked with `role="tabpanel"`, `id="<sectionId>-tabpanel"` and `aria-labelledby="<sectionId>"`.
 - **Explicit Label Coupling:** Under `jsx-a11y/label-has-associated-control`, implicit wrapping is strictly prohibited. Every `<input>` and `<textarea>` control is programmatically linked to an adjacent `<label>` through matching `id` and `htmlFor` attributes.
-- **Natural DOM Source Order & Unassisted Tab Flow:** The shell and page DOM are
-  laid out so that document source order strictly mirrors logical reading
-  order: progressing from the `Sidebar`/`Navbar` tabs, through the active
-  tabpanel in `<main>`, to individual form fields in linear succession. Because
-  positive `tabIndex` values are never used, forward keyboard navigation (`Tab`)
-  from the active navbar tab directly into the panel's first interactive control
-  occurs 100% natively via browser heuristics without synthetic event listeners
-  or manual focus redirection.
-- **Surgical Reverse Focus Boundary Interception:** The only focus edge
-  requiring programmatic intervention is the reverse direction. When navigating
-  backwards via `Shift+Tab` from the first interactive control inside any
-  tabpanel, `useLastComponentBeforeTabpanel` intercepts the event and returns
-  focus directly to the controlling navbar tab button. This bridges the only gap
-  in native document flow to preserve bidirectional keyboard symmetry.
+- **DOM Order & Focus:** The shell and page order support forward keyboard navigation from the navbar into the active panel. `useLastComponentBeforeTabpanel` handles a reverse-navigation boundary by returning focus from the first interactive control to the controlling tab. These patterns do not establish that every focus transition is covered.
 
 ---
 
-## 2. Domain Data Structures
+## 2. Legacy Domain Data Structures
 
-The editor manages seven discrete section schemas defined in `src/types/resumeData.ts`:
+The following table describes the legacy model formerly defined in `src/types/resumeData.ts`. A separate domain migration is pending; this table is historical context, not a specification of the new data model.
 
 | Section            | Model Interface  | Primary Properties                                             | Key Dynamic Behaviours                                                  |
 | ------------------ | ---------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -66,7 +53,7 @@ In multi-item sections (Education, Experience and Projects), items are presented
 
 ## 4. Drag-and-Drop Architecture (`@dnd-kit`)
 
-Accomplishment lists in jobs, degrees, projects and skills utilize `@dnd-kit/core` and `@dnd-kit/sortable` inside the reusable `BulletPoints` primitive:
+Accomplishment lists in jobs, degrees, projects and skills use `@dnd-kit/core` and `@dnd-kit/sortable` inside the reusable `BulletPoints` primitive:
 
 - **Sensors:** Configured with `PointerSensor` (requiring a distance threshold before drag initiation to distinguish intentional drags from clicks) and `KeyboardSensor` (using `sortableKeyboardCoordinates`).
 - **Modifiers:** Constrained with `restrictToVerticalAxis` and `restrictToParentElement` to keep draggable items within their visual bounds.
