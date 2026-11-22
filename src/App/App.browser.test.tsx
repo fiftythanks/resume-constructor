@@ -88,14 +88,24 @@ describe('App', () => {
         });
 
         // ACT
-        /**
-         * Draggable tabs run an infinite CSS shake animation in editor mode,
-         * so Playwright's layout stability check must be bypassed via `force`.
-         */
-        await user.dragAndDrop(sourceTab, targetTab, {
-          force: true,
-          steps: 5,
-        });
+        // Wait for the navbar's slide-in transition to settle.
+        await navbar.hover();
+        // `force: true` skips Playwright's stability check while the tabs shake.
+        await sourceTab.hover({ force: true });
+        await user.pointer('[MouseLeft>]');
+        try {
+          await targetTab.hover({ force: true });
+          // Wait for `dnd-kit` to recognise the target before releasing.
+          await expect
+            .element(
+              page.getByText(
+                'Draggable item education was moved over droppable area skills.',
+              ),
+            )
+            .toBeInTheDocument();
+        } finally {
+          await user.pointer('[/MouseLeft]');
+        }
 
         // ASSERT
         const tabIds = navbar

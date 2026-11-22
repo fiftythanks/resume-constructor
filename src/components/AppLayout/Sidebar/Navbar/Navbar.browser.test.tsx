@@ -67,7 +67,22 @@ describe('Navbar', () => {
       });
 
       // Act
-      await user.dragAndDrop(sourceTab, targetTab, { force: true });
+      // `force: true` skips Playwright's stability check while the tabs shake.
+      await sourceTab.hover({ force: true });
+      await user.pointer('[MouseLeft>]');
+      try {
+        await targetTab.hover({ force: true });
+        // Wait for `dnd-kit` to recognise the target before releasing.
+        await expect
+          .element(
+            page.getByText(
+              'Draggable item education was moved over droppable area skills.',
+            ),
+          )
+          .toBeInTheDocument();
+      } finally {
+        await user.pointer('[/MouseLeft]');
+      }
 
       // Assert
       expect(reorderSectionsMock).toHaveBeenCalledTimes(1);
