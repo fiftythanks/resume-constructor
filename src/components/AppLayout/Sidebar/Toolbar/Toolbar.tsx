@@ -6,23 +6,16 @@ import { clsx } from 'clsx';
 import AppbarIconButton from '@/components/AppbarIconButton';
 import Preview from '@/components/Preview';
 
-import possibleSectionIds from '@/utils/possibleSectionIds';
+import getControlledIds from './getControlledIds';
 
 import deleteSrc from '@/assets/icons/clear.svg';
 import fillSrc from '@/assets/icons/fill.svg';
+import previewSrc from '@/assets/icons/preview.svg';
 
 import './Toolbar.scss';
 
-import previewSrc from '@/assets/icons/preview.svg';
-
-import type {
-  ResumeData,
-  SectionId,
-  SectionIds,
-  SectionIdsDeletable,
-  TabpanelIds,
-} from '@/types/resumeData';
-import type { ArraySplice, ReadonlyDeep } from 'type-fest';
+import type { ResumeData, SectionId } from '@/types/resumeData';
+import type { ReadonlyDeep } from 'type-fest';
 
 export interface ToolbarProps {
   activeSectionIds: SectionId[];
@@ -121,20 +114,7 @@ export default function Toolbar({
     }
   }
 
-  // Ids necessary for correct `aria-controls`.
-
-  const deletableSectionIds: SectionIdsDeletable = possibleSectionIds.toSpliced(
-    0,
-    1,
-  ) as ArraySplice<SectionIds, 0, 1>;
-
-  type AppendSuffix<T extends SectionIds> = {
-    [K in keyof T]: `${T[K]}-tabpanel`;
-  };
-
-  const tabpanelIds: TabpanelIds = possibleSectionIds.map(
-    (sectionId) => `${sectionId}-tabpanel`,
-  ) as AppendSuffix<SectionIds>;
+  const controlledIds = getControlledIds();
 
   return (
     <>
@@ -147,7 +127,7 @@ export default function Toolbar({
         {/* TODO: add a warning that clicking "Clear All" will result in loss of all data. */}
         <AppbarIconButton
           // All sections' tabs but the undeletable "Personal Details"'s one and all tabpanels.
-          aria-controls={clsx([...deletableSectionIds, ...tabpanelIds])}
+          aria-controls={controlledIds}
           aria-label="Clear All"
           className="Toolbar-Item Toolbar-Item_deleteAll"
           iconSrc={deleteSrc}
@@ -161,7 +141,7 @@ export default function Toolbar({
         {/* TODO: add a warning that clicking "Fill All" will result in loss of all data. */}
         <AppbarIconButton
           // All sections' tabs but the undeletable "Personal Details"'s one and all tabpanels.
-          aria-controls={clsx([...deletableSectionIds, ...tabpanelIds])}
+          aria-controls={controlledIds}
           aria-label="Fill All"
           className="Toolbar-Item Toolbar-Item_fillAll"
           iconSrc={fillSrc}

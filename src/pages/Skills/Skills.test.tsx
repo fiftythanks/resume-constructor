@@ -6,7 +6,7 @@
 
 import { getByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import Skills from './Skills';
 
@@ -108,7 +108,7 @@ describe('Skills', () => {
 
     it('should call `addLanguage` when a language is added via the add-button', async () => {
       render(<div aria-label="Skills" id="skills" />);
-      const addLanguageMock = jest.fn();
+      const addLanguageMock = vi.fn();
       let props = getProps();
 
       props = {
@@ -130,7 +130,7 @@ describe('Skills', () => {
 
     it('should call `deleteLanguage` with the correct index when a language is deleted via the corresponding delete button', async () => {
       render(<div aria-label="Skills" id="skills" />);
-      const deleteLanguageMock = jest.fn((_languageIndex: number) => {});
+      const deleteLanguageMock = vi.fn((_languageIndex: number) => {});
       let props = getProps();
 
       props = {
@@ -156,7 +156,7 @@ describe('Skills', () => {
     it('should call `editLanguage` with the correct index when a language is edited via the corresponding text input', async () => {
       render(<div aria-label="Skills" id="skills" />);
 
-      const editLanguageMock = jest.fn(
+      const editLanguageMock = vi.fn(
         (_languageIndex: number, _value: string) => {},
       );
 
@@ -190,7 +190,7 @@ describe('Skills', () => {
     it('should call `updateScreenReaderAnnouncement` when an important change is made to Languages via the corresponding controls (not DnD related)', async () => {
       render(<div aria-label="Skills" id="skills" />);
 
-      const updateScreenReaderAnnouncementMock = jest.fn(
+      const updateScreenReaderAnnouncementMock = vi.fn(
         (_announcement: string) => {},
       );
 
@@ -256,7 +256,7 @@ describe('Skills', () => {
 
     it('should call `addFramework` when a framework is added via the add-button', async () => {
       render(<div aria-label="Skills" id="skills" />);
-      const addFrameworkMock = jest.fn();
+      const addFrameworkMock = vi.fn();
       let props = getProps();
 
       props = {
@@ -278,7 +278,7 @@ describe('Skills', () => {
 
     it('should call `deleteFramework` with the correct index when a framework is deleted via the corresponding delete button', async () => {
       render(<div aria-label="Skills" id="skills" />);
-      const deleteFrameworkMock = jest.fn((_frameworkIndex: number) => {});
+      const deleteFrameworkMock = vi.fn((_frameworkIndex: number) => {});
       let props = getProps();
 
       props = {
@@ -306,7 +306,7 @@ describe('Skills', () => {
     it('should call `editFramework` with the correct index when a framework is edited via the corresponding text input', async () => {
       render(<div aria-label="Skills" id="skills" />);
 
-      const editFrameworkMock = jest.fn(
+      const editFrameworkMock = vi.fn(
         (_frameworkIndex: number, _value: string) => {},
       );
 
@@ -346,7 +346,7 @@ describe('Skills', () => {
     it('should call `updateScreenReaderAnnouncement` when an important change is made to Frameworks via the corresponding controls (not DnD related)', async () => {
       render(<div aria-label="Skills" id="skills" />);
 
-      const updateScreenReaderAnnouncementMock = jest.fn(
+      const updateScreenReaderAnnouncementMock = vi.fn(
         (_announcement: string) => {},
       );
 
@@ -405,7 +405,7 @@ describe('Skills', () => {
 
     it('should call `addTool` when a tool is added via the add-button', async () => {
       render(<div aria-label="Skills" id="skills" />);
-      const addToolMock = jest.fn();
+      const addToolMock = vi.fn();
       let props = getProps();
 
       props = {
@@ -427,7 +427,7 @@ describe('Skills', () => {
 
     it('should call `deleteTool` with the correct index when a tool is deleted via the corresponding delete button', async () => {
       render(<div aria-label="Skills" id="skills" />);
-      const deleteToolMock = jest.fn((_toolIndex: number) => {});
+      const deleteToolMock = vi.fn((_toolIndex: number) => {});
       let props = getProps();
 
       props = {
@@ -455,7 +455,7 @@ describe('Skills', () => {
     it('should call `editTool` with the correct index when a tool is edited via the corresponding text input', async () => {
       render(<div aria-label="Skills" id="skills" />);
 
-      const editToolMock = jest.fn((_toolIndex: number, _value: string) => {});
+      const editToolMock = vi.fn((_toolIndex: number, _value: string) => {});
 
       let props = getProps();
 
@@ -489,7 +489,7 @@ describe('Skills', () => {
     it('should call `updateScreenReaderAnnouncement` when an important change is made to Tools via the corresponding controls (not DnD related)', async () => {
       render(<div aria-label="Skills" id="skills" />);
 
-      const updateScreenReaderAnnouncementMock = jest.fn(
+      const updateScreenReaderAnnouncementMock = vi.fn(
         (_announcement: string) => {},
       );
 

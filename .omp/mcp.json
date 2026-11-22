@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "chrome-devtools": {
+      "type": "stdio",
+      "instructions": false,
+      "command": "${HOME}/.local/share/resume-constructor-tools/chrome-devtools/node_modules/.bin/chrome-devtools-mcp",
+      "args": [
+        "--headless",
+        "--isolated",
+        "--executable-path=/usr/bin/google-chrome-stable",
+        "--no-usage-statistics",
+        "--no-performance-crux",
+        "--redact-network-headers",
+        "--no-file-navigations"
+      ],
+      "env": {
+        "CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS": "1"
+      }
+    },
+    "serena": {
+      "type": "stdio",
+      "instructions": false,
+      "command": "${HOME}/.local/bin/serena",
+      "args": [
+        "start-mcp-server",
+        "--project-from-cwd",
+        "--context",
+        "ide",
+        "--agent-interface",
+        "tools",
+        "--open-web-dashboard",
+        "false"
+      ],
+      "env": {
+        "SERENA_HOME": "${HOME}/.local/share/resume-constructor-tools/serena-state"
+      }
+    }
+  }
+}

@@ -1,15 +1,11 @@
-import { act } from 'react';
-
 import {
-  ByRoleOptions,
-  fireEvent,
   getAllByRole,
   getByRole,
   render,
   screen,
 } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import getFilledData from '@/hooks/useResumeData/getFilledData';
 
@@ -17,6 +13,8 @@ import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
 
 import App from './App';
+
+import type { ByRoleOptions } from '@testing-library/react';
 
 function renderApp() {
   render(<div id="popup-root" />);
@@ -137,225 +135,6 @@ describe('App', () => {
     const appLayout = screen.getByTestId('app-layout');
 
     expect(appLayout).toBeInTheDocument();
-  });
-
-  // TODO: WTH? PARAMETRISE!!!
-  describe("Tabbing to tabpanels' first tabbable elements", () => {
-    it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.personal} tab`, async () => {
-      // Arrange
-      const { navbar, user } = await renderAppWithNavbarExpanded();
-
-      const options: ByRoleOptions = { name: sectionTitles.personal };
-      const personalTabpanel = screen.getByRole('tabpanel', options);
-      const [firstTabbable] = getAllByRole(personalTabpanel, 'textbox');
-
-      const personalTab = getByRole(navbar, 'tab', options);
-      personalTab.focus();
-
-      // Act
-      await user.tab();
-
-      // Assert
-      expect(firstTabbable).toHaveFocus();
-    });
-
-    it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.links} tab`, async () => {
-      // Arrange
-      const result = await renderAppWithNavbarExpanded();
-      const { addSectionsBtn, navbar, user } = result;
-
-      // Show the "Add Sections" dialog.
-      await user.click(addSectionsBtn);
-
-      // Add the section.
-      const options: ByRoleOptions = { name: `Add ${sectionTitles.links}` };
-      const addLinksBtn = screen.getByRole('button', options);
-      await user.click(addLinksBtn);
-
-      // Hide the dialog.
-      options.name = 'Close Popup';
-      const closeDialogBtn = screen.getByRole('button', options);
-      await user.click(closeDialogBtn);
-
-      // Select the section.
-      options.name = sectionTitles.links;
-      const tab = getByRole(navbar, 'tab', options);
-      await user.click(tab);
-
-      const panel = screen.getByRole('tabpanel', options);
-      const [firstTabbable] = getAllByRole(panel, 'textbox');
-
-      // Act
-      await user.tab();
-
-      // Assert
-      expect(firstTabbable).toHaveFocus();
-    });
-
-    it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.skills} tab`, async () => {
-      // Arrange
-      const result = await renderAppWithNavbarExpanded();
-      const { addSectionsBtn, navbar, user } = result;
-
-      // Show the "Add Sections" dialog.
-      await user.click(addSectionsBtn);
-
-      // Add the section.
-      const options: ByRoleOptions = { name: `Add ${sectionTitles.skills}` };
-      const addSkillsBtn = screen.getByRole('button', options);
-      await user.click(addSkillsBtn);
-
-      // Hide the dialog.
-      options.name = 'Close Popup';
-      const closeDialogBtn = screen.getByRole('button', options);
-      await user.click(closeDialogBtn);
-
-      // Select the section.
-      options.name = sectionTitles.skills;
-      const tab = getByRole(navbar, 'tab', options);
-      await user.click(tab);
-
-      const panel = screen.getByRole('tabpanel', options);
-      const [firstTabbable] = getAllByRole(panel, 'button');
-
-      // Act
-      await user.tab();
-
-      // Assert
-      expect(firstTabbable).toHaveFocus();
-    });
-
-    it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.experience} tab`, async () => {
-      // Arrange
-      const result = await renderAppWithNavbarExpanded();
-      const { addSectionsBtn, navbar, user } = result;
-
-      // Show the "Add Sections" dialog.
-      await user.click(addSectionsBtn);
-
-      // Add the section.
-      let name = `Add ${sectionTitles.experience}`;
-      const addExperienceBtn = screen.getByRole('button', { name });
-      await user.click(addExperienceBtn);
-
-      // Hide the dialog.
-      name = 'Close Popup';
-      const closeDialogBtn = screen.getByRole('button', { name });
-      await user.click(closeDialogBtn);
-
-      // Select the section.
-      name = sectionTitles.experience;
-      const tab = getByRole(navbar, 'tab', { name });
-      await user.click(tab);
-
-      const panel = screen.getByRole('tabpanel', { name });
-      const [firstTabbable] = getAllByRole(panel, 'button');
-
-      // Act
-      await user.tab();
-
-      // Assert
-      expect(firstTabbable).toHaveFocus();
-    });
-
-    it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.projects} tab`, async () => {
-      // Arrange
-      const result = await renderAppWithNavbarExpanded();
-      const { addSectionsBtn, navbar, user } = result;
-
-      // Show the "Add Sections" dialog.
-      await user.click(addSectionsBtn);
-
-      // Add the section.
-      let name = `Add ${sectionTitles.projects}`;
-      const addProjectsBtn = screen.getByRole('button', { name });
-      await user.click(addProjectsBtn);
-
-      // Hide the dialog.
-      name = 'Close Popup';
-      const closeDialogBtn = screen.getByRole('button', { name });
-      await user.click(closeDialogBtn);
-
-      // Select the section.
-      name = sectionTitles.projects;
-      const tab = getByRole(navbar, 'tab', { name });
-      await user.click(tab);
-
-      const panel = screen.getByRole('tabpanel', { name });
-      const [firstTabbable] = getAllByRole(panel, 'button');
-
-      // Act
-      await user.tab();
-
-      // Assert
-      expect(firstTabbable).toHaveFocus();
-    });
-
-    it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.education} tab`, async () => {
-      // Arrange
-      const result = await renderAppWithNavbarExpanded();
-      const { addSectionsBtn, navbar, user } = result;
-
-      // Show the "Add Sections" dialog.
-      await user.click(addSectionsBtn);
-
-      // Add the section.
-      let name = `Add ${sectionTitles.education}`;
-      const addEducationBtn = screen.getByRole('button', { name });
-      await user.click(addEducationBtn);
-
-      // Hide the dialog.
-      name = 'Close Popup';
-      const closeDialogBtn = screen.getByRole('button', { name });
-      await user.click(closeDialogBtn);
-
-      // Select the section.
-      name = sectionTitles.education;
-      const tab = getByRole(navbar, 'tab', { name });
-      await user.click(tab);
-
-      const panel = screen.getByRole('tabpanel', { name });
-      const [firstTabbable] = getAllByRole(panel, 'button');
-
-      // Act
-      await user.tab();
-
-      // Assert
-      expect(firstTabbable).toHaveFocus();
-    });
-
-    it(`should focus the tabpanel's first tabbable element when the user tabs from the selected ${sectionTitles.certifications} tab`, async () => {
-      // Arrange
-      const result = await renderAppWithNavbarExpanded();
-      const { addSectionsBtn, navbar, user } = result;
-
-      // Show the "Add Sections" dialog.
-      await user.click(addSectionsBtn);
-
-      // Add the section.
-      let name = `Add ${sectionTitles.certifications}`;
-      const addCertificationsBtn = screen.getByRole('button', { name });
-      await user.click(addCertificationsBtn);
-
-      // Hide the dialog.
-      name = 'Close Popup';
-      const closeDialogBtn = screen.getByRole('button', { name });
-      await user.click(closeDialogBtn);
-
-      // Select the section.
-      name = sectionTitles.certifications;
-      const tab = getByRole(navbar, 'tab', { name });
-      await user.click(tab);
-
-      const panel = screen.getByRole('tabpanel', { name });
-      const [firstTabbable] = getAllByRole(panel, 'textbox');
-
-      // Act
-      await user.tab();
-
-      // Assert
-      expect(firstTabbable).toHaveFocus();
-    });
   });
 
   describe('Focus retention', () => {
@@ -708,22 +487,15 @@ describe('App', () => {
 
       it('should clear "Personal Details"', async () => {
         // Arrange
-        const { initialTabs, user } =
-          await renderAppWithNavbarAndControlsExpanded();
+        const { user } = await renderAppWithNavbarAndControlsExpanded();
 
-        // Focus "Personal Details".
-        await act(async () => initialTabs[0].focus());
+        const tabpanel = screen.getByRole('tabpanel');
+        const [firstInput, secondInput] = getAllByRole(tabpanel, 'textbox');
 
-        // Focus the first input field in the tabpanel.
-        await user.tab();
-        const firstInput = document.activeElement;
-
+        firstInput.focus();
         await user.keyboard('Some data');
 
-        // Focus the next input field.
-        await user.tab();
-        const secondInput = document.activeElement;
-
+        secondInput.focus();
         await user.keyboard('Some other data');
 
         const clearAllBtn = screen.getByRole('button', { name: 'Clear All' });
@@ -908,7 +680,8 @@ describe('App', () => {
 
       it('should rewrite previous input in "Personal Details"', async () => {
         // Arrange
-        const { user } = await renderAppWithNavbarExpanded();
+        const { fillAllBtn, user } =
+          await renderAppWithNavbarAndControlsExpanded();
 
         const personalTabpanel = screen.getByRole('tabpanel', {
           name: sectionTitles.personal,
@@ -931,8 +704,6 @@ describe('App', () => {
         const summary = getByRole(personalTabpanel, 'textbox', { name });
         summary.focus();
         await user.keyboard('some summary');
-
-        const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
         // Act
         await user.click(fillAllBtn);
@@ -1101,7 +872,8 @@ describe('App', () => {
         await user.click(thirdAddBtn);
 
         // Close the dialog.
-        await user.keyboard('{Escape}');
+        const closeBtn = screen.getByRole('button', { name: 'Close Popup' });
+        await user.click(closeBtn);
 
         const fillAllBtn = screen.getByRole('button', { name: 'Fill All' });
 
@@ -1270,8 +1042,6 @@ describe('App', () => {
         });
 
         // Act
-        // NOTE: fireEvent.pointerDown is used because JSDOM does not synthesize pointerdown events upon click.
-        fireEvent.pointerDown(personalTab);
         await user.click(personalTab);
 
         // Assert

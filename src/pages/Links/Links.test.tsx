@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import Links from './Links';
 
@@ -100,7 +100,7 @@ describe('Links', () => {
       it("should call `updateLinks` when Website link's text is changed via the corresponding text input", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',
@@ -159,7 +159,7 @@ describe('Links', () => {
       it("should call `updateLinks` when Website link's URL is changed via the corresponding text input", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',
@@ -220,7 +220,7 @@ describe('Links', () => {
       it("should call `updateLinks` when GitHub link's text is changed via the corresponding text input", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',
@@ -279,7 +279,7 @@ describe('Links', () => {
       it("should call `updateLinks` when GitHub link's URL is changed via the corresponding text input", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',
@@ -340,7 +340,7 @@ describe('Links', () => {
       it("should call `updateLinks` when LinkedIn link's text is changed via the corresponding text input", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',
@@ -399,7 +399,7 @@ describe('Links', () => {
       it("should call `updateLinks` when LinkedIn link's URL is changed", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',
@@ -460,7 +460,7 @@ describe('Links', () => {
       it("should call `updateLinks` when Telegram link's text is changed via the corresponding text input", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',
@@ -519,7 +519,7 @@ describe('Links', () => {
       it("should call `updateLinks` when Telegram link's URL is changed via the corresponding text input", async () => {
         render(<div aria-label="Links" id="links" />);
 
-        const updateLinksMock = jest.fn(
+        const updateLinksMock = vi.fn(
           (
             _field: 'github' | 'linkedin' | 'telegram' | 'website',
             _type: 'link' | 'text',

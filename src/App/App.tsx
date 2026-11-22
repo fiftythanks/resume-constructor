@@ -1,4 +1,5 @@
-import { RefObject, useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
+import type { RefObject } from 'react';
 
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { tabbable } from 'tabbable';
@@ -36,7 +37,7 @@ import type { SectionId } from '@/types/resumeData';
 /**
  * The app needs a Russian version, since I will be using it for my job search.
  * There needs to be a toggle or something like that. Russian language needs a
- * different typeface, and the style of the resume should be a bit different, I
+ * different typeface and the style of the resume should be a bit different, I
  * think.
  */
 // TODO: add Russian version.
@@ -45,10 +46,10 @@ import type { SectionId } from '@/types/resumeData';
  * I've just stumbled upon one great article about accessibility,
  * https://blog.logrocket.com/ux-design/wcag-3-vs-2-ux/.
  * I should go through it thoroughly, as well as through all basic WCAG
- * guidelines, and see what I should change in the app to reasonably
+ * guidelines and see what I should change in the app to reasonably
  * improve accessibility.
  */
-// TODO: fix color contrasts with APCA (https://apcacontrast.com/).
+// TODO: fix colour contrasts with APCA (https://apcacontrast.com/).
 // TODO: go through the article and change whatever needs a change.
 
 // TODO: determine which fields are those that aren't desirable in a software engineer's resume and add hints to their labels that explain that they aren't desirable.
@@ -186,32 +187,8 @@ export default function App() {
   const focusSection = useCallback(() => {
     if (sectionRefs[openedSectionId].current === null) return;
 
-    /**
-     * `tabbable` has no support for `jsdom`. Its documentation highly
-     * recommends setting `displayCheck` to `none` for `jsdom`, therefore.
-     *
-     * TODO: A better solution might be to define a global mock like this:
-     *
-     * ```
-     * // __mocks__/tabbable.js
-     *
-     * const lib = jest.requireActual('tabbable');
-     *
-     * const tabbable = {
-     *    ...lib,
-     *    tabbable: (node, options) => lib.tabbable(node, { ...options, displayCheck: 'none' }),
-     *    focusable: (node, options) => lib.focusable(node, { ...options, displayCheck: 'none' }),
-     *    isFocusable: (node, options) => lib.isFocusable(node, { ...options, displayCheck: 'none' }),
-     *    isTabbable: (node, options) => lib.isTabbable(node, { ...options, displayCheck: 'none' }),
-     * };
-     *
-     * module.exports = tabbable;
-     * ```
-     */
     // TODO: Verify `sectionRefs[openedSectionId].current.isConnected` and `allTabbable[0].isConnected` before invoking `.focus()`.
-    const allTabbable = tabbable(sectionRefs[openedSectionId].current, {
-      displayCheck: process.env.NODE_ENV === 'test' ? 'none' : 'full',
-    });
+    const allTabbable = tabbable(sectionRefs[openedSectionId].current);
 
     if (allTabbable.length > 0) allTabbable[0].focus();
   }, [openedSectionId, sectionRefs]);

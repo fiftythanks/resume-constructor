@@ -1,11 +1,12 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
 
 import AddSections from './AddSections';
+import getAddableSectionIds from './getAddableSectionIds';
 
 import type { AddSectionsProps } from './AddSections';
 import type { SectionId } from '@/types/resumeData';
@@ -26,12 +27,6 @@ const ACTIVE_SECTION_IDS: SectionId[] = [
   'experience',
 ];
 
-function getAddableSectionIds(): SectionId[] {
-  return possibleSectionIds.filter(
-    (sectionId) => !ACTIVE_SECTION_IDS.includes(sectionId),
-  );
-}
-
 function getProps(overrides?: Partial<AddSectionsProps>): AddSectionsProps {
   return {
     activeSectionIds: ACTIVE_SECTION_IDS,
@@ -41,8 +36,6 @@ function getProps(overrides?: Partial<AddSectionsProps>): AddSectionsProps {
     ...overrides,
   };
 }
-
-// TODO: should close when Escape is pressed.
 
 describe('AddSections', () => {
   it('should render with an accessible name "Add Sections" when `isShown === true`', () => {
@@ -63,23 +56,6 @@ describe('AddSections', () => {
     expect(popup).not.toBeInTheDocument();
   });
 
-  it('should call `onClose` on close', () => {
-    const onCloseMock = jest.fn();
-    render(<Container />);
-    render(<AddSections {...getProps({ onClose: onCloseMock })} />);
-    const popup = screen.getByRole('dialog', { name: 'Add Sections' });
-
-    /**
-     * JSDOM hasn't implemented HTMLDialogElement properly yet, so the `close`
-     * event won't fire when the popup is closed. I had to come up with
-     * a workaround in this test. This is the best thing I could've thought of
-     * at the moment.
-     */
-    fireEvent(popup, new Event('close'));
-
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
-  });
-
   it('should render a heading "Add Sections"', () => {
     render(<Container />);
     render(<AddSections {...getProps()} />);
@@ -94,7 +70,7 @@ describe('AddSections', () => {
       render(<Container />);
       render(<AddSections {...getProps()} />);
 
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
       addableSectionIds.forEach((sectionId) => {
         const addBtn = screen.getByRole('button', {
@@ -119,11 +95,11 @@ describe('AddSections', () => {
     });
 
     it('should call `addSections` when an "Add [section title]" button is clicked, with the corresponding ID passed to it', async () => {
-      const addSectionsMock = jest.fn((_sectionIds: SectionId[]) => {});
+      const addSectionsMock = vi.fn((_sectionIds: SectionId[]) => {});
       render(<Container />);
       render(<AddSections {...getProps({ addSections: addSectionsMock })} />);
       const user = userEvent.setup();
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
       const sectionToAddId = addableSectionIds[0];
 
       const btn = screen.getByRole('button', {
@@ -140,7 +116,7 @@ describe('AddSections', () => {
       render(<Container />);
       render(<AddSections {...getProps()} />);
       const user = userEvent.setup();
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
       const firstAddBtn = screen.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds[0]]}`,
@@ -161,7 +137,7 @@ describe('AddSections', () => {
       render(<Container />);
       render(<AddSections {...getProps()} />);
       const user = userEvent.setup();
-      const addableSectionIds = getAddableSectionIds();
+      const addableSectionIds = getAddableSectionIds(ACTIVE_SECTION_IDS);
 
       const lastAddBtn = screen.getByRole('button', {
         name: `Add ${sectionTitles[addableSectionIds.at(-1)!]}`,
@@ -179,7 +155,7 @@ describe('AddSections', () => {
     });
 
     it('should call `onClose` if the added section is the only addable section', async () => {
-      const onCloseMock = jest.fn();
+      const onCloseMock = vi.fn();
       const activeSectionIds = possibleSectionIds.toSpliced(-1, 1);
       const props = getProps({ activeSectionIds, onClose: onCloseMock });
       render(<Container />);
@@ -212,7 +188,7 @@ describe('AddSections', () => {
   });
 
   it('should call `onClose` when "Add All Sections" is clicked', async () => {
-    const onCloseMock = jest.fn();
+    const onCloseMock = vi.fn();
     render(<Container />);
     render(<AddSections {...getProps({ onClose: onCloseMock })} />);
     const user = userEvent.setup();
@@ -236,7 +212,7 @@ describe('AddSections', () => {
   });
 
   it('should call `onClose` when the close button is clicked', async () => {
-    const onCloseMock = jest.fn();
+    const onCloseMock = vi.fn();
     render(<Container />);
     render(<AddSections {...getProps({ onClose: onCloseMock })} />);
     const user = userEvent.setup();

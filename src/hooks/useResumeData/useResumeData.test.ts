@@ -3,15 +3,14 @@ import { act, renderHook } from '@testing-library/react';
 import getDefaultData from './getDefaultData';
 import useResumeData from './useResumeData';
 
-import type { WritableDraft } from 'immer';
-import type { ReadonlyDeep } from 'type-fest';
-
-import {
+import type {
   ItemWithId,
   ResumeData,
   ResumeDataWithOptionalIds,
   ResumeDataWithoutIds,
 } from '@/types/resumeData';
+import type { WritableDraft } from 'immer';
+import type { ReadonlyDeep } from 'type-fest';
 
 function stripOfIds(data: ReadonlyDeep<ResumeData>): ResumeDataWithoutIds {
   const newData: ResumeDataWithOptionalIds = structuredClone(
@@ -277,7 +276,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.education.shownDegreeIndex).toBe(1);
         } else {
           await act(async () => {
@@ -285,7 +284,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.education.shownDegreeIndex).toBe(0);
         }
       });
@@ -626,7 +625,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.experience.shownJobIndex).toBe(1);
         } else {
           await act(async () => {
@@ -634,7 +633,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.experience.shownJobIndex).toBe(0);
         }
       });
@@ -1037,7 +1036,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.projects.shownProjectIndex).toBe(1);
         } else {
           await act(async () => {
@@ -1045,7 +1044,7 @@ describe('useResumeData', () => {
           });
 
           // It's too convenient and harmless here to not use it like that.
-          // eslint-disable-next-line jest/no-conditional-expect
+          // eslint-disable-next-line vitest/no-conditional-expect
           expect(result.current.data.projects.shownProjectIndex).toBe(0);
         }
       });

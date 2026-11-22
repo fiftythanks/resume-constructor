@@ -1,23 +1,23 @@
 /* eslint-disable import-x/no-named-as-default-member */
 import js from '@eslint/js';
 import json from '@eslint/json';
+import vitest from '@vitest/eslint-plugin';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import { createNodeResolver, importX } from 'eslint-plugin-import-x';
-import pluginJest from 'eslint-plugin-jest';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import nodePlugin from 'eslint-plugin-n';
 import perfectionist from 'eslint-plugin-perfectionist';
 import react from 'eslint-plugin-react';
-import * as reactHooks from 'eslint-plugin-react-hooks';
+import reactHooks from 'eslint-plugin-react-hooks';
 import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need-an-effect';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-// TODO: Update the signature (this one is deprecated).
-export default tseslint.config([
+export default tseslint.config(
   {
     ignores: [
+      '.agents/**',
       'dist/**',
       '**/dist/**',
       '**/.astro/**',
@@ -33,7 +33,6 @@ export default tseslint.config([
     plugins: {
       js,
       react,
-      reactHooks,
       jsxA11y,
       n: nodePlugin,
       'import-x': importX,
@@ -48,14 +47,13 @@ export default tseslint.config([
       importX.configs['flat/recommended'],
       nodePlugin.configs['flat/recommended'],
       perfectionist.configs['recommended-natural'],
-      reactHooks.configs['recommended-latest'],
+      reactHooks.configs.flat['recommended-latest'],
       reactYouMightNotNeedAnEffect.configs.recommended,
     ],
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.jest,
         ...globals.es2026,
       },
       parser: tseslint.parser,
@@ -102,6 +100,7 @@ export default tseslint.config([
       'n/no-unsupported-features/node-builtins': [
         'error',
         {
+          ignores: ['import.meta.dirname'],
           version: '>=22.16.0',
         },
       ],
@@ -251,10 +250,14 @@ export default tseslint.config([
         'error',
         {
           argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_',
         },
       ],
+
+      'react-hooks/refs': 'off',
+      'react-hooks/immutability': 'off',
     },
     settings: {
       'import-x/resolver-next': [
@@ -268,7 +271,7 @@ export default tseslint.config([
         '@typescript-eslint/parser': ['.mts', '.ts', '.tsx'],
       },
       react: {
-        version: 'detect',
+        version: '19.3',
       },
     },
   },
@@ -300,14 +303,18 @@ export default tseslint.config([
   },
   {
     files: ['**/*.{test,spec}.{mjs,js,jsx,mts,ts,tsx}'],
-    plugins: { jest: pluginJest },
+    plugins: { vitest },
     languageOptions: {
-      globals: pluginJest.environments.globals.globals,
+      globals: vitest.environments.env.globals,
     },
-    extends: [
-      pluginJest.configs['flat/recommended'],
-      pluginJest.configs['flat/style'],
-    ],
+    extends: [vitest.configs.recommended],
+    rules: {
+      'vitest/no-alias-methods': 'error',
+      'vitest/prefer-called-exactly-once-with': 'off',
+      'vitest/prefer-to-be': 'error',
+      'vitest/prefer-to-contain': 'error',
+      'vitest/prefer-to-have-length': 'error',
+    },
   },
   {
     files: ['**/*.json'],
@@ -316,4 +323,4 @@ export default tseslint.config([
     extends: [json.configs.recommended],
   },
   eslintConfigPrettier,
-]);
+);

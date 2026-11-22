@@ -1,9 +1,9 @@
 ---
 title: Resume Constructor Documentation
-description: Technical architecture, zero-bootstrap engineering and API reference for Resume Constructor.
+description: Developer guides and API reference for Resume Constructor.
 template: splash
 hero:
-  tagline: Production-grade, zero-bootstrap resume generator implementing The Tech Resume Inside Out.
+  tagline: Generate a standard software engineering CV from your content.
   actions:
     - text: Getting Started
       link: /getting-started/
@@ -12,4 +12,4 @@ hero:
 
 ## Overview
 
-Resume Constructor is a production-grade, zero-bootstrap resume generator built with React 19, TypeScript and SCSS BEM.
+Resume Constructor supplies the structure and formatting for a CV. You provide the career facts and wording, so the quality of its content depends on your choices. Explore the [product reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/product.md) for the intended structure and export goals.

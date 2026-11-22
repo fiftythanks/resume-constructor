@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import useDebouncedWindowSize from './useDebouncedWindowSize';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 describe('useDebouncedWindowSize', () => {
   const initialInnerHeight = window.innerHeight;
@@ -23,9 +23,10 @@ describe('useDebouncedWindowSize', () => {
     const { result } = renderHook(() => useDebouncedWindowSize());
 
     await act(async () => {
-      Object.defineProperty(window, innerWidth, {
-        writable: true,
+      Object.defineProperty(window, 'innerWidth', {
+        configurable: true,
         value: 1024,
+        writable: true,
       });
 
       window.dispatchEvent(new Event('resize'));
@@ -35,14 +36,14 @@ describe('useDebouncedWindowSize', () => {
     expect(result.current.innerWidth).toBe(initialInnerWidth);
 
     await act(async () => {
-      jest.runAllTimers();
+      vi.runAllTimers();
     });
 
     expect(result.current.innerWidth).toBe(1024);
   });
 
   it('should clean up the event listener on unmount', async () => {
-    const spy = jest.spyOn(window, 'removeEventListener');
+    const spy = vi.spyOn(window, 'removeEventListener');
     const { unmount } = renderHook(() => useDebouncedWindowSize());
 
     await act(async () => {

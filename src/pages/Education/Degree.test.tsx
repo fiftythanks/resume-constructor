@@ -3,11 +3,11 @@
  * feature in Node.
  */
 /* eslint-disable n/no-unsupported-features/node-builtins */
-import { RefObject } from 'react';
+import type { RefObject } from 'react';
 
 import { getByRole, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
 import cloneDeep from 'lodash/cloneDeep';
 
 import Degree from './Degree';
@@ -188,7 +188,7 @@ describe('Degree', () => {
   it('should call `edit(field, value)` when fields are changed via the corresponding text inputs', async () => {
     // Arrange
     type Field = 'address' | 'degree' | 'graduation' | 'uni';
-    const mockFn = jest.fn((_field: Field, _value: string) => {});
+    const mockFn = vi.fn((_field: Field, _value: string) => {});
     const functions = cloneDeep({ ...FUNCTIONS, edit: mockFn });
 
     render(<Degree {...getProps({ functions })} />);
@@ -284,7 +284,7 @@ describe('Degree', () => {
      */
     it('should call `updateScreenReaderAnnouncement` when an important change is made to the bullet points via the corresponding controls (not DnD related)', async () => {
       // Arrange
-      const mockFn = jest.fn((_announcement: string) => {});
+      const mockFn = vi.fn((_announcement: string) => {});
       const props = getProps({ updateScreenReaderAnnouncement: mockFn });
 
       render(<Degree {...props} />);
@@ -303,7 +303,7 @@ describe('Degree', () => {
 
     it('should call `addBulletPoint` when a bullet point is added', async () => {
       // Arrange
-      const mockFn = jest.fn();
+      const mockFn = vi.fn();
       const functions = cloneDeep({ ...FUNCTIONS, addBulletPoint: mockFn });
 
       render(<Degree {...getProps({ functions })} />);
@@ -319,7 +319,7 @@ describe('Degree', () => {
 
     it('should call `deleteBulletPoint` when a bullet point is deleted', async () => {
       // Arrange
-      const mockFn = jest.fn((_index: number) => {});
+      const mockFn = vi.fn((_index: number) => {});
       const functions = cloneDeep({ ...FUNCTIONS, deleteBulletPoint: mockFn });
 
       render(<Degree {...getProps({ functions })} />);
@@ -339,7 +339,7 @@ describe('Degree', () => {
 
     it("should call `editBulletPoint` when a bullet point is edited via it's corresponding text input", async () => {
       // Arrange
-      const mockFn = jest.fn((_index: number, _value: string) => {});
+      const mockFn = vi.fn((_index: number, _value: string) => {});
       const functions = cloneDeep({ ...FUNCTIONS, editBulletPoint: mockFn });
 
       render(<Degree {...getProps({ functions })} />);

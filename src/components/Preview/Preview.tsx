@@ -9,7 +9,7 @@ import {
 
 import { Font, PDFDownloadLink, usePDF } from '@react-pdf/renderer';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs';
+import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
 import useDebouncedWindowSize from '@/hooks/useDebouncedWindowSize';
 
@@ -145,9 +145,8 @@ export default function Preview({
       return;
     }
 
-    const paddingInline = parseFloat(
-      getComputedStyle(popupRef.current).paddingInline,
-    );
+    const paddingInline =
+      parseFloat(getComputedStyle(popupRef.current).paddingInline) || 0;
 
     const width = viewportWidth - 2 * paddingInline;
 
@@ -316,10 +315,7 @@ export default function Preview({
         aria-label="Close Popup"
         className="Preview-CloseBtn"
         type="button"
-        onClick={() => {
-          popupRef.current?.close();
-          onClose();
-        }}
+        onClick={onClose}
       >
         <img alt="Close Popup" height="32px" src={closeSrc} width="32px" />
       </button>
@@ -348,7 +344,9 @@ export default function Preview({
                 }
 
                 return (
-                  <Button modifiers={['Button_paddingInline_medium']}>
+                  <Button
+                    modifiers={['Button_size_smallest', 'Button_width_medium']}
+                  >
                     Download
                   </Button>
                 );
@@ -419,7 +417,9 @@ export default function Preview({
                 }
 
                 return (
-                  <Button modifiers={['Button_paddingInline_medium']}>
+                  <Button
+                    modifiers={['Button_size_smallest', 'Button_width_medium']}
+                  >
                     Download
                   </Button>
                 );

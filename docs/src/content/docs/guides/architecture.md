@@ -1,11 +1,9 @@
 ---
 title: System Architecture & Design Patterns
-description: Core architectural principles, zero-bootstrap philosophy, component colocation and state flow in Resume Constructor.
+description: Component colocation, immutability and state flow in Resume Constructor.
 ---
 
-Resume Constructor is a production-grade, zero-bootstrap resume generator built on **React 19**, **TypeScript (strict)**, **SCSS with BEM**, custom **webpack 5** and the **Bun** runtime. It implements the formatting, typography and content standards defined in [The Tech Resume Inside Out](https://thetechresume.com/) book by Gergely Orosz.
-
-The codebase is engineered around strict boundaries between presentation, form state, document rendering and accessibility infrastructure.
+Resume Constructor uses React, TypeScript, SCSS, Vite, Vitest and Bun. Its architecture separates presentation, form state, document rendering and accessibility infrastructure. The [product reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/product.md) describes the CV structure and guidance sources.
 
 ```mermaid
 flowchart TD
@@ -23,62 +21,27 @@ flowchart TD
 
 ## Architectural Principles
 
-### 1. Zero-Bootstrap Philosophy
+### 1. UI Composition
 
-The application avoids heavy UI component libraries (such as Material UI, Tailwind or Chakra). Every UI element — from buttons and modal dialogs to sortable lists and form controls — is built from first principles using semantic HTML, CSS custom properties, BEM methodology and WAI-ARIA authoring practices. This ensures:
-
-- Zero styling abstraction leaks.
-- Total control over DOM hierarchy and keyboard focus trapping.
-- Minimal bundle footprint and instantaneous startup.
+The application uses its own UI components, semantic HTML, SCSS and accessibility patterns. Reusable interface components, feature composition and business logic have distinct roles; see the [TypeScript and React reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/typescript-react.md).
 
 ### 2. Component Colocation
 
-Every UI component and page feature is self-contained in its own directory following a strict four-file colocation pattern:
+A component directory can group its implementation, styles and tests, for example:
 
 ```text
 src/components/Button/
 ├── Button.tsx         # Component implementation and prop types
 ├── Button.scss        # Scoped BEM styles
-├── Button.test.tsx    # Jest + React Testing Library suite
-└── index.tsx          # Clean public barrel export
+├── Button.test.tsx    # Vitest + vitest-browser-react suite
+└── index.tsx          # Barrel, where useful
 ```
 
-### 3. Deep Immutability Pattern (`ReadonlyExcept`)
+This example is descriptive, not a mandatory four-file template. Meaningful extracted pure logic and its tests belong together; private helpers do not need barrel exports. Native documentation discovery does not require manual registration.
 
-Component prop interfaces enforce deep immutability across component boundaries using the custom `ReadonlyExcept` utility type:
+### 3. Deep Immutability
 
-```ts
-import type { MouseEvent, ReactNode, RefCallback, RefObject } from 'react';
-
-import type { ReadonlyExcept } from '@/types/ReadonlyExcept';
-
-export interface ButtonProps {
-  children: ReactNode;
-  disabled?: boolean;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-  ref?: RefCallback<HTMLButtonElement> | RefObject<HTMLButtonElement | null>;
-  variant?: 'icon' | 'primary' | 'secondary';
-}
-
-export function Button({
-  children,
-  ref,
-  variant = 'primary',
-  ...rest
-}: ReadonlyExcept<ButtonProps, 'ref'>) {
-  /**
-   * Props are deeply immutable; ref remains accessible as a
-   * first-class React 19 prop.
-   */
-  return (
-    <button ref={ref} {...rest}>
-      {children}
-    </button>
-  );
-}
-```
-
-This prevents accidental prop mutation and enforces pure functional component contracts.
+`ReadonlyDeep` is the default for immutable props and other inputs. `ReadonlyExcept` is useful when a legitimate exception, such as a mutable ref, needs to remain mutable. It is not required for every component. See the [TypeScript and React reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/typescript-react.md).
 
 ---
 
@@ -90,7 +53,7 @@ State is decoupled into two primary custom hooks coordinated by `App.tsx`:
 
 Manages the structured content of the resume (`Personal`, `Education`, `Experience`, `Projects`, `Skills`, `Certifications`, `Links`).
 
-- Utilises `use-immer` to perform safe, deeply nested draft mutations.
+- Uses `use-immer` for nested draft updates. Immer is useful for complicated updates, not mandatory for every nested change.
 - Provides atomic action creators (`updateName`, `addDegree`, `deleteJob`, `reorderSkills`) ensuring consumer components never manipulate state shape directly.
 - Encapsulates bulk operations (`clearAll`, `fillAll`, `clearSection`).
 
@@ -110,13 +73,9 @@ Modal dialog visibility is managed locally within each respective shell componen
 - `Toolbar` manages the full-screen `<Preview>` modal dialog (`isPreviewModalShown`).
 - Toolbar operations such as "Clear All" (`deleteAll`) and "Fill All" (`fillAll`) trigger state resets immediately without modal popups.
 
-### Zero Redundant Effects
+### Derived State and Effects
 
-In strict compliance with `eslint-plugin-react-you-might-not-need-an-effect`:
-
-- No `useEffect` is used for state synchronisation or data transformation.
-- Derived values (e.g. can a section be deleted, is the active tab still valid) are computed synchronously during render.
-- Focus restoration and side effects are executed inside explicit user event callbacks.
+Values derivable from current state can be computed during rendering or in the interaction that changes them, avoiding redundant synchronisation. Effects remain appropriate when synchronising with an external system, such as the PDF rendering pipeline.
 
 ---
 
@@ -141,7 +100,7 @@ resume-constructor/
 │   ├── styles/               # Global SCSS, custom properties, BEM base
 │   ├── types/                # TypeScript domain interfaces and utility types
 │   └── utils/                # Pure helper functions (capitalize, neverReached)
-├── webpack.common.ts         # Shared webpack 5 build configuration
-├── webpack.dev.ts            # Development server configuration
-└── webpack.prod.ts           # Production optimization pipeline
+├── index.html                # Application HTML entry point
+├── vite.config.ts            # Vite 8 build and dev server configuration
+└── vitest.config.ts          # Vitest project and environment configuration
 ```

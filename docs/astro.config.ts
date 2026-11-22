@@ -14,8 +14,7 @@ export default defineConfig({
     mermaid(),
     starlight({
       title: 'Resume Constructor',
-      description:
-        'Technical architecture, zero-bootstrap engineering and API reference.',
+      description: 'Developer guides and API reference for Resume Constructor.',
       social: [
         {
           icon: 'github',
@@ -57,36 +56,13 @@ export default defineConfig({
       ],
       plugins: [
         starlightTypeDoc({
-          entryPoints: [
-            '../src/types/resumeData.ts',
-            '../src/types/ReadonlyExcept.ts',
-            '../src/hooks/useAppState.ts',
-            '../src/hooks/useDebouncedWindowSize.ts',
-            '../src/hooks/useLastComponentBeforeTabpanel.ts',
-            '../src/hooks/useResumeData/index.ts',
-            '../src/utils/capitalize.ts',
-            '../src/utils/neverReached.ts',
-            '../src/utils/possibleSectionIds.ts',
-            '../src/utils/sectionTitles.ts',
-            '../src/components/Button/index.tsx',
-            '../src/components/Popup/index.tsx',
-            '../src/components/AddSections/index.tsx',
-            '../src/components/AppbarIconButton/index.tsx',
-            '../src/components/AppLayout/index.tsx',
-            '../src/components/BulletPoints/index.tsx',
-            '../src/components/Preview/index.tsx',
-            '../src/components/Preview/getResumePdfFileName.ts',
-            '../src/pages/Personal/index.tsx',
-            '../src/pages/Education/index.tsx',
-            '../src/pages/Experience/index.tsx',
-            '../src/pages/Projects/index.tsx',
-            '../src/pages/Skills/index.tsx',
-            '../src/pages/Certifications/index.tsx',
-            '../src/pages/Links/index.tsx',
-          ],
+          entryPoints: ['../src/**/*.ts', '../src/**/*.tsx'],
           pagination: true,
           tsconfig: '../tsconfig.json',
           typeDoc: {
+            entryPointStrategy: 'expand',
+            exclude: ['**/*.test.*', '**/*.test-d.ts', '**/*.d.ts'],
+            excludeInternal: false,
             enumMembersFormat: 'table',
             parametersFormat: 'table',
             propertiesFormat: 'table',

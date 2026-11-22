@@ -2,15 +2,17 @@ import type { MouseEvent } from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import Button from './Button';
 
+import type { Mock } from 'vitest';
+
 describe('Button', () => {
-  let handleClickMock: jest.Mock<void, [MouseEvent<HTMLButtonElement>]>;
+  let handleClickMock: Mock<(e: MouseEvent<HTMLButtonElement>) => void>;
 
   beforeEach(() => {
-    handleClickMock = jest.fn();
+    handleClickMock = vi.fn();
   });
 
   it('should render with the correct accessible name from its children', () => {

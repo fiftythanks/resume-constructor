@@ -1,4 +1,3 @@
-import { useRef, useState } from 'react';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 
 // `dnd-kit` docs: https://docs.dndkit.com/
@@ -15,7 +14,6 @@ import {
   restrictToVerticalAxis,
 } from '@dnd-kit/modifiers';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -24,10 +22,14 @@ import { clsx } from 'clsx';
 
 import Button from '@/components/Button';
 
+import {
+  createBulletPointAnnouncements,
+  reorderBulletPoints,
+} from './bulletPointsDnd';
 import ListItem from './ListItem';
 
 import type { ItemWithId } from '@/types/resumeData';
-import type { Active, DragEndEvent, Over } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import type { ReadonlyDeep } from 'type-fest';
 
 import './BulletPoints.scss';
@@ -80,9 +82,6 @@ export default function BulletPoints({
   handleKeyDownOnFirstElement,
   handleFocusOnFirstElement,
 }: BulletPointsProps) {
-  const [_, setIsDragging] = useState(false);
-  const wasDraggedAwayFromItsInitialPosition = useRef(false);
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -90,72 +89,16 @@ export default function BulletPoints({
     }),
   );
 
-  function handleDragStart() {
-    setIsDragging(true);
-  }
-
   function handleDragEnd(e: ReadonlyDeep<DragEndEvent>) {
     const { active, over } = e;
+    const newData = reorderBulletPoints(data, active.id, over?.id ?? null);
 
-    if (over !== null && active.id !== over.id) {
-      const oldIndex = data.findIndex((item) => item.id === active.id);
-      const newIndex = data.findIndex((item) => item.id === over.id);
-      const newData = arrayMove([...data], oldIndex, newIndex);
+    if (newData !== null) {
       updateData(newData);
     }
-
-    setIsDragging(false);
   }
 
-  // Screen reader announcements.
-  interface Arguments {
-    active: Active;
-    over: null | Over;
-  }
-
-  const announcements = {
-    onDragStart({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
-      wasDraggedAwayFromItsInitialPosition.current = false;
-
-      return `Picked up draggable item ${data.findIndex((item) => item.id === active.id) + 1}.`;
-    },
-
-    onDragOver({ active, over }: ReadonlyDeep<Arguments>) {
-      if (over === null) {
-        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} is no longer over a droppable area.`;
-      }
-
-      if (
-        active.id !== over.id ||
-        wasDraggedAwayFromItsInitialPosition.current
-      ) {
-        /**
-         * In case the draggable item is dragged over the area where it came
-         * from, announce it only if the draggable item was dragged over some
-         * other draggable area.
-         *
-         * This is necessary to make sure `onDragOver` doesn't lead to
-         * announcing something like "Draggable item 1 was dragged over
-         * area 1" right after the draggable item has just been picked up.
-         */
-        wasDraggedAwayFromItsInitialPosition.current = true;
-
-        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was moved over droppable area ${data.findIndex((item) => item.id === over.id) + 1}.`;
-      }
-    },
-
-    onDragEnd({ active, over }: ReadonlyDeep<Arguments>) {
-      if (over === null) {
-        return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped.`;
-      }
-
-      return `Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was dropped over droppable area ${data.findIndex((item) => item.id === over.id) + 1}`;
-    },
-
-    onDragCancel({ active }: ReadonlyDeep<Pick<Arguments, 'active'>>) {
-      return `Dragging was cancelled. Draggable item ${data.findIndex((item) => item.id === active.id) + 1} was put to its initial position.`;
-    },
-  };
+  const announcements = createBulletPointAnnouncements(data);
 
   const bulletPointsClassName = clsx([
     className,
@@ -180,7 +123,6 @@ export default function BulletPoints({
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
         sensors={sensors}
         onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
       >
         <SortableContext
           items={data.map((item) => item.id)}
@@ -279,7 +221,7 @@ export default function BulletPoints({
         aria-label={`Add ${itemName}`}
         className="BulletPoints-Add"
         id={`add-${name}`}
-        modifiers={['Button_paddingInline_large']}
+        modifiers={['Button_size_smallest', 'Button_width_medium']}
         // TODO: add a screen reader announcement "A new bullet point was added".
         onClick={addItem}
       >

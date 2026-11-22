@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import Personal from './Personal';
 
@@ -20,12 +20,7 @@ function getProps(overrides?: Partial<PersonalProps>): PersonalProps {
     functions: {
       updatePersonal(
         _field:
-          | 'address'
-          | 'email'
-          | 'fullName'
-          | 'jobTitle'
-          | 'phone'
-          | 'summary',
+          'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary',
         _value: string,
       ) {},
     },
@@ -84,15 +79,10 @@ describe('Personal', () => {
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
-      const updatePersonalMock = jest.fn(
+      const updatePersonalMock = vi.fn(
         (
           _field:
-            | 'address'
-            | 'email'
-            | 'fullName'
-            | 'jobTitle'
-            | 'phone'
-            | 'summary',
+            'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary',
           _value: string,
         ) => {},
       );
@@ -145,15 +135,10 @@ describe('Personal', () => {
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
-      const updatePersonalMock = jest.fn(
+      const updatePersonalMock = vi.fn(
         (
           _field:
-            | 'address'
-            | 'email'
-            | 'fullName'
-            | 'jobTitle'
-            | 'phone'
-            | 'summary',
+            'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary',
           _value: string,
         ) => {},
       );
@@ -206,15 +191,10 @@ describe('Personal', () => {
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
-      const updatePersonalMock = jest.fn(
+      const updatePersonalMock = vi.fn(
         (
           _field:
-            | 'address'
-            | 'email'
-            | 'fullName'
-            | 'jobTitle'
-            | 'phone'
-            | 'summary',
+            'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary',
           _value: string,
         ) => {},
       );
@@ -267,15 +247,10 @@ describe('Personal', () => {
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
-      const updatePersonalMock = jest.fn(
+      const updatePersonalMock = vi.fn(
         (
           _field:
-            | 'address'
-            | 'email'
-            | 'fullName'
-            | 'jobTitle'
-            | 'phone'
-            | 'summary',
+            'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary',
           _value: string,
         ) => {},
       );
@@ -328,15 +303,10 @@ describe('Personal', () => {
     });
 
     it("should call `updatePersonal` when the text input's value is changed", async () => {
-      const updatePersonalMock = jest.fn(
+      const updatePersonalMock = vi.fn(
         (
           _field:
-            | 'address'
-            | 'email'
-            | 'fullName'
-            | 'jobTitle'
-            | 'phone'
-            | 'summary',
+            'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary',
           _value: string,
         ) => {},
       );
@@ -391,15 +361,10 @@ describe('Personal', () => {
     });
 
     it("should call `updatePersonal` when the textarea's value is changed", async () => {
-      const updatePersonalMock = jest.fn(
+      const updatePersonalMock = vi.fn(
         (
           _field:
-            | 'address'
-            | 'email'
-            | 'fullName'
-            | 'jobTitle'
-            | 'phone'
-            | 'summary',
+            'address' | 'email' | 'fullName' | 'jobTitle' | 'phone' | 'summary',
           _value: string,
         ) => {},
       );

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import NavbarItem from './NavbarItem';
 
@@ -16,8 +16,8 @@ function getProps(overrides?: Partial<NavbarItemProps>): NavbarItemProps {
     sectionId: 'certifications',
     sectionTitle: 'Certifications',
     tabIndex: 0,
-    onDeleteSection: jest.fn(),
-    onSelectSection: jest.fn(),
+    onDeleteSection: vi.fn(),
+    onSelectSection: vi.fn(),
     ...overrides,
   };
 }
@@ -61,7 +61,7 @@ describe('NavbarItem', () => {
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaDisabled).toBe('false');
+      expect(tab).toHaveAttribute('aria-disabled', 'false');
     });
 
     it('should be disabled when `isEditorMode === true`', () => {
@@ -70,7 +70,7 @@ describe('NavbarItem', () => {
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaDisabled).toBe('true');
+      expect(tab).toHaveAttribute('aria-disabled', 'true');
     });
 
     it('should be selected when `isSelected === true`', () => {
@@ -79,7 +79,7 @@ describe('NavbarItem', () => {
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaSelected).toBe('true');
+      expect(tab).toHaveAttribute('aria-selected', 'true');
     });
 
     it('should not be selected when `isSelected === false`', () => {
@@ -88,7 +88,7 @@ describe('NavbarItem', () => {
 
       const tab = screen.getByRole('tab', { name: props.sectionTitle });
 
-      expect(tab.ariaSelected).toBe('false');
+      expect(tab).toHaveAttribute('aria-selected', 'false');
     });
   });
 

@@ -6,20 +6,15 @@ import { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cloneDeep from 'lodash/cloneDeep';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import possibleSectionIds from '@/utils/possibleSectionIds';
 
+import getControlledIds from './getControlledIds';
 import Toolbar from './Toolbar';
 
 import type { ToolbarProps } from './Toolbar';
-import type {
-  ResumeData,
-  SectionIds,
-  SectionIdsDeletable,
-  TabpanelIds,
-} from '@/types/resumeData';
-import type { ArraySplice } from 'type-fest';
+import type { ResumeData } from '@/types/resumeData';
 
 const DATA: ResumeData = {
   certifications: {
@@ -223,20 +218,7 @@ describe('Toolbar', () => {
     expect(toolbar).toHaveClass('ToolbarClass');
   });
 
-  const deletableSectionIds: SectionIdsDeletable = possibleSectionIds.toSpliced(
-    0,
-    1,
-  ) as ArraySplice<SectionIds, 0, 1>;
-
-  type AppendSuffix<T extends SectionIds> = {
-    [K in keyof T]: `${T[K]}-tabpanel`;
-  };
-
-  const tabpanelIds: TabpanelIds = possibleSectionIds.map(
-    (sectionId) => `${sectionId}-tabpanel`,
-  ) as AppendSuffix<SectionIds>;
-
-  const allControlledIds = [...deletableSectionIds, ...tabpanelIds].join(' ');
+  const allControlledIds = getControlledIds();
 
   describe('Buttons', () => {
     describe('"Clear All" button', () => {
@@ -257,7 +239,7 @@ describe('Toolbar', () => {
       });
 
       it('should call `deleteAll` when clicked', async () => {
-        const deleteAllMock = jest.fn();
+        const deleteAllMock = vi.fn();
         renderToolbar({ deleteAll: deleteAllMock });
         const user = userEvent.setup();
 
@@ -286,7 +268,7 @@ describe('Toolbar', () => {
       });
 
       it('should call `fillAll` when clicked', async () => {
-        const fillAllMock = jest.fn();
+        const fillAllMock = vi.fn();
         renderToolbar({ fillAll: fillAllMock });
         const user = userEvent.setup();
 

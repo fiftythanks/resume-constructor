@@ -4,6 +4,8 @@ import Popup from '@/components/Popup';
 import possibleSectionIds from '@/utils/possibleSectionIds';
 import sectionTitles from '@/utils/sectionTitles';
 
+import getAddableSectionIds from './getAddableSectionIds';
+
 import closeSrc from '@/assets/icons/cross.svg';
 
 import './AddSections.scss';
@@ -35,7 +37,7 @@ export default function AddSections({
   onClose,
 }: ReadonlyDeep<AddSectionsProps>) {
   /**
-   * The `onClose` function changes a state, and this change
+   * The `onClose` function changes a state and this change
    * results in the closing of the popup. So in some contexts, for
    * readability, it's better to call the function `closePopup`, which
    * I will do. It's entirely the same function, but its name conveys
@@ -47,9 +49,7 @@ export default function AddSections({
    * Creates an array of "add-buttons" for adding sections.
    */
   const createAddBtns = () => {
-    const addableSectionIds = possibleSectionIds.filter(
-      (sectionId) => !activeSectionIds.includes(sectionId),
-    );
+    const addableSectionIds = getAddableSectionIds(activeSectionIds);
 
     return addableSectionIds.map((sectionId, i) => {
       const handleClick = () => {
@@ -85,7 +85,7 @@ export default function AddSections({
           <Button
             aria-label={`Add ${sectionTitles[sectionId]}`}
             id={`add-${sectionId}`}
-            modifiers={['Button_width_full']}
+            modifiers={['Button_size_smallest', 'Button_width_wide']}
             onClick={handleClick}
           >
             {sectionTitles[sectionId]}
@@ -109,7 +109,7 @@ export default function AddSections({
           <Button
             aria-label="Add All Sections"
             id="add-all-sections"
-            modifiers={['Button_width_full']}
+            modifiers={['Button_size_smallest', 'Button_width_wide']}
             onClick={() => {
               addSections([...possibleSectionIds]);
               closePopup();
@@ -120,6 +120,7 @@ export default function AddSections({
         </li>
       </ul>
       {/* (1) */}
+      {/* TODO: Make it `Button`. */}
       <button
         className="AddSections-CloseBtn"
         type="button"

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import Certifications from './Certifications';
 
@@ -78,7 +78,7 @@ describe('Certifications', () => {
     it('should call `updateCertifications` when the Certificates value is changed via the text area', async () => {
       render(<div aria-label="Certifications" id="certifications" />);
 
-      const updateCertificationsMock = jest.fn(
+      const updateCertificationsMock = vi.fn(
         (_field: 'certificates' | 'interests' | 'skills', _value: string) => {},
       );
 
@@ -137,7 +137,7 @@ describe('Certifications', () => {
     it('should call updateCertifications when the Skills value is changed via the text area', async () => {
       render(<div aria-label="Certifications" id="certifications" />);
 
-      const updateCertificationsMock = jest.fn(
+      const updateCertificationsMock = vi.fn(
         (_field: 'certificates' | 'interests' | 'skills', _value: string) => {},
       );
 
@@ -196,7 +196,7 @@ describe('Certifications', () => {
     it('should call `updateCertifications` when the Interests value is changed via the text area', async () => {
       render(<div aria-label="Certifications" id="certifications" />);
 
-      const updateCertificationsMock = jest.fn(
+      const updateCertificationsMock = vi.fn(
         (_field: 'certificates' | 'interests' | 'skills', _value: string) => {},
       );
 

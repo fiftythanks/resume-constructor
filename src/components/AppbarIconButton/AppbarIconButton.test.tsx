@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import AppbarIconButton from './AppbarIconButton';
 
@@ -10,8 +10,13 @@ describe('AppbarIconButton', () => {
   const getProps = (
     overrides: Partial<AppbarIconButtonProps> = {},
   ): AppbarIconButtonProps => ({
+    /**
+     * NOTE: If you decide to make this prop `undefined` by default, make sure
+     * you update tests that rely on the default value being defined. There are
+     * at least two such tests.
+     */
     alt: 'Alternative text',
-    onClick: jest.fn(),
+    onClick: vi.fn(),
     iconSrc: 'path/to/icon.jpg',
     ...overrides,
   });
@@ -20,7 +25,7 @@ describe('AppbarIconButton', () => {
     const props = getProps();
     render(<AppbarIconButton {...props} />);
 
-    const btn = screen.getByRole('button', { name: props.alt });
+    const btn = screen.getByRole('button', { name: props.alt! });
 
     expect(btn).toBeInTheDocument();
   });
@@ -29,7 +34,7 @@ describe('AppbarIconButton', () => {
     const props = getProps({ 'aria-label': 'Close Dialog' });
     render(<AppbarIconButton {...props} />);
 
-    const btn = screen.getByRole('button', { name: props['aria-label'] });
+    const btn = screen.getByRole('button', { name: props['aria-label']! });
 
     expect(btn).toBeInTheDocument();
   });
@@ -48,9 +53,35 @@ describe('AppbarIconButton', () => {
     const user = userEvent.setup();
     render(<AppbarIconButton {...props} />);
 
-    const btn = screen.getByRole('button', { name: props.alt });
+    const btn = screen.getByRole('button', { name: props.alt! });
     await user.click(btn);
 
     expect(props.onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should apply the large icon modifier class when `largeIcon` is true', () => {
+    // Arrange
+    const props = getProps({ largeIcon: true });
+
+    // Act
+    render(<AppbarIconButton {...props} />);
+
+    // Assert
+    const icon = screen.getByRole('img');
+
+    expect(icon).toHaveClass('AppbarIconButton-Icon_large');
+  });
+
+  it('should not apply the large icon modifier class by default', () => {
+    // Arrange
+    const props = getProps();
+
+    // Act
+    render(<AppbarIconButton {...props} />);
+
+    // Assert
+    const icon = screen.getByRole('img');
+
+    expect(icon).not.toHaveClass('AppbarIconButton-Icon_large');
   });
 });

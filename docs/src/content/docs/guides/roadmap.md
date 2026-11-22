@@ -1,30 +1,30 @@
 ---
 title: Project Roadmap & Technical Decisions
-description: Comprehensive synthesis of codebase TODOs, architectural dilemmas and planned system evolutions in Resume Constructor.
+description: Backlog of proposed changes and open questions for Resume Constructor.
 ---
 
-This roadmap synthesises the architectural priorities, engineering directives and open tasks from the project specification, internal task logs and source code annotations (`TODO:`, `FIXME:`, `DILEMMA:`). Items are organised by priority and domain.
+This roadmap collects open tasks, ideas and historical notes from the project specification, internal task logs and source annotations (`TODO:`, `FIXME:`, `DILEMMA:`). Items are proposals for discussion, not approved requirements or implementation plans. Priorities, designs and cited locations need reassessment before work begins. See the [product reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/product.md), [styling reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/styling.md) and [accessibility reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/accessibility.md).
 
 ---
 
-## 1. Macro Responsive Scaling Strategy (Immediate Priority)
+## 1. Macro Responsive Scaling Strategy
 
-The highest immediate priority is adapting Resume Constructor from a mobile-first single-column layout into an adaptive, multi-viewport workspace based on the project's responsive scaling strategy.
+One proposed direction adapts the mobile-first single-column layout into a multi-viewport workspace. The breakpoint, interaction design and implementation require approval.
 
 ### Desktop & Tablet Shell Adaptation
 
-- **Hybrid CSS Architecture:** Global `@media` queries exclusively govern macro-layout shifts in `AppLayout`, while all internal component responsiveness relies on CSS Container Queries (`@container`).
-- **Unified Sidebar (`@media (min-width: 768px)`):** Transition from mobile bottom-docked navigation to a permanent desktop sidebar on the left containing both navigation tabs and toolbar actions.
-- **Dynamic ARIA Synchronisation:** When hiding mobile drawer toggles on wider screens, React state will programmatically enforce a permanently expanded `aria-expanded="true"` state on desktop navigation.
-- **Dual-Pane Side-by-Side Workspace:** On medium and large displays, the interface will display the active section editor alongside a persistent live preview pane. Mobile viewports remain single-column form editors without live preview due to screen real estate constraints, with preview accessed via the on-demand modal before download.
-- **Skip Links (WCAG 2.4.1):** Introduce keyboard skip links as the first interactive element inside the sidebar to allow keyboard and screen reader users to jump straight to the active form editor.
+- **Hybrid CSS Architecture:** Viewport-level layout belongs in `AppLayout`, while component size adaptation uses ancestor container queries. Pointer, hover and user-preference media queries remain distinct from viewport layout.
+- **Unified Sidebar:** A permanent left sidebar at `768px` is a proposed breakpoint and design, not an approved requirement.
+- **ARIA Synchronisation:** How a wider-screen navigation state is exposed, including whether `aria-expanded` applies, requires interaction and accessibility design.
+- **Dual-Pane Workspace:** A persistent live preview beside the editor on wider screens, with a modal on mobile, is a proposed layout.
+- **Skip Links:** Consider keyboard skip links to the active form editor as part of the approved navigation design.
 
 ### Pure JSX Live Preview (Desktop/Tablet) & Real PDF Parity
 
-- **Main-Thread Performance:** Implement a pure DOM-based JSX live preview exclusively for wider viewports to provide instant typing feedback. Running the existing `@react-pdf/renderer` compilation and `pdfjs-dist` canvas rasterisation dynamically during interactive typing would cause disastrous performance degradation; the pure JSX DOM engine eliminates canvas rasterisation overhead.
-- **Engine Parity via Universal Primitives:** Enforce strict Yoga-compliant Flexbox rules across shared layout primitives to guarantee pixel-level parity between DOM preview and exported PDF.
-- **Pre-Download Real PDF Verification:** Retain the full `@react-pdf/renderer` and `pdfjs-dist` canvas modal pipeline as the final pre-download inspection step with an engine toggle ("Switch to Real PDF") within the desktop preview pane to verify exact vector pagination on demand.
-- **Effect Pruning:** Replace `useDebouncedWindowSize` and synchronous resize listeners with modern `@container` queries and `ResizeObserver`.
+- **DOM Preview:** A pure JSX live preview on wider viewports is one possible approach to typing feedback. Compare performance and fidelity with alternatives rather than assuming an unmeasured cost.
+- **Shared Primitives:** Universal shared layout primitives are a proposal, not a guarantee of pixel-level parity. The [product reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/product.md) defines the required preview/export correspondence.
+- **Pre-Download Inspection:** A desktop toggle to the existing PDF modal pipeline is another design proposal, subject to approval and validation.
+- **Resize Handling:** Evaluate container queries or `ResizeObserver` where appropriate rather than assuming they replace every resize listener.
 
 ---
 
@@ -32,19 +32,19 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ### DOM Attachment & `isConnected` Guards
 
-- **Current Issue:** Multiple event listeners, layout queries and focus handlers query or focus DOM elements without verifying `node.isConnected`. Calling `.focus()` or querying styles on unmounted or detached elements causes silent focus drops to `document.body`, incorrect layout computations or runtime exceptions.
-- **Planned Fix:** Guard all focus restoration, computed style lookups and canvas pipelines with `node.isConnected` checks. Ensure captured focus targets and tabpanel roots remain attached to the document before executing focus actions.
+- **Concern:** Detached focus targets or rendering nodes can cause focus or layout problems in asynchronous flows.
+- **Candidate Approach:** Investigate attachment checks at the affected boundaries. Blanket guards are not an approved fix; establish the intended behaviour and test each case.
 - **Affected Locations:**
   - `src/hooks/useLastComponentBeforeTabpanel.ts:87, 110`: Refocusing captured `relatedTarget` without verifying `lastComponent.current.isConnected` risks dropping focus to `document.body` if the element was detached or re-rendered.
-  - `src/components/Preview/Preview.tsx`: Asynchronous PDF rendering and text layer pipelines are now guarded with `canvasNode.isConnected` and `textLayerNode.isConnected` checks; remaining work involves replacing legacy window resize listeners with container queries.
+  - `src/components/Preview/Preview.tsx`: Asynchronous PDF rendering and text layer pipelines use `canvasNode.isConnected` and `textLayerNode.isConnected` checks; alternative resize handling remains a proposal.
   - `src/components/AppLayout/Sidebar/Toolbar/Toolbar.tsx:65, 118`: Toolbar arrow navigation and preview modal close handler invoke `.focus()` without checking whether target buttons remain connected.
   - `src/components/AppLayout/Sidebar/Sidebar.tsx:105`: Sidebar toggle keyup handler invokes `.focus()` without verifying `navbarToggle.current.isConnected`.
   - `src/App/App.tsx:211`: `focusSection` computes tabbable elements and invokes `.focus()` without checking `isConnected` on the section container or the first tabbable target.
 
 ### Ref-Based Focus Management Migration
 
-- **Current Issue:** Extensive use of `document.getElementById(...)!.focus()` throughout navigation, deletion and form action handlers completely bypasses React refs and introduces brittle non-null assertions (`!`). Furthermore, form action dispatchers trigger synchronous focus calls immediately after React state updates before reconciliation completes, targeting pre-update or missing DOM nodes.
-- **Planned Fix:** Migrate all direct DOM lookups to idiomatic React refs. Replace non-null assertions with safe optional chaining and connection checks. Defer focus transitions following state additions until after React reconciliation.
+- **Concern:** Direct DOM lookups, non-null assertions and focus immediately after state updates may be brittle.
+- **Candidate Approach:** Evaluate refs, explicit handling of missing targets and timing of focus transitions for each interaction. A blanket conversion to optional chaining or connection checks is not an approved fix and could hide errors.
 - **Affected Locations:**
   - `src/components/AddSections/AddSections.tsx:70–76`: Uses `document.getElementById(...)!.focus()` with non-null assertions to navigate between add buttons instead of managing button refs.
   - `src/components/AppLayout/Sidebar/Navbar/Navbar.tsx:152–162, 205–216, 283–312, 338–356, 358–383, 403–413, 425–427`: Navbar reordering, deletion and arrow navigation handlers bypass `tabRefs` with raw `document.getElementById(...)!.focus()` calls and non-null assertions across tabs, delete triggers and action buttons.
@@ -55,8 +55,8 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ### Dialog Lifecycle & Portal Hardening
 
-- **Current Issue:** Native `<dialog>` methods `showModal()` and `close()` in `Popup` are called unconditionally inside `useEffect` upon `isShown` changes without checking `node.isConnected` or the dialog's current `open` state, risking native `DOMException: InvalidStateError`. Additionally, `Popup` queries `'popup-root'` using `document.getElementById` with an unsafe non-null assertion `!` during ref initialisation, risking crashes if the container has not mounted.
-- **Planned Fix:** Verify `node.isConnected` and `node.open` before invoking `showModal()` or `close()`. Manage the portal root container through React refs or validated mounting hooks rather than raw non-null assertions.
+- **Concern:** Native dialog lifecycle and portal root availability need careful handling when state and attachment change.
+- **Candidate Approach:** Investigate dialog state and mounting at the relevant boundaries; choose a tested approach rather than applying blanket attachment guards.
 - **Affected Locations:**
   - `src/components/Popup/Popup.tsx:46`: `rootRef` initialised via `document.getElementById('popup-root')!` with unsafe non-null assertion.
   - `src/components/Popup/Popup.tsx:52–58`: Direct `showModal()` and `close()` invocations in `useEffect` without checking `node.isConnected` or `node.open`.
@@ -68,8 +68,8 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 - **Personalised Resume Filename:** Formatted downloadable PDF file names using `getResumePdfFileName` to sanitise the applicant's name and produce files like `"john_doe_resume.pdf"`.
 - **Link Presence Checks:** Replaced `activeSectionIds` checks in `ResumeDocument` with content-based checks so empty sections do not render orphaned delimiters.
 - **Single Contact Item Display:** Resolved header layout bug where email failed to display when no custom links were present.
-- **Multi-Page Page Breaks:** Hardened card wrapping with `wrap={false}` in `@react-pdf/renderer`, ensuring multi-page documents break cleanly.
-- **PDF Blob Race Condition:** Eliminated `ERR_FILE_NOT_FOUND` blob URL errors during rapid updates via task cancellation and worker asset caching.
+- **Multi-Page Page Breaks:** Configured card wrapping with `wrap={false}` in `@react-pdf/renderer` to keep entries together where possible.
+- **PDF Blob Race Condition:** Added task cancellation and worker asset caching to address blob URL errors during rapid updates.
 - **Sources:** `src/components/Preview/ResumeDocument.tsx`, `src/components/Preview/Preview.tsx`, `src/components/Preview/getResumePdfFileName.ts`
 
 ---
@@ -79,16 +79,16 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 ### Local Storage Synchronisation
 
 - **Current State:** Resume data is stored solely in React memory. Accidental tab closures or browser restarts result in complete data loss.
-- **Planned Evolution:** Add a debounced `localStorage` synchronization layer in `src/App/App.tsx` with automatic draft recovery and snapshot history.
+- **Planned Evolution:** Add a debounced `localStorage` synchronisation layer in `src/App/App.tsx` with automatic draft recovery and snapshot history.
 - **Source:** `src/App/App.tsx:32`
 
-### Decomposition of `useAppState` & Zero-Effect Architecture
+### Possible Decomposition of `useAppState`
 
-- **Current State:** `useAppState.ts` combines document section topology, navbar interaction mode (`editorMode`) and screen reader live announcements. It violates `react-you-might-not-need-an-effect` by using `useEffect` to watch state changes (`sectionsState` and `editorMode`) and trigger `setScreenReaderAnnouncement`, causing double-render cascades across the entire app shell and chained state race conditions.
-- **Planned Evolution:**
-  1. **Event-Driven Live Announcements:** Remove announcement `useEffect` hooks and ref diffing (`previousSectionsStateRef`). Trigger screen reader messages directly inside user interaction callbacks (`openSection`, `addSections`, `deleteSections`, `reorderSections` and `toggleEditorMode`).
-  2. **Colocate Navbar Mode:** Push `editorMode` down to `Navbar` or `AppLayout` so local drawer and reordering toggles do not re-render the root `App` and active form panels.
-  3. **Decompose Responsibilities:** Split the monolithic hook into focused utilities:
+- **Current Context:** `useAppState.ts` combines section topology, navbar interaction mode and screen reader live announcements. Changes to its state flow should be evaluated against observed behaviour and measured performance rather than assumed render costs.
+- **Candidate Evolution:** The following event-driven announcements and hook decomposition are proposals requiring design approval, not approved work:
+  1. **Event-Driven Live Announcements:** Consider triggering screen reader messages inside user interaction callbacks (`openSection`, `addSections`, `deleteSections`, `reorderSections` and `toggleEditorMode`).
+  2. **Colocate Navbar Mode:** Consider placing `editorMode` closer to `Navbar` or `AppLayout`.
+  3. **Decompose Responsibilities:** Consider splitting the hook into focused utilities:
      - `useSectionsState`: Active section ordering, tab switching and undeletable collections.
      - `useUiState`: Ephemeral navbar drawer toggles and editor mode states.
      - `useScreenReaderAnnouncement`: Standalone imperative announcement dispatcher.
@@ -130,9 +130,8 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ### Schema Normalisation (`link` to `url`)
 
-- **Current State:** The `Link` interface defines `{ link: string, text: string }`.
-- **Planned Evolution:** Rename the `link` property to `url` to conform to standard terminology and strip unused top-level entity IDs.
-- **Sources:** `src/types/resumeData.ts:65, 113, 146`
+- **Legacy Context:** The former `Link` interface used `{ link: string, text: string }`. The domain model is undergoing a separate migration.
+- **Proposed Evolution:** Consider whether `url` is preferable and whether any entity IDs are unused. Data-model changes need their own approval.
 
 ---
 
@@ -176,7 +175,7 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ### APCA Contrast Auditing
 
-- **Planned Evolution:** Audit color palettes against the Accessible Perceptual Contrast Algorithm (APCA) to ensure optimal reading comfort.
+- **Planned Evolution:** Audit colour palettes against the Accessible Perceptual Contrast Algorithm (APCA) to ensure optimal reading comfort.
 - **Source:** `src/App/App.tsx:51–52`
 
 ### Native Dialogs & Invoker Commands API
@@ -187,6 +186,8 @@ The highest immediate priority is adapting Resume Constructor from a mobile-firs
 
 ## 8. Long-Term Explorations
 
-- **Automated ATS Verification:** Test generated resumes against leading Applicant Tracking System parsers to ensure machine readability.
+Accessible exported CVs and verified ATS compatibility are future goals, not established capabilities. The [product reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/product.md) and [accessibility reference](https://github.com/fiftythanks/resume-constructor/blob/main/docs/reference/accessibility.md) describe the goals and current export gap without selecting an implementation.
+
+- **Automated ATS Verification:** Explore testing generated CVs against relevant Applicant Tracking System parsing workflows; the approach and acceptance criteria are not yet approved.
 - **AI-Assisted Tailoring:** Optional integration for evaluating job description alignment and language clarity.
 - **Cloud Account Synchronisation:** Optional backend service for persisting and syncing resumes across devices.

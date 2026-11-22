@@ -2,12 +2,12 @@
 
 @layer blocks {
   .Preview {
-    padding-inline: 2rem;
+    padding-inline: var(--inner-padding-inline);
 
     &-CloseBtn {
       position: absolute;
       top: 1rem;
-      right: 0.5rem;
+      right: var(--inner-padding-inline);
       border: 0;
       background: none;
       width: 2rem;

@@ -13,6 +13,8 @@ export interface AppbarIconButtonProps extends Omit<
   // TODO: Probably unnecessary prop. Delete it.
   alt?: string;
   iconSrc: string;
+  // Right now, it's only used for the double chevrons on the navbar toggle btn.
+  largeIcon?: boolean;
   ref?: Ref<HTMLButtonElement>;
 }
 
@@ -35,8 +37,9 @@ export interface AppbarIconButtonProps extends Omit<
  */
 export default function AppbarIconButton({
   alt,
-  className,
+  className = '',
   iconSrc,
+  largeIcon = false,
   ref,
   ...rest
 }: Pick<AppbarIconButtonProps, 'ref'> &
@@ -44,13 +47,17 @@ export default function AppbarIconButton({
   const btnClassName = clsx('AppbarIconButton', className);
 
   return (
+    // TODO: Make it `Button`.
     <button className={btnClassName} ref={ref} type="button" {...rest}>
       <img
         alt={alt}
-        className="AppbarIconButton-Icon"
         height="25px"
         src={iconSrc}
         width="25px"
+        className={clsx(
+          'AppbarIconButton-Icon',
+          largeIcon && 'AppbarIconButton-Icon_large',
+        )}
       />
     </button>
   );

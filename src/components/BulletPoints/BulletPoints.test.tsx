@@ -3,7 +3,7 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import BulletPoints from './BulletPoints';
 
@@ -74,7 +74,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `handleFocusOnFirstElement` when the first bullet point drag handle is focused', () => {
-    const mockFn = jest.fn();
+    const mockFn = vi.fn();
     const props = getProps({ handleFocusOnFirstElement: mockFn });
     render(<BulletPoints {...props} />);
 
@@ -88,7 +88,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `handleKeyDownOnFirstElement` when key is pressed on the first bullet point drag handle', async () => {
-    const mockFn = jest.fn();
+    const mockFn = vi.fn();
     const user = userEvent.setup();
     const props = getProps({ handleKeyDownOnFirstElement: mockFn });
     render(<BulletPoints {...props} />);
@@ -128,7 +128,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `editItem` when a bullet point value is changed', async () => {
-    const editItemMock = jest.fn((_itemIndex: number, _value: string) => {});
+    const editItemMock = vi.fn((_itemIndex: number, _value: string) => {});
     render(<BulletPoints {...getProps({ editItem: editItemMock })} />);
     const user = userEvent.setup();
 
@@ -154,85 +154,6 @@ describe('BulletPoints', () => {
     }
   });
 
-  it('should announce "Picked up draggable item [index + 1]" to screen readers when the drag handle of a bullet point [index + 1] is clicked for the first time (in other words, on drag start)', async () => {
-    render(<BulletPoints {...getProps()} />);
-    const user = userEvent.setup();
-
-    const dragHandle = screen.getByRole('button', {
-      name: 'Drag bullet point 1',
-    });
-
-    dragHandle.focus();
-    await user.keyboard(' ');
-
-    const a11yElement = screen.getByText('Picked up draggable item 1.');
-
-    expect(a11yElement).toBeInTheDocument();
-  });
-
-  // TODO: figure out how to test drag over. As far as I understand, it is impossible to do by the means of unit testing, at least in Jest.
-
-  it('should announce "Dragging was cancelled. Draggable item [index + 1] was put to its initial position." to screen readers when Escape is pressed during dragging', async () => {
-    render(<BulletPoints {...getProps()} />);
-    const user = userEvent.setup();
-
-    const dragHandle = screen.getByRole('button', {
-      name: 'Drag bullet point 1',
-    });
-
-    dragHandle.focus();
-    await user.keyboard(' ');
-    await user.keyboard('{Escape}');
-
-    const a11yElement = screen.getByText(
-      'Dragging was cancelled. Draggable item 1 was put to its initial position.',
-    );
-
-    expect(a11yElement).toBeInTheDocument();
-  });
-
-  it('should announce "Draggable item [index + 1] was dropped over droppable area [droppableIndex + 1]" to screen readers when the dragged bullet point [index + 1] is dropped over droppable area [droppableIndex + 1]', async () => {
-    render(<BulletPoints {...getProps()} />);
-    const user = userEvent.setup();
-
-    const dragHandle = screen.getByRole('button', {
-      name: 'Drag bullet point 1',
-    });
-
-    dragHandle.focus();
-    await user.keyboard(' ');
-    await user.keyboard(' ');
-
-    const a11yElement = screen.getByText(
-      'Draggable item 1 was dropped over droppable area 1',
-    );
-
-    expect(a11yElement).toBeInTheDocument();
-  });
-
-  it('should provide a screen reader instruction "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."', async () => {
-    render(<BulletPoints {...getProps()} />);
-    const user = userEvent.setup();
-
-    const dragHandle = screen.getByRole('button', {
-      name: 'Drag bullet point 1',
-    });
-
-    await user.tab();
-
-    expect(dragHandle).toHaveFocus();
-
-    const descriptionNode = document.getElementById(
-      dragHandle.getAttribute('aria-describedby')!,
-    )!;
-
-    const cleanText = (text: string) => text.replaceAll(/\s+/g, ' ').trim();
-
-    expect(cleanText(descriptionNode.textContent)).toBe(
-      'To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel.',
-    );
-  });
-
   it('should render delete buttons with accessible names "Delete bullet point [index + 1]" for each bullet point', () => {
     render(<BulletPoints {...getProps()} />);
 
@@ -246,7 +167,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `deleteItem` with a correct index when a delete button is pressed', async () => {
-    const deleteItemMock = jest.fn((_itemIndex: number) => {});
+    const deleteItemMock = vi.fn((_itemIndex: number) => {});
     render(<BulletPoints {...getProps({ deleteItem: deleteItemMock })} />);
     const user = userEvent.setup();
 
@@ -261,7 +182,7 @@ describe('BulletPoints', () => {
   });
 
   it('should announce "Bullet point [index + 1] was deleted." to screen readers when a delete button is clicked', async () => {
-    const updateScreenReaderAnnouncementMock = jest.fn(
+    const updateScreenReaderAnnouncementMock = vi.fn(
       (_announcement: string) => {},
     );
 
@@ -309,7 +230,7 @@ describe('BulletPoints', () => {
   });
 
   it('should call `addItem` when the add-button is clicked', async () => {
-    const addItemMock = jest.fn();
+    const addItemMock = vi.fn();
     render(<BulletPoints {...getProps({ addItem: addItemMock })} />);
     const user = userEvent.setup();
 

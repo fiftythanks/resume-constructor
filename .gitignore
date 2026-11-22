@@ -129,12 +129,14 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Playwright
+# Playwright & Vitest Browser Mode
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+/.vitest/
+/.playwright-mcp/
 
 # Local internal notes
 /notes/
@@ -143,3 +145,6 @@ dist
 .astro/
 docs/src/content/docs/api/
 
+# Serena local runtime data
+/.serena/*
+!/.serena/project.yml

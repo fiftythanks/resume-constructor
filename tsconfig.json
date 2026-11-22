@@ -2,9 +2,9 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM"],
-    "module": "es2020",
+    "module": "esnext",
     "moduleResolution": "bundler",
-    "target": "es2020",
+    "target": "es2022",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,24 +18,33 @@
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "sourceMap": true,
+    "rootDir": "./",
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "exactOptionalPropertyTypes": true,
+    "types": [
+      "node",
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom",
+      "@vitest/browser-playwright",
+      "vitest-browser-react"
+    ],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": [
-    "babel.config.cjs",
-    "commitlint.config.cjs",
+    "__mocks__",
+    "commitlint.config.ts",
     "e2e",
     "eslint.config.ts",
-    "jest.config.ts",
-    "jest.setup.tsx",
     "playwright.config.ts",
     "prettier.config.js",
     "src",
-    "scripts",
     "stylelint.config.js",
-    "webpack.common.ts",
-    "webpack.dev.ts",
-    "webpack.prod.ts"
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.setup.tsx"
   ]
 }
